@@ -1,0 +1,1288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101014">
+  <meta name="description" content="CURIOID is a collection of strange interactive experiments, curious machines and digital oddities.">
+  <title>CURIOID</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 48 48%27%3E%3Crect width=%2748%27 height=%2748%27 rx=%2711%27 fill=%27%23101014%27/%3E%3Cpath d=%27M4.5 24C9.3 13.7 17.1 8.5 24 8.5S38.7 13.7 43.5 24C38.7 34.3 30.9 39.5 24 39.5S9.3 34.3 4.5 24Z%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%273.2%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%278.1%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%272.5%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%273.6%27 fill=%27%23d6ff69%27/%3E%3Cpath d=%27M32.5 14.5 37 10%27 stroke=%27%23d6ff69%27 stroke-width=%272.3%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101014;
+      --bg-soft: #15151b;
+      --panel: #191920;
+      --panel-raised: #202029;
+      --line: #30303a;
+      --line-soft: #26262f;
+      --text: #f1f0ed;
+      --muted: #a09eaa;
+      --dim: #74727f;
+      --acid: #d6ff69;
+      --violet: #baa7ff;
+      --pink: #ff9cba;
+      --cyan: #85e6da;
+      --sidebar-width: 264px;
+      --radius: 16px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--acid);
+      outline-offset: 3px;
+    }
+    a { color: inherit; }
+    .app-shell { min-height: 100vh; }
+
+    /* The entire sidebar scrolls, including its footer links. */
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 50;
+      width: var(--sidebar-width);
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 22px 15px 15px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #454550 transparent;
+      background: #15151b;
+      border-right: 1px solid var(--line);
+    }
+    .sidebar::-webkit-scrollbar { width: 8px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #41414b; border-radius: 20px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 54px;
+      margin: 0 3px 26px;
+      padding: 3px 5px;
+      text-decoration: none;
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      flex: 0 0 48px;
+      width: 48px;
+      height: 48px;
+      color: var(--acid);
+      filter: drop-shadow(0 0 13px rgba(214,255,105,.12));
+    }
+    .brand-mark svg { display: block; width: 46px; height: 46px; overflow: visible; }
+    .brand-word { display: block; font-size: 22px; font-weight: 900; letter-spacing: .16em; line-height: 1; }
+    .brand-caption { display: block; margin-top: 6px; color: var(--muted); font-size: 8px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    .sidebar-section-label {
+      margin: 0 9px 9px;
+      color: var(--dim);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .project-nav { display: grid; gap: 5px; }
+    .nav-item {
+      width: 100%;
+      min-height: 45px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: #b6b4bf;
+      text-align: left;
+      cursor: pointer;
+      transition: color .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .nav-item:hover { color: var(--text); background: #202027; }
+    .nav-item.active { color: var(--text); border-color: #414536; background: #22261d; }
+    .nav-symbol { flex: 0 0 22px; width: 22px; color: #8b8995; font-size: 17px; text-align: center; }
+    .nav-item.active .nav-symbol { color: var(--acid); }
+    .nav-label { flex: 1; font-size: 12px; font-weight: 680; }
+    .nav-indicator { width: 7px; height: 7px; border-radius: 50%; background: #55535f; }
+    .nav-item.active .nav-indicator { background: var(--acid); box-shadow: 0 0 10px rgba(214,255,105,.45); }
+
+    .sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
+    .sidebar-note { margin: 0 2px 14px; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: #19191f; }
+    .sidebar-note-title { color: var(--violet); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .13em; text-transform: uppercase; }
+    .sidebar-note p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .portfolio-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 43px;
+      padding: 10px 11px;
+      border: 1px solid #49415e;
+      border-radius: 10px;
+      background: #211e2a;
+      color: #ded6ff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      transition: background .16s ease, border-color .16s ease;
+    }
+    .portfolio-link:hover { background: #2b2638; border-color: #6a5b90; }
+    .portfolio-link span:last-child { font-size: 16px; }
+    .sidebar-foot { margin: 12px 4px 1px; color: #666471; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+
+    /* Main page */
+    .main { min-height: 100vh; margin-left: var(--sidebar-width); padding: 0 38px 55px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: rgba(16,16,20,.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 11px; min-width: 0; color: var(--muted); font-size: 11px; }
+    .topbar-brand { color: var(--text); font-size: 11px; font-weight: 850; letter-spacing: .12em; }
+    .topbar-separator { color: #55535f; }
+    .topbar-context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .topbar-right { display: flex; align-items: center; gap: 13px; color: var(--dim); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .status-live { display: inline-flex; align-items: center; gap: 7px; color: var(--acid); }
+    .status-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 9px rgba(214,255,105,.55); }
+    .menu-toggle { display: none; width: 39px; height: 39px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); cursor: pointer; }
+    .page-wrap { max-width: 1380px; margin: 0 auto; }
+    .hero { padding: 43px 0 29px; }
+    .hero-kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 13px; color: var(--acid); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .17em; text-transform: uppercase; }
+    .hero-kicker::before { content: ""; width: 23px; height: 1px; background: var(--acid); }
+    h1 { max-width: 790px; margin: 0; font-size: clamp(35px, 5vw, 59px); line-height: .99; letter-spacing: -.065em; font-weight: 820; }
+    .strange-word { position: relative; display: inline-flex; align-items: baseline; color: var(--acid); font-style: normal; letter-spacing: -.075em; transform: skewX(-8deg) rotate(-1.4deg); transform-origin: left center; text-shadow: 2px 0 rgba(214,255,105,.27), -2px 1px rgba(214,255,105,.16), 0 0 22px rgba(214,255,105,.12); white-space: nowrap; }
+    .strange-word::before { content: attr(data-word); position: absolute; z-index: 0; color: var(--acid); opacity: .2; transform: translate(4px,-3px) skewX(17deg) scaleY(.88); clip-path: inset(0 0 46% 0); pointer-events: none; }
+    .strange-word span { position: relative; z-index: 1; display: inline-block; }
+    .strange-word span:nth-child(1) { transform: translateY(2px) rotate(-9deg) scaleY(1.12); }
+    .strange-word span:nth-child(2) { transform: translateY(-3px) rotate(8deg) scaleY(.84); }
+    .strange-word span:nth-child(3) { transform: translateY(3px) rotate(-5deg) scaleX(1.1); }
+    .strange-word span:nth-child(4) { transform: translateY(-2px) rotate(5deg) scaleY(1.13); }
+    .strange-word span:nth-child(5) { transform: translateY(2px) rotate(-8deg) scaleX(.9); }
+    .strange-word span:nth-child(6) { transform: translateY(-3px) rotate(7deg) scaleY(.9); }
+    .strange-word span:nth-child(7) { transform: translateY(1px) rotate(-4deg) scaleX(1.08); }
+    .hero-bottom { display: flex; align-items: flex-end; justify-content: flex-start; gap: 24px; margin-top: 17px; }
+    .hero-copy { max-width: 610px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+    .section-rule { height: 1px; margin: 0 0 22px; border: 0; background: var(--line); }
+    .rooms-label { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: 0 0 10px; color: var(--dim); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .15em; text-transform: uppercase; }
+    .rooms-label span:last-child { color: #686674; letter-spacing: .08em; }
+    .category-stack { display: grid; gap: 37px; }
+    .category-section { min-width: 0; scroll-margin-top: 83px; }
+    .category-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 0 0 12px; padding: 0 2px 11px; border-bottom: 1px solid var(--line-soft); }
+    .category-heading-copy { min-width: 0; }
+    .category-kicker { margin: 0 0 4px; color: var(--acid); font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; }
+    .category-title { margin: 0; color: #efeee9; font-size: clamp(20px, 2.5vw, 26px); font-weight: 810; letter-spacing: -.045em; }
+    .category-description { margin: 4px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .category-count { flex: 0 0 auto; padding: 5px 8px; border: 1px solid #373641; border-radius: 6px; color: #898793; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; white-space: nowrap; }
+    .category-nav .nav-item { min-height: 43px; }
+
+    /* Click-to-expand project windows */
+    .room-list { display: grid; gap: 9px; }
+    .room-window { min-width: 0; overflow: hidden; border: 1px solid #33333d; border-radius: 12px; background: #17171d; transition: border-color .18s ease, background .18s ease; scroll-margin-top: 77px; }
+    .room-window.open { border-color: #585a46; background: #18191a; }
+    .room-heading {
+      width: 100%;
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 11px 15px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+    .room-heading:hover { background: rgba(255,255,255,.025); }
+    .room-window.open .room-heading { border-bottom: 1px solid var(--line); }
+    .room-icon { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 34px; border: 1px solid #44434f; border-radius: 9px; background: #22222b; color: var(--violet); font-size: 16px; }
+    .room-window:first-child .room-icon { border-color: #4e5937; background: #23291b; color: var(--acid); }
+    .room-number { color: #797784; font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .room-name-wrap { flex: 1; min-width: 0; }
+    .room-name { display: block; overflow: hidden; color: #e9e8e4; font-size: 13px; font-weight: 760; text-overflow: ellipsis; white-space: nowrap; }
+    .room-description { display: block; overflow: hidden; margin-top: 3px; color: #898794; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .room-state { flex: 0 0 auto; padding: 4px 7px; border: 1px solid #3b3a45; border-radius: 5px; color: #888694; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .09em; }
+    .room-state.live { border-color: #59673a; background: rgba(214,255,105,.055); color: var(--acid); }
+    .room-chevron { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 25px; border: 1px solid #393943; border-radius: 7px; color: #aaa8b3; font-size: 15px; transition: transform .2s ease; }
+    .room-window.open .room-chevron { transform: rotate(180deg); color: var(--acid); }
+    .room-body { padding: 17px; }
+    .room-body[hidden] { display: none; }
+    .room-mount { min-width: 0; }
+
+    /* Experiment window */
+    .experiment-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(275px, .8fr); gap: 13px; align-items: start; }
+    .surface { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #1c1c23; }
+    .surface-header { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 14px; border-bottom: 1px solid var(--line); }
+    .surface-title { display: flex; align-items: center; gap: 8px; margin: 0; color: #e3e2df; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .surface-dot { width: 6px; height: 6px; border-radius: 2px; background: var(--pink); transform: rotate(45deg); }
+    .surface-meta { color: #858390; font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .07em; }
+    .stage-wrap { padding: 13px; }
+    .stage {
+      position: relative;
+      min-height: 490px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid #393943;
+      border-radius: 9px;
+      background:
+        radial-gradient(ellipse at 50% 47%, rgba(139,91,105,.18), transparent 48%),
+        linear-gradient(145deg, #19171d, #101015 74%);
+    }
+    .stage::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .55; background-image: linear-gradient(rgba(255,255,255,.027) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.027) 1px, transparent 1px); background-size: 31px 31px; mask-image: linear-gradient(to bottom, black, transparent 88%); }
+    .stage-orbit { position: absolute; width: min(74%, 365px); aspect-ratio: 1; border: 1px solid rgba(214,255,105,.09); border-radius: 50%; pointer-events: none; }
+    .stage-orbit::before, .stage-orbit::after { content: ""; position: absolute; border: 1px solid rgba(186,167,255,.09); border-radius: 50%; }
+    .stage-orbit::before { inset: 9%; }
+    .stage-orbit::after { inset: 19%; }
+    .stage-corner { position: absolute; z-index: 2; color: #777583; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; pointer-events: none; }
+    .stage-corner.tl { top: 13px; left: 14px; }
+    .stage-corner.tr { top: 13px; right: 14px; }
+    .stage-corner.bl { bottom: 13px; left: 14px; }
+    .stage-corner.br { bottom: 13px; right: 14px; color: var(--acid); }
+    .face-art { display: block; width: min(84%, 455px); max-height: 455px; aspect-ratio: 1; overflow: visible; filter: drop-shadow(0 24px 35px rgba(0,0,0,.56)) saturate(.88) contrast(1.08); animation: arrive .45s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes arrive { from { opacity: 0; transform: translateY(9px) scale(.96) rotate(-1deg); } to { opacity: 1; transform: translateY(0) scale(1) rotate(0); } }
+    .stage-caption { display: flex; align-items: center; justify-content: space-between; gap: 11px; padding: 12px 2px 0; color: #8f8d99; font-size: 10px; }
+    .stage-caption strong { color: #e6e4df; font-weight: 720; }
+    .stage-code { color: var(--acid); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+    .stage-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 11px 2px 1px; }
+    .tag { padding: 4px 7px; border: 1px solid #383742; border-radius: 5px; color: #aaa8b3; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; }
+    .control-intro { padding: 14px 14px 13px; }
+    .control-intro-kicker { margin: 0 0 5px; color: var(--acid); font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; }
+    .control-intro h3 { margin: 0; font-size: 20px; line-height: 1.12; letter-spacing: -.04em; }
+    .control-intro p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    .control-body { padding: 0 14px 14px; }
+    .control-field { padding: 12px 0; border-top: 1px solid var(--line); }
+    .control-field-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .control-field label, .control-label { color: #d1cfd7; font-size: 10px; font-weight: 720; }
+    .control-value { color: var(--acid); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .select-wrap { position: relative; }
+    .select-wrap::after { content: "⌄"; position: absolute; top: 7px; right: 11px; color: #93919e; font-size: 16px; pointer-events: none; }
+    select { width: 100%; min-height: 38px; appearance: none; padding: 8px 32px 8px 10px; border: 1px solid #41404b; border-radius: 7px; background: #14141a; color: #e7e5e9; font-size: 11px; cursor: pointer; }
+    input[type="range"] { width: 100%; margin: 5px 0 0; accent-color: var(--acid); cursor: pointer; }
+    .range-hints { display: flex; justify-content: space-between; margin-top: 2px; color: #777582; font-size: 8px; }
+    .shape-options { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; }
+    .shape-option { min-height: 33px; padding: 6px 4px; border: 1px solid #41404b; border-radius: 7px; background: #14141a; color: #aaa8b3; font-size: 9px; font-weight: 720; cursor: pointer; }
+    .shape-option:hover { color: var(--text); border-color: #6b6975; }
+    .shape-option[aria-pressed="true"] { border-color: #5c6b3a; background: #242a1b; color: var(--acid); }
+    .button-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding-top: 13px; }
+    .action-button { min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 10px; border: 1px solid #45444f; border-radius: 8px; background: #25252e; color: #e6e4e9; font-size: 10px; font-weight: 760; cursor: pointer; transition: transform .14s ease, border-color .14s ease, background .14s ease; }
+    .action-button:hover { transform: translateY(-1px); border-color: #777480; background: #2c2c37; }
+    .action-button.primary { grid-column: 1 / -1; min-height: 44px; border-color: var(--acid); background: var(--acid); color: #15170f; }
+    .action-button.primary:hover { background: #e2ff91; }
+    .action-button:disabled { cursor: wait; opacity: .7; transform: none; }
+    .action-button.subtle { color: #b4a7dc; }
+    .control-note { margin: 10px 1px 0; color: #7f7d89; font-size: 9px; line-height: 1.5; }
+
+    /* Saved specimen drawer */
+    .specimen-drawer { margin-top: 13px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #19191f; }
+    .drawer-head { min-height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+    .drawer-title { margin: 0; color: #e7e5e9; font-size: 10px; font-weight: 820; letter-spacing: .12em; text-transform: uppercase; }
+    .drawer-copy { margin: 3px 0 0; color: #858390; font-size: 9px; }
+    .drawer-count { color: var(--acid); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+    .specimen-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; padding: 12px; }
+    .specimen-card { min-width: 0; position: relative; display: block; padding: 6px; border: 1px solid #35343e; border-radius: 8px; background: #202027; text-align: left; cursor: pointer; transition: transform .14s ease, border-color .14s ease; }
+    .specimen-card:hover { transform: translateY(-2px); border-color: #6a7844; }
+    .specimen-card img { display: block; width: 100%; aspect-ratio: 1; border-radius: 5px; background: #15151b; object-fit: contain; }
+    .specimen-card-name { display: block; overflow: hidden; margin-top: 6px; color: #cfccd6; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; text-overflow: ellipsis; white-space: nowrap; }
+    .drawer-empty { grid-column: 1 / -1; padding: 15px 10px; color: #858390; font-size: 10px; text-align: center; }
+    .drawer-empty strong { color: #d2d0d8; }
+    .drawer-clear { padding: 5px 7px; border: 1px solid #3e3d47; border-radius: 6px; background: transparent; color: #a5a2af; font-size: 8px; cursor: pointer; }
+    .drawer-clear:hover { border-color: #76576a; color: var(--pink); }
+
+    /* Future room content */
+    .future-room { min-height: 250px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(190px, .58fr); gap: 25px; align-items: center; padding: 25px; background: radial-gradient(ellipse at 78% 40%, rgba(186,167,255,.09), transparent 45%); }
+    .future-preview { position: relative; display: grid; place-items: center; min-height: 180px; overflow: hidden; border: 1px solid #403d4c; border-radius: 12px; background: #14141b; }
+    .future-preview::before { content: ""; position: absolute; inset: 0; opacity: .42; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 22px 22px; }
+    .future-preview svg { position: relative; width: min(88%, 245px); height: 150px; overflow: visible; }
+    .future-preview-label { position: absolute; left: 11px; bottom: 9px; color: #777582; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .future-details { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; color: var(--violet); font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .future-details::before { content: ""; width: 16px; height: 1px; background: currentColor; }
+    .future-kicker { margin: 0 0 8px; color: var(--violet); font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .15em; text-transform: uppercase; }
+    .future-room h3 { margin: 0; font-size: clamp(23px, 3vw, 34px); letter-spacing: -.05em; }
+    .future-room p { max-width: 500px; margin: 9px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .future-stamp { display: grid; place-items: center; min-height: 150px; border: 1px solid #3f3b4e; border-radius: 12px; background: rgba(186,167,255,.045); color: var(--violet); font-size: 38px; }
+    .future-stamp small { display: block; margin-top: 5px; color: #8b8796; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .13em; text-transform: uppercase; }
+    .site-footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line); color: #6f6d79; font-size: 9px; }
+    .site-footer strong { color: #a5a2ad; font-weight: 760; letter-spacing: .09em; }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 100; max-width: min(350px, calc(100vw - 40px)); padding: 11px 14px; border: 1px solid #596b3c; border-radius: 9px; background: #22291b; color: #eff8df; font-size: 11px; box-shadow: 0 12px 35px rgba(0,0,0,.35); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .scrim { display: none; }
+
+    @media (max-height: 690px) and (min-width: 901px) {
+      .sidebar { padding-top: 13px; padding-bottom: 10px; }
+      .brand { margin-bottom: 14px; }
+      .sidebar-bottom { margin-top: 16px; padding-top: 11px; }
+      .sidebar-note { margin-bottom: 9px; padding: 9px; }
+      .sidebar-note p { font-size: 10px; }
+    }
+    @media (max-width: 1120px) {
+      .main { padding-right: 25px; padding-left: 25px; }
+      .experiment-grid { grid-template-columns: minmax(0, 1.15fr) minmax(260px, .85fr); }
+      .stage { min-height: 430px; }
+      .specimen-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    }
+    @media (max-width: 900px) {
+      .sidebar { width: min(300px, 86vw); transform: translateX(-103%); transition: transform .23s ease; box-shadow: 20px 0 50px rgba(0,0,0,.4); }
+      body.menu-open .sidebar { transform: translateX(0); }
+      .scrim { display: block; position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.62); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+      body.menu-open .scrim { opacity: 1; pointer-events: auto; }
+      .main { margin-left: 0; padding-right: 22px; padding-left: 22px; }
+      .category-section { scroll-margin-top: 70px; }
+      .menu-toggle { display: grid; place-items: center; }
+      .topbar { min-height: 60px; justify-content: flex-start; }
+      .topbar-right { margin-left: auto; }
+      .experiment-grid { grid-template-columns: 1fr; }
+      .stage { min-height: min(73vw, 550px); }
+      .face-art { width: min(78%, 440px); }
+      .control-panel { display: grid; grid-template-columns: 1fr 1fr; }
+      .control-panel .surface-header { grid-column: 1 / -1; }
+      .control-intro { grid-column: 1 / -1; }
+      .control-body { display: grid; grid-template-columns: 1fr 1fr; column-gap: 15px; }
+      .control-field:nth-of-type(1), .control-field:nth-of-type(2) { border-top: 1px solid var(--line); }
+      .button-stack, .control-note { grid-column: 1 / -1; }
+      .future-room { grid-template-columns: minmax(0,1fr) 170px; }
+    }
+    @media (max-width: 600px) {
+      .main { padding: 0 12px 32px; }
+      .topbar { min-height: 56px; gap: 9px; }
+      .topbar-left { gap: 7px; font-size: 9px; }
+      .topbar-brand { font-size: 10px; }
+      .topbar-right { gap: 7px; font-size: 8px; }
+      .hero { padding: 31px 1px 22px; }
+      h1 { font-size: clamp(34px, 10vw, 47px); }
+      .hero-bottom { display: block; margin-top: 13px; }
+      .hero-copy { font-size: 11px; }
+      .category-heading { align-items: flex-start; }
+      .category-count { margin-top: 4px; }
+      .room-heading { min-height: 61px; gap: 9px; padding: 9px; }
+      .room-icon { width: 30px; height: 30px; flex-basis: 30px; }
+      .room-number { display: none; }
+      .room-description { max-width: 200px; }
+      .room-state { display: none; }
+      .room-state { font-size: 7px; padding: 4px 5px; }
+      .room-body { padding: 9px; }
+      .stage-wrap { padding: 8px; }
+      .stage { min-height: 370px; }
+      .stage-corner { font-size: 7px; }
+      .control-panel { display: block; }
+      .control-body { display: block; padding: 0 12px 13px; }
+      .control-intro { padding: 13px 12px 12px; }
+      .specimen-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; padding: 9px; }
+      .drawer-head { padding: 9px 11px; }
+      .future-room { display: block; padding: 16px; }
+      .future-preview { min-height: 145px; margin-top: 17px; }
+      .site-footer { display: block; line-height: 1.8; }
+      .site-footer span { display: block; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+  <link rel="stylesheet" href="projects.css">
+</head>
+<body>
+  <div class="scrim" id="scrim" aria-hidden="true"></div>
+  <aside class="sidebar" id="sidebar" aria-label="Project categories">
+    <a class="brand" href="#top" aria-label="CURIOID home" id="brandHome">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" role="presentation" focusable="false">
+          <path d="M4.5 24C9.3 13.7 17.1 8.5 24 8.5S38.7 13.7 43.5 24C38.7 34.3 30.9 39.5 24 39.5S9.3 34.3 4.5 24Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+          <circle cx="24" cy="24" r="8.1" fill="none" stroke="currentColor" stroke-width="2.5"/>
+          <circle cx="24" cy="24" r="3.6" fill="currentColor"/>
+          <path d="M32.5 14.5 37 10" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span><span class="brand-word">CURIOID</span><span class="brand-caption">A place for curious things</span></span>
+    </a>
+
+    <p class="sidebar-section-label">Collections</p>
+    <nav class="project-nav category-nav" id="categoryNav" aria-label="Project categories">
+      <button class="nav-item active" type="button" data-category="web-experiments" aria-current="location">
+        <span class="nav-symbol" aria-hidden="true">◉</span><span class="nav-label">Web Experiments</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="digital-art">
+        <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Digital Art</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="tiny-games">
+        <span class="nav-symbol" aria-hidden="true">▣</span><span class="nav-label">Tiny Games</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="sound-motion">
+        <span class="nav-symbol" aria-hidden="true">〰</span><span class="nav-label">Sound &amp; Motion</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="strange-archives">
+        <span class="nav-symbol" aria-hidden="true">⌑</span><span class="nav-label">Strange Archives</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="creative-tools">
+        <span class="nav-symbol" aria-hidden="true">⌘</span><span class="nav-label">Creative Tools</span><span class="nav-indicator"></span>
+      </button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-note">
+        <div class="sidebar-note-title">A cabinet of curiosities</div>
+        <p>Experiments, visual ideas, tiny worlds and useful oddities. Open a project window, explore, then close it when you're done.</p>
+      </div>
+      <a class="portfolio-link" href="https://stelioswinters.github.io" target="_blank" rel="noopener noreferrer">
+        <span>Visit the artist's website</span><span aria-hidden="true">↗</span>
+      </a>
+      <div class="sidebar-foot">Independent creative projects</div>
+    </div>
+  </aside>
+
+  <main class="main" id="top">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false">☰</button>
+      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context">A playground for unusual ideas</span></div>
+      <div class="topbar-right"><span class="status-live" id="topStatus">1 window open</span></div>
+    </header>
+
+    <div class="page-wrap">
+      <section class="hero" aria-labelledby="heroTitle">
+        <p class="hero-kicker">The curious side of the internet</p>
+        <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> results.</h1>
+        <div class="hero-bottom">
+          <p class="hero-copy">A growing collection of unusual projects, visual experiments, tiny games and curious tools. Nothing to install. Nothing to take too seriously. Open a window and see what happens.</p>
+        </div>
+      </section>
+      <hr class="section-rule">
+      <div class="rooms-label"><span>Explore the collections</span><span>Open a project window to begin</span></div>
+      <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · An independent creative playground</span><span>Made for curiosity, not productivity.</span></footer>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <template id="oddityTemplate">
+    <div class="experiment-grid" aria-label="Oddity Lab face experiment">
+      <section class="surface output-surface">
+        <div class="surface-header"><h3 class="surface-title"><span class="surface-dot"></span> Specimen output</h3><span class="surface-meta" id="stageCounter">SUBJECT 001</span></div>
+        <div class="stage-wrap">
+          <div class="stage" id="faceStage" aria-label="Generated uncanny face">
+            <div class="stage-orbit" aria-hidden="true"></div>
+            <span class="stage-corner tl">Observation / 01</span><span class="stage-corner tr">Facial anomaly</span>
+            <span class="stage-corner bl">Look directly at it</span><span class="stage-corner br" id="stageSeed">SEED 482913</span>
+            <svg class="face-art" id="faceArt" viewBox="0 0 600 600" role="img" aria-label="A strange generated face" xmlns="http://www.w3.org/2000/svg"></svg>
+          </div>
+          <div class="stage-caption"><span><strong id="specimenName">The thing behind the expression</strong> · <span id="specimenMood">Suspicious</span></span><code class="stage-code" id="specimenCode">CR-0001</code></div>
+          <div class="stage-tags"><span class="tag" id="tagEyes">EYES / 03</span><span class="tag" id="tagAnatomy">ANATOMY / UNKNOWN</span><span class="tag" id="tagStructure">FORM / ORGANIC</span></div>
+        </div>
+      </section>
+
+      <section class="surface control-panel">
+        <div class="surface-header"><h3 class="surface-title"><span class="surface-dot"></span> Machine controls</h3><span class="surface-meta">MACHINE / 001</span></div>
+        <div class="control-intro"><p class="control-intro-kicker">Experiment no. 001</p><h3>The Face Machine</h3><p>The machine is trying to reconstruct a face from incomplete instructions. Push the anatomy, distort the familiar, and keep just enough human detail to make it recognizable.</p></div>
+        <div class="control-body">
+          <div class="control-field"><div class="control-field-top"><label for="moodSelect">Expression</label><span class="control-value">01 / MOOD</span></div><div class="select-wrap"><select id="moodSelect"><option value="random">Unpredictable</option><option value="dissociated">Dissociated</option><option value="predatory">Predatory</option><option value="terrified">Terrified</option><option value="anguished">Anguished</option><option value="calm">Unnaturally calm</option><option value="blank">Expressionless</option></select></div></div>
+          <div class="control-field"><div class="control-field-top"><label for="anatomySelect">Origin / anatomy</label><span class="control-value">02 / TYPE</span></div><div class="select-wrap"><select id="anatomySelect"><option value="random">Unknown / surprise</option><option value="abyssal">Abyssal organism</option><option value="insectoid">Insectoid</option><option value="porcelain">Living porcelain</option><option value="biomech">Bio-mechanical</option><option value="cosmic">Cosmic anomaly</option><option value="almost-human">Almost human</option><option value="flesh-mutation">Flesh mutation</option><option value="mineral">Mineral / bone</option></select></div></div>
+          <div class="control-field"><div class="control-field-top"><label for="weirdnessRange">Uncanniness</label><output class="control-value" id="weirdnessValue" for="weirdnessRange">95%</output></div><input id="weirdnessRange" type="range" min="0" max="100" value="100"><div class="range-hints"><span>Unsettling</span><span>Deeply wrong</span></div></div>
+          <div class="control-field"><div class="control-field-top"><label for="eyeLayoutSelect">Eye arrangement</label><span class="control-value">04 / GAZE</span></div><div class="select-wrap"><select id="eyeLayoutSelect"><option value="random">Unpredictable</option><option value="uneven">Uneven pair</option><option value="clustered">Clustered</option><option value="vertical">Vertical additions</option><option value="many">Multiple eyes</option><option value="embedded">Eyes beneath the skin</option></select></div></div>
+          <div class="control-field"><div class="control-field-top"><label for="mouthSelect">Mouth mutation</label><span class="control-value">05 / VOICE</span></div><div class="select-wrap"><select id="mouthSelect"><option value="random">Unpredictable</option><option value="stretched">Stretched grin</option><option value="teeth">Crowded teeth</option><option value="vertical">Vertical opening</option><option value="sealed">Sealed seam</option><option value="double">Second mouth</option></select></div></div>
+          <div class="control-field"><div class="control-field-top"><span class="control-label">Face structure</span><span class="control-value">06 / FORM</span></div><div class="shape-options" role="group" aria-label="Choose face structure"><button class="shape-option" type="button" data-structure="soft" aria-pressed="false">Soft</button><button class="shape-option" type="button" data-structure="mixed" aria-pressed="true">Mixed</button><button class="shape-option" type="button" data-structure="angular" aria-pressed="false">Angular</button></div></div>
+          <div class="button-stack"><button class="action-button primary" id="generateBtn" type="button">↻ &nbsp; Generate a new face</button><button class="action-button" id="saveBtn" type="button">＋ &nbsp; Save specimen</button><button class="action-button" id="downloadBtn" type="button">↓ &nbsp; Export PNG</button></div>
+          <p class="control-note">Everything is generated locally in your browser. Nothing is uploaded. Saved specimens stay on this device.</p>
+        </div>
+      </section>
+    </div>
+
+    <section class="specimen-drawer" aria-label="Saved face specimens"><div class="drawer-head"><div><h3 class="drawer-title">The specimen drawer</h3><p class="drawer-copy">Keep the specimens you would rather not meet.</p></div><div style="display:flex;align-items:center;gap:9px"><span class="drawer-count" id="archiveCount">0 / 8</span><button class="drawer-clear" id="clearArchiveBtn" type="button">CLEAR</button></div></div><div class="specimen-grid" id="specimenGrid"><div class="drawer-empty"><strong>The drawer is empty.</strong> Save a specimen to keep it here.</div></div></section>
+  </template>
+
+  <script src="projects.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "curioid-face-specimens-v2";
+      const MAX_SAVED = 8;
+      const CATEGORIES = [
+        { id: "web-experiments", title: "Web Experiments", kicker: "01 / INTERACTIVE", description: "Browser-based experiments, curious machines and things to poke at.", rooms: ["oddity-lab", "gravity-garden", "pattern-engine", "echo-cabinet", "impossible-objects", "pixel-weather", "dream-index"] },
+        { id: "digital-art", title: "Digital Art", kicker: "02 / VISUAL", description: "Generative images, strange compositions and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio"] },
+        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["pocket-universe", "one-button-ritual", "last-corridor"] },
+        { id: "sound-motion", title: "Sound & Motion", kicker: "04 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "noise-choir"] },
+        { id: "strange-archives", title: "Strange Archives", kicker: "05 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "dead-interface", "unbuilt-tomorrow"] },
+        { id: "creative-tools", title: "Creative Tools", kicker: "06 / UTILITIES", description: "Odd little helpers for making, arranging and transforming things.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler"] }
+      ];
+
+      const ROOM_INFO = {
+        "oddity-lab": { title: "Oddity Lab", mark: "01", icon: "◉", description: "Generate unfamiliar faces and questionable little beings", category: "web-experiments", live: true },
+        "gravity-garden": { title: "Gravity Garden", mark: "02", icon: "◌", description: "A tiny universe where physics is a suggestion", copy: "Build a miniature solar system, drag planets into place, change the speed and watch gravity pull their paths into unexpected orbits.", visual: "orbit" },
+        "pattern-engine": { title: "Pattern Engine", mark: "03", icon: "▦", description: "Repeating shapes, broken symmetry and visual noise", copy: "Create repeating geometry, broken symmetry and intricate visual systems. Change the rules, randomize the composition and export a clean image.", visual: "pattern" },
+        "echo-cabinet": { title: "Echo Cabinet", mark: "04", icon: "〰", description: "Little sound experiments and things you can see", copy: "Compose short rhythmic sequences with a 16-step synthesizer. Adjust tempo, tone and echo, then play or export the visual score.", visual: "wave" },
+        "impossible-objects": { title: "Impossible Objects", mark: "05", icon: "◇", description: "Objects that should not exist, but somehow do", copy: "Rotate and inspect impossible structures, change their perspective and discover where a convincing object stops making physical sense.", visual: "object" },
+        "pixel-weather": { title: "Pixel Weather", mark: "06", icon: "☼", description: "Tiny digital climates from places off the map", copy: "Generate miniature climates from imaginary places. Change the atmosphere, shift the weather and export a snapshot of the forecast.", visual: "weather" },
+        "dream-index": { title: "Dream Index", mark: "07", icon: "✳", description: "A visual index of places that never existed", copy: "Explore a set of invented locations, inspect details and collect fragments from places that feel like memories you never made.", visual: "dream" },
+
+        "chromatic-fossils": { title: "Chromatic Fossils", mark: "01", icon: "◈", description: "Color studies that look excavated from another world", copy: "Layered color fields, strange material studies and abstract compositions with the feeling of found objects. Build layered geological color compositions, adjust the strata and export an original digital artwork.", visual: "paint" },
+        "organic-errors": { title: "Organic Errors", mark: "02", icon: "✣", description: "Beautiful accidents, warped forms and digital growths", copy: "Grow branching forms and cellular structures, mutate their patterns and export the moments when the system almost becomes something familiar.", visual: "organic" },
+        "afterimage-studio": { title: "Afterimage Studio", mark: "03", icon: "▤", description: "Layered images, visual echoes and color ghosts", copy: "Load an image locally and create echoes, offsets, grain and color ghosts. Your source image stays in your browser.", visual: "afterimage" },
+
+        "pocket-universe": { title: "Pocket Universe", mark: "01", icon: "◎", description: "A tiny playable world with its own rules", copy: "Pilot a tiny courier through a miniature gravitational field, collect seven light fragments and find the exit without losing your hull.", visual: "game" },
+        "one-button-ritual": { title: "One-Button Ritual", mark: "02", icon: "◉", description: "A game controlled by one button and bad decisions", copy: "A precision timing game controlled by one button. Read the moving mark, commit at the right moment and see how long your streak lasts.", visual: "button" },
+        "last-corridor": { title: "The Last Corridor", mark: "03", icon: "⌁", description: "A strange little journey through one changing space", copy: "Navigate a corridor with three choices, collect clues and notice what changes when you repeat the same decision.", visual: "corridor" },
+
+        "frequency-garden": { title: "Frequency Garden", mark: "01", icon: "〰", description: "Living shapes that respond to sound", copy: "Plant tone-generating blooms in a responsive sound garden. Their positions decide pitch, while the controls shape the sound.", visual: "wave" },
+        "motion-residue": { title: "Motion Residue", mark: "02", icon: "⌁", description: "Movement that leaves strange traces behind", copy: "Draw with a mouse, finger or pen. Build mirrored trails and motion echoes, then export the resulting composition.", visual: "afterimage" },
+        "noise-choir": { title: "Noise Choir", mark: "03", icon: "♬", description: "A small orchestra of strange sounds", copy: "Arrange five synthetic voices into an atmospheric chord, tune their intervals and reverb, and listen to the result.", visual: "sound" },
+
+        "museum-almost": { title: "Museum of Almost Real Things", mark: "01", icon: "▣", description: "A collection of objects with invented histories", copy: "Browse eight fictional artifacts with detailed acquisition records, object descriptions and notes from the collection staff.", visual: "museum" },
+        "dead-interface": { title: "Dead Interface Archive", mark: "02", icon: "▤", description: "Interfaces from software that never existed", copy: "Explore a simulated late-90s computer, open its applications and inspect the notes, mail, paint program and unfamiliar drives.", visual: "interface" },
+        "unbuilt-tomorrow": { title: "Unbuilt Tomorrow", mark: "03", icon: "⌂", description: "Futures imagined, designed, then forgotten", copy: "Browse shelved proposals for transit, housing, civic design and domestic technology from futures that almost arrived.", visual: "city" },
+
+        "color-alchemist": { title: "Color Alchemist", mark: "01", icon: "◍", description: "Mix, bend and discover unusual color relationships", copy: "Generate color harmonies, lock the swatches you like, check text contrast and export CSS variables or a palette file.", visual: "palette" },
+        "type-foundry": { title: "Type Foundry", mark: "02", icon: "Aa", description: "A playground for letters, forms and tiny type tools", copy: "Create a typographic poster with editable phrases, type styles, layout, scale and distortion. Export the composition as PNG.", visual: "type" },
+        "idea-tumbler": { title: "Idea Tumbler", mark: "03", icon: "✳", description: "Shake unrelated ideas together and see what sticks", copy: "Combine subjects, formats and constraints into original project seeds. Save ideas locally or copy a concept to develop further.", visual: "ideas" }
+      };
+
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+      const toast = $("#toast");
+      let toastTimer = 0;
+      let subjectNumber = 1;
+      let current = { seed: randomSeed(), mood: "random", weirdness: 100, structure: "mixed", anatomy: "random", eyeStyle: "random", mouthStyle: "random", number: 1 };
+      let resolvedCurrent = null;
+
+      function randomSeed() { return Math.floor(Math.random() * 900000000) + 100000000; }
+      function seededRandom(seed) {
+        let value = seed >>> 0;
+        return () => {
+          value += 0x6D2B79F5;
+          let t = value;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      const pick = (rng, list) => list[Math.floor(rng() * list.length)];
+      const int = (rng, min, max) => Math.floor(rng() * (max - min + 1)) + min;
+      const chance = (rng, probability) => rng() < probability;
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const n = value => Number(value.toFixed(1));
+      const esc = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
+
+      const PALETTES = [
+        { skin: "#6b6861", shade: "#34303a", light: "#a69b8b", ink: "#0d0b10", iris: "#e0b65c", accent: "#708e80", deep: "#1b171f" },
+        { skin: "#70575d", shade: "#3b2934", light: "#ac8585", ink: "#0c080e", iris: "#c4d36c", accent: "#86546a", deep: "#1d111a" },
+        { skin: "#58645f", shade: "#2d3b3b", light: "#a0b0a2", ink: "#091011", iris: "#dfb66a", accent: "#688f8a", deep: "#182120" },
+        { skin: "#786348", shade: "#49392f", light: "#b49b76", ink: "#110d0a", iris: "#b3c47d", accent: "#a56e55", deep: "#241b16" },
+        { skin: "#555c6d", shade: "#303442", light: "#9ba3a7", ink: "#0a0b13", iris: "#e2b765", accent: "#7f93aa", deep: "#191d29" },
+        { skin: "#754d5a", shade: "#422938", light: "#ad7d83", ink: "#10070e", iris: "#cadb85", accent: "#965d77", deep: "#21121e" },
+        { skin: "#626b4d", shade: "#39432f", light: "#a3a782", ink: "#0c1109", iris: "#d3a36b", accent: "#84935e", deep: "#1b2416" },
+        { skin: "#765b4c", shade: "#44302d", light: "#af8970", ink: "#120a09", iris: "#9ed0c2", accent: "#a57661", deep: "#241714" },
+        { skin: "#5e5866", shade: "#34303f", light: "#a19aa1", ink: "#0c0a11", iris: "#d2ad6c", accent: "#92758e", deep: "#1d1926" },
+        { skin: "#827966", shade: "#51483f", light: "#b9aa91", ink: "#17120f", iris: "#a6c99e", accent: "#978b82", deep: "#29221f" }
+      ];
+      const MOODS = ["dissociated", "predatory", "terrified", "anguished", "calm", "blank"];
+      const ANATOMIES = ["abyssal", "insectoid", "porcelain", "biomech", "cosmic", "flesh-mutation", "mineral"];
+      const ANATOMY_LABELS = { abyssal: "Abyssal organism", insectoid: "Insectoid", porcelain: "Living porcelain", biomech: "Bio-mechanical", cosmic: "Cosmic anomaly", "almost-human": "Almost human", "flesh-mutation": "Flesh mutation", mineral: "Mineral / bone" };
+      const NAME_A = ["The sideways", "The patient", "The distant", "The damp", "The polite", "The hungry", "The forgotten", "The overripe", "The velvet", "The borrowed", "The unfinished", "The nervous", "The hollow", "The curious", "The last"];
+      const NAME_B = ["witness", "visitor", "relative", "observer", "stranger", "ancestor", "neighbor", "impostor", "sleepwalker", "specimen", "caretaker", "messenger", "guest", "reflection", "thing"];
+
+      function createFacePath(cx, cy, w, h, form, rng) {
+        const left = cx - w, right = cx + w, top = cy - h, bottom = cy + h;
+        const asym = (rng() - .5) * .18;
+        const topX = cx + asym * w;
+        if (form === "square") {
+          return `M ${n(topX-w*.48)} ${n(top)} C ${n(left+w*.08)} ${n(top-h*.06)} ${n(left-w*.04)} ${n(cy-h*.65)} ${n(left)} ${n(cy-h*.12)} Q ${n(left-w*.08)} ${n(cy+h*.58)} ${n(cx-w*.52)} ${n(bottom-h*.03)} Q ${n(cx)} ${n(bottom+h*.12)} ${n(cx+w*.56)} ${n(bottom-h*.08)} Q ${n(right+w*.08)} ${n(cy+h*.48)} ${n(right)} ${n(cy-h*.08)} C ${n(right+w*.03)} ${n(top-h*.58)} ${n(cx+w*.54)} ${n(top-h*.08)} ${n(topX+w*.48)} ${n(top)} Z`;
+        }
+        if (form === "diamond") {
+          return `M ${n(topX)} ${n(top)} C ${n(cx+w*.62)} ${n(top-h*.02)} ${n(right+w*.07)} ${n(cy-h*.33)} ${n(right)} ${n(cy+h*.04)} Q ${n(cx+w*.82)} ${n(cy+h*.83)} ${n(cx+w*.14)} ${n(bottom)} Q ${n(cx-w*.03)} ${n(bottom+h*.09)} ${n(cx-w*.19)} ${n(bottom-h*.02)} Q ${n(left-w*.08)} ${n(cy+h*.42)} ${n(left)} ${n(cy-h*.02)} C ${n(left-w*.02)} ${n(top-h*.35)} ${n(cx-w*.57)} ${n(top-h*.02)} ${n(topX)} ${n(top)} Z`;
+        }
+        if (form === "pear") {
+          return `M ${n(topX)} ${n(top)} C ${n(cx+w*.78)} ${n(top-h*.08)} ${n(right+w*.04)} ${n(cy-h*.38)} ${n(right-w*.02)} ${n(cy+h*.25)} C ${n(right-w*.07)} ${n(cy+h*.82)} ${n(cx+w*.58)} ${n(bottom+h*.14)} ${n(cx)} ${n(bottom)} C ${n(cx-w*.57)} ${n(bottom+h*.11)} ${n(left-w*.08)} ${n(cy+h*.73)} ${n(left)} ${n(cy+h*.08)} C ${n(left-w*.08)} ${n(cy-h*.55)} ${n(cx-w*.67)} ${n(top-h*.03)} ${n(topX)} ${n(top)} Z`;
+        }
+        if (form === "long") {
+          return `M ${n(topX)} ${n(top)} C ${n(cx+w*.57)} ${n(top-h*.04)} ${n(right+w*.18)} ${n(cy-h*.46)} ${n(right-w*.04)} ${n(cy+h*.08)} C ${n(right-w*.13)} ${n(cy+h*.72)} ${n(cx+w*.5)} ${n(bottom+h*.05)} ${n(cx)} ${n(bottom)} C ${n(cx-w*.53)} ${n(bottom+h*.06)} ${n(left-w*.06)} ${n(cy+h*.68)} ${n(left)} ${n(cy-h*.05)} C ${n(left-w*.07)} ${n(top-h*.42)} ${n(cx-w*.55)} ${n(top-h*.03)} ${n(topX)} ${n(top)} Z`;
+        }
+        if (form === "wide") {
+          return `M ${n(topX)} ${n(top)} C ${n(cx+w*.72)} ${n(top-h*.03)} ${n(right+w*.23)} ${n(cy-h*.2)} ${n(right+w*.12)} ${n(cy+h*.2)} C ${n(right+w*.1)} ${n(cy+h*.82)} ${n(cx+w*.42)} ${n(bottom+h*.1)} ${n(cx)} ${n(bottom)} C ${n(cx-w*.46)} ${n(bottom+h*.1)} ${n(left-w*.1)} ${n(cy+h*.78)} ${n(left-w*.1)} ${n(cy+h*.08)} C ${n(left-w*.17)} ${n(cy-h*.28)} ${n(cx-w*.66)} ${n(top-h*.02)} ${n(topX)} ${n(top)} Z`;
+        }
+        if (form === "triangular") {
+          return `M ${n(topX)} ${n(top)} C ${n(cx+w*.4)} ${n(top-h*.12)} ${n(right+w*.18)} ${n(cy-h*.48)} ${n(right)} ${n(cy-h*.02)} Q ${n(cx+w*.75)} ${n(cy+h*.62)} ${n(cx+w*.18)} ${n(bottom)} Q ${n(cx)} ${n(bottom+h*.06)} ${n(cx-w*.18)} ${n(bottom)} Q ${n(cx-w*.75)} ${n(cy+h*.62)} ${n(left)} ${n(cy-h*.02)} C ${n(left-w*.18)} ${n(cy-h*.48)} ${n(cx-w*.4)} ${n(top-h*.12)} ${n(topX)} ${n(top)} Z`;
+        }
+        if (form === "notched") {
+          return `M ${n(topX)} ${n(top)} C ${n(cx+w*.52)} ${n(top-h*.08)} ${n(right+w*.12)} ${n(cy-h*.58)} ${n(right)} ${n(cy-h*.06)} L ${n(right-w*.09)} ${n(cy+h*.23)} Q ${n(right-w*.3)} ${n(cy+h*.55)} ${n(cx+w*.48)} ${n(bottom-h*.02)} Q ${n(cx)} ${n(bottom+h*.12)} ${n(cx-w*.43)} ${n(bottom-h*.08)} Q ${n(left-w*.2)} ${n(cy+h*.62)} ${n(left)} ${n(cy+h*.08)} L ${n(left+w*.1)} ${n(cy-h*.19)} C ${n(left+w*.04)} ${n(top-h*.52)} ${n(cx-w*.55)} ${n(top-h*.04)} ${n(topX)} ${n(top)} Z`;
+        }
+        return `M ${n(topX)} ${n(top)} C ${n(cx+w*.65)} ${n(top-h*.04)} ${n(right+w*.15)} ${n(cy-h*.46)} ${n(right)} ${n(cy+h*.08)} C ${n(right+w*.05)} ${n(cy+h*.76)} ${n(cx+w*.52)} ${n(bottom+h*.07)} ${n(cx)} ${n(bottom)} C ${n(cx-w*.55)} ${n(bottom+h*.05)} ${n(left-w*.1)} ${n(cy+h*.75)} ${n(left)} ${n(cy+h*.02)} C ${n(left-w*.08)} ${n(top-h*.45)} ${n(cx-w*.61)} ${n(top-h*.04)} ${n(topX)} ${n(top)} Z`;
+      }
+
+      function makeEye(x, y, size, mood, palette, rng, weirdness, index, anatomy) {
+        const weird = weirdness / 100;
+        const w = size * pick(rng, [.72, .88, 1, 1.18, 1.42]);
+        const h = size * pick(rng, [.48, .62, .8, 1.04, 1.28]);
+        const tilt = int(rng, -24, 24) * (.35 + weird * .8);
+        const ex = x + (rng() - .5) * 12 * weird;
+        const ey = y + (rng() - .5) * 16 * weird;
+        const shape = pick(rng, ["almond", "round", "vertical", "narrow", "diamond", "drooping"]);
+        const irisR = Math.max(4, size * pick(rng, [.25, .32, .4, .48]));
+        const px = ex + int(rng, -Math.round(size*.24), Math.round(size*.24));
+        const py = ey + int(rng, -Math.round(size*.14), Math.round(size*.14));
+        const socket = `<ellipse cx="${n(ex)}" cy="${n(ey)}" rx="${n(w*1.3)}" ry="${n(h*1.38)}" fill="#100e14" opacity=".88"/><ellipse cx="${n(ex)}" cy="${n(ey+2)}" rx="${n(w*1.12)}" ry="${n(h*1.2)}" fill="${palette.deep}" opacity=".9"/>`;
+        let white = "";
+        if (shape === "almond") white = `<path d="M ${n(ex-w)} ${n(ey)} Q ${n(ex)} ${n(ey-h*1.5)} ${n(ex+w)} ${n(ey)} Q ${n(ex)} ${n(ey+h*1.5)} ${n(ex-w)} ${n(ey)}Z" fill="${palette.light}"/>`;
+        if (shape === "round") white = `<ellipse cx="${n(ex)}" cy="${n(ey)}" rx="${n(w*.88)}" ry="${n(h*.9)}" fill="${palette.light}"/>`;
+        if (shape === "vertical") white = `<ellipse cx="${n(ex)}" cy="${n(ey)}" rx="${n(w*.72)}" ry="${n(h*1.3)}" fill="${palette.light}"/>`;
+        if (shape === "narrow") white = `<path d="M ${n(ex-w)} ${n(ey+2)} Q ${n(ex)} ${n(ey-h*.55)} ${n(ex+w)} ${n(ey-2)} Q ${n(ex)} ${n(ey+h*.7)} ${n(ex-w)} ${n(ey+2)}Z" fill="${palette.light}"/>`;
+        if (shape === "diamond") white = `<path d="M ${n(ex)} ${n(ey-h*1.3)} L ${n(ex+w)} ${n(ey)} L ${n(ex)} ${n(ey+h*1.3)} L ${n(ex-w)} ${n(ey)}Z" fill="${palette.light}"/>`;
+        if (shape === "drooping") white = `<path d="M ${n(ex-w)} ${n(ey-h*.35)} Q ${n(ex)} ${n(ey-h*1.25)} ${n(ex+w)} ${n(ey-h*.18)} Q ${n(ex+w*.55)} ${n(ey+h*1.6)} ${n(ex-w*.6)} ${n(ey+h*.5)}Z" fill="${palette.light}"/>`;
+        let pupil = "";
+        const pupilType = pick(rng, ["slit", "pin", "double", "ring", "star"]);
+        if (pupilType === "slit") pupil = `<ellipse cx="${n(px)}" cy="${n(py)}" rx="${n(irisR*.34)}" ry="${n(irisR*1.24)}" fill="${palette.ink}"/>`;
+        if (pupilType === "pin") pupil = `<circle cx="${n(px)}" cy="${n(py)}" r="${n(irisR*.2)}" fill="${palette.ink}"/>`;
+        if (pupilType === "double") pupil = `<circle cx="${n(px-irisR*.34)}" cy="${n(py)}" r="${n(irisR*.54)}" fill="${palette.ink}"/><circle cx="${n(px+irisR*.34)}" cy="${n(py)}" r="${n(irisR*.54)}" fill="${palette.ink}"/>`;
+        if (pupilType === "ring") pupil = `<circle cx="${n(px)}" cy="${n(py)}" r="${n(irisR*.78)}" fill="none" stroke="${palette.ink}" stroke-width="${n(Math.max(2,irisR*.3))}"/><circle cx="${n(px)}" cy="${n(py)}" r="${n(irisR*.2)}" fill="${palette.ink}"/>`;
+        if (pupilType === "star") pupil = `<path d="M ${n(px)} ${n(py-irisR)} L ${n(px+irisR*.28)} ${n(py-irisR*.25)} L ${n(px+irisR)} ${n(py)} L ${n(px+irisR*.28)} ${n(py+irisR*.25)} L ${n(px)} ${n(py+irisR)} L ${n(px-irisR*.28)} ${n(py+irisR*.25)} L ${n(px-irisR)} ${n(py)} L ${n(px-irisR*.28)} ${n(py-irisR*.25)}Z" fill="${palette.ink}"/>`;
+        const iris = `<circle cx="${n(px)}" cy="${n(py)}" r="${n(irisR*1.15)}" fill="${palette.accent}"/><circle cx="${n(px)}" cy="${n(py)}" r="${n(irisR)}" fill="${palette.iris}"/>${pupil}<circle cx="${n(px-irisR*.22)}" cy="${n(py-irisR*.3)}" r="${n(Math.max(1.7,irisR*.13))}" fill="#fff" opacity=".9"/>`;
+        const lid = `<path d="M ${n(ex-w*1.05)} ${n(ey-h*.04)} Q ${n(ex)} ${n(ey-h*1.7)} ${n(ex+w*1.05)} ${n(ey-h*.04)}" fill="none" stroke="${palette.ink}" stroke-width="${n(size*.16)}" stroke-linecap="round"/><path d="M ${n(ex-w*.88)} ${n(ey+h*.12)} Q ${n(ex)} ${n(ey+h*1.55)} ${n(ex+w*.88)} ${n(ey+h*.12)}" fill="none" stroke="${palette.shade}" stroke-width="${n(size*.09)}" stroke-linecap="round"/>`;
+        let veins = "";
+        if (weird > 42 && chance(rng, .76)) {
+          const count = int(rng, 2, 5);
+          veins = Array.from({length: count}, () => {
+            const side = chance(rng,.5) ? -1 : 1;
+            const sx = ex + side * int(rng, Math.round(w*.55), Math.round(w*.95));
+            const sy = ey + int(rng,-Math.round(h*.55),Math.round(h*.55));
+            return `<path d="M ${n(sx)} ${n(sy)} q ${n(side*int(rng,5,12))} ${n(int(rng,-8,8))} ${n(side*int(rng,12,21))} ${n(int(rng,7,19))}" fill="none" stroke="${palette.accent}" stroke-width="1.5" opacity=".62"/>`;
+          }).join("");
+        }
+        const stitches = weird > 82 && chance(rng,.26) ? `<path d="M ${n(ex-w*1.12)} ${n(ey)} l 9 -7 m -8 13 l 9 -7 M ${n(ex+w*.86)} ${n(ey)} l 8 -7 m -7 13 l 8 -7" stroke="${palette.light}" stroke-width="2.4" stroke-linecap="round"/>` : "";
+        const extraPupils = weird > 88 && chance(rng,.22) ? `<circle cx="${n(ex+int(rng,-w*.35,w*.35))}" cy="${n(ey+int(rng,-h*.3,h*.3))}" r="${n(irisR*.19)}" fill="${palette.ink}"/>` : "";
+        const expression = mood === "terrified" ? `<path d="M ${n(ex-w)} ${n(ey-h*1.45)} Q ${n(ex)} ${n(ey-h*2.05)} ${n(ex+w)} ${n(ey-h*1.45)}" fill="none" stroke="${palette.ink}" stroke-width="${n(size*.13)}" stroke-linecap="round"/>` : "";
+        return `<g transform="rotate(${n(tilt)} ${n(ex)} ${n(ey)})">${veins}${socket}${white}${iris}${extraPupils}${lid}${stitches}${expression}</g>`;
+      }
+
+      function makeMouth(cx, y, palette, mood, rng, weirdness, requestedStyle = "random") {
+        const w = int(rng, 34, 66) * (1 + weirdness / 145);
+        const h = int(rng, 13, 27);
+        const styles = weirdness >= 85 ? ["slit", "teeth", "vertical", "zipper", "spiral", "ragged", "stitched"] : ["smile", "frown", "oval", "slit", "teeth", "wavy", "vertical", "zipper", "spiral", "ragged", "stitched"];
+        const mapped = { stretched: "smile", vertical: "vertical", sealed: "stitched" };
+        const style = requestedStyle === "random" || requestedStyle === "double" ? pick(rng, styles) : (mapped[requestedStyle] || requestedStyle);
+        const fill = palette.deep;
+        let mouth = "";
+        if (style === "smile") {
+          mouth = `<path d="M ${n(cx-w)} ${n(y)} Q ${n(cx)} ${n(y+h*2.7)} ${n(cx+w)} ${n(y)} Q ${n(cx)} ${n(y+h*.5)} ${n(cx-w)} ${n(y)}Z" fill="${fill}" stroke="${palette.ink}" stroke-width="7" stroke-linejoin="round"/><path d="M ${n(cx-w*.76)} ${n(y+h*.52)} Q ${n(cx)} ${n(y+h*1.2)} ${n(cx+w*.76)} ${n(y+h*.52)}" stroke="${palette.light}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+        } else if (style === "frown") {
+          mouth = `<path d="M ${n(cx-w)} ${n(y+h)} Q ${n(cx)} ${n(y-h*.85)} ${n(cx+w)} ${n(y+h*.4)}" stroke="${palette.ink}" stroke-width="9" fill="none" stroke-linecap="round"/>`;
+        } else if (style === "oval" || style === "vertical") {
+          mouth = `<path d="M ${n(cx)} ${n(y-h*1.3)} C ${n(cx-w*.72)} ${n(y-h*.6)} ${n(cx-w*.7)} ${n(y+h)} ${n(cx)} ${n(y+h*1.4)} C ${n(cx+w*.7)} ${n(y+h)} ${n(cx+w*.72)} ${n(y-h*.6)} ${n(cx)} ${n(y-h*1.3)}Z" fill="${fill}" stroke="${palette.ink}" stroke-width="7"/><path d="M ${n(cx-w*.32)} ${n(y+h*.72)} Q ${n(cx)} ${n(y+h*1.3)} ${n(cx+w*.3)} ${n(y+h*.68)}" stroke="${palette.accent}" stroke-width="5" fill="none" opacity=".9"/>`;
+        } else if (style === "slit") {
+          mouth = `<path d="M ${n(cx-w)} ${n(y)} Q ${n(cx)} ${n(y-h*.82)} ${n(cx+w)} ${n(y)} Q ${n(cx)} ${n(y+h*.78)} ${n(cx-w)} ${n(y)}Z" fill="${fill}" stroke="${palette.ink}" stroke-width="7"/>`;
+        } else if (style === "teeth" || style === "ragged") {
+          const toothCount = int(rng, style === "ragged" ? 7 : 9, style === "ragged" ? 14 : 17);
+          const teeth = Array.from({length: toothCount}, (_, i) => {
+            const tx = cx-w*.8 + i*(w*1.6/Math.max(1,toothCount-1));
+            const toothHeight = int(rng, style === "ragged" ? 8 : 10, style === "ragged" ? 25 : 20);
+            const direction = i % 2 ? 1 : -1;
+            return `<path d="M ${n(tx)} ${n(y)} l ${n(int(rng,3,7))} ${n(toothHeight*direction)} l ${n(int(rng,3,7))} ${n(-toothHeight*direction)}" fill="${palette.light}" stroke="${palette.ink}" stroke-width="1.6"/>`;
+          }).join("");
+          mouth = `<path d="M ${n(cx-w)} ${n(y)} Q ${n(cx)} ${n(y-h*1.1)} ${n(cx+w)} ${n(y)} Q ${n(cx)} ${n(y+h*1.35)} ${n(cx-w)} ${n(y)}Z" fill="${fill}" stroke="${palette.ink}" stroke-width="7"/>${teeth}`;
+        } else if (style === "wavy") {
+          mouth = `<path d="M ${n(cx-w)} ${n(y)} C ${n(cx-w*.55)} ${n(y-h*1.2)} ${n(cx-w*.24)} ${n(y+h*1.3)} ${n(cx)} ${n(y)} S ${n(cx+w*.55)} ${n(y-h*1.1)} ${n(cx+w)} ${n(y+h*.1)}" fill="none" stroke="${palette.ink}" stroke-width="9" stroke-linecap="round"/>`;
+        } else if (style === "zipper") {
+          const teeth = Array.from({length: 13}, (_, i) => { const tx = cx-w*.8 + i*(w*1.6/12); return `<path d="M ${n(tx)} ${n(y-6)} l 7 12" stroke="${palette.light}" stroke-width="3.2" stroke-linecap="round"/>`; }).join("");
+          mouth = `<path d="M ${n(cx-w)} ${n(y)} Q ${n(cx)} ${n(y-h*.6)} ${n(cx+w)} ${n(y)}" fill="none" stroke="${palette.ink}" stroke-width="8" stroke-linecap="round"/>${teeth}`;
+        } else if (style === "spiral") {
+          mouth = `<path d="M ${n(cx)} ${n(y)} m -2 0 c -30 -24 -44 25 -10 31 c 38 7 54 -43 14 -54 c -17 -5 -36 4 -43 18" fill="none" stroke="${palette.ink}" stroke-width="8" stroke-linecap="round"/>`;
+        } else {
+          mouth = `<path d="M ${n(cx-w)} ${n(y)} Q ${n(cx)} ${n(y-h*.22)} ${n(cx+w)} ${n(y)}" fill="none" stroke="${palette.ink}" stroke-width="6" stroke-linecap="round"/><path d="M ${n(cx-w*.76)} ${n(y-7)} l 8 14 m ${n(w*.28)} -17 l 8 14 m ${n(w*.28)} -17 l 8 14 m ${n(w*.28)} -17 l 8 14" stroke="${palette.accent}" stroke-width="2.5" stroke-linecap="round"/>`;
+        }
+        return { svg: mouth, style };
+      }
+
+      function makeFace(config) {
+        const rng = seededRandom(config.seed);
+        const weird = clamp(config.weirdness, 0, 100) / 100;
+        const mood = config.mood === "random" ? pick(rng, MOODS) : config.mood;
+        const anatomy = config.anatomy === "random" ? pick(rng, ANATOMIES) : config.anatomy;
+        const palette = pick(rng, PALETTES);
+        const prefix = `face-${config.seed}`;
+        const cx = 300 + int(rng, -9, 9) * weird;
+        const cy = 304 + int(rng, -8, 8) * weird;
+        const w = int(rng, 145, 174) * (anatomy === "insectoid" ? 1.04 : 1);
+        const h = int(rng, 192, 222) * (chance(rng, weird * .48) ? pick(rng, [.82, 1.12, 1.22]) : 1);
+        const forms = config.structure === "soft"
+          ? ["round", "pear", "long", "wide"]
+          : config.structure === "angular"
+            ? ["square", "diamond", "long", "triangular", "notched"]
+            : ["round", "pear", "long", "wide", "square", "diamond", "triangular", "notched"];
+        const form = pick(rng, forms);
+        const head = createFacePath(cx, cy, w, h, form, rng);
+        const stroke = int(rng, 7, 11);
+
+        // The face always keeps a recognizable pair of primary eyes. Mutations grow around them.
+        const eyeStyle = config.eyeStyle || "random";
+        const eyeLayout = eyeStyle === "random" ? pick(rng, ["uneven", "uneven", "clustered", "vertical", "many", "embedded"]) : eyeStyle;
+        const eyeSpacing = int(rng, 68, 120);
+        const eyeBaseY = cy - h * pick(rng, [.24, .28, .32]);
+        const mainSize = int(rng, 30, 42);
+        const primary = [
+          { x: cx - eyeSpacing + int(rng,-17,13)*weird, y: eyeBaseY + int(rng,-17,16)*weird, size: mainSize * pick(rng,[.88,1,1.12]) },
+          { x: cx + eyeSpacing + int(rng,-13,18)*weird, y: eyeBaseY + int(rng,-14,20)*weird, size: mainSize * pick(rng,[.8,1,1.24]) }
+        ];
+        let additional = [];
+        const extraCount = eyeLayout === "many" ? int(rng,4,7) : eyeLayout === "embedded" ? int(rng,3,6) : weird > .92 ? int(rng,2,4) : weird > .78 && chance(rng,.7) ? int(rng,1,3) : 0;
+        for (let i=0;i<extraCount;i++) {
+          let x, y;
+          if (eyeLayout === "clustered") {
+            const side = i % 2 ? 1 : -1;
+            x = cx + side * int(rng, 8, 70);
+            y = cy - h * pick(rng,[.42,.32,.18,.08]);
+          } else if (eyeLayout === "vertical") {
+            x = cx + int(rng,-20,20);
+            y = cy - h * pick(rng,[.68,.54,.43,.12]);
+          } else if (eyeLayout === "embedded") {
+            const side = chance(rng,.5) ? -1 : 1;
+            x = cx + side * int(rng, w*.27, w*.66);
+            y = cy + int(rng,-h*.05,h*.45);
+          } else {
+            x = cx + int(rng,-w*.64,w*.64);
+            y = cy + int(rng,-h*.7,h*.05);
+          }
+          additional.push({ x, y, size: int(rng,12,25) * (eyeLayout === "many" ? 1.05 : .82) });
+        }
+        if (eyeLayout === "clustered" && additional.length < 2) {
+          const side = chance(rng,.5) ? -1 : 1;
+          additional.push({ x: cx + side*int(rng,20,50), y: eyeBaseY-int(rng,25,50), size: 17 });
+          additional.push({ x: cx + side*int(rng,35,73), y: eyeBaseY+int(rng,15,37), size: 13 });
+        }
+        const eyeMarkup = primary.map((e,i) => makeEye(e.x,e.y,e.size,mood,palette,rng,weird*100,i,anatomy)).join("") + additional.map((e,i) => makeEye(e.x,e.y,e.size,"blank",palette,rng,Math.max(80,weird*100),i+2,anatomy)).join("");
+
+        // A central bridge anchors the eyes and mouth as a face, even when the details mutate.
+        const noseX = cx + int(rng,-22,22)*weird;
+        const noseY = cy + int(rng,18,43);
+        const noseStyle = pick(rng,["hook","split","long","ridge","collapsed"]);
+        let nose = "";
+        if (noseStyle === "hook") nose = `<path d="M ${n(noseX-4)} ${n(noseY-45)} C ${n(noseX-16)} ${n(noseY-1)} ${n(noseX-31)} ${n(noseY+28)} ${n(noseX+2)} ${n(noseY+30)} Q ${n(noseX+26)} ${n(noseY+28)} ${n(noseX+13)} ${n(noseY+11)}" fill="none" stroke="${palette.ink}" stroke-width="${stroke+2}" stroke-linecap="round"/><ellipse cx="${n(noseX+2)}" cy="${n(noseY+23)}" rx="11" ry="6" fill="${palette.deep}"/>`;
+        if (noseStyle === "split") nose = `<path d="M ${n(noseX)} ${n(noseY-34)} L ${n(noseX-22)} ${n(noseY+22)} L ${n(noseX-2)} ${n(noseY+11)} L ${n(noseX+22)} ${n(noseY+25)} Z" fill="${palette.shade}" stroke="${palette.ink}" stroke-width="5" stroke-linejoin="round"/>`;
+        if (noseStyle === "long") nose = `<path d="M ${n(noseX-5)} ${n(noseY-53)} C ${n(noseX-17)} ${n(noseY+3)} ${n(noseX+11)} ${n(noseY+8)} ${n(noseX-17)} ${n(noseY+42)} Q ${n(noseX+9)} ${n(noseY+54)} ${n(noseX+25)} ${n(noseY+29)}" fill="${palette.shade}" stroke="${palette.ink}" stroke-width="5" stroke-linejoin="round"/>`;
+        if (noseStyle === "ridge") nose = `<path d="M ${n(noseX)} ${n(noseY-44)} L ${n(noseX-20)} ${n(noseY+21)} Q ${n(noseX)} ${n(noseY+37)} ${n(noseX+23)} ${n(noseY+18)}" fill="${palette.light}" opacity=".55" stroke="${palette.ink}" stroke-width="5"/>`;
+        if (noseStyle === "collapsed") nose = `<path d="M ${n(noseX-27)} ${n(noseY+4)} Q ${n(noseX)} ${n(noseY-25)} ${n(noseX+27)} ${n(noseY+5)} Q ${n(noseX+7)} ${n(noseY+39)} ${n(noseX-27)} ${n(noseY+4)}Z" fill="${palette.deep}" stroke="${palette.ink}" stroke-width="5"/><ellipse cx="${n(noseX-10)}" cy="${n(noseY+8)}" rx="5" ry="8" fill="${palette.ink}"/><ellipse cx="${n(noseX+11)}" cy="${n(noseY+8)}" rx="5" ry="8" fill="${palette.ink}"/>`;
+
+        const mouthY = cy + h * pick(rng,[.49,.54,.59]) + int(rng,-10,15)*weird;
+        const mouthX = cx + int(rng,-25,25)*weird;
+        const mouth = makeMouth(mouthX,mouthY,palette,mood,rng,weird*100,config.mouthStyle || "random");
+        let secondMouth = "";
+        const doubleMouth = config.mouthStyle === "double" || (weird > .94 && chance(rng,.62));
+        if (doubleMouth) {
+          const side = chance(rng,.5) ? -1 : 1;
+          const sx = cx + side * int(rng,64,94);
+          const sy = cy + h * int(rng,24,38) / 100;
+          const sw = int(rng,17,31);
+          secondMouth = `<path d="M ${n(sx-sw)} ${n(sy)} Q ${n(sx)} ${n(sy-int(rng,7,18))} ${n(sx+sw)} ${n(sy+int(rng,-3,6))} Q ${n(sx)} ${n(sy+int(rng,10,18))} ${n(sx-sw)} ${n(sy)}Z" fill="${palette.deep}" stroke="${palette.ink}" stroke-width="5"/><path d="M ${n(sx-sw*.55)} ${n(sy+2)} l 6 8 m 6 -9 l 6 8 m 6 -8 l 6 8" stroke="${palette.light}" stroke-width="2.5"/>`;
+        }
+
+        const earMode = chance(rng, .76);
+        const outerEars = earMode ? `
+          <path d="M ${n(cx-w*.87)} ${n(cy-28)} C ${n(cx-w-65)} ${n(cy-100)} ${n(cx-w-67)} ${n(cy+42)} ${n(cx-w*.88)} ${n(cy+82)} Q ${n(cx-w*1.04)} ${n(cy+4)} ${n(cx-w*.87)} ${n(cy-28)}Z" fill="${palette.shade}" stroke="${palette.ink}" stroke-width="${stroke}"/>
+          <path d="M ${n(cx+w*.87)} ${n(cy-28)} C ${n(cx+w+65)} ${n(cy-100)} ${n(cx+w+67)} ${n(cy+42)} ${n(cx+w*.88)} ${n(cy+82)} Q ${n(cx+w*1.04)} ${n(cy+4)} ${n(cx+w*.87)} ${n(cy-28)}Z" fill="${palette.shade}" stroke="${palette.ink}" stroke-width="${stroke}"/>` : "";
+        const neck = `<path d="M ${n(cx-70)} ${n(cy+h*.72)} L ${n(cx-85)} 580 Q ${n(cx)} 600 ${n(cx+86)} 580 L ${n(cx+68)} ${n(cy+h*.72)}Z" fill="${palette.deep}" stroke="${palette.ink}" stroke-width="7"/><path d="M 164 600 Q 180 528 ${n(cx-62)} 520 Q ${n(cx)} 537 ${n(cx+62)} 520 Q 420 528 438 600Z" fill="${palette.shade}" stroke="${palette.ink}" stroke-width="7"/>`;
+
+        let appendages = "";
+        const appendageCount = anatomy === "insectoid" ? int(rng,2,5) : weird > .84 ? int(rng,0,3) : int(rng,0,1);
+        for (let i=0;i<appendageCount;i++) {
+          const side = chance(rng,.5) ? -1 : 1;
+          const sx = cx + side*int(rng,70,145);
+          const sy = cy - int(rng,110,190);
+          const ex = sx + side*int(rng,25,78);
+          const ey = sy - int(rng,35,100);
+          appendages += `<path d="M ${n(sx)} ${n(sy)} C ${n(sx+side*24)} ${n(sy-30)} ${n(ex-side*10)} ${n(ey+25)} ${n(ex)} ${n(ey)}" fill="none" stroke="${palette.ink}" stroke-width="${int(rng,4,8)}" stroke-linecap="round"/><path d="M ${n(ex)} ${n(ey)} l ${n(side*7)} -${int(rng,9,19)}" stroke="${palette.accent}" stroke-width="3" stroke-linecap="round"/>`;
+        }
+
+        let markings = "";
+        const detailCount = int(rng,12,22 + Math.round(weird*28));
+        for (let i=0;i<detailCount;i++) {
+          const side = chance(rng,.5) ? -1 : 1;
+          const x = cx + side*int(rng,15,w*.8);
+          const y = cy + int(rng,-h*.68,h*.78);
+          const size = int(rng,2,7);
+          const kind = int(rng,0,5);
+          if (kind === 0) markings += `<circle cx="${n(x)}" cy="${n(y)}" r="${size}" fill="${palette.ink}" opacity=".22"/>`;
+          if (kind === 1) markings += `<path d="M ${n(x-size*2)} ${n(y-size)} q ${n(size*2)} ${n(size*3)} ${n(size*4)} 0" fill="none" stroke="${palette.ink}" stroke-width="2.5" opacity=".55"/>`;
+          if (kind === 2) markings += `<path d="M ${n(x)} ${n(y-size*1.6)} l ${n(size)} ${n(size*2)} l ${n(-size)} ${n(size*1.6)}" fill="none" stroke="${palette.light}" stroke-width="2" opacity=".48"/>`;
+          if (kind === 3) markings += `<path d="M ${n(x-size*1.5)} ${n(y)} l ${n(size*3)} ${n(-size*.3)}" stroke="${palette.ink}" stroke-width="2.5" stroke-linecap="round" opacity=".48"/>`;
+          if (kind === 4 && weird > .65) markings += `<circle cx="${n(x)}" cy="${n(y)}" r="${size+3}" fill="none" stroke="${palette.accent}" stroke-width="2" opacity=".7"/>`;
+          if (kind === 5 && weird > .78) markings += `<path d="M ${n(x-7)} ${n(y-4)} l 14 9 m -11 -12 l 14 9" stroke="${palette.ink}" stroke-width="2.5" stroke-linecap="round"/>`;
+        }
+
+        let extraAnatomy = "";
+        if (anatomy === "abyssal" || anatomy === "flesh-mutation") {
+          for (let i=0;i<6;i++) {
+            const x = cx - w*.78 + i*int(rng,25,35);
+            extraAnatomy += `<path d="M ${n(x)} ${n(cy+30+i*4)} Q ${n(x+int(rng,-18,18))} ${n(cy+72+i*5)} ${n(x+int(rng,-12,12))} ${n(cy+109+i*7)}" fill="none" stroke="${palette.accent}" stroke-width="${int(rng,2,4)}" opacity=".72"/>`;
+          }
+        }
+        if (anatomy === "porcelain" || anatomy === "mineral") {
+          extraAnatomy += Array.from({length:12},() => { const x=cx+int(rng,-w*.72,w*.72), y=cy+int(rng,-h*.7,h*.65), dx=int(rng,-28,28), dy=int(rng,15,48); return `<path d="M ${n(x)} ${n(y)} l ${n(dx)} ${n(dy)} l ${n(-dx*.4)} ${n(dy*.45)}" fill="none" stroke="${palette.ink}" stroke-width="2.3" opacity=".65"/>`; }).join("");
+        }
+        if (anatomy === "biomech") {
+          extraAnatomy += `<path d="M ${n(cx-w*.72)} ${n(cy+4)} L ${n(cx-w*.58)} ${n(cy+58)} M ${n(cx+w*.72)} ${n(cy+4)} L ${n(cx+w*.58)} ${n(cy+58)}" stroke="${palette.accent}" stroke-width="6"/><circle cx="${n(cx-w*.68)}" cy="${n(cy+24)}" r="9" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="3"/><circle cx="${n(cx+w*.68)}" cy="${n(cy+24)}" r="9" fill="${palette.accent}" stroke="${palette.ink}" stroke-width="3"/>`;
+        }
+        if (anatomy === "cosmic") {
+          extraAnatomy += Array.from({length:28},() => { const x=cx+int(rng,-w*.78,w*.78), y=cy+int(rng,-h*.8,h*.8), r=pick(rng,[1.5,2,3]); return `<circle cx="${n(x)}" cy="${n(y)}" r="${r}" fill="${palette.light}" opacity=".8"/>`; }).join("");
+        }
+        if (anatomy === "insectoid") {
+          extraAnatomy += `<path d="M ${n(cx-28)} ${n(cy-h+20)} Q ${n(cx-72)} ${n(cy-h-50)} ${n(cx-102)} ${n(cy-h-62)} M ${n(cx+28)} ${n(cy-h+20)} Q ${n(cx+72)} ${n(cy-h-50)} ${n(cx+102)} ${n(cy-h-62)}" fill="none" stroke="${palette.ink}" stroke-width="6" stroke-linecap="round"/><circle cx="${n(cx-102)}" cy="${n(cy-h-62)}" r="8" fill="${palette.accent}"/><circle cx="${n(cx+102)}" cy="${n(cy-h-62)}" r="8" fill="${palette.accent}"/>`;
+        }
+
+        const asymmetry = `<path d="M ${n(cx-w*.72)} ${n(cy-h*.4)} Q ${n(cx-w*.35)} ${n(cy-h*.54)} ${n(cx-w*.08)} ${n(cy-h*.38)} M ${n(cx+w*.1)} ${n(cy-h*.39)} Q ${n(cx+w*.39)} ${n(cy-h*.57)} ${n(cx+w*.69)} ${n(cy-h*.33)}" fill="none" stroke="${palette.ink}" stroke-width="${int(rng,4,9)}" stroke-linecap="round" opacity=".9"/>`;
+        const cheekFolds = `<path d="M ${n(cx-w*.67)} ${n(cy+h*.17)} Q ${n(cx-w*.49)} ${n(cy+h*.32)} ${n(cx-w*.55)} ${n(cy+h*.51)} M ${n(cx+w*.68)} ${n(cy+h*.16)} Q ${n(cx+w*.48)} ${n(cy+h*.35)} ${n(cx+w*.56)} ${n(cy+h*.52)}" fill="none" stroke="${palette.ink}" stroke-width="3.2" opacity=".55"/>`;
+        const faceGradient = `<defs>
+          <linearGradient id="${prefix}-skin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${palette.light}"/><stop offset=".34" stop-color="${palette.skin}"/><stop offset=".78" stop-color="${palette.shade}"/><stop offset="1" stop-color="${palette.deep}"/></linearGradient>
+          <linearGradient id="${prefix}-shade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".46" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient>
+          <filter id="${prefix}-grain"><feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="2" seed="${config.seed % 997}"/><feColorMatrix values=".45 0 0 0 0 0 .42 0 0 0 0 0 .4 0 0 0 0 0 .16 0"/></filter>
+          <clipPath id="${prefix}-clip"><path d="${head}"/></clipPath>
+        </defs>`;
+        const faceBase = `<path d="${head}" fill="url(#${prefix}-skin)" stroke="${palette.ink}" stroke-width="${stroke}" stroke-linejoin="round"/><path d="${head}" fill="url(#${prefix}-shade)"/>`;
+        const crown = weird > .7 && chance(rng,.55) ? `<path d="M ${n(cx-w*.68)} ${n(cy-h+42)} Q ${n(cx-w*.3)} ${n(cy-h-55)} ${n(cx)} ${n(cy-h+18)} Q ${n(cx+w*.35)} ${n(cy-h-35)} ${n(cx+w*.7)} ${n(cy-h+35)}" fill="none" stroke="${palette.ink}" stroke-width="${int(rng,5,10)}" stroke-linecap="round"/>` : "";
+        const scars = weird > .68 && chance(rng,.8) ? `<path d="M ${n(cx-w*.55)} ${n(cy+h*.08)} l 24 22 -9 20 22 18 M ${n(cx+w*.48)} ${n(cy-h*.05)} l -18 19 10 16 -17 24" fill="none" stroke="${palette.ink}" stroke-width="${int(rng,2,5)}" stroke-linecap="round" opacity=".82"/>` : "";
+        const skinNoise = weird > .55 ? `<path d="${head}" filter="url(#${prefix}-grain)" opacity=".2"/>` : "";
+
+        return `<svg id="faceArt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="An uncanny ${esc(ANATOMY_LABELS[anatomy] || anatomy)} face" class="face-art">
+          ${faceGradient}
+          <g opacity=".12"><circle cx="300" cy="300" r="237" fill="none" stroke="${palette.accent}" stroke-width="2"/><circle cx="300" cy="300" r="213" fill="none" stroke="${palette.light}" stroke-dasharray="2 11" stroke-width="2"/></g>
+          ${neck}${outerEars}${appendages}
+          <path d="${head}" fill="${palette.deep}" opacity=".48" transform="translate(0 10)"/>
+          ${faceBase}${crown}
+          <g clip-path="url(#${prefix}-clip)">
+            ${skinNoise}${markings}${extraAnatomy}${asymmetry}${cheekFolds}${scars}
+            ${eyeMarkup}${nose}${mouth.svg}${secondMouth}
+          </g>
+          <path d="${head}" fill="none" stroke="${palette.ink}" stroke-width="${stroke}" stroke-linejoin="round"/>
+          <g fill="none" stroke="${palette.accent}" stroke-width="3" opacity=".62"><path d="M ${n(cx-w*.73)} ${n(cy-h*.08)} q -16 12 -8 30"/><path d="M ${n(cx+w*.73)} ${n(cy-h*.08)} q 16 12 8 30"/></g>
+          <g fill="${palette.accent}" opacity=".75"><circle cx="${n(cx-w*.7)}" cy="${n(cy+h*.45)}" r="3.5"/><circle cx="${n(cx+w*.69)}" cy="${n(cy+h*.43)}" r="3.5"/></g>
+        </svg>`;
+      }
+
+      function resolvedSettings(config) {
+        const rng = seededRandom(config.seed);
+        return {
+          mood: config.mood === "random" ? pick(rng, MOODS) : config.mood,
+          anatomy: config.anatomy === "random" ? pick(rng, ANATOMIES) : config.anatomy,
+          eyes: config.anatomy === "insectoid" ? "MULTI" : (config.weirdness > 77 ? "VARIABLE" : "ASYMMETRIC")
+        };
+      }
+
+      function specimenName(config) {
+        const rng = seededRandom(config.seed ^ 0xA53A9B4D);
+        return `${pick(rng, NAME_A)} ${pick(rng, NAME_B)}`;
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove("show"), 2500);
+      }
+
+      function readSaved() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(saved) ? saved.slice(0, MAX_SAVED) : [];
+        } catch (_) { return []; }
+      }
+      function writeSaved(items) {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items.slice(0, MAX_SAVED))); return true; }
+        catch (_) { return false; }
+      }
+
+      function faceDataUri(config) {
+        return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(makeFace(config))}`;
+      }
+
+      function renderArchive(mount) {
+        const grid = $("#specimenGrid", mount);
+        const count = $("#archiveCount", mount);
+        if (!grid || !count) return;
+        const items = readSaved();
+        count.textContent = `${items.length} / ${MAX_SAVED} SAVED`;
+        grid.replaceChildren();
+        if (!items.length) {
+          const empty = document.createElement("div");
+          empty.className = "drawer-empty";
+          empty.innerHTML = "<strong>The drawer is empty.</strong> Save a specimen to keep it here.";
+          grid.appendChild(empty);
+          return;
+        }
+        items.forEach((item, index) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "specimen-card";
+          button.title = `Load ${item.name || `Specimen ${index+1}`}`;
+          const img = document.createElement("img");
+          img.loading = "lazy";
+          img.alt = "";
+          img.src = faceDataUri(item);
+          const label = document.createElement("span");
+          label.className = "specimen-card-name";
+          label.textContent = item.name || `Specimen ${index+1}`;
+          button.append(img, label);
+          button.addEventListener("click", () => loadSpecimen(item, mount));
+          grid.appendChild(button);
+        });
+      }
+
+      function updateFace(mount, showNotice = false) {
+        const settings = resolvedSettings(current);
+        resolvedCurrent = settings;
+        const svg = makeFace(current);
+        const stage = $("#faceArt", mount);
+        if (!stage) throw new Error("The face display is not ready.");
+        stage.outerHTML = svg;
+        const name = specimenName(current);
+        $("#specimenName", mount).textContent = name;
+        $("#specimenMood", mount).textContent = settings.mood.replace(/-/g, " ");
+        $("#specimenCode", mount).textContent = `CR-${String(current.number).padStart(4,"0")}`;
+        $("#stageCounter", mount).textContent = `SUBJECT ${String(current.number).padStart(3,"0")}`;
+        $("#stageSeed", mount).textContent = `SEED ${current.seed}`;
+        $("#tagEyes", mount).textContent = `EYES / ${(current.eyeStyle || "random").toUpperCase()}`;
+        $("#tagAnatomy", mount).textContent = `ANATOMY / ${settings.anatomy.toUpperCase()}`;
+        $("#tagStructure", mount).textContent = `FORM / ${current.structure.toUpperCase()}`;
+        if (showNotice) showToast("A new specimen has arrived.");
+      }
+
+      function generateFace(mount) {
+        current = {
+          seed: randomSeed(),
+          mood: $("#moodSelect", mount).value,
+          anatomy: $("#anatomySelect", mount).value,
+          eyeStyle: $("#eyeLayoutSelect", mount).value,
+          mouthStyle: $("#mouthSelect", mount).value,
+          weirdness: Number($("#weirdnessRange", mount).value),
+          structure: $(".shape-option[aria-pressed='true']", mount)?.dataset.structure || "mixed",
+          number: ++subjectNumber
+        };
+        updateFace(mount, true);
+      }
+
+      function saveCurrent(mount) {
+        const items = readSaved();
+        if (items.some(item => item.seed === current.seed)) { showToast("That specimen is already in the drawer."); return; }
+        const item = { ...current, name: specimenName(current) };
+        if (!writeSaved([item, ...items].slice(0, MAX_SAVED))) { showToast("Your browser could not save this specimen."); return; }
+        renderArchive(mount);
+        showToast("Specimen saved in your drawer.");
+      }
+
+      function loadSpecimen(item, mount) {
+        const legacyMoods = { suspicious: "predatory", panicked: "terrified", serene: "calm", delighted: "predatory", exhausted: "dissociated" };
+        const savedMood = legacyMoods[item.mood] || item.mood || "random";
+        current = { seed: item.seed, mood: savedMood, anatomy: item.anatomy || "random", eyeStyle: item.eyeStyle || "random", mouthStyle: item.mouthStyle || "random", weirdness: Number(item.weirdness ?? 100), structure: item.structure || "mixed", number: item.number || 1 };
+        $("#moodSelect", mount).value = current.mood;
+        $("#anatomySelect", mount).value = current.anatomy;
+        $("#eyeLayoutSelect", mount).value = current.eyeStyle;
+        $("#mouthSelect", mount).value = current.mouthStyle;
+        $("#weirdnessRange", mount).value = String(current.weirdness);
+        $("#weirdnessValue", mount).textContent = `${current.weirdness}%`;
+        $$(".shape-option", mount).forEach(btn => btn.setAttribute("aria-pressed", String(btn.dataset.structure === current.structure)));
+        subjectNumber = Math.max(subjectNumber, current.number);
+        updateFace(mount);
+        showToast("Specimen restored.");
+      }
+
+      function downloadPng() {
+        const svg = makeFace(current).replace("class=\"face-art\"", "");
+        const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const image = new Image();
+        image.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = 1600;
+            canvas.height = 1600;
+            const context = canvas.getContext("2d");
+            if (!context) throw new Error("Canvas is unavailable");
+            context.fillStyle = "#17171e";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(url);
+            canvas.toBlob(png => {
+              if (!png) { showToast("PNG export failed. Try again."); return; }
+              const downloadUrl = URL.createObjectURL(png);
+              const link = document.createElement("a");
+              link.href = downloadUrl;
+              link.download = `curioid-specimen-${current.seed}.png`;
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
+              showToast("PNG exported at 1600 × 1600.");
+            }, "image/png");
+          } catch (error) { URL.revokeObjectURL(url); showToast("The image could not be exported."); }
+        };
+        image.onerror = () => { URL.revokeObjectURL(url); showToast("The image could not be exported."); };
+        image.src = url;
+      }
+
+      function bindExperiment(mount) {
+        const generateButton = $("#generateBtn", mount);
+        generateButton.addEventListener("click", () => {
+          // Render in the next frame so the click always applies to the already-mounted experiment.
+          generateButton.disabled = true;
+          requestAnimationFrame(() => {
+            try { generateFace(mount); }
+            catch (error) { console.error("CURIOID face generation failed:", error); showToast("The machine missed a step. Try again."); }
+            finally { generateButton.disabled = false; }
+          });
+        });
+        $("#saveBtn", mount).addEventListener("click", () => saveCurrent(mount));
+        $("#downloadBtn", mount).addEventListener("click", downloadPng);
+        $("#weirdnessRange", mount).addEventListener("input", event => { $("#weirdnessValue", mount).textContent = `${event.target.value}%`; });
+        $$(".shape-option", mount).forEach(button => button.addEventListener("click", () => {
+          $$(".shape-option", mount).forEach(option => option.setAttribute("aria-pressed", String(option === button)));
+          current.structure = button.dataset.structure;
+        }));
+        $("#clearArchiveBtn", mount).addEventListener("click", () => {
+          if (!readSaved().length) { showToast("The specimen drawer is already empty."); return; }
+          if (!window.confirm("Clear all saved specimens from this browser?")) return;
+          writeSaved([]);
+          renderArchive(mount);
+          showToast("The specimen drawer has been cleared.");
+        });
+        renderArchive(mount);
+        $("#moodSelect", mount).value = current.mood;
+        $("#anatomySelect", mount).value = current.anatomy;
+        $("#eyeLayoutSelect", mount).value = current.eyeStyle || "random";
+        $("#mouthSelect", mount).value = current.mouthStyle || "random";
+        $("#weirdnessRange", mount).value = String(current.weirdness);
+        $("#weirdnessValue", mount).textContent = `${current.weirdness}%`;
+        $$(".shape-option", mount).forEach(option => option.setAttribute("aria-pressed", String(option.dataset.structure === current.structure)));
+        updateFace(mount);
+      }
+
+      function futurePreviewSvg(type) {
+        const common = 'fill="none" stroke="#d6ff69" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+        const art = {
+          orbit: `<g ${common}><circle cx="120" cy="75" r="37" opacity=".65"/><circle cx="120" cy="75" r="17"/><ellipse cx="120" cy="75" rx="94" ry="27" transform="rotate(-26 120 75)"/><circle cx="199" cy="36" r="5" fill="#baa7ff" stroke="none"/><path d="M120 22v-9m0 124v-9M67 75h-9m124 0h-9"/></g>`,
+          pattern: `<g ${common}>${Array.from({length:7},(_,i)=>`<path d="M${32+i*29} 24l22 22-22 22-22-22Z" transform="translate(0 ${i%2?13:0})" opacity="${.35+i*.08}"/>`).join("")}<circle cx="120" cy="75" r="14" fill="#baa7ff" stroke="none"/></g>`,
+          wave: `<g ${common}>${Array.from({length:35},(_,i)=>`<path d="M${12+i*6} 75q3 ${Math.sin(i*.7)*38} 6 0" opacity="${.25+(i%5)*.13}"/>`).join("")}</g>`,
+          object: `<g ${common}><path d="M70 35h72v72H70zM70 35l42-20 73 0-43 20M142 35l43-20v71l-43 21"/><path d="M70 107l42 22 73-43M112 57v72" stroke="#baa7ff"/></g>`,
+          weather: `<g ${common}><path d="M22 106Q44 88 66 106t44 0 44 0 44 0"/><circle cx="165" cy="40" r="19" stroke="#baa7ff"/><path d="M165 10v-7m0 74v-7m-30-30h-7m74 0h-7"/><path d="M52 30l8 16m20-24-2 20" stroke="#baa7ff"/></g>`,
+          dream: `<g ${common}><path d="M33 120V66l35-24 35 24v54M103 120V48l38-28 38 28v72"/><path d="M53 120V82h30v38m39 0V72h39v48"/><circle cx="103" cy="24" r="5" fill="#baa7ff" stroke="none"/></g>`,
+          paint: `<g><path d="M40 120C20 90 43 27 92 27s84 24 90 59-37 53-71 29-48 33-71 5Z" fill="#baa7ff" opacity=".6"/><path d="M50 83q40-55 88-24t34 23" fill="none" stroke="#d6ff69" stroke-width="3"/><circle cx="83" cy="65" r="10" fill="#d6ff69"/></g>`,
+          organic: `<g ${common}><path d="M120 130C14 111 40 22 120 18c80 4 106 93 0 112Z"/><path d="M120 18Q78 73 120 130M120 18Q167 68 120 130M34 70q40-20 86 5 42 20 86-6"/><circle cx="120" cy="75" r="10" fill="#ff9cba" stroke="none"/></g>`,
+          afterimage: `<g fill="none" stroke-width="7" stroke-linecap="round"><path d="M48 105Q85 8 128 77t58-41" stroke="#baa7ff" opacity=".32"/><path d="M38 115Q77 18 120 87t58-41" stroke="#85e6da" opacity=".52"/><path d="M28 125Q67 28 110 97t58-41" stroke="#d6ff69"/></g>`,
+          game: `<g ${common}><rect x="42" y="19" width="157" height="110" rx="8"/><path d="M60 99l35-51 35 51 35-51 17 25"/><circle cx="151" cy="40" r="8" fill="#ff9cba" stroke="none"/></g>`,
+          button: `<g ${common}><circle cx="120" cy="75" r="52"/><circle cx="120" cy="75" r="34" stroke="#baa7ff" stroke-width="8"/><circle cx="120" cy="75" r="17" fill="#d6ff69" stroke="none"/><path d="M120 5v18m0 104v18M50 75H32m176 0h-18"/></g>`,
+          corridor: `<g ${common}><path d="M26 130 74 20h92l48 110M74 20v110m92-110v110M97 130V55h46v75"/><path d="M110 55l10-14 10 14" stroke="#baa7ff"/></g>`,
+          sound: `<g ${common}>${Array.from({length:9},(_,i)=>`<path d="M${27+i*24} 75q-9 -${15+i*4} 0 -${31+i*5}q9 ${31+i*5} 0 ${62+i*7}q-9 -${31+i*5} 0 -${62+i*7}" stroke="${i%3===0?'#baa7ff':'#d6ff69'}" opacity=".8"/>`).join("")}</g>`,
+          museum: `<g ${common}><rect x="34" y="24" width="174" height="105" rx="4"/><path d="M48 111h146M60 94V48h32v46m14 0V42h32v52m13 0V59h25v35"/><circle cx="77" cy="37" r="4" fill="#baa7ff" stroke="none"/></g>`,
+          interface: `<g ${common}><rect x="27" y="20" width="186" height="112" rx="7"/><path d="M27 43h186M44 57h66v60H44zm79 0h75v12h-75zm0 22h57v5h-57zm0 16h65v5h-65zm0 16h42v5h-42"/><circle cx="41" cy="32" r="3" fill="#ff9cba" stroke="none"/></g>`,
+          city: `<g ${common}><path d="M25 128V77h30v51m9 0V41h43v87m12 0V65h30v63m11 0V25h40v103"/><path d="M73 54h8m-8 14h8m-8 14h8m-8 14h8m50-20h8m-8 14h8m35-43h8m-8 15h8m-8 15h8" stroke="#baa7ff"/></g>`,
+          palette: `<g><circle cx="75" cy="75" r="48" fill="#baa7ff"/><circle cx="130" cy="65" r="43" fill="#d6ff69" opacity=".8"/><circle cx="153" cy="108" r="31" fill="#ff9cba" opacity=".85"/><circle cx="70" cy="81" r="13" fill="#17171d"/></g>`,
+          type: `<g fill="#d6ff69" font-family="Georgia,serif" text-anchor="middle"><text x="120" y="103" font-size="88">Aa</text><path d="M42 119h156" stroke="#baa7ff" stroke-width="2"/></g>`,
+          ideas: `<g ${common}><circle cx="120" cy="75" r="47"/><circle cx="72" cy="45" r="13" stroke="#baa7ff"/><circle cx="165" cy="44" r="15" stroke="#ff9cba"/><circle cx="75" cy="112" r="11" stroke="#85e6da"/><circle cx="169" cy="110" r="9"/><path d="M84 53l24 13m25-5 19-12M87 105l20-20m35 9 18 10"/></g>`
+        };
+        return `<svg viewBox="0 0 240 150" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${art[type] || art.orbit}</svg>`;
+      }
+
+      function renderFutureRoom(roomId) {
+        const info = ROOM_INFO[roomId];
+        const html = document.createElement("div");
+        html.className = "future-room";
+        const text = document.createElement("div");
+        text.innerHTML = `<p class="future-kicker">PROJECT / ${info.mark}</p><h3>${esc(info.title)}</h3><p>${esc(info.copy)}</p><p>This project could not be loaded. Refresh the page and open it again.</p><span class="future-details">ROOM UNAVAILABLE</span>`;
+        const preview = document.createElement("div");
+        preview.className = "future-preview";
+        preview.innerHTML = `${futurePreviewSvg(info.visual)}<span class="future-preview-label">${esc(info.title)} / 01</span>`;
+        html.append(text, preview);
+        return html;
+      }
+
+      function createRoomCard(roomId, index) {
+        const info = ROOM_INFO[roomId];
+        const isOpen = roomId === "oddity-lab";
+        const article = document.createElement("article");
+        article.className = `room-window${isOpen ? " open" : ""}`;
+        article.id = `room-${roomId}`;
+        article.dataset.room = roomId;
+        const heading = document.createElement("button");
+        heading.className = "room-heading";
+        heading.type = "button";
+        heading.setAttribute("aria-expanded", String(isOpen));
+        heading.setAttribute("aria-controls", `body-${roomId}`);
+        heading.innerHTML = `<span class="room-icon" aria-hidden="true">${esc(info.icon)}</span><span class="room-number">${info.mark}</span><span class="room-name-wrap"><span class="room-name">${esc(info.title)}</span><span class="room-description">${esc(info.description)}</span></span><span class="room-state${info.live ? " live" : ""}">${isOpen ? "OPEN / LIVE" : (info.live ? "LIVE" : "READY")}</span><span class="room-chevron" aria-hidden="true">⌄</span>`;
+        const body = document.createElement("div");
+        body.className = "room-body";
+        body.id = `body-${roomId}`;
+        body.hidden = !isOpen;
+        const mount = document.createElement("div");
+        mount.className = "room-mount";
+        mount.dataset.mount = roomId;
+        body.appendChild(mount);
+        article.append(heading, body);
+        return article;
+      }
+
+      function renderCategories() {
+        const host = $("#categorySections");
+        host.replaceChildren();
+        CATEGORIES.forEach(category => {
+          const section = document.createElement("section");
+          section.className = "category-section";
+          section.id = `category-${category.id}`;
+          section.dataset.categorySection = category.id;
+          const heading = document.createElement("header");
+          heading.className = "category-heading";
+          const copy = document.createElement("div");
+          copy.className = "category-heading-copy";
+          copy.innerHTML = `<p class="category-kicker">${esc(category.kicker)}</p><h2 class="category-title">${esc(category.title)}</h2><p class="category-description">${esc(category.description)}</p>`;
+          const count = document.createElement("span");
+          count.className = "category-count";
+          count.textContent = `${String(category.rooms.length).padStart(2,"0")} PROJECT WINDOWS`;
+          heading.append(copy, count);
+          const list = document.createElement("div");
+          list.className = "room-list";
+          list.id = `list-${category.id}`;
+          list.setAttribute("aria-label", `${category.title} projects`);
+          category.rooms.forEach((roomId,index) => list.appendChild(createRoomCard(roomId,index)));
+          section.append(heading,list);
+          host.appendChild(section);
+        });
+      }
+
+      function loadRoom(room) {
+        const roomId = room.dataset.room;
+        const mount = $(".room-mount", room);
+        if (room.dataset.loaded === "true") return;
+        mount.replaceChildren();
+        if (roomId === "oddity-lab") {
+          const template = $("#oddityTemplate");
+          mount.appendChild(template.content.cloneNode(true));
+          bindExperiment(mount);
+        } else if (window.CurioidProjects && window.CurioidProjects.ids.includes(roomId)) {
+          room._curioidCleanup = window.CurioidProjects.mount(roomId, mount, {
+            toast(message) { if (typeof showToast === "function") showToast(message); }
+          });
+        } else {
+          mount.appendChild(renderFutureRoom(roomId));
+        }
+        room.dataset.loaded = "true";
+      }
+
+      function unloadRoom(room) {
+        if (typeof room._curioidCleanup === "function") {
+          try { room._curioidCleanup(); } catch (error) { console.warn("CURIOID cleanup issue:", error); }
+          room._curioidCleanup = null;
+        }
+        const mount = $(".room-mount", room);
+        if (mount) mount.replaceChildren();
+        room.dataset.loaded = "false";
+      }
+
+      function setRoomOpen(room, open, shouldScroll = false) {
+        const roomId = room.dataset.room;
+        const heading = $(".room-heading", room);
+        const body = $(".room-body", room);
+        const state = $(".room-state", room);
+        room.classList.toggle("open", open);
+        heading.setAttribute("aria-expanded", String(open));
+        body.hidden = !open;
+        if (open) {
+          loadRoom(room);
+          if (state) { state.textContent = roomId === "oddity-lab" ? "OPEN / LIVE" : "OPEN"; state.classList.toggle("live", roomId === "oddity-lab"); }
+        } else {
+          unloadRoom(room);
+          if (state) { state.textContent = roomId === "oddity-lab" ? "LIVE" : "READY"; state.classList.toggle("live", roomId === "oddity-lab"); }
+        }
+        const openCount = $$(".room-window.open").length;
+        $("#topStatus").textContent = `${openCount} window${openCount === 1 ? "" : "s"} open`;
+        if (shouldScroll) {
+          room.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
+        }
+      }
+
+      function toggleRoom(room, shouldScroll = false) {
+        setRoomOpen(room, !room.classList.contains("open"), shouldScroll);
+      }
+
+      function setActiveCategory(categoryId) {
+        $$(".nav-item[data-category]").forEach(button => {
+          const active = button.dataset.category === categoryId;
+          button.classList.toggle("active", active);
+          if (active) button.setAttribute("aria-current", "location");
+          else button.removeAttribute("aria-current");
+        });
+      }
+
+      function closeMenu() {
+        document.body.classList.remove("menu-open");
+        $("#menuToggle").setAttribute("aria-expanded", "false");
+        $("#menuToggle").setAttribute("aria-label", "Open project menu");
+      }
+
+      $("#categorySections").addEventListener("click", event => {
+        const heading = event.target.closest(".room-heading");
+        if (!heading) return;
+        const room = heading.closest(".room-window");
+        if (room) toggleRoom(room);
+      });
+      $("#categoryNav").addEventListener("click", event => {
+        const nav = event.target.closest(".nav-item[data-category]");
+        if (!nav) return;
+        const category = $(`[data-category-section="${nav.dataset.category}"]`);
+        if (category) {
+          setActiveCategory(nav.dataset.category);
+          category.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
+      });
+      $("#brandHome").addEventListener("click", event => {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
+      });
+      $("#menuToggle").addEventListener("click", () => {
+        const open = !document.body.classList.contains("menu-open");
+        document.body.classList.toggle("menu-open", open);
+        $("#menuToggle").setAttribute("aria-expanded", String(open));
+        $("#menuToggle").setAttribute("aria-label", open ? "Close project menu" : "Open project menu");
+      });
+      $("#scrim").addEventListener("click", closeMenu);
+      document.addEventListener("keydown", event => { if (event.key === "Escape") closeMenu(); });
+
+      // Render lightweight category/project headings before observing their scroll positions.
+      renderCategories();
+
+      // Keep the sidebar category indicator in sync as visitors scroll the page.
+      if ("IntersectionObserver" in window) {
+        const categoryObserver = new IntersectionObserver(entries => {
+          const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio-a.intersectionRatio)[0];
+          if (visible) setActiveCategory(visible.target.dataset.categorySection);
+        }, { rootMargin: "-18% 0px -64% 0px", threshold: [0, .1, .25, .5] });
+        $$(".category-section").forEach(section => categoryObserver.observe(section));
+      }
+
+      // Project content is mounted only when its own window is opened.
+      const firstRoom = $(".room-window[data-room='oddity-lab']");
+      loadRoom(firstRoom);
+      $("#topStatus").textContent = "1 window open";
+    })();
+  </script>
+</body>
+</html>
