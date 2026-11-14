@@ -169,6 +169,10 @@
     .topbar-right { display: flex; align-items: center; gap: 13px; color: var(--dim); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
     .status-live { display: inline-flex; align-items: center; gap: 7px; color: var(--acid); }
     .status-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 9px rgba(214,255,105,.55); }
+    .topbar-action { padding: 5px 8px; border: 1px solid #393843; border-radius: 6px; background: #17171e; color: #a09eaa; font: inherit; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: color .16s ease, border-color .16s ease, background .16s ease; }
+    .topbar-action:hover { color: var(--text); border-color: #68645c; background: #222229; }
+    .topbar-action:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+    .topbar-action[hidden] { display: none; }
     .menu-toggle { display: none; width: 39px; height: 39px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); cursor: pointer; }
     .page-wrap { max-width: 1380px; margin: 0 auto; }
     .hero { padding: 43px 0 29px; }
@@ -267,8 +271,14 @@
     .stage-corner.bl { bottom: 13px; left: 14px; }
     .stage-corner.br { bottom: 13px; right: 14px; color: var(--acid); }
     .face-art { display: block; width: min(84%, 455px); max-height: 455px; aspect-ratio: 1; overflow: visible; filter: drop-shadow(0 24px 35px rgba(0,0,0,.56)) saturate(.88) contrast(1.08); animation: arrive .45s cubic-bezier(.2,.8,.2,1) both, faceBreath 8.8s ease-in-out .5s infinite; transform-origin: 50% 55%; }
-    .face-eye-blink { transform-box: fill-box; transform-origin: center; animation: faceBlink var(--blink-duration, 11s) ease-in-out var(--blink-delay, -3s) infinite; }
-    .stage .face-eye-blink.no-blink { animation: none !important; transform: none; }
+    .results-word { color: var(--acid); letter-spacing: -.055em; text-shadow: 0 0 20px rgba(214,255,105,.09); }
+    .face-eye-blink { transform-box: fill-box; transform-origin: 50% 50%; transition: transform 78ms cubic-bezier(.2,.7,.2,1); }
+    .face-eye-blink.is-blinking { transform: scaleY(.035); opacity: .015; }
+    .face-eye-lid { opacity: 0; transition: opacity 45ms ease-out; pointer-events: none; }
+    .face-eye-blink.is-blinking + .face-eye-lid, .face-eye-lid.is-visible { opacity: 1 !important; }
+    .face-eye-lid path { vector-effect: non-scaling-stroke; }
+    .face-eye-lid .face-eye-shut { fill-opacity: 1; stroke-width: 3.2px; }
+    .face-eye-lid { mix-blend-mode: normal; }
     .face-gaze { transform-box: fill-box; transform-origin: center; animation: faceGaze var(--gaze-duration, 12s) ease-in-out var(--gaze-delay, -2s) infinite; }
     .face-mouth-life { transform-box: fill-box; transform-origin: center; animation: faceMouth 7.5s ease-in-out infinite; }
     .stage[data-eye-behavior="restless"] .face-eye-blink { animation-duration: calc(var(--blink-duration, 11s) * .58); }
@@ -282,7 +292,6 @@
     .stage.face-motion-paused .face-art { animation-play-state: paused !important; }
     @keyframes arrive { from { opacity: 0; transform: translateY(9px) scale(.96) rotate(-1deg); } to { opacity: 1; transform: translateY(0) scale(1) rotate(0); } }
     @keyframes faceBreath { 0%,100% { transform: translateY(0) scale(1); } 48% { transform: translateY(-1.6px) scale(1.006,1.008); } }
-    @keyframes faceBlink { 0%,88%,100% { transform: scaleY(1); } 90% { transform: scaleY(.08); } 91.2% { transform: scaleY(.08); } 93% { transform: scaleY(1); } }
     @keyframes faceGaze { 0%,18%,100% { transform: translate(0,0); } 43% { transform: translate(var(--gaze-x, 2px),var(--gaze-y, 1px)); } 66% { transform: translate(calc(var(--gaze-x, 2px) * -.55),calc(var(--gaze-y, 1px) * -.55)); } }
     @keyframes faceMouth { 0%,100% { transform: scaleY(1); } 46% { transform: scaleY(1.025); } 52% { transform: scaleY(.985); } }
     .stage-caption { display: flex; align-items: center; justify-content: space-between; gap: 11px; padding: 12px 2px 0; color: #8f8d99; font-size: 10px; }
@@ -476,13 +485,13 @@
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false">☰</button>
       <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context">A playground for unusual ideas</span></div>
-      <div class="topbar-right"><span class="status-live" id="topStatus">1 window open</span></div>
+      <div class="topbar-right"><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
     </header>
 
     <div class="page-wrap">
       <section class="hero" aria-labelledby="heroTitle">
         <p class="hero-kicker">The curious side of the internet</p>
-        <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> results.</h1>
+        <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> <span class="results-word">results.</span></h1>
         <div class="hero-bottom">
           <p class="hero-copy">A growing collection of unusual projects, visual experiments, tiny games and curious tools. Nothing to install. Nothing to take too seriously. Open a window and see what happens.</p>
         </div>
@@ -521,7 +530,7 @@
           <div class="control-field"><div class="control-field-top"><label for="weirdnessRange">Uncanniness</label><output class="control-value" id="weirdnessValue" for="weirdnessRange">95%</output></div><input id="weirdnessRange" type="range" min="0" max="100" value="100"><div class="range-hints"><span>Unsettling</span><span>Deeply wrong</span></div></div>
           <div class="control-field"><div class="control-field-top"><label for="eyeLayoutSelect">Eye arrangement</label><span class="control-value">04 / GAZE</span></div><div class="select-wrap"><select id="eyeLayoutSelect"><option value="random">Unpredictable</option><option value="uneven">Uneven pair</option><option value="clustered">Clustered</option><option value="vertical">Vertical additions</option><option value="many">Multiple eyes</option><option value="embedded">Eyes beneath the skin</option></select></div></div>
           <div class="control-field"><div class="control-field-top"><label for="mouthSelect">Mouth mutation</label><span class="control-value">05 / VOICE</span></div><div class="select-wrap"><select id="mouthSelect"><option value="random">Unpredictable</option><option value="stretched">Stretched grin</option><option value="teeth">Crowded teeth</option><option value="vertical">Vertical opening</option><option value="sealed">Sealed seam</option><option value="double">Second mouth</option></select></div></div>
-          <div class="control-field"><div class="control-field-top"><label for="eyeBehaviorSelect">Eye behaviour</label><span class="control-value">06 / PRESENCE</span></div><div class="select-wrap"><select id="eyeBehaviorSelect"><option value="natural">Unsettlingly natural</option><option value="restless">Restless / searching</option><option value="staring">Long, deliberate stares</option><option value="unblinking">Never blink</option></select></div><small class="tool-help">Each eye can blink and drift independently. Choose how it behaves.</small></div>
+          <div class="control-field"><div class="control-field-top"><label for="eyeBehaviorSelect">Eye behaviour</label><span class="control-value">06 / PRESENCE</span></div><div class="select-wrap"><select id="eyeBehaviorSelect"><option value="natural">Unsettlingly natural</option><option value="restless">Restless / searching</option><option value="staring">Long, deliberate stares</option><option value="rare">Rare, deliberate blinks</option></select></div><small class="tool-help">Each eye can blink and drift independently. Choose how it behaves.</small></div>
           <div class="control-field"><div class="control-field-top"><span class="control-label">Face structure</span><span class="control-value">07 / FORM</span></div><div class="shape-options" role="group" aria-label="Choose face structure"><button class="shape-option" type="button" data-structure="soft" aria-pressed="false">Soft</button><button class="shape-option" type="button" data-structure="mixed" aria-pressed="true">Mixed</button><button class="shape-option" type="button" data-structure="angular" aria-pressed="false">Angular</button></div></div>
           <div class="button-stack"><button class="action-button primary" id="generateBtn" type="button">↻ &nbsp; Generate a new face</button><button class="action-button" id="faceMotionBtn" type="button" aria-pressed="false">Ⅱ &nbsp; Pause movement</button><button class="action-button" id="saveBtn" type="button">＋ &nbsp; Save specimen</button><button class="action-button" id="downloadBtn" type="button">↓ &nbsp; Export PNG</button><button class="action-button" id="faceResetBtn" type="button">↺ &nbsp; Reset settings</button></div>
           <p class="control-note">Everything is generated locally in your browser. Nothing is uploaded. Saved specimens stay on this device.</p>
@@ -546,7 +555,7 @@
         { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["pocket-universe", "one-button-ritual", "last-corridor"] },
         { id: "sound-motion", title: "Sound & Motion", kicker: "04 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "noise-choir"] },
         { id: "strange-archives", title: "Strange Archives", kicker: "05 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "dead-interface", "unbuilt-tomorrow"] },
-        { id: "creative-tools", title: "Creative Tools", kicker: "06 / UTILITIES", description: "Odd little helpers for making, arranging and transforming things.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler"] }
+        { id: "creative-tools", title: "Creative Tools", kicker: "06 / UTILITIES", description: "Odd little helpers for making, arranging and transforming things.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio"] }
       ];
 
       const ROOM_INFO = {
@@ -576,7 +585,17 @@
 
         "color-alchemist": { title: "Color Alchemist", mark: "01", icon: "◍", description: "Mix, bend and discover unusual color relationships", copy: "Generate color harmonies, lock the swatches you like, check text contrast and export CSS variables or a palette file.", visual: "palette" },
         "type-foundry": { title: "Type Foundry", mark: "02", icon: "Aa", description: "A playground for letters, forms and tiny type tools", copy: "Create a typographic poster with editable phrases, type styles, layout, scale and distortion. Export the composition as PNG.", visual: "type" },
-        "idea-tumbler": { title: "Idea Tumbler", mark: "03", icon: "✳", description: "Shake unrelated ideas together and see what sticks", copy: "Combine subjects, formats and constraints into original project seeds. Save ideas locally or copy a concept to develop further.", visual: "ideas" }
+        "idea-tumbler": { title: "Idea Tumbler", mark: "03", icon: "✳", description: "Shake unrelated ideas together and see what sticks", copy: "Combine subjects, formats and constraints into original project seeds. Save ideas locally or copy a concept to develop further.", visual: "ideas" },
+        "texture-press": { title: "Texture Press", mark: "04", icon: "▧", description: "Make repeatable surfaces, patterns and material studies", copy: "Generate seamless tiles for backgrounds, game surfaces and print work. Adjust scale, texture and irregularity, then export large PNG tiles.", visual: "pattern" },
+        "sprite-sheet-studio": { title: "Sprite Sheet Studio", mark: "05", icon: "▦", description: "Build small animated game characters and sprite sheets", copy: "Choose a character, motion and palette. Preview its loop, export a sprite sheet and copy a CSS animation snippet.", visual: "game" },
+        "vector-mark-studio": { title: "Vector Mark Studio", mark: "06", icon: "◇", description: "Create compact symbols, emblems and identity marks", copy: "Combine simple geometry into a distinctive vector mark. Edit its initials, silhouette and colors, then export SVG or PNG.", visual: "object" },
+        "layout-composer": { title: "Layout Composer", mark: "07", icon: "▤", description: "Compose posters, covers and social graphics", copy: "Set a canvas size, choose a layout rhythm and build a finished typographic composition. Export clean artwork for further editing.", visual: "type" },
+        "palette-extractor": { title: "Palette Extractor", mark: "08", icon: "◍", description: "Pull useful color systems from your own images", copy: "Choose an image stored on your device and extract a balanced palette locally. Copy CSS variables or export a palette file; the image is never uploaded.", visual: "palette" },
+        "gradient-atlas": { title: "Gradient Atlas", mark: "09", icon: "◒", description: "Build expressive gradient systems and save CSS", copy: "Mix color stops, choose linear, radial or conic geometry, add grain and export the result as CSS or PNG.", visual: "palette" },
+        "contact-sheet": { title: "Contact Sheet", mark: "10", icon: "▦", description: "Turn a folder of images into a clean visual index", copy: "Select a batch of local images, arrange them into a labelled contact sheet, adjust spacing and export a print-ready PNG.", visual: "type" },
+        "pixel-sort-lab": { title: "Pixel Sort Lab", mark: "11", icon: "▥", description: "Reorder image pixels into controlled visual distortions", copy: "Sort selected pixel runs by luminance, hue or saturation. Compare vertical and horizontal passes, tune thresholds and export the altered image.", visual: "afterimage" },
+        "shape-composer": { title: "Shape Composer", mark: "12", icon: "◇", description: "Compose bold abstract graphics from modular geometry", copy: "Build a layered graphic from repeatable shapes, symmetry, palette and controlled chaos. Export crisp large-format artwork.", visual: "object" },
+        "icon-set-studio": { title: "Icon Set Studio", mark: "13", icon: "⌘", description: "Design a coherent family of tiny interface symbols", copy: "Set a shared stroke, grid and visual language, generate a 12-icon family and export a reusable SVG sprite sheet.", visual: "interface" }
       };
 
       const $ = (selector, root = document) => root.querySelector(selector);
@@ -586,6 +605,7 @@
       let subjectNumber = 1;
       let current = { seed: randomSeed(), mood: "random", weirdness: 100, structure: "mixed", anatomy: "random", eyeStyle: "random", mouthStyle: "random", number: 1 };
       let resolvedCurrent = null;
+      const faceBlinkControllers = new WeakMap();
 
       const rand = (min, max) => min + Math.random() * (max - min);
       function randomSeed() { return Math.floor(Math.random() * 900000000) + 100000000; }
@@ -693,15 +713,13 @@
         const stitches = weird > 82 && chance(rng,.26) ? `<path d="M ${n(ex-w*1.12)} ${n(ey)} l 9 -7 m -8 13 l 9 -7 M ${n(ex+w*.86)} ${n(ey)} l 8 -7 m -7 13 l 8 -7" stroke="${palette.light}" stroke-width="2.4" stroke-linecap="round"/>` : "";
         const extraPupils = weird > 88 && chance(rng,.22) ? `<circle cx="${n(ex+int(rng,-w*.35,w*.35))}" cy="${n(ey+int(rng,-h*.3,h*.3))}" r="${n(irisR*.19)}" fill="${palette.ink}"/>` : "";
         const expression = mood === "terrified" ? `<path d="M ${n(ex-w)} ${n(ey-h*1.45)} Q ${n(ex)} ${n(ey-h*2.05)} ${n(ex+w)} ${n(ey-h*1.45)}" fill="none" stroke="${palette.ink}" stroke-width="${n(size*.13)}" stroke-linecap="round"/>` : "";
-        const blinkEnabled = chance(rng, weirdness > 78 ? .96 : .88);
-        const blinkDelay = -rand(0, 10).toFixed(2);
-        const blinkDuration = rand(5.8, 11.8).toFixed(2);
         const gazeX = int(rng, -7, 7);
         const gazeY = int(rng, -5, 5);
         const gazeDelay = -rand(0, 9).toFixed(2);
         const gazeDuration = rand(5.5, 12.5).toFixed(2);
         const gaze = `<g class="face-gaze" style="--gaze-x:${gazeX}px;--gaze-y:${gazeY}px;--gaze-delay:${gazeDelay}s;--gaze-duration:${gazeDuration}s">${white}${iris}${extraPupils}</g>`;
-        return `<g transform="rotate(${n(tilt)} ${n(ex)} ${n(ey)})"><g class="face-eye-blink${blinkEnabled ? "" : " no-blink"}" style="--blink-delay:${blinkDelay}s;--blink-duration:${blinkDuration}s">${veins}${socket}${gaze}${lid}${stitches}${expression}</g></g>`;
+        const shutLid = `<path class="face-eye-shut" d="M ${n(ex-w*1.08)} ${n(ey)} Q ${n(ex)} ${n(ey-h*.35)} ${n(ex+w*1.08)} ${n(ey)} Q ${n(ex)} ${n(ey+h*.72)} ${n(ex-w*1.08)} ${n(ey)}Z" fill="${palette.skin}" stroke="${palette.ink}" stroke-width="${n(Math.max(2,size*.1))}" stroke-linejoin="round"/><path class="face-eye-shut" d="M ${n(ex-w*.78)} ${n(ey+2)} Q ${n(ex)} ${n(ey+h*.45)} ${n(ex+w*.78)} ${n(ey+2)}" fill="none" stroke="${palette.light}" stroke-width="${n(Math.max(1.5,size*.045))}"/>`;
+        return `<g transform="rotate(${n(tilt)} ${n(ex)} ${n(ey)})"><g class="face-eye-blink" data-eye-live="true">${veins}${socket}${gaze}${lid}${stitches}${expression}</g><g class="face-eye-lid">${shutLid}</g></g>`;
       }
 
       function makeMouth(cx, y, palette, mood, rng, weirdness, requestedStyle = "random") {
@@ -985,6 +1003,8 @@
         stage.outerHTML = svg;
         const stageFrame = $("#faceStage", mount);
         if (stageFrame) stageFrame.dataset.eyeBehavior = $("#eyeBehaviorSelect", mount)?.value || "natural";
+        const blinkController = faceBlinkControllers.get(mount);
+        if (blinkController) blinkController.restart();
         const name = specimenName(current);
         $("#specimenName", mount).textContent = name;
         $("#specimenMood", mount).textContent = settings.mood.replace(/-/g, " ");
@@ -1072,6 +1092,53 @@
 
       function bindExperiment(mount) {
         let savedSettings = {};
+        const blinkController = (() => {
+          const timers = new Set();
+          let generation = 0, disposed = false;
+          const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          const clear = () => { timers.forEach(timer => clearTimeout(timer)); timers.clear(); };
+          const later = (callback, delay) => {
+            const id = setTimeout(() => { timers.delete(id); callback(); }, delay);
+            timers.add(id);
+            return id;
+          };
+          function restart() {
+            clear();
+            generation++;
+            const token = generation;
+            const stage = $("#faceStage", mount);
+            if (disposed || reducedMotion || !stage || stage.classList.contains("face-motion-paused")) return;
+            if (stage.dataset.eyeBehavior === "unblinking") return;
+            const eyes = $$(".face-eye-blink[data-eye-live='true']", mount);
+            const behavior = stage.dataset.eyeBehavior || "natural";
+            const delays = behavior === "restless" ? [1200, 2800] : behavior === "staring" ? [4500, 8200] : behavior === "rare" ? [9000, 15000] : [2300, 5200];
+            const blink = (eye, isDouble = false) => {
+              if (disposed || token !== generation || !eye.isConnected || stage.classList.contains("face-motion-paused")) return;
+              const lid = eye.nextElementSibling && eye.nextElementSibling.classList.contains("face-eye-lid") ? eye.nextElementSibling : null;
+              eye.classList.add("is-blinking");
+              if (lid) lid.classList.add("is-visible");
+              later(() => {
+                eye.classList.remove("is-blinking");
+                if (lid) lid.classList.remove("is-visible");
+                if (disposed || token !== generation || !eye.isConnected) return;
+                if (!isDouble && Math.random() < .16) {
+                  later(() => blink(eye, true), 125 + Math.random() * 90);
+                } else schedule(eye);
+              }, 190 + Math.random() * 45);
+            };
+            const schedule = eye => {
+              if (disposed || token !== generation || !eye.isConnected) return;
+              later(() => blink(eye, false), delays[0] + Math.random() * (delays[1] - delays[0]));
+            };
+            // Each eye has its own independent phase and recurrence, so blinks never move as a pair.
+            eyes.forEach((eye, index) => {
+              const stagger = index * (420 + Math.random() * 820);
+              later(() => blink(eye, false), 850 + Math.random() * 1700 + stagger);
+            });
+          }
+          return { restart, dispose() { disposed = true; generation++; clear(); } };
+        })();
+        faceBlinkControllers.set(mount, blinkController);
         try { savedSettings = JSON.parse(localStorage.getItem(FACE_SETTINGS_KEY) || "{}") || {}; } catch (_) {}
         const settingControls = {
           mood: $("#moodSelect", mount),
@@ -1088,7 +1155,7 @@
           if (savedSettings.weirdness != null) settingControls.weirdness.value = String(savedSettings.weirdness);
           if (savedSettings.eyeStyle) settingControls.eyeStyle.value = savedSettings.eyeStyle;
           if (savedSettings.mouthStyle) settingControls.mouthStyle.value = savedSettings.mouthStyle;
-          if (savedSettings.eyeBehavior) settingControls.eyeBehavior.value = savedSettings.eyeBehavior;
+          if (savedSettings.eyeBehavior) settingControls.eyeBehavior.value = savedSettings.eyeBehavior === "unblinking" ? "rare" : savedSettings.eyeBehavior;
           if (savedSettings.structure) current.structure = savedSettings.structure;
           if (savedSettings.motionPaused === true) $("#faceStage", mount).classList.add("face-motion-paused");
         }
@@ -1112,6 +1179,7 @@
         }
         function applyEyeBehavior() {
           $("#faceStage", mount).dataset.eyeBehavior = settingControls.eyeBehavior.value;
+          blinkController.restart();
           persistFaceSettings();
         }
         const generateButton = $("#generateBtn", mount);
@@ -1158,6 +1226,7 @@
           const paused = $("#faceStage", mount).classList.toggle("face-motion-paused");
           event.currentTarget.setAttribute("aria-pressed", String(paused));
           event.currentTarget.textContent = paused ? "▶  Resume movement" : "Ⅱ  Pause movement";
+          blinkController.restart();
           persistFaceSettings();
         });
         $$(".shape-option", mount).forEach(button => button.addEventListener("click", () => {
@@ -1186,6 +1255,7 @@
         $("#faceMotionBtn", mount).textContent = isPaused ? "▶  Resume movement" : "Ⅱ  Pause movement";
         updateFace(mount);
         persistFaceSettings();
+        return () => { blinkController.dispose(); faceBlinkControllers.delete(mount); };
       }
 
       function futurePreviewSvg(type) {
@@ -1287,7 +1357,7 @@
         if (roomId === "oddity-lab") {
           const template = $("#oddityTemplate");
           mount.appendChild(template.content.cloneNode(true));
-          bindExperiment(mount);
+          room._curioidCleanup = bindExperiment(mount);
         } else if (window.CurioidProjects && window.CurioidProjects.ids.includes(roomId)) {
           room._curioidCleanup = window.CurioidProjects.mount(roomId, mount, {
             toast(message) { if (typeof showToast === "function") showToast(message); }
@@ -1333,8 +1403,7 @@
             state.setAttribute("aria-label", "Project closed");
           }
         }
-        const openCount = $$(".room-window.open").length;
-        $("#topStatus").textContent = `${openCount} window${openCount === 1 ? "" : "s"} open`;
+        updateOpenStatus();
         if (shouldScroll) {
           room.scrollIntoView({ behavior: "smooth", block: "start" });
           if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
@@ -1343,6 +1412,13 @@
 
       function toggleRoom(room, shouldScroll = false) {
         setRoomOpen(room, !room.classList.contains("open"), shouldScroll);
+      }
+
+      function updateOpenStatus() {
+        const openCount = $$(".room-window.open").length;
+        $("#topStatus").textContent = `${openCount} window${openCount === 1 ? "" : "s"} open`;
+        const closeAll = $("#closeAllRooms");
+        if (closeAll) closeAll.hidden = openCount < 2;
       }
 
       function setActiveCategory(categoryId) {
@@ -1388,6 +1464,11 @@
         $("#menuToggle").setAttribute("aria-label", open ? "Close project menu" : "Open project menu");
       });
       $("#scrim").addEventListener("click", closeMenu);
+      $("#closeAllRooms").addEventListener("click", () => {
+        $$(".room-window.open").forEach(room => setRoomOpen(room, false));
+        updateOpenStatus();
+        showToast("All project windows are closed.");
+      });
       document.addEventListener("keydown", event => { if (event.key === "Escape") closeMenu(); });
 
       // Render lightweight category/project headings before observing their scroll positions.
@@ -1405,7 +1486,7 @@
       // Project content is mounted only when its own window is opened.
       const firstRoom = $(".room-window[data-room='oddity-lab']");
       loadRoom(firstRoom);
-      $("#topStatus").textContent = "1 window open";
+      updateOpenStatus();
     })();
   </script>
 </body>
