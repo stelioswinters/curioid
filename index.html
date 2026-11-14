@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101014">
   <meta name="description" content="CURIOID is a collection of strange interactive experiments, curious machines and digital oddities.">
-  <title>CURIOID</title>
+  <title>Face Machine — CURIOID</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 48 48%27%3E%3Crect width=%2748%27 height=%2748%27 rx=%2711%27 fill=%27%23101014%27/%3E%3Cpath d=%27M4.5 24C9.3 13.7 17.1 8.5 24 8.5S38.7 13.7 43.5 24C38.7 34.3 30.9 39.5 24 39.5S9.3 34.3 4.5 24Z%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%273.2%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%278.1%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%272.5%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%273.6%27 fill=%27%23d6ff69%27/%3E%3Cpath d=%27M32.5 14.5 37 10%27 stroke=%27%23d6ff69%27 stroke-width=%272.3%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
   <style>
     :root {
@@ -226,8 +226,9 @@
     .room-name-wrap { flex: 1; min-width: 0; }
     .room-name { display: block; overflow: hidden; color: #e9e8e4; font-size: 13px; font-weight: 760; text-overflow: ellipsis; white-space: nowrap; }
     .room-description { display: block; overflow: hidden; margin-top: 3px; color: #898794; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-    .room-state { flex: 0 0 auto; padding: 4px 7px; border: 1px solid #3b3a45; border-radius: 5px; color: #888694; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .09em; }
-    .room-state.live { border-color: #59673a; background: rgba(214,255,105,.055); color: var(--acid); }
+    .room-state { flex: 0 0 auto; min-width: 54px; padding: 4px 7px; border: 1px solid #3b3a45; border-radius: 5px; color: #888694; background: #15151b; text-align: center; font: 8px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .09em; }
+    .room-state.closed { border-color: #373640; background: #15151b; color: #777580; }
+    .room-state.open { border-color: #52633a; background: rgba(214,255,105,.075); color: var(--acid); box-shadow: inset 0 0 0 1px rgba(214,255,105,.025); }
     .room-chevron { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 25px; border: 1px solid #393943; border-radius: 7px; color: #aaa8b3; font-size: 15px; transition: transform .2s ease; }
     .room-window.open .room-chevron { transform: rotate(180deg); color: var(--acid); }
     .room-body { padding: 17px; }
@@ -265,8 +266,25 @@
     .stage-corner.tr { top: 13px; right: 14px; }
     .stage-corner.bl { bottom: 13px; left: 14px; }
     .stage-corner.br { bottom: 13px; right: 14px; color: var(--acid); }
-    .face-art { display: block; width: min(84%, 455px); max-height: 455px; aspect-ratio: 1; overflow: visible; filter: drop-shadow(0 24px 35px rgba(0,0,0,.56)) saturate(.88) contrast(1.08); animation: arrive .45s cubic-bezier(.2,.8,.2,1) both; }
+    .face-art { display: block; width: min(84%, 455px); max-height: 455px; aspect-ratio: 1; overflow: visible; filter: drop-shadow(0 24px 35px rgba(0,0,0,.56)) saturate(.88) contrast(1.08); animation: arrive .45s cubic-bezier(.2,.8,.2,1) both, faceBreath 8.8s ease-in-out .5s infinite; transform-origin: 50% 55%; }
+    .face-eye-blink { transform-box: fill-box; transform-origin: center; animation: faceBlink var(--blink-duration, 11s) ease-in-out var(--blink-delay, -3s) infinite; }
+    .stage .face-eye-blink.no-blink { animation: none !important; transform: none; }
+    .face-gaze { transform-box: fill-box; transform-origin: center; animation: faceGaze var(--gaze-duration, 12s) ease-in-out var(--gaze-delay, -2s) infinite; }
+    .face-mouth-life { transform-box: fill-box; transform-origin: center; animation: faceMouth 7.5s ease-in-out infinite; }
+    .stage[data-eye-behavior="restless"] .face-eye-blink { animation-duration: calc(var(--blink-duration, 11s) * .58); }
+    .stage[data-eye-behavior="restless"] .face-gaze { animation-duration: calc(var(--gaze-duration, 12s) * .54); }
+    .stage[data-eye-behavior="staring"] .face-eye-blink { animation-duration: calc(var(--blink-duration, 11s) * 1.75); }
+    .stage[data-eye-behavior="staring"] .face-gaze { animation-duration: calc(var(--gaze-duration, 12s) * 1.6); }
+    .stage[data-eye-behavior="unblinking"] .face-eye-blink { animation: none; transform: none; }
+    .stage.face-motion-paused .face-eye-blink,
+    .stage.face-motion-paused .face-gaze,
+    .stage.face-motion-paused .face-mouth-life,
+    .stage.face-motion-paused .face-art { animation-play-state: paused !important; }
     @keyframes arrive { from { opacity: 0; transform: translateY(9px) scale(.96) rotate(-1deg); } to { opacity: 1; transform: translateY(0) scale(1) rotate(0); } }
+    @keyframes faceBreath { 0%,100% { transform: translateY(0) scale(1); } 48% { transform: translateY(-1.6px) scale(1.006,1.008); } }
+    @keyframes faceBlink { 0%,88%,100% { transform: scaleY(1); } 90% { transform: scaleY(.08); } 91.2% { transform: scaleY(.08); } 93% { transform: scaleY(1); } }
+    @keyframes faceGaze { 0%,18%,100% { transform: translate(0,0); } 43% { transform: translate(var(--gaze-x, 2px),var(--gaze-y, 1px)); } 66% { transform: translate(calc(var(--gaze-x, 2px) * -.55),calc(var(--gaze-y, 1px) * -.55)); } }
+    @keyframes faceMouth { 0%,100% { transform: scaleY(1); } 46% { transform: scaleY(1.025); } 52% { transform: scaleY(.985); } }
     .stage-caption { display: flex; align-items: center; justify-content: space-between; gap: 11px; padding: 12px 2px 0; color: #8f8d99; font-size: 10px; }
     .stage-caption strong { color: #e6e4df; font-weight: 720; }
     .stage-code { color: var(--acid); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
@@ -384,8 +402,7 @@
       .room-icon { width: 30px; height: 30px; flex-basis: 30px; }
       .room-number { display: none; }
       .room-description { max-width: 200px; }
-      .room-state { display: none; }
-      .room-state { font-size: 7px; padding: 4px 5px; }
+      .room-state { display: inline-flex; align-items: center; justify-content: center; min-width: 47px; font-size: 7px; padding: 4px 5px; }
       .room-body { padding: 9px; }
       .stage-wrap { padding: 8px; }
       .stage { min-height: 370px; }
@@ -480,13 +497,13 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <template id="oddityTemplate">
-    <div class="experiment-grid" aria-label="Oddity Lab face experiment">
+    <div class="experiment-grid" aria-label="Face Machine experiment">
       <section class="surface output-surface">
         <div class="surface-header"><h3 class="surface-title"><span class="surface-dot"></span> Specimen output</h3><span class="surface-meta" id="stageCounter">SUBJECT 001</span></div>
         <div class="stage-wrap">
           <div class="stage" id="faceStage" aria-label="Generated uncanny face">
             <div class="stage-orbit" aria-hidden="true"></div>
-            <span class="stage-corner tl">Observation / 01</span><span class="stage-corner tr">Facial anomaly</span>
+            <span class="stage-corner tl">Observation / 001</span><span class="stage-corner tr">Facial anomaly</span>
             <span class="stage-corner bl">Look directly at it</span><span class="stage-corner br" id="stageSeed">SEED 482913</span>
             <svg class="face-art" id="faceArt" viewBox="0 0 600 600" role="img" aria-label="A strange generated face" xmlns="http://www.w3.org/2000/svg"></svg>
           </div>
@@ -496,16 +513,17 @@
       </section>
 
       <section class="surface control-panel">
-        <div class="surface-header"><h3 class="surface-title"><span class="surface-dot"></span> Machine controls</h3><span class="surface-meta">MACHINE / 001</span></div>
-        <div class="control-intro"><p class="control-intro-kicker">Experiment no. 001</p><h3>The Face Machine</h3><p>The machine is trying to reconstruct a face from incomplete instructions. Push the anatomy, distort the familiar, and keep just enough human detail to make it recognizable.</p></div>
+        <div class="surface-header"><h3 class="surface-title"><span class="surface-dot"></span> Machine controls</h3><span class="surface-meta">FACE MACHINE / 001</span></div>
+        <div class="control-intro"><p class="control-intro-kicker">Experiment no. 001</p><h3>Face Machine</h3><p>The machine is trying to reconstruct a face from incomplete instructions. Push the anatomy, distort the familiar, and keep just enough human detail to make it recognizable.</p></div>
         <div class="control-body">
           <div class="control-field"><div class="control-field-top"><label for="moodSelect">Expression</label><span class="control-value">01 / MOOD</span></div><div class="select-wrap"><select id="moodSelect"><option value="random">Unpredictable</option><option value="dissociated">Dissociated</option><option value="predatory">Predatory</option><option value="terrified">Terrified</option><option value="anguished">Anguished</option><option value="calm">Unnaturally calm</option><option value="blank">Expressionless</option></select></div></div>
           <div class="control-field"><div class="control-field-top"><label for="anatomySelect">Origin / anatomy</label><span class="control-value">02 / TYPE</span></div><div class="select-wrap"><select id="anatomySelect"><option value="random">Unknown / surprise</option><option value="abyssal">Abyssal organism</option><option value="insectoid">Insectoid</option><option value="porcelain">Living porcelain</option><option value="biomech">Bio-mechanical</option><option value="cosmic">Cosmic anomaly</option><option value="almost-human">Almost human</option><option value="flesh-mutation">Flesh mutation</option><option value="mineral">Mineral / bone</option></select></div></div>
           <div class="control-field"><div class="control-field-top"><label for="weirdnessRange">Uncanniness</label><output class="control-value" id="weirdnessValue" for="weirdnessRange">95%</output></div><input id="weirdnessRange" type="range" min="0" max="100" value="100"><div class="range-hints"><span>Unsettling</span><span>Deeply wrong</span></div></div>
           <div class="control-field"><div class="control-field-top"><label for="eyeLayoutSelect">Eye arrangement</label><span class="control-value">04 / GAZE</span></div><div class="select-wrap"><select id="eyeLayoutSelect"><option value="random">Unpredictable</option><option value="uneven">Uneven pair</option><option value="clustered">Clustered</option><option value="vertical">Vertical additions</option><option value="many">Multiple eyes</option><option value="embedded">Eyes beneath the skin</option></select></div></div>
           <div class="control-field"><div class="control-field-top"><label for="mouthSelect">Mouth mutation</label><span class="control-value">05 / VOICE</span></div><div class="select-wrap"><select id="mouthSelect"><option value="random">Unpredictable</option><option value="stretched">Stretched grin</option><option value="teeth">Crowded teeth</option><option value="vertical">Vertical opening</option><option value="sealed">Sealed seam</option><option value="double">Second mouth</option></select></div></div>
-          <div class="control-field"><div class="control-field-top"><span class="control-label">Face structure</span><span class="control-value">06 / FORM</span></div><div class="shape-options" role="group" aria-label="Choose face structure"><button class="shape-option" type="button" data-structure="soft" aria-pressed="false">Soft</button><button class="shape-option" type="button" data-structure="mixed" aria-pressed="true">Mixed</button><button class="shape-option" type="button" data-structure="angular" aria-pressed="false">Angular</button></div></div>
-          <div class="button-stack"><button class="action-button primary" id="generateBtn" type="button">↻ &nbsp; Generate a new face</button><button class="action-button" id="saveBtn" type="button">＋ &nbsp; Save specimen</button><button class="action-button" id="downloadBtn" type="button">↓ &nbsp; Export PNG</button></div>
+          <div class="control-field"><div class="control-field-top"><label for="eyeBehaviorSelect">Eye behaviour</label><span class="control-value">06 / PRESENCE</span></div><div class="select-wrap"><select id="eyeBehaviorSelect"><option value="natural">Unsettlingly natural</option><option value="restless">Restless / searching</option><option value="staring">Long, deliberate stares</option><option value="unblinking">Never blink</option></select></div><small class="tool-help">Each eye can blink and drift independently. Choose how it behaves.</small></div>
+          <div class="control-field"><div class="control-field-top"><span class="control-label">Face structure</span><span class="control-value">07 / FORM</span></div><div class="shape-options" role="group" aria-label="Choose face structure"><button class="shape-option" type="button" data-structure="soft" aria-pressed="false">Soft</button><button class="shape-option" type="button" data-structure="mixed" aria-pressed="true">Mixed</button><button class="shape-option" type="button" data-structure="angular" aria-pressed="false">Angular</button></div></div>
+          <div class="button-stack"><button class="action-button primary" id="generateBtn" type="button">↻ &nbsp; Generate a new face</button><button class="action-button" id="faceMotionBtn" type="button" aria-pressed="false">Ⅱ &nbsp; Pause movement</button><button class="action-button" id="saveBtn" type="button">＋ &nbsp; Save specimen</button><button class="action-button" id="downloadBtn" type="button">↓ &nbsp; Export PNG</button><button class="action-button" id="faceResetBtn" type="button">↺ &nbsp; Reset settings</button></div>
           <p class="control-note">Everything is generated locally in your browser. Nothing is uploaded. Saved specimens stay on this device.</p>
         </div>
       </section>
@@ -520,6 +538,7 @@
       "use strict";
 
       const STORAGE_KEY = "curioid-face-specimens-v2";
+      const FACE_SETTINGS_KEY = "curioid-face-settings-v1";
       const MAX_SAVED = 8;
       const CATEGORIES = [
         { id: "web-experiments", title: "Web Experiments", kicker: "01 / INTERACTIVE", description: "Browser-based experiments, curious machines and things to poke at.", rooms: ["oddity-lab", "gravity-garden", "pattern-engine", "echo-cabinet", "impossible-objects", "pixel-weather", "dream-index"] },
@@ -531,7 +550,7 @@
       ];
 
       const ROOM_INFO = {
-        "oddity-lab": { title: "Oddity Lab", mark: "01", icon: "◉", description: "Generate unfamiliar faces and questionable little beings", category: "web-experiments", live: true },
+        "oddity-lab": { title: "Face Machine", mark: "01", icon: "◉", description: "Generate almost-human faces that feel quietly alive", category: "web-experiments" },
         "gravity-garden": { title: "Gravity Garden", mark: "02", icon: "◌", description: "A tiny universe where physics is a suggestion", copy: "Build a miniature solar system, drag planets into place, change the speed and watch gravity pull their paths into unexpected orbits.", visual: "orbit" },
         "pattern-engine": { title: "Pattern Engine", mark: "03", icon: "▦", description: "Repeating shapes, broken symmetry and visual noise", copy: "Create repeating geometry, broken symmetry and intricate visual systems. Change the rules, randomize the composition and export a clean image.", visual: "pattern" },
         "echo-cabinet": { title: "Echo Cabinet", mark: "04", icon: "〰", description: "Little sound experiments and things you can see", copy: "Compose short rhythmic sequences with a 16-step synthesizer. Adjust tempo, tone and echo, then play or export the visual score.", visual: "wave" },
@@ -568,6 +587,7 @@
       let current = { seed: randomSeed(), mood: "random", weirdness: 100, structure: "mixed", anatomy: "random", eyeStyle: "random", mouthStyle: "random", number: 1 };
       let resolvedCurrent = null;
 
+      const rand = (min, max) => min + Math.random() * (max - min);
       function randomSeed() { return Math.floor(Math.random() * 900000000) + 100000000; }
       function seededRandom(seed) {
         let value = seed >>> 0;
@@ -673,7 +693,15 @@
         const stitches = weird > 82 && chance(rng,.26) ? `<path d="M ${n(ex-w*1.12)} ${n(ey)} l 9 -7 m -8 13 l 9 -7 M ${n(ex+w*.86)} ${n(ey)} l 8 -7 m -7 13 l 8 -7" stroke="${palette.light}" stroke-width="2.4" stroke-linecap="round"/>` : "";
         const extraPupils = weird > 88 && chance(rng,.22) ? `<circle cx="${n(ex+int(rng,-w*.35,w*.35))}" cy="${n(ey+int(rng,-h*.3,h*.3))}" r="${n(irisR*.19)}" fill="${palette.ink}"/>` : "";
         const expression = mood === "terrified" ? `<path d="M ${n(ex-w)} ${n(ey-h*1.45)} Q ${n(ex)} ${n(ey-h*2.05)} ${n(ex+w)} ${n(ey-h*1.45)}" fill="none" stroke="${palette.ink}" stroke-width="${n(size*.13)}" stroke-linecap="round"/>` : "";
-        return `<g transform="rotate(${n(tilt)} ${n(ex)} ${n(ey)})">${veins}${socket}${white}${iris}${extraPupils}${lid}${stitches}${expression}</g>`;
+        const blinkEnabled = chance(rng, weirdness > 78 ? .96 : .88);
+        const blinkDelay = -rand(0, 10).toFixed(2);
+        const blinkDuration = rand(5.8, 11.8).toFixed(2);
+        const gazeX = int(rng, -7, 7);
+        const gazeY = int(rng, -5, 5);
+        const gazeDelay = -rand(0, 9).toFixed(2);
+        const gazeDuration = rand(5.5, 12.5).toFixed(2);
+        const gaze = `<g class="face-gaze" style="--gaze-x:${gazeX}px;--gaze-y:${gazeY}px;--gaze-delay:${gazeDelay}s;--gaze-duration:${gazeDuration}s">${white}${iris}${extraPupils}</g>`;
+        return `<g transform="rotate(${n(tilt)} ${n(ex)} ${n(ey)})"><g class="face-eye-blink${blinkEnabled ? "" : " no-blink"}" style="--blink-delay:${blinkDelay}s;--blink-duration:${blinkDuration}s">${veins}${socket}${gaze}${lid}${stitches}${expression}</g></g>`;
       }
 
       function makeMouth(cx, y, palette, mood, rng, weirdness, requestedStyle = "random") {
@@ -863,18 +891,20 @@
         const skinNoise = weird > .55 ? `<path d="${head}" filter="url(#${prefix}-grain)" opacity=".2"/>` : "";
 
         return `<svg id="faceArt" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="An uncanny ${esc(ANATOMY_LABELS[anatomy] || anatomy)} face" class="face-art">
-          ${faceGradient}
-          <g opacity=".12"><circle cx="300" cy="300" r="237" fill="none" stroke="${palette.accent}" stroke-width="2"/><circle cx="300" cy="300" r="213" fill="none" stroke="${palette.light}" stroke-dasharray="2 11" stroke-width="2"/></g>
-          ${neck}${outerEars}${appendages}
-          <path d="${head}" fill="${palette.deep}" opacity=".48" transform="translate(0 10)"/>
-          ${faceBase}${crown}
-          <g clip-path="url(#${prefix}-clip)">
-            ${skinNoise}${markings}${extraAnatomy}${asymmetry}${cheekFolds}${scars}
-            ${eyeMarkup}${nose}${mouth.svg}${secondMouth}
+          <g class="face-breath">
+            ${faceGradient}
+            <g opacity=".12"><circle cx="300" cy="300" r="237" fill="none" stroke="${palette.accent}" stroke-width="2"/><circle cx="300" cy="300" r="213" fill="none" stroke="${palette.light}" stroke-dasharray="2 11" stroke-width="2"/></g>
+            ${neck}${outerEars}${appendages}
+            <path d="${head}" fill="${palette.deep}" opacity=".48" transform="translate(0 10)"/>
+            ${faceBase}${crown}
+            <g clip-path="url(#${prefix}-clip)">
+              ${skinNoise}${markings}${extraAnatomy}${asymmetry}${cheekFolds}${scars}
+              ${eyeMarkup}${nose}<g class="face-mouth-life">${mouth.svg}${secondMouth}</g>
+            </g>
+            <path d="${head}" fill="none" stroke="${palette.ink}" stroke-width="${stroke}" stroke-linejoin="round"/>
+            <g fill="none" stroke="${palette.accent}" stroke-width="3" opacity=".62"><path d="M ${n(cx-w*.73)} ${n(cy-h*.08)} q -16 12 -8 30"/><path d="M ${n(cx+w*.73)} ${n(cy-h*.08)} q 16 12 8 30"/></g>
+            <g fill="${palette.accent}" opacity=".75"><circle cx="${n(cx-w*.7)}" cy="${n(cy+h*.45)}" r="3.5"/><circle cx="${n(cx+w*.69)}" cy="${n(cy+h*.43)}" r="3.5"/></g>
           </g>
-          <path d="${head}" fill="none" stroke="${palette.ink}" stroke-width="${stroke}" stroke-linejoin="round"/>
-          <g fill="none" stroke="${palette.accent}" stroke-width="3" opacity=".62"><path d="M ${n(cx-w*.73)} ${n(cy-h*.08)} q -16 12 -8 30"/><path d="M ${n(cx+w*.73)} ${n(cy-h*.08)} q 16 12 8 30"/></g>
-          <g fill="${palette.accent}" opacity=".75"><circle cx="${n(cx-w*.7)}" cy="${n(cy+h*.45)}" r="3.5"/><circle cx="${n(cx+w*.69)}" cy="${n(cy+h*.43)}" r="3.5"/></g>
         </svg>`;
       }
 
@@ -953,6 +983,8 @@
         const stage = $("#faceArt", mount);
         if (!stage) throw new Error("The face display is not ready.");
         stage.outerHTML = svg;
+        const stageFrame = $("#faceStage", mount);
+        if (stageFrame) stageFrame.dataset.eyeBehavior = $("#eyeBehaviorSelect", mount)?.value || "natural";
         const name = specimenName(current);
         $("#specimenName", mount).textContent = name;
         $("#specimenMood", mount).textContent = settings.mood.replace(/-/g, " ");
@@ -1039,7 +1071,68 @@
       }
 
       function bindExperiment(mount) {
+        let savedSettings = {};
+        try { savedSettings = JSON.parse(localStorage.getItem(FACE_SETTINGS_KEY) || "{}") || {}; } catch (_) {}
+        const settingControls = {
+          mood: $("#moodSelect", mount),
+          anatomy: $("#anatomySelect", mount),
+          weirdness: $("#weirdnessRange", mount),
+          eyeStyle: $("#eyeLayoutSelect", mount),
+          mouthStyle: $("#mouthSelect", mount),
+          eyeBehavior: $("#eyeBehaviorSelect", mount),
+          structure: null
+        };
+        if (savedSettings && typeof savedSettings === "object") {
+          if (savedSettings.mood) settingControls.mood.value = savedSettings.mood;
+          if (savedSettings.anatomy) settingControls.anatomy.value = savedSettings.anatomy;
+          if (savedSettings.weirdness != null) settingControls.weirdness.value = String(savedSettings.weirdness);
+          if (savedSettings.eyeStyle) settingControls.eyeStyle.value = savedSettings.eyeStyle;
+          if (savedSettings.mouthStyle) settingControls.mouthStyle.value = savedSettings.mouthStyle;
+          if (savedSettings.eyeBehavior) settingControls.eyeBehavior.value = savedSettings.eyeBehavior;
+          if (savedSettings.structure) current.structure = savedSettings.structure;
+          if (savedSettings.motionPaused === true) $("#faceStage", mount).classList.add("face-motion-paused");
+        }
+        current.mood = settingControls.mood.value;
+        current.anatomy = settingControls.anatomy.value;
+        current.weirdness = Number(settingControls.weirdness.value);
+        current.eyeStyle = settingControls.eyeStyle.value;
+        current.mouthStyle = settingControls.mouthStyle.value;
+        function persistFaceSettings() {
+          const values = {
+            mood: settingControls.mood.value,
+            anatomy: settingControls.anatomy.value,
+            weirdness: Number(settingControls.weirdness.value),
+            eyeStyle: settingControls.eyeStyle.value,
+            mouthStyle: settingControls.mouthStyle.value,
+            eyeBehavior: settingControls.eyeBehavior.value,
+            structure: $(".shape-option[aria-pressed='true']", mount)?.dataset.structure || "mixed",
+            motionPaused: $("#faceStage", mount).classList.contains("face-motion-paused")
+          };
+          try { localStorage.setItem(FACE_SETTINGS_KEY, JSON.stringify(values)); } catch (_) {}
+        }
+        function applyEyeBehavior() {
+          $("#faceStage", mount).dataset.eyeBehavior = settingControls.eyeBehavior.value;
+          persistFaceSettings();
+        }
         const generateButton = $("#generateBtn", mount);
+        $("#faceResetBtn", mount).addEventListener("click", () => {
+          settingControls.mood.value = "random";
+          settingControls.anatomy.value = "random";
+          settingControls.weirdness.value = "100";
+          settingControls.eyeStyle.value = "random";
+          settingControls.mouthStyle.value = "random";
+          settingControls.eyeBehavior.value = "natural";
+          $$(".shape-option", mount).forEach(option => option.setAttribute("aria-pressed", String(option.dataset.structure === "mixed")));
+          $("#weirdnessValue", mount).textContent = "100%";
+          $("#faceStage", mount).classList.remove("face-motion-paused");
+          $("#faceMotionBtn", mount).setAttribute("aria-pressed", "false");
+          $("#faceMotionBtn", mount).textContent = "Ⅱ  Pause movement";
+          current.structure = "mixed";
+          applyEyeBehavior();
+          generateFace(mount);
+          persistFaceSettings();
+          showToast("Face Machine settings restored. Saved specimens remain in the drawer.");
+        });
         generateButton.addEventListener("click", () => {
           // Render in the next frame so the click always applies to the already-mounted experiment.
           generateButton.disabled = true;
@@ -1051,10 +1144,26 @@
         });
         $("#saveBtn", mount).addEventListener("click", () => saveCurrent(mount));
         $("#downloadBtn", mount).addEventListener("click", downloadPng);
-        $("#weirdnessRange", mount).addEventListener("input", event => { $("#weirdnessValue", mount).textContent = `${event.target.value}%`; });
+        $("#weirdnessRange", mount).addEventListener("input", event => { $("#weirdnessValue", mount).textContent = `${event.target.value}%`; current.weirdness = Number(event.target.value); });
+        [settingControls.mood, settingControls.anatomy, settingControls.eyeStyle, settingControls.mouthStyle].forEach(control => control.addEventListener("change", () => {
+          current.mood = settingControls.mood.value;
+          current.anatomy = settingControls.anatomy.value;
+          current.eyeStyle = settingControls.eyeStyle.value;
+          current.mouthStyle = settingControls.mouthStyle.value;
+          persistFaceSettings();
+        }));
+        settingControls.weirdness.addEventListener("change", persistFaceSettings);
+        settingControls.eyeBehavior.addEventListener("change", applyEyeBehavior);
+        $("#faceMotionBtn", mount).addEventListener("click", event => {
+          const paused = $("#faceStage", mount).classList.toggle("face-motion-paused");
+          event.currentTarget.setAttribute("aria-pressed", String(paused));
+          event.currentTarget.textContent = paused ? "▶  Resume movement" : "Ⅱ  Pause movement";
+          persistFaceSettings();
+        });
         $$(".shape-option", mount).forEach(button => button.addEventListener("click", () => {
           $$(".shape-option", mount).forEach(option => option.setAttribute("aria-pressed", String(option === button)));
           current.structure = button.dataset.structure;
+          persistFaceSettings();
         }));
         $("#clearArchiveBtn", mount).addEventListener("click", () => {
           if (!readSaved().length) { showToast("The specimen drawer is already empty."); return; }
@@ -1071,7 +1180,12 @@
         $("#weirdnessRange", mount).value = String(current.weirdness);
         $("#weirdnessValue", mount).textContent = `${current.weirdness}%`;
         $$(".shape-option", mount).forEach(option => option.setAttribute("aria-pressed", String(option.dataset.structure === current.structure)));
+        applyEyeBehavior();
+        const isPaused = $("#faceStage", mount).classList.contains("face-motion-paused");
+        $("#faceMotionBtn", mount).setAttribute("aria-pressed", String(isPaused));
+        $("#faceMotionBtn", mount).textContent = isPaused ? "▶  Resume movement" : "Ⅱ  Pause movement";
         updateFace(mount);
+        persistFaceSettings();
       }
 
       function futurePreviewSvg(type) {
@@ -1125,7 +1239,7 @@
         heading.type = "button";
         heading.setAttribute("aria-expanded", String(isOpen));
         heading.setAttribute("aria-controls", `body-${roomId}`);
-        heading.innerHTML = `<span class="room-icon" aria-hidden="true">${esc(info.icon)}</span><span class="room-number">${info.mark}</span><span class="room-name-wrap"><span class="room-name">${esc(info.title)}</span><span class="room-description">${esc(info.description)}</span></span><span class="room-state${info.live ? " live" : ""}">${isOpen ? "OPEN / LIVE" : (info.live ? "LIVE" : "READY")}</span><span class="room-chevron" aria-hidden="true">⌄</span>`;
+        heading.innerHTML = `<span class="room-icon" aria-hidden="true">${esc(info.icon)}</span><span class="room-number">${info.mark}</span><span class="room-name-wrap"><span class="room-name">${esc(info.title)}</span><span class="room-description">${esc(info.description)}</span></span><span class="room-state ${isOpen ? "open" : "closed"}" aria-label="${isOpen ? "Project open" : "Project closed"}">${isOpen ? "OPEN" : "CLOSED"}</span><span class="room-chevron" aria-hidden="true">⌄</span>`;
         const body = document.createElement("div");
         body.className = "room-body";
         body.id = `body-${roomId}`;
@@ -1204,10 +1318,20 @@
         body.hidden = !open;
         if (open) {
           loadRoom(room);
-          if (state) { state.textContent = roomId === "oddity-lab" ? "OPEN / LIVE" : "OPEN"; state.classList.toggle("live", roomId === "oddity-lab"); }
+          if (state) {
+            state.textContent = "OPEN";
+            state.classList.remove("closed");
+            state.classList.add("open");
+            state.setAttribute("aria-label", "Project open");
+          }
         } else {
           unloadRoom(room);
-          if (state) { state.textContent = roomId === "oddity-lab" ? "LIVE" : "READY"; state.classList.toggle("live", roomId === "oddity-lab"); }
+          if (state) {
+            state.textContent = "CLOSED";
+            state.classList.remove("open");
+            state.classList.add("closed");
+            state.setAttribute("aria-label", "Project closed");
+          }
         }
         const openCount = $$(".room-window.open").length;
         $("#topStatus").textContent = `${openCount} window${openCount === 1 ? "" : "s"} open`;
