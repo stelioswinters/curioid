@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101014">
   <meta name="description" content="CURIOID is a collection of strange interactive experiments, curious machines and digital oddities.">
-  <title>Face Machine — CURIOID</title>
+  <title>CURIOID</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 48 48%27%3E%3Crect width=%2748%27 height=%2748%27 rx=%2711%27 fill=%27%23101014%27/%3E%3Cpath d=%27M4.5 24C9.3 13.7 17.1 8.5 24 8.5S38.7 13.7 43.5 24C38.7 34.3 30.9 39.5 24 39.5S9.3 34.3 4.5 24Z%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%273.2%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%278.1%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%272.5%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%273.6%27 fill=%27%23d6ff69%27/%3E%3Cpath d=%27M32.5 14.5 37 10%27 stroke=%27%23d6ff69%27 stroke-width=%272.3%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
   <style>
     :root {
@@ -272,21 +272,25 @@
     .stage-corner.br { bottom: 13px; right: 14px; color: var(--acid); }
     .face-art { display: block; width: min(84%, 455px); max-height: 455px; aspect-ratio: 1; overflow: visible; filter: drop-shadow(0 24px 35px rgba(0,0,0,.56)) saturate(.88) contrast(1.08); animation: arrive .45s cubic-bezier(.2,.8,.2,1) both, faceBreath 8.8s ease-in-out .5s infinite; transform-origin: 50% 55%; }
     .results-word { color: var(--acid); letter-spacing: -.055em; text-shadow: 0 0 20px rgba(214,255,105,.09); }
-    .face-eye-blink { transform-box: fill-box; transform-origin: 50% 50%; transition: transform 78ms cubic-bezier(.2,.7,.2,1); }
-    .face-eye-blink.is-blinking { transform: scaleY(.035); opacity: .015; }
-    .face-eye-lid { opacity: 0; transition: opacity 45ms ease-out; pointer-events: none; }
-    .face-eye-blink.is-blinking + .face-eye-lid, .face-eye-lid.is-visible { opacity: 1 !important; }
+    /* Blinking is driven by CSS on each generated eye, not by project-window timers. */
+    .face-eye-blink { transform-box: fill-box; transform-origin: 50% 50%; animation: faceEyeBlink var(--blink-duration, 6s) ease-in-out var(--blink-delay, 0s) infinite; }
+    .face-eye-lid { opacity: 0; pointer-events: none; animation: faceEyeLid var(--blink-duration, 6s) ease-in-out var(--blink-delay, 0s) infinite; }
     .face-eye-lid path { vector-effect: non-scaling-stroke; }
     .face-eye-lid .face-eye-shut { fill-opacity: 1; stroke-width: 3.2px; }
-    .face-eye-lid { mix-blend-mode: normal; }
     .face-gaze { transform-box: fill-box; transform-origin: center; animation: faceGaze var(--gaze-duration, 12s) ease-in-out var(--gaze-delay, -2s) infinite; }
     .face-mouth-life { transform-box: fill-box; transform-origin: center; animation: faceMouth 7.5s ease-in-out infinite; }
-    .stage[data-eye-behavior="restless"] .face-eye-blink { animation-duration: calc(var(--blink-duration, 11s) * .58); }
+    .stage[data-eye-behavior="restless"] .face-eye-blink,
+    .stage[data-eye-behavior="restless"] .face-eye-lid { animation-duration: calc(var(--blink-duration, 8s) * .58); }
     .stage[data-eye-behavior="restless"] .face-gaze { animation-duration: calc(var(--gaze-duration, 12s) * .54); }
-    .stage[data-eye-behavior="staring"] .face-eye-blink { animation-duration: calc(var(--blink-duration, 11s) * 1.75); }
+    .stage[data-eye-behavior="staring"] .face-eye-blink,
+    .stage[data-eye-behavior="staring"] .face-eye-lid { animation-duration: calc(var(--blink-duration, 8s) * 1.75); }
     .stage[data-eye-behavior="staring"] .face-gaze { animation-duration: calc(var(--gaze-duration, 12s) * 1.6); }
-    .stage[data-eye-behavior="unblinking"] .face-eye-blink { animation: none; transform: none; }
+    .stage[data-eye-behavior="rare"] .face-eye-blink,
+    .stage[data-eye-behavior="rare"] .face-eye-lid { animation-duration: calc(var(--blink-duration, 8s) * 2.6); }
+    .stage[data-eye-behavior="unblinking"] .face-eye-blink,
+    .stage[data-eye-behavior="unblinking"] .face-eye-lid { animation: none; }
     .stage.face-motion-paused .face-eye-blink,
+    .stage.face-motion-paused .face-eye-lid,
     .stage.face-motion-paused .face-gaze,
     .stage.face-motion-paused .face-mouth-life,
     .stage.face-motion-paused .face-art { animation-play-state: paused !important; }
@@ -294,6 +298,8 @@
     @keyframes faceBreath { 0%,100% { transform: translateY(0) scale(1); } 48% { transform: translateY(-1.6px) scale(1.006,1.008); } }
     @keyframes faceGaze { 0%,18%,100% { transform: translate(0,0); } 43% { transform: translate(var(--gaze-x, 2px),var(--gaze-y, 1px)); } 66% { transform: translate(calc(var(--gaze-x, 2px) * -.55),calc(var(--gaze-y, 1px) * -.55)); } }
     @keyframes faceMouth { 0%,100% { transform: scaleY(1); } 46% { transform: scaleY(1.025); } 52% { transform: scaleY(.985); } }
+    @keyframes faceEyeBlink { 0%, 54%, 63%, 100% { transform: scaleY(1); } 56%, 60% { transform: scaleY(.025); } }
+    @keyframes faceEyeLid { 0%, 54%, 100% { opacity: 0; } 56%, 60% { opacity: 1; } 63% { opacity: 0; } }
     .stage-caption { display: flex; align-items: center; justify-content: space-between; gap: 11px; padding: 12px 2px 0; color: #8f8d99; font-size: 10px; }
     .stage-caption strong { color: #e6e4df; font-weight: 720; }
     .stage-code { color: var(--acid); font: 9px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
@@ -428,6 +434,10 @@
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      /* Eye blinks are brief, localized and retained at a slower cadence for clarity. */
+      .face-eye-blink { animation: faceEyeBlink 8.5s ease-in-out var(--blink-delay, 0s) infinite !important; }
+      .face-eye-lid { animation: faceEyeLid 8.5s ease-in-out var(--blink-delay, 0s) infinite !important; }
+      .face-gaze, .face-mouth-life, .face-art { animation: none !important; }
     }
   </style>
   <link rel="stylesheet" href="projects.css">
@@ -471,26 +481,26 @@
 
     <div class="sidebar-bottom">
       <div class="sidebar-note">
-        <div class="sidebar-note-title">A cabinet of curiosities</div>
+        <div class="sidebar-note-title">HOW TO EXPLORE</div>
         <p>Experiments, visual ideas, tiny worlds and useful oddities. Open a project window, explore, then close it when you're done.</p>
       </div>
       <a class="portfolio-link" href="https://stelioswinters.github.io" target="_blank" rel="noopener noreferrer">
         <span>Visit the artist's website</span><span aria-hidden="true">↗</span>
       </a>
-      <div class="sidebar-foot">Independent creative projects</div>
+      <div class="sidebar-foot">STELIOS WINTERS CREATIVE PROJECTS</div>
     </div>
   </aside>
 
   <main class="main" id="top">
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false">☰</button>
-      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context">A playground for unusual ideas</span></div>
+      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">40 Projects</span></div>
       <div class="topbar-right"><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
     </header>
 
     <div class="page-wrap">
       <section class="hero" aria-labelledby="heroTitle">
-        <p class="hero-kicker">The curious side of the internet</p>
+        <p class="hero-kicker">THE PROJECT INDEX</p>
         <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> <span class="results-word">results.</span></h1>
         <div class="hero-bottom">
           <p class="hero-copy">A growing collection of unusual projects, visual experiments, tiny games and curious tools. Nothing to install. Nothing to take too seriously. Open a window and see what happens.</p>
@@ -499,7 +509,7 @@
       <hr class="section-rule">
       <div class="rooms-label"><span>Explore the collections</span><span>Open a project window to begin</span></div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · An independent creative playground</span><span>Made for curiosity, not productivity.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground</span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -551,10 +561,10 @@
       const MAX_SAVED = 8;
       const CATEGORIES = [
         { id: "web-experiments", title: "Web Experiments", kicker: "01 / INTERACTIVE", description: "Browser-based experiments, curious machines and things to poke at.", rooms: ["oddity-lab", "gravity-garden", "pattern-engine", "echo-cabinet", "impossible-objects", "pixel-weather", "dream-index"] },
-        { id: "digital-art", title: "Digital Art", kicker: "02 / VISUAL", description: "Generative images, strange compositions and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio"] },
-        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["pocket-universe", "one-button-ritual", "last-corridor"] },
-        { id: "sound-motion", title: "Sound & Motion", kicker: "04 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "noise-choir"] },
-        { id: "strange-archives", title: "Strange Archives", kicker: "05 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "dead-interface", "unbuilt-tomorrow"] },
+        { id: "digital-art", title: "Digital Art", kicker: "02 / VISUAL", description: "Generative images, strange compositions and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather"] },
+        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers"] },
+        { id: "sound-motion", title: "Sound & Motion", kicker: "04 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "noise-choir", "listening-room", "orbit-choir"] },
+        { id: "strange-archives", title: "Strange Archives", kicker: "05 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "dead-interface", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors"] },
         { id: "creative-tools", title: "Creative Tools", kicker: "06 / UTILITIES", description: "Odd little helpers for making, arranging and transforming things.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio"] }
       ];
 
@@ -567,17 +577,29 @@
         "pixel-weather": { title: "Pixel Weather", mark: "06", icon: "☼", description: "Tiny digital climates from places off the map", copy: "Generate miniature climates from imaginary places. Change the atmosphere, shift the weather and export a snapshot of the forecast.", visual: "weather" },
         "dream-index": { title: "Dream Index", mark: "07", icon: "✳", description: "A visual index of places that never existed", copy: "Explore a set of invented locations, inspect details and collect fragments from places that feel like memories you never made.", visual: "dream" },
 
+        "faultline-portrait": { title: "Faultline Portrait", mark: "04", icon: "◍", description: "Portraits assembled from misaligned pieces of memory", copy: "Build a fractured portrait from contour bands, displaced features and geological color layers. Push the face toward abstraction without losing its uneasy likeness, then export a high-resolution image.", visual: "paint" },
+        "velvet-weather": { title: "Velvet Weather", mark: "05", icon: "☁", description: "A forecast for skies that do not occur naturally", copy: "Generate slow-moving atmospheric landscapes with impossible cloud formations, unfamiliar horizons and weather systems that behave almost correctly.", visual: "weather" },
+
         "chromatic-fossils": { title: "Chromatic Fossils", mark: "01", icon: "◈", description: "Color studies that look excavated from another world", copy: "Layered color fields, strange material studies and abstract compositions with the feeling of found objects. Build layered geological color compositions, adjust the strata and export an original digital artwork.", visual: "paint" },
         "organic-errors": { title: "Organic Errors", mark: "02", icon: "✣", description: "Beautiful accidents, warped forms and digital growths", copy: "Grow branching forms and cellular structures, mutate their patterns and export the moments when the system almost becomes something familiar.", visual: "organic" },
         "afterimage-studio": { title: "Afterimage Studio", mark: "03", icon: "▤", description: "Layered images, visual echoes and color ghosts", copy: "Load an image locally and create echoes, offsets, grain and color ghosts. Your source image stays in your browser.", visual: "afterimage" },
+
+        "borrowed-gravity": { title: "Borrowed Gravity", mark: "04", icon: "↕", description: "A courier game where the floor keeps changing sides", copy: "Navigate a sealed test chamber by shifting gravity between the floor and ceiling. Collect every light fragment and reach the exit without touching the moving hazards.", visual: "game" },
+        "room-remembers": { title: "The Room Remembers", mark: "05", icon: "▦", description: "A memory game where the pattern changes its mind", copy: "Watch a sequence of rooms light up, then repeat it. The room grows longer each round, and a familiar tile may not mean the same thing twice.", visual: "corridor" },
 
         "pocket-universe": { title: "Pocket Universe", mark: "01", icon: "◎", description: "A tiny playable world with its own rules", copy: "Pilot a tiny courier through a miniature gravitational field, collect seven light fragments and find the exit without losing your hull.", visual: "game" },
         "one-button-ritual": { title: "One-Button Ritual", mark: "02", icon: "◉", description: "A game controlled by one button and bad decisions", copy: "A precision timing game controlled by one button. Read the moving mark, commit at the right moment and see how long your streak lasts.", visual: "button" },
         "last-corridor": { title: "The Last Corridor", mark: "03", icon: "⌁", description: "A strange little journey through one changing space", copy: "Navigate a corridor with three choices, collect clues and notice what changes when you repeat the same decision.", visual: "corridor" },
 
+        "listening-room": { title: "The Listening Room", mark: "04", icon: "◖", description: "A room that turns nearby sound into moving architecture", copy: "Use your microphone to turn live sound into an evolving visual instrument. Audio stays in your browser and is never recorded or uploaded.", visual: "wave" },
+        "orbit-choir": { title: "Orbit Choir", mark: "05", icon: "◎", description: "Three voices circling the same note without agreeing", copy: "Build an evolving ambient chord from three orbiting oscillators. Change their paths, tuning and speed, then listen to the harmony almost settle.", visual: "sound" },
+
         "frequency-garden": { title: "Frequency Garden", mark: "01", icon: "〰", description: "Living shapes that respond to sound", copy: "Plant tone-generating blooms in a responsive sound garden. Their positions decide pitch, while the controls shape the sound.", visual: "wave" },
         "motion-residue": { title: "Motion Residue", mark: "02", icon: "⌁", description: "Movement that leaves strange traces behind", copy: "Draw with a mouse, finger or pen. Build mirrored trails and motion echoes, then export the resulting composition.", visual: "afterimage" },
         "noise-choir": { title: "Noise Choir", mark: "03", icon: "♬", description: "A small orchestra of strange sounds", copy: "Arrange five synthetic voices into an atmospheric chord, tune their intervals and reverb, and listen to the result.", visual: "sound" },
+
+        "missing-minutes": { title: "The Office of Missing Minutes", mark: "04", icon: "◷", description: "A public records office for time that went missing", copy: "Search reports from people who lost small portions of their day. Claim a record, inspect the circumstances and see what the office has decided to call it.", visual: "interface" },
+        "unreturned-doors": { title: "The Registry of Unreturned Doors", mark: "05", icon: "▯", description: "A building directory where some rooms are not on the plan", copy: "Inspect a directory of unusual doors, open their entries and discover the rooms behind them. The registry remembers which doors you have visited.", visual: "corridor" },
 
         "museum-almost": { title: "Museum of Almost Real Things", mark: "01", icon: "▣", description: "A collection of objects with invented histories", copy: "Browse eight fictional artifacts with detailed acquisition records, object descriptions and notes from the collection staff.", visual: "museum" },
         "dead-interface": { title: "Dead Interface Archive", mark: "02", icon: "▤", description: "Interfaces from software that never existed", copy: "Explore a simulated late-90s computer, open its applications and inspect the notes, mail, paint program and unfamiliar drives.", visual: "interface" },
@@ -605,7 +627,6 @@
       let subjectNumber = 1;
       let current = { seed: randomSeed(), mood: "random", weirdness: 100, structure: "mixed", anatomy: "random", eyeStyle: "random", mouthStyle: "random", number: 1 };
       let resolvedCurrent = null;
-      const faceBlinkControllers = new WeakMap();
 
       const rand = (min, max) => min + Math.random() * (max - min);
       function randomSeed() { return Math.floor(Math.random() * 900000000) + 100000000; }
@@ -717,9 +738,13 @@
         const gazeY = int(rng, -5, 5);
         const gazeDelay = -rand(0, 9).toFixed(2);
         const gazeDuration = rand(5.5, 12.5).toFixed(2);
+        // Different duration and phase per eye make the blink independent and visibly staggered.
+        const blinkDuration = (4.2 + (index % 4) * .62 + Math.random() * .9).toFixed(2);
+        const blinkDelay = (-(index * .83 + Math.random() * 3.7)).toFixed(2);
+        const blinkStyle = `--blink-duration:${blinkDuration}s;--blink-delay:${blinkDelay}s`;
         const gaze = `<g class="face-gaze" style="--gaze-x:${gazeX}px;--gaze-y:${gazeY}px;--gaze-delay:${gazeDelay}s;--gaze-duration:${gazeDuration}s">${white}${iris}${extraPupils}</g>`;
         const shutLid = `<path class="face-eye-shut" d="M ${n(ex-w*1.08)} ${n(ey)} Q ${n(ex)} ${n(ey-h*.35)} ${n(ex+w*1.08)} ${n(ey)} Q ${n(ex)} ${n(ey+h*.72)} ${n(ex-w*1.08)} ${n(ey)}Z" fill="${palette.skin}" stroke="${palette.ink}" stroke-width="${n(Math.max(2,size*.1))}" stroke-linejoin="round"/><path class="face-eye-shut" d="M ${n(ex-w*.78)} ${n(ey+2)} Q ${n(ex)} ${n(ey+h*.45)} ${n(ex+w*.78)} ${n(ey+2)}" fill="none" stroke="${palette.light}" stroke-width="${n(Math.max(1.5,size*.045))}"/>`;
-        return `<g transform="rotate(${n(tilt)} ${n(ex)} ${n(ey)})"><g class="face-eye-blink" data-eye-live="true">${veins}${socket}${gaze}${lid}${stitches}${expression}</g><g class="face-eye-lid">${shutLid}</g></g>`;
+        return `<g transform="rotate(${n(tilt)} ${n(ex)} ${n(ey)})"><g class="face-eye-blink" data-eye-live="true" style="${blinkStyle}">${veins}${socket}${gaze}${lid}${stitches}${expression}</g><g class="face-eye-lid" style="${blinkStyle}">${shutLid}</g></g>`;
       }
 
       function makeMouth(cx, y, palette, mood, rng, weirdness, requestedStyle = "random") {
@@ -1003,8 +1028,6 @@
         stage.outerHTML = svg;
         const stageFrame = $("#faceStage", mount);
         if (stageFrame) stageFrame.dataset.eyeBehavior = $("#eyeBehaviorSelect", mount)?.value || "natural";
-        const blinkController = faceBlinkControllers.get(mount);
-        if (blinkController) blinkController.restart();
         const name = specimenName(current);
         $("#specimenName", mount).textContent = name;
         $("#specimenMood", mount).textContent = settings.mood.replace(/-/g, " ");
@@ -1092,53 +1115,6 @@
 
       function bindExperiment(mount) {
         let savedSettings = {};
-        const blinkController = (() => {
-          const timers = new Set();
-          let generation = 0, disposed = false;
-          const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          const clear = () => { timers.forEach(timer => clearTimeout(timer)); timers.clear(); };
-          const later = (callback, delay) => {
-            const id = setTimeout(() => { timers.delete(id); callback(); }, delay);
-            timers.add(id);
-            return id;
-          };
-          function restart() {
-            clear();
-            generation++;
-            const token = generation;
-            const stage = $("#faceStage", mount);
-            if (disposed || reducedMotion || !stage || stage.classList.contains("face-motion-paused")) return;
-            if (stage.dataset.eyeBehavior === "unblinking") return;
-            const eyes = $$(".face-eye-blink[data-eye-live='true']", mount);
-            const behavior = stage.dataset.eyeBehavior || "natural";
-            const delays = behavior === "restless" ? [1200, 2800] : behavior === "staring" ? [4500, 8200] : behavior === "rare" ? [9000, 15000] : [2300, 5200];
-            const blink = (eye, isDouble = false) => {
-              if (disposed || token !== generation || !eye.isConnected || stage.classList.contains("face-motion-paused")) return;
-              const lid = eye.nextElementSibling && eye.nextElementSibling.classList.contains("face-eye-lid") ? eye.nextElementSibling : null;
-              eye.classList.add("is-blinking");
-              if (lid) lid.classList.add("is-visible");
-              later(() => {
-                eye.classList.remove("is-blinking");
-                if (lid) lid.classList.remove("is-visible");
-                if (disposed || token !== generation || !eye.isConnected) return;
-                if (!isDouble && Math.random() < .16) {
-                  later(() => blink(eye, true), 125 + Math.random() * 90);
-                } else schedule(eye);
-              }, 190 + Math.random() * 45);
-            };
-            const schedule = eye => {
-              if (disposed || token !== generation || !eye.isConnected) return;
-              later(() => blink(eye, false), delays[0] + Math.random() * (delays[1] - delays[0]));
-            };
-            // Each eye has its own independent phase and recurrence, so blinks never move as a pair.
-            eyes.forEach((eye, index) => {
-              const stagger = index * (420 + Math.random() * 820);
-              later(() => blink(eye, false), 850 + Math.random() * 1700 + stagger);
-            });
-          }
-          return { restart, dispose() { disposed = true; generation++; clear(); } };
-        })();
-        faceBlinkControllers.set(mount, blinkController);
         try { savedSettings = JSON.parse(localStorage.getItem(FACE_SETTINGS_KEY) || "{}") || {}; } catch (_) {}
         const settingControls = {
           mood: $("#moodSelect", mount),
@@ -1179,7 +1155,6 @@
         }
         function applyEyeBehavior() {
           $("#faceStage", mount).dataset.eyeBehavior = settingControls.eyeBehavior.value;
-          blinkController.restart();
           persistFaceSettings();
         }
         const generateButton = $("#generateBtn", mount);
@@ -1226,7 +1201,6 @@
           const paused = $("#faceStage", mount).classList.toggle("face-motion-paused");
           event.currentTarget.setAttribute("aria-pressed", String(paused));
           event.currentTarget.textContent = paused ? "▶  Resume movement" : "Ⅱ  Pause movement";
-          blinkController.restart();
           persistFaceSettings();
         });
         $$(".shape-option", mount).forEach(button => button.addEventListener("click", () => {
@@ -1255,7 +1229,7 @@
         $("#faceMotionBtn", mount).textContent = isPaused ? "▶  Resume movement" : "Ⅱ  Pause movement";
         updateFace(mount);
         persistFaceSettings();
-        return () => { blinkController.dispose(); faceBlinkControllers.delete(mount); };
+        return () => {};
       }
 
       function futurePreviewSvg(type) {
@@ -1322,7 +1296,17 @@
         return article;
       }
 
+      function updateProjectCount() {
+        // The count is derived from the category registry, so new rooms update it automatically.
+        const total = CATEGORIES.reduce((sum, category) => sum + category.rooms.length, 0);
+        const count = $("#projectCount");
+        if (count) count.textContent = `${total} Projects`;
+        document.documentElement.dataset.projectCount = String(total);
+        return total;
+      }
+
       function renderCategories() {
+        updateProjectCount();
         const host = $("#categorySections");
         host.replaceChildren();
         CATEGORIES.forEach(category => {
@@ -1422,12 +1406,21 @@
       }
 
       function setActiveCategory(categoryId) {
+        let activeButton = null;
         $$(".nav-item[data-category]").forEach(button => {
           const active = button.dataset.category === categoryId;
           button.classList.toggle("active", active);
-          if (active) button.setAttribute("aria-current", "location");
+          if (active) { button.setAttribute("aria-current", "location"); activeButton = button; }
           else button.removeAttribute("aria-current");
         });
+        // Keep the active category visible inside the scrollable sidebar without moving the page.
+        if (activeButton) {
+          const sidebar = $("#sidebar");
+          const sideRect = sidebar.getBoundingClientRect();
+          const itemRect = activeButton.getBoundingClientRect();
+          if (itemRect.top < sideRect.top + 8) sidebar.scrollTop -= (sideRect.top + 8 - itemRect.top);
+          else if (itemRect.bottom > sideRect.bottom - 8) sidebar.scrollTop += (itemRect.bottom - (sideRect.bottom - 8));
+        }
       }
 
       function closeMenu() {
@@ -1474,14 +1467,29 @@
       // Render lightweight category/project headings before observing their scroll positions.
       renderCategories();
 
-      // Keep the sidebar category indicator in sync as visitors scroll the page.
-      if ("IntersectionObserver" in window) {
-        const categoryObserver = new IntersectionObserver(entries => {
-          const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio-a.intersectionRatio)[0];
-          if (visible) setActiveCategory(visible.target.dataset.categorySection);
-        }, { rootMargin: "-18% 0px -64% 0px", threshold: [0, .1, .25, .5] });
-        $$(".category-section").forEach(section => categoryObserver.observe(section));
+      // Track the section crossing a fixed reading line. Unlike an IntersectionObserver
+      // callback limited to newly changed entries, this always compares every section.
+      let categoryScrollFrame = 0;
+      function syncActiveCategoryToScroll() {
+        if (categoryScrollFrame) return;
+        categoryScrollFrame = requestAnimationFrame(() => {
+          categoryScrollFrame = 0;
+          const sections = $$(".category-section");
+          if (!sections.length) return;
+          const readingLine = Math.max(105, Math.min(250, window.innerHeight * .34));
+          let active = sections[0];
+          for (const section of sections) {
+            if (section.getBoundingClientRect().top <= readingLine) active = section;
+            else break;
+          }
+          const atPageBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
+          if (atPageBottom) active = sections[sections.length - 1];
+          setActiveCategory(active.dataset.categorySection);
+        });
       }
+      window.addEventListener("scroll", syncActiveCategoryToScroll, { passive: true });
+      window.addEventListener("resize", syncActiveCategoryToScroll, { passive: true });
+      syncActiveCategoryToScroll();
 
       // Project content is mounted only when its own window is opened.
       const firstRoom = $(".room-window[data-room='oddity-lab']");
