@@ -379,3 +379,48 @@
   .memory-game-grid { gap:5px; }
   .door-registry-grid { grid-template-columns:1fr; }
 }
+
+/* Additional release rooms: compact, tactile interfaces with shared CURIOID language. */
+.rule-garden-canvas,.pendulum-choir-canvas,.strata-loom-canvas,.negative-space-canvas,.moth-census-canvas,.tide-signal-canvas,.print-room-canvas,.poster-press-canvas { touch-action: pan-y; }
+.lift-board { display:grid; grid-template-columns:minmax(110px,.65fr) minmax(180px,1fr); gap:10px; padding:14px; border:1px solid var(--line); border-radius:10px; background:linear-gradient(145deg,#181b24,#11131a); }
+.lift-screen { display:grid; align-content:center; justify-items:center; min-height:120px; border:1px solid #4b5360; border-radius:8px; background:radial-gradient(circle at 50% 20%,#2b3945,#111820 72%); box-shadow:inset 0 0 28px #0008; }
+.lift-screen>span,.lift-screen>small,.lift-mission>span { color:#9da8a8; font:8px ui-monospace,monospace; letter-spacing:.13em; }
+.lift-screen strong { color:var(--acid); font:800 48px ui-monospace,monospace; line-height:1.1; text-shadow:0 0 18px #d6ff6944; }
+.lift-mission { display:grid; align-content:center; gap:8px; min-width:0; padding:12px; border:1px solid var(--line); border-radius:8px; background:#1a1b23; }
+.lift-mission strong { color:#f0edf2; font-size:18px; letter-spacing:.06em; }
+.lift-mission small { color:#a09daa; font-size:10px; line-height:1.55; }
+.lift-stats { grid-column:1/-1; display:flex; justify-content:space-between; gap:10px; padding:8px 2px 3px; color:#96939f; font:8px ui-monospace,monospace; letter-spacing:.12em; }
+.lift-stats b { color:var(--acid); font-size:11px; }
+.lift-floor-grid { grid-column:1/-1; display:grid; grid-template-columns:repeat(13,minmax(0,1fr)); gap:4px; }
+.lift-floor-grid button { min-width:0; min-height:34px; border:1px solid #43434e; border-radius:5px; background:#20212a; color:#b9b7c0; font:9px ui-monospace,monospace; cursor:pointer; }
+.lift-floor-grid button:hover:not(:disabled) { border-color:var(--acid); color:var(--text); }
+.lift-floor-grid button.current { border-color:var(--acid); background:#29311e; color:var(--acid); box-shadow:inset 0 0 12px #d6ff6918; }
+.lift-floor-grid button:disabled { opacity:.55; cursor:not-allowed; }
+.atlas-shell { display:grid; gap:9px; }
+.atlas-toolbar { display:grid; grid-template-columns:minmax(0,1fr) minmax(120px,.45fr); gap:7px; }
+.atlas-toolbar input,.atlas-toolbar select { width:100%; min-width:0; min-height:36px; padding:8px 10px; border:1px solid #42414c; border-radius:7px; outline:none; background:#181820; color:#e8e5ec; font:10px system-ui,sans-serif; }
+.atlas-toolbar input:focus,.atlas-toolbar select:focus { border-color:var(--acid); }
+.atlas-columns { display:grid; grid-template-columns:minmax(130px,.85fr) minmax(0,1.15fr); gap:9px; min-height:260px; }
+.atlas-list { max-height:350px; overflow:auto; display:grid; align-content:start; gap:4px; padding:5px; border:1px solid var(--line); border-radius:8px; background:#14141b; }
+.atlas-entry { display:grid; gap:3px; padding:8px; border:1px solid transparent; border-radius:6px; background:#1b1b23; color:#d8d5de; text-align:left; cursor:pointer; }
+.atlas-entry:hover,.atlas-entry.active { border-color:#606d43; background:#22271d; }
+.atlas-entry span,.atlas-entry small { color:#8b8997; font:7px ui-monospace,monospace; letter-spacing:.08em; }
+.atlas-entry strong { overflow-wrap:anywhere; font-size:10px; }
+.atlas-entry small { color:var(--acid); }
+.atlas-detail { align-self:start; min-height:220px; padding:15px; border:1px solid var(--line); border-radius:8px; background:linear-gradient(155deg,#20202a,#17171e); }
+.atlas-detail h4 { margin:6px 0 10px; color:#f1edf2; font-size:19px; line-height:1.15; }
+.atlas-detail>p:not(.tool-eyebrow) { color:#b5b1bf; font-size:10px; line-height:1.75; }
+.atlas-detail .tool-button { width:100%; margin-top:7px; }
+.moth-stats { display:flex; justify-content:space-between; gap:8px; padding:8px 2px; color:#92909d; font:8px ui-monospace,monospace; letter-spacing:.1em; }
+.moth-stats b { color:var(--acid); font-size:11px; }
+.lift-board + .tool-button-row,.atlas-shell + .tool-button-row { margin-top:10px; }
+@media (max-width:680px) {
+  .lift-board { grid-template-columns:1fr; }
+  .lift-screen { min-height:95px; }
+  .lift-floor-grid { grid-template-columns:repeat(7,minmax(0,1fr)); }
+  .atlas-toolbar { grid-template-columns:1fr; }
+  .atlas-columns { grid-template-columns:1fr; }
+  .atlas-list { max-height:190px; }
+  .atlas-detail { min-height:170px; }
+  .moth-stats { flex-wrap:wrap; }
+}

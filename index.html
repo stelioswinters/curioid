@@ -454,7 +454,7 @@
           <path d="M32.5 14.5 37 10" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
         </svg>
       </span>
-      <span><span class="brand-word">CURIOID</span><span class="brand-caption">A place for curious things</span></span>
+      <span><span class="brand-word">CURIOID</span><span class="brand-caption">A place for all<br><span>things curious</span></span></span>
     </a>
 
     <p class="sidebar-section-label">Collections</p>
@@ -481,8 +481,8 @@
 
     <div class="sidebar-bottom">
       <div class="sidebar-note">
-        <div class="sidebar-note-title">HOW TO EXPLORE</div>
-        <p>Experiments, visual ideas, tiny worlds and useful oddities. Open a project window, explore, then close it when you're done.</p>
+        <div class="sidebar-note-title">CABINET OF CURIOSITIES</div>
+        <p>A small cabinet of experiments, visual ideas, tiny worlds and useful oddities. Open a project window and see what happens.</p>
       </div>
       <a class="portfolio-link" href="https://stelioswinters.github.io" target="_blank" rel="noopener noreferrer">
         <span>Visit the artist's website</span><span aria-hidden="true">↗</span>
@@ -494,7 +494,7 @@
   <main class="main" id="top">
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false">☰</button>
-      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">40 Projects</span></div>
+      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">50 Projects</span></div>
       <div class="topbar-right"><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
     </header>
 
@@ -560,12 +560,12 @@
       const FACE_SETTINGS_KEY = "curioid-face-settings-v1";
       const MAX_SAVED = 8;
       const CATEGORIES = [
-        { id: "web-experiments", title: "Web Experiments", kicker: "01 / INTERACTIVE", description: "Browser-based experiments, curious machines and things to poke at.", rooms: ["oddity-lab", "gravity-garden", "pattern-engine", "echo-cabinet", "impossible-objects", "pixel-weather", "dream-index"] },
-        { id: "digital-art", title: "Digital Art", kicker: "02 / VISUAL", description: "Generative images, strange compositions and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather"] },
-        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers"] },
-        { id: "sound-motion", title: "Sound & Motion", kicker: "04 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "noise-choir", "listening-room", "orbit-choir"] },
-        { id: "strange-archives", title: "Strange Archives", kicker: "05 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "dead-interface", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors"] },
-        { id: "creative-tools", title: "Creative Tools", kicker: "06 / UTILITIES", description: "Odd little helpers for making, arranging and transforming things.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio"] }
+        { id: "web-experiments", title: "Web Experiments", kicker: "01 / INTERACTIVE", description: "Browser-based experiments, curious machines and things to poke at.", rooms: ["oddity-lab", "gravity-garden", "pattern-engine", "echo-cabinet", "impossible-objects", "pixel-weather", "dream-index", "rule-garden", "pendulum-choir"] },
+        { id: "digital-art", title: "Digital Art", kicker: "02 / VISUAL", description: "Generative images, strange compositions and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather", "strata-loom", "negative-space"] },
+        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers", "unreliable-lift", "moth-census"] },
+        { id: "sound-motion", title: "Sound & Motion", kicker: "04 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "noise-choir", "listening-room", "orbit-choir", "tide-signal"] },
+        { id: "strange-archives", title: "Strange Archives", kicker: "05 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "dead-interface", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
+        { id: "creative-tools", title: "Creative Tools", kicker: "06 / UTILITIES", description: "Odd little helpers for making, arranging and transforming things.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio", "print-room", "poster-press"] }
       ];
 
       const ROOM_INFO = {
@@ -617,7 +617,17 @@
         "contact-sheet": { title: "Contact Sheet", mark: "10", icon: "▦", description: "Turn a folder of images into a clean visual index", copy: "Select a batch of local images, arrange them into a labelled contact sheet, adjust spacing and export a print-ready PNG.", visual: "type" },
         "pixel-sort-lab": { title: "Pixel Sort Lab", mark: "11", icon: "▥", description: "Reorder image pixels into controlled visual distortions", copy: "Sort selected pixel runs by luminance, hue or saturation. Compare vertical and horizontal passes, tune thresholds and export the altered image.", visual: "afterimage" },
         "shape-composer": { title: "Shape Composer", mark: "12", icon: "◇", description: "Compose bold abstract graphics from modular geometry", copy: "Build a layered graphic from repeatable shapes, symmetry, palette and controlled chaos. Export crisp large-format artwork.", visual: "object" },
-        "icon-set-studio": { title: "Icon Set Studio", mark: "13", icon: "⌘", description: "Design a coherent family of tiny interface symbols", copy: "Set a shared stroke, grid and visual language, generate a 12-icon family and export a reusable SVG sprite sheet.", visual: "interface" }
+        "icon-set-studio": { title: "Icon Set Studio", mark: "13", icon: "⌘", description: "Design a coherent family of tiny interface symbols", copy: "Set a shared stroke, grid and visual language, generate a 12-icon family and export a reusable SVG sprite sheet.", visual: "interface" },
+        "rule-garden": { title: "Rule Garden", mark: "08", icon: "▥", description: "Grow intricate worlds from a handful of local rules", copy: "Choose a cellular automaton rule, seed a small disturbance and watch a simple row of cells unfold into an intricate visual system.", visual: "pattern" },
+        "pendulum-choir": { title: "Pendulum Choir", mark: "09", icon: "〰", description: "A field of pendulums that gradually lose agreement", copy: "Tune gravity, coupling and the number of pendulums. Watch their paths braid together, then export a trace of the movement.", visual: "wave" },
+        "strata-loom": { title: "Strata Loom", mark: "06", icon: "▧", description: "Weave a surface from bands, threads and imperfect tension", copy: "Generate woven surfaces with variable warp, weft, knots, slippage and material palettes. Save a seamless-looking visual study as an image.", visual: "paint" },
+        "negative-space": { title: "Negative Space Department", mark: "07", icon: "◩", description: "Make a composition from the parts that are missing", copy: "Cut holes, windows and shifting silhouettes from a layered poster field. Adjust the balance of positive and negative space, then export.", visual: "object" },
+        "unreliable-lift": { title: "Unreliable Lift", mark: "06", icon: "↕", description: "Deliver passengers through a building with uncertain floors", copy: "Read the destination requests, choose the lift route and try to complete the run before the floor indicators begin to disagree.", visual: "game" },
+        "moth-census": { title: "Moth Census", mark: "07", icon: "✦", description: "Count the visitors that gather around a very strange lamp", copy: "A short observation game. Identify moths among decoys, build a streak and keep the census alive until the lamp changes its mind.", visual: "game" },
+        "tide-signal": { title: "Tide Signal", mark: "06", icon: "≈", description: "A small radio that listens to a tide that is not on a map", copy: "Shape a local ambient signal using slow oscillators, filters and modulated noise. It only makes sound after you start it.", visual: "sound" },
+        "atlas-unclaimed": { title: "Atlas of Unclaimed Names", mark: "06", icon: "⌖", description: "A registry of places that have names but no confirmed locations", copy: "Search an archive of invented place names, inspect their notes and claim entries for a local collection.", visual: "archive" },
+        "print-room": { title: "Print Room", mark: "14", icon: "▤", description: "Turn ordinary images into strange print processes", copy: "Apply risograph, overprint, halftone, photocopy and threshold treatments to a sample or local image. Everything happens in your browser.", visual: "afterimage" },
+        "poster-press": { title: "Poster Press", mark: "15", icon: "▣", description: "Build a finished poster from type, color and a few strong shapes", copy: "Compose a poster with editable copy, layout systems, typography, graphic marks and print texture. Export a high-resolution PNG.", visual: "type" }
       };
 
       const $ = (selector, root = document) => root.querySelector(selector);
@@ -1263,7 +1273,7 @@
         const html = document.createElement("div");
         html.className = "future-room";
         const text = document.createElement("div");
-        text.innerHTML = `<p class="future-kicker">PROJECT / ${info.mark}</p><h3>${esc(info.title)}</h3><p>${esc(info.copy)}</p><p>This project could not be loaded. Refresh the page and open it again.</p><span class="future-details">ROOM UNAVAILABLE</span>`;
+        text.innerHTML = `<p class="future-kicker">PROJECT / ${info.mark}</p><h3>${esc(info.title)}</h3><p>${esc(info.copy)}</p><p>This project module did not initialize. Close this window and reopen it; the rest of the collection remains available.</p><span class="future-details">MODULE INITIALIZATION ISSUE</span>`;
         const preview = document.createElement("div");
         preview.className = "future-preview";
         preview.innerHTML = `${futurePreviewSvg(info.visual)}<span class="future-preview-label">${esc(info.title)} / 01</span>`;
@@ -1466,6 +1476,20 @@
 
       // Render lightweight category/project headings before observing their scroll positions.
       renderCategories();
+      // Give the word a small, per-visit print-registration variation without reducing legibility.
+      const strange = document.querySelector('.strange-word');
+      if (strange) {
+        const letters = [...strange.querySelectorAll('span')];
+        letters.forEach((letter, index) => {
+          const seed = Math.random();
+          const cut = seed > .72;
+          letter.style.setProperty('--letter-tilt', `${(Math.random() - .5) * 9}deg`);
+          letter.style.setProperty('--letter-shift', `${(Math.random() - .5) * 3}px`);
+          letter.style.setProperty('--letter-cut', cut ? `${Math.round(18 + Math.random() * 28)}%` : '0%');
+          letter.style.setProperty('--letter-index', String(index));
+          letter.classList.toggle('print-worn', cut);
+        });
+      }
 
       // Track the section crossing a fixed reading line. Unlike an IntersectionObserver
       // callback limited to newly changed entries, this always compares every section.
