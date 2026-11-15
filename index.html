@@ -406,7 +406,9 @@
       .topbar { min-height: 56px; gap: 9px; }
       .topbar-left { gap: 7px; font-size: 9px; }
       .topbar-brand { font-size: 10px; }
-      .topbar-right { gap: 7px; font-size: 8px; }
+      .topbar-right { gap: 6px; font-size: 8px; }
+      .motion-toggle { padding: 4px 6px; font-size: 7px; white-space: nowrap; }
+      .status-live { display: none; }
       .hero { padding: 31px 1px 22px; }
       h1 { font-size: clamp(34px, 10vw, 47px); }
       .hero-bottom { display: block; margin-top: 13px; }
@@ -432,13 +434,18 @@
       .site-footer { display: block; line-height: 1.8; }
       .site-footer span { display: block; }
     }
+    /* Motion is enabled by default because the interactive projects rely on it.
+       Visitors can pause it explicitly with the Motion button in the top bar. */
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-      /* Eye blinks are brief, localized and retained at a slower cadence for clarity. */
-      .face-eye-blink { animation: faceEyeBlink 8.5s ease-in-out var(--blink-delay, 0s) infinite !important; }
-      .face-eye-lid { animation: faceEyeLid 8.5s ease-in-out var(--blink-delay, 0s) infinite !important; }
-      .face-gaze, .face-mouth-life, .face-art { animation: none !important; }
+      html { scroll-behavior: auto; }
     }
+    html.motion-reduced *, html.motion-reduced *::before, html.motion-reduced *::after {
+      animation-play-state: paused !important;
+      transition-duration: .01ms !important;
+    }
+    html.motion-reduced { scroll-behavior: auto; }
+    .motion-toggle[aria-pressed="true"] { color: var(--acid); border-color: #52633a; background: rgba(214,255,105,.07); }
+    .motion-toggle[aria-pressed="false"] { color: #aaa7b2; }
   </style>
   <link rel="stylesheet" href="projects.css">
 </head>
@@ -495,7 +502,7 @@
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false">☰</button>
       <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">50 Projects</span></div>
-      <div class="topbar-right"><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
+      <div class="topbar-right"><button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
     </header>
 
     <div class="page-wrap">
@@ -632,6 +639,21 @@
 
       const $ = (selector, root = document) => root.querySelector(selector);
       const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+      const motionToggle = $("#motionToggle");
+      function syncMotionToggle() {
+        const enabled = window.CurioidMotion ? window.CurioidMotion.enabled : true;
+        motionToggle.textContent = enabled ? "Motion ON" : "Motion OFF";
+        motionToggle.setAttribute("aria-pressed", String(enabled));
+        motionToggle.setAttribute("aria-label", enabled ? "Pause animated projects" : "Resume animated projects");
+        motionToggle.title = enabled ? "Pause all decorative and canvas motion" : "Resume all animated projects";
+      }
+      motionToggle.addEventListener("click", () => {
+        if (window.CurioidMotion) window.CurioidMotion.toggle();
+        syncMotionToggle();
+        showToast(window.CurioidMotion?.enabled ? "Motion is on." : "Motion is paused.");
+      });
+      syncMotionToggle();
+
       const toast = $("#toast");
       let toastTimer = 0;
       let subjectNumber = 1;
