@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101014">
-  <meta name="description" content="Explore six browser-based operating systems, 53 creative projects and Sandbox OS, a local builder for Basic, Advanced or Hybrid personal operating systems. Local-first and built by Stelios Winters.">
+  <meta name="description" content="Explore six browser-based operating systems, 53 creative projects, tiny games and tools, plus Sandbox OS for building your own local-first desktop.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="Stelios Winters">
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), display-capture=(), usb=(), serial=(), bluetooth=(), hid=(), payment=()">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-VJjgO5GLd0JbdZAnPpNi0cyK3VirOEgG31gaU189TjI='; style-src 'self' 'unsafe-inline' data:; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Vn64fwOKt+eDtZziz4exnyISGqehCzP9S3ePw+vJ380='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.github.io/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
   <meta property="og:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
-  <meta property="og:description" content="Six browser-based operating systems, 53 creative projects and Sandbox OS, a local-first builder for Basic, Advanced and Hybrid personal operating systems.">
+  <meta property="og:description" content="Six browser-based operating systems, 53 creative projects, tiny games and tools, plus Sandbox OS for building a personal desktop.">
   <meta property="og:url" content="https://stelioswinters.github.io/curioid/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
@@ -25,7 +25,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="CURIOID: six independent browser worlds and a collection of creative experiments">
   <meta name="twitter:image" content="https://stelioswinters.github.io/curioid/social-preview.png">
-  <title>CURIOID | Browser Worlds, Creative Projects and Sandbox OS</title>
+  <title>CURIOID</title>
+  <script defer src="curioid-runtime.js" integrity="sha384-uq1m5MFFrRyTfChj03gSeFHxEIMW0I0lYH0EulQwf2C0oxS1Gbe+9i1ZQaOv9isX" crossorigin="anonymous"></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CURIOID","url":"https://stelioswinters.github.io/curioid/","description":"A local-first collection of six browser-based operating environments, interactive projects, tiny games, creative tools, sound experiments and strange archives.","creator":{"@type":"Person","name":"Stelios Winters"},"inLanguage":"en","isAccessibleForFree":true}</script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 48 48%27%3E%3Crect width=%2748%27 height=%2748%27 rx=%2711%27 fill=%27%23101014%27/%3E%3Cpath d=%27M4.5 24C9.3 13.7 17.1 8.5 24 8.5S38.7 13.7 43.5 24C38.7 34.3 30.9 39.5 24 39.5S9.3 34.3 4.5 24Z%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%273.2%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%278.1%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%272.5%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%273.6%27 fill=%27%23d6ff69%27/%3E%3Cpath d=%27M15.5 14.5 11 10%27 stroke=%27%23d6ff69%27 stroke-width=%272.3%27 stroke-linecap=%27round%27/%3E%3Cpath d=%27M32.5 14.5 37 10%27 stroke=%27%23d6ff69%27 stroke-width=%272.3%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
   <style>
@@ -346,6 +347,10 @@
     .loading-mark { width: 13px; height: 13px; border: 1.5px solid #55535f; border-top-color: var(--acid); border-radius: 50%; animation: curioid-load-spin .8s linear infinite; }
     @keyframes curioid-load-spin { to { transform: rotate(360deg); } }
     .project-load-error { justify-content: space-between; flex-wrap: wrap; border: 1px solid #51404a; border-radius: 10px; background: #21191e; color: #efb8c5; }
+    .project-style-warning { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin:0 0 14px; padding:12px 14px; border:1px solid #77643b; border-radius:10px; background:#282317; color:#f2dfae; font-size:12px; line-height:1.5; }
+    .project-style-warning p { margin:0; flex:1 1 260px; }
+    .project-style-warning button { border:1px solid #b39a59; border-radius:7px; padding:7px 10px; background:#3a311d; color:#fff0c5; cursor:pointer; }
+    .project-style-warning button:disabled { opacity:.6; cursor:wait; }
     .room-mount { min-width: 0; }
     .room-ecosystem { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 13px; margin-top: 13px; padding: 10px 1px 0; border-top: 1px solid rgba(255,255,255,.055); }
     .room-ecosystem-label { color: #858592; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .11em; text-transform: uppercase; }
@@ -617,7 +622,7 @@
     .site-control-head h2{margin:6px 0;font:600 22px system-ui,sans-serif}
     .site-control-head p{margin:0;color:#a4a3af;font:12px/1.5 system-ui,sans-serif}
     .site-control-head>button{width:30px;height:30px;border:1px solid #393a46;border-radius:7px;background:#22232b;color:#d8d6df;font-size:20px;cursor:pointer}
-    .site-control-status-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:14px 18px}
+    .site-control-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:14px 18px}
     .site-control-status-grid article{display:grid;align-content:start;gap:6px;min-width:0;padding:10px;border:1px solid #30313b;border-radius:8px;background:#20212a}
     .site-control-status-grid small{color:#aaa8b5;font:9px ui-monospace,monospace;letter-spacing:.1em}
     .site-control-status-grid b{font:600 11px system-ui,sans-serif;overflow-wrap:anywhere}
@@ -628,6 +633,7 @@
     .site-control-actions b{font:600 11px system-ui,sans-serif}
     .site-control-actions small{color:#a3a2ae;font:10px/1.35 system-ui,sans-serif}
     .site-control-footnote{margin:0;padding:11px 18px 15px;border-top:1px solid #30313b;color:#9998a4;font:10px/1.5 system-ui,sans-serif}
+    @media(max-width:760px){.site-control-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:560px){.site-control-status-grid{grid-template-columns:1fr}.site-control-status-grid article{grid-template-columns:78px 1fr;align-items:center}.site-control-status-grid span{grid-column:2}.site-control-actions{grid-template-columns:1fr}.site-notification-panel{right:-36px}}
 
   </style>
@@ -723,7 +729,7 @@
 
   <main class="main" id="top">
     <header class="topbar">
-      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false">☰</button>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
       <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">54 Projects</span></div>
       <div class="topbar-right"><label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label><button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
     </header>
@@ -762,7 +768,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.145</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.221</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -773,6 +779,7 @@
       <article><small>STORAGE</small><b data-control-storage>Checking browser storage…</b><span>Only this site's browser storage is measured.</span></article>
       <article><small>WORLDS</small><b>6 independent worlds</b><span>Each world keeps its own workspace.</span></article>
       <article><small>YOUR SHORTCUTS</small><b data-control-shortcuts>0 favorites · 0 recent</b><span>Saved locally in this browser.</span></article>
+      <article><small>APP RUNTIMES</small><b data-control-runtime aria-live="polite" aria-atomic="true">0 active · 0 tracked</b><span>Resources are released when an app closes.</span></article>
     </section>
     <section class="site-control-actions" aria-label="Quick actions">
       <button type="button" data-control-action="connect"><b>Connect Console</b><small>Inspect local services and permissions</small></button>
@@ -1248,15 +1255,69 @@
         return `<svg viewBox="0 0 240 150" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${art[type] || art.orbit}</svg>`;
       }
 
+      function createFuturePreviewNode(type) {
+        // The SVG source is selected only from the fixed, source-authored art map above.
+        // Parse it as SVG XML (not HTML), then enforce a small allowlist before it enters the live DOM.
+        const namespace = "http://www.w3.org/2000/svg";
+        const fallback = document.createElementNS(namespace, "svg");
+        fallback.setAttribute("viewBox", "0 0 240 150");
+        fallback.setAttribute("aria-hidden", "true");
+        try {
+          const parsed = new DOMParser().parseFromString(futurePreviewSvg(type), "image/svg+xml");
+          const svg = parsed.documentElement;
+          if (!svg || svg.localName !== "svg" || svg.namespaceURI !== namespace || parsed.querySelector("parsererror")) return fallback;
+          const allowedTags = new Set(["svg", "g", "path", "circle", "ellipse", "rect", "text"]);
+          const allowedAttributes = new Set(["viewBox", "xmlns", "aria-hidden", "fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "opacity", "cx", "cy", "r", "rx", "ry", "transform", "d", "x", "y", "font-size", "font-family", "text-anchor"]);
+          for (const element of [svg, ...svg.querySelectorAll("*")]) {
+            if (!allowedTags.has(element.localName) || element.namespaceURI !== namespace) { element.remove(); continue; }
+            for (const attribute of Array.from(element.attributes)) {
+              if (!allowedAttributes.has(attribute.name) || /^on/i.test(attribute.name) || /url\s*\(|javascript:/i.test(attribute.value)) element.removeAttribute(attribute.name);
+            }
+          }
+          if (Array.from(svg.querySelectorAll("*")).some(element => !allowedTags.has(element.localName))) return fallback;
+          return document.importNode(svg, true);
+        } catch (_) {
+          return fallback;
+        }
+      }
+
+      function createProjectLoadingStatus(message) {
+        const status = document.createElement("div");
+        status.className = "project-loading";
+        status.setAttribute("role", "status");
+        const mark = document.createElement("span");
+        mark.className = "loading-mark";
+        mark.setAttribute("aria-hidden", "true");
+        const label = document.createElement("span");
+        label.textContent = message;
+        status.append(mark, label);
+        return status;
+      }
+
       function renderFutureRoom(roomId) {
         const info = ROOM_INFO[roomId];
         const html = document.createElement("div");
         html.className = "future-room";
         const text = document.createElement("div");
-        text.innerHTML = `<p class="future-kicker">PROJECT / ${info.mark}</p><h3>${esc(info.title)}</h3><p>${esc(info.copy)}</p><p>This project module did not initialize. Close this window and reopen it; the rest of the collection remains available.</p><span class="future-details">MODULE INITIALIZATION ISSUE</span>`;
+        const kicker = document.createElement("p");
+        kicker.className = "future-kicker";
+        kicker.textContent = `PROJECT / ${info.mark}`;
+        const title = document.createElement("h3");
+        title.textContent = info.title;
+        const description = document.createElement("p");
+        description.textContent = info.copy;
+        const recovery = document.createElement("p");
+        recovery.textContent = "This project module did not initialize. Close this window and reopen it; the rest of the collection remains available.";
+        const detail = document.createElement("span");
+        detail.className = "future-details";
+        detail.textContent = "MODULE INITIALIZATION ISSUE";
+        text.append(kicker, title, description, recovery, detail);
         const preview = document.createElement("div");
         preview.className = "future-preview";
-        preview.innerHTML = `${futurePreviewSvg(info.visual)}<span class="future-preview-label">${esc(info.title)} / 01</span>`;
+        const previewLabel = document.createElement("span");
+        previewLabel.className = "future-preview-label";
+        previewLabel.textContent = `${info.title} / 01`;
+        preview.append(createFuturePreviewNode(info.visual), previewLabel);
         html.append(text, preview);
         return html;
       }
@@ -1369,7 +1430,31 @@
         heading.setAttribute("aria-expanded", String(isOpen));
         heading.setAttribute("aria-controls", `body-${roomId}`);
         heading.setAttribute("aria-label", `${info.title}. ${info.description}. ${isOpen ? "Open" : "Closed"}.`);
-        heading.innerHTML = `<span class="room-icon" aria-hidden="true">${esc(ROOM_ICON_BY_ID[roomId] || info.icon)}</span><span class="room-number">${info.mark}</span><span class="room-name-wrap"><span class="room-name">${esc(projectDisplayTitle(roomId, info.title))}</span><span class="room-description">${esc(info.description)}</span></span><span class="room-state ${isOpen ? "open" : "closed"}" aria-label="${isOpen ? "Project open" : "Project closed"}">${isOpen ? "OPEN" : "CLOSED"}</span><span class="room-chevron" aria-hidden="true">⌄</span>`;
+        const roomIcon = document.createElement("span");
+        roomIcon.className = "room-icon";
+        roomIcon.setAttribute("aria-hidden", "true");
+        roomIcon.textContent = String(ROOM_ICON_BY_ID[roomId] || info.icon || "");
+        const roomNumber = document.createElement("span");
+        roomNumber.className = "room-number";
+        roomNumber.textContent = String(info.mark || "");
+        const nameWrap = document.createElement("span");
+        nameWrap.className = "room-name-wrap";
+        const roomName = document.createElement("span");
+        roomName.className = "room-name";
+        roomName.textContent = projectDisplayTitle(roomId, info.title);
+        const roomDescription = document.createElement("span");
+        roomDescription.className = "room-description";
+        roomDescription.textContent = info.description;
+        nameWrap.append(roomName, roomDescription);
+        const roomState = document.createElement("span");
+        roomState.className = `room-state ${isOpen ? "open" : "closed"}`;
+        roomState.setAttribute("aria-label", isOpen ? "Project open" : "Project closed");
+        roomState.textContent = isOpen ? "OPEN" : "CLOSED";
+        const roomChevron = document.createElement("span");
+        roomChevron.className = "room-chevron";
+        roomChevron.setAttribute("aria-hidden", "true");
+        roomChevron.textContent = "⌄";
+        heading.append(roomIcon, roomNumber, nameWrap, roomState, roomChevron);
         const cardHead = document.createElement('div'); cardHead.className = 'room-card-head';
         const favorite = document.createElement('button'); favorite.type = 'button'; favorite.className = 'room-favorite'; favorite.dataset.roomFavorite = roomId; favorite.textContent = '☆'; favorite.setAttribute('aria-pressed', 'false'); favorite.title = 'Add to favorites'; favorite.setAttribute('aria-label', `Add ${info.title} to favorites`);
         cardHead.append(heading, favorite);
@@ -1382,11 +1467,7 @@
         mount.dataset.mount = roomId;
         if (isOpen) {
           article.setAttribute("aria-busy", "true");
-          const starting = document.createElement("div");
-          starting.className = "project-loading";
-          starting.setAttribute("role", "status");
-          starting.innerHTML = '<span class="loading-mark" aria-hidden="true"></span><span>Preparing the desktop…</span>';
-          mount.appendChild(starting);
+          mount.appendChild(createProjectLoadingStatus("Preparing the desktop…"));
         }
         body.appendChild(mount);
         const relatedIds = projectProfile?.relatedProjectIds || [];
@@ -1443,7 +1524,16 @@
           heading.className = "category-heading";
           const copy = document.createElement("div");
           copy.className = "category-heading-copy";
-          copy.innerHTML = `<p class="category-kicker">${esc(category.kicker)}</p><h2 class="category-title">${esc(category.title)}</h2><p class="category-description">${esc(category.description)}</p>`;
+          const kicker = document.createElement("p");
+          kicker.className = "category-kicker";
+          kicker.textContent = category.kicker;
+          const title = document.createElement("h2");
+          title.className = "category-title";
+          title.textContent = category.title;
+          const description = document.createElement("p");
+          description.className = "category-description";
+          description.textContent = category.description;
+          copy.append(kicker, title, description);
           const count = document.createElement("span");
           count.className = "category-count";
           count.textContent = `${String(category.rooms.length).padStart(2,"0")} PROJECT WINDOWS`;
@@ -1469,72 +1559,231 @@
       }
 
       let projectAssetsPromise = null;
+      let projectCssPromise = null;
+      let projectCssError = null;
+      let retryProjectCss = null;
       function ensureProjectAssets() {
+        // A file:// page has an opaque origin in modern browsers. Do not try to
+        // mix local files with a remote copy of another release: SRI must reject
+        // that mismatch. Serve this folder over localhost or deploy it over HTTPS.
+        if (window.location.protocol === "file:") {
+          const error = new Error("CURIOID cannot run by double-clicking index.html (file://). Keep all seven website files together and either run Start-CURIOID-Local.bat in this folder (Python 3 required), or publish the files to your GitHub Pages site and open its HTTPS address.");
+          error.code = "CURIOID_FILE_PROTOCOL_UNSUPPORTED";
+          error.attemptedUrls = [];
+          return Promise.reject(error);
+        }
+        if (window.location.protocol !== "http:" && window.location.protocol !== "https:") {
+          const error = new Error(`CURIOID requires an HTTP or HTTPS origin; the current protocol is ${window.location.protocol || "unknown"}.`);
+          error.code = "CURIOID_UNSUPPORTED_PROTOCOL";
+          return Promise.reject(error);
+        }
         const cssLoaded = Boolean(document.querySelector('link[data-curioid-project-css][data-loaded="true"]'));
         const jsLoaded = Boolean(window.CurioidProjects);
+        if (cssLoaded) projectCssError = null;
         if (cssLoaded && jsLoaded) return Promise.resolve(window.CurioidProjects);
         if (projectAssetsPromise) return projectAssetsPromise;
 
-        const loadProjectCss = () => {
-          if (document.querySelector('link[data-curioid-project-css][data-loaded="true"]')) return Promise.resolve();
-          return new Promise((resolve, reject) => {
-            let link = document.querySelector('link[data-curioid-project-css]');
-            if (!link) {
-              link = document.createElement("link");
-              link.rel = "stylesheet";
-              link.href = "projects.css?v=curioid145-nourish-kitchen-game-20261121";
-              link.dataset.curioidProjectCss = "true";
-              document.head.appendChild(link);
+        const getProjectAssetUrls = (file, hash) => {
+          const current = new URL(window.location.href);
+          const directoryOf = value => {
+            const url = new URL(value, current.href);
+            return url.pathname.endsWith("/")
+              ? url.pathname
+              : url.pathname.slice(0, url.pathname.lastIndexOf("/") + 1) || "/";
+          };
+          const candidates = [];
+          const addCandidate = (origin, directory) => {
+            if (!origin || !directory) return;
+            const candidate = new URL(file, `${origin}${directory}`);
+            candidate.searchParams.set("v", `sha256-${hash}`);
+            if (!candidates.includes(candidate.href)) candidates.push(candidate.href);
+          };
+          addCandidate(current.origin, directoryOf(current.href));
+          try {
+            const canonical = document.querySelector('link[rel="canonical"]');
+            if (canonical) {
+              const canonicalUrl = new URL(canonical.href, current.href);
+              const canonicalDirectory = directoryOf(canonicalUrl.href);
+              // Only use the current release's origin. A cross-origin canonical
+              // fallback can redirect to a different deployment/release; SRI would
+              // correctly reject it, while the user would only see a misleading load
+              // error. Deployment aliases should serve assets on the page's own origin.
+              if (canonicalUrl.origin === current.origin) {
+                addCandidate(canonicalUrl.origin, canonicalDirectory);
+              }
             }
-            let settled = false;
-            const finish = (error) => {
-              if (settled) return;
-              settled = true;
-              clearTimeout(timeout);
-              link.removeEventListener("load", onLoad);
-              link.removeEventListener("error", onError);
-              if (error) { link.remove(); reject(error); }
-              else { link.dataset.loaded = "true"; resolve(); }
-            };
-            const onLoad = () => finish();
-            const onError = () => finish(new Error("Project styles could not be loaded. Check that projects.css is in the site root."));
-            const timeout = setTimeout(() => finish(new Error("Project styles did not respond. Check the connection and try again.")), 12000);
-            link.addEventListener("load", onLoad, { once: true });
-            link.addEventListener("error", onError, { once: true });
-            // A stylesheet may have completed between the initial check and listener attachment.
-            if (link.sheet) finish();
-          });
+          } catch (_) {}
+          return candidates;
         };
+
+        const loadAssetWithFallback = ({ type, file, hash, integrity, expected, isReady, markReady }) => {
+          const urls = getProjectAssetUrls(file, hash);
+          const failures = [];
+          const attempt = index => {
+            if (index >= urls.length) {
+              const details = failures.map(item => `${item.url} — ${item.reason}`).join("; ");
+              const error = new Error(`${expected} could not be loaded. Tried ${details || urls.join(", ")}. Check that ${file} is beside index.html with the exact lowercase filename and belongs to the same release. If the files are correct, hard-refresh to clear stale cached assets.`);
+              error.code = "CURIOID_PROJECT_ASSET_LOAD_FAILED";
+              error.attemptedUrls = urls.slice();
+              error.failures = failures.slice();
+              console.error("CURIOID project asset loading failed", { file, urls, failures, page: window.location.href, canonical: document.querySelector('link[rel="canonical"]')?.href || null });
+              return Promise.reject(error);
+            }
+            return new Promise((resolve, reject) => {
+              const element = document.createElement(type);
+              if (type === "link") {
+                element.rel = "stylesheet";
+                element.dataset.curioidProjectCss = "true";
+              } else {
+                element.async = true;
+              }
+              const assetUrl = new URL(urls[index]);
+              if (assetUrl.origin !== window.location.origin) element.crossOrigin = "anonymous";
+              if (type === "link") element.href = urls[index];
+              else element.src = urls[index];
+              element.integrity = integrity;
+              element.referrerPolicy = "strict-origin-when-cross-origin";
+              let settled = false;
+              const timeout = setTimeout(() => finish(new Error("request timed out")), 12000);
+              const cleanup = () => {
+                clearTimeout(timeout);
+                element.removeEventListener("load", onLoad);
+                element.removeEventListener("error", onError);
+              };
+              const finish = error => {
+                if (settled) return;
+                settled = true;
+                cleanup();
+                if (error) {
+                  failures.push({ url: urls[index], reason: error.message || "network, CSP, or integrity failure" });
+                  element.remove();
+                  attempt(index + 1).then(resolve, reject);
+                  return;
+                }
+                if (isReady && !isReady()) {
+                  failures.push({ url: urls[index], reason: "resource loaded but did not initialize" });
+                  element.remove();
+                  attempt(index + 1).then(resolve, reject);
+                  return;
+                }
+                if (markReady) markReady(element);
+                resolve(element);
+              };
+              const onLoad = () => finish();
+              const onError = () => finish(new Error("HTTP, Content Security Policy, or Subresource Integrity failure"));
+              element.addEventListener("load", onLoad, { once: true });
+              element.addEventListener("error", onError, { once: true });
+              try { document.head.appendChild(element); }
+              catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
+            });
+          };
+          return attempt(0);
+        };
+
+        const loadProjectCss = ({ retry = false } = {}) => {
+          if (document.querySelector('link[data-curioid-project-css][data-loaded="true"]')) {
+            projectCssError = null;
+            return Promise.resolve(true);
+          }
+          if (projectCssPromise && !retry) return projectCssPromise;
+          if (retry) projectCssPromise = null;
+          const previous = document.querySelector('link[data-curioid-project-css]');
+          if (previous) previous.remove();
+          projectCssPromise = loadAssetWithFallback({
+            type: "link",
+            file: "projects.css", hash: "701ee4a2343230fcc114dca7952a077606bad8de2387e6dee80531c51a303cb3", integrity: "sha384-wo18zeqdDZx60urGFQ6XPk//gRdao7jGMDhsg8ECu+MF4Y6U4XUrf4V4ncWFvzfs",
+            expected: "Project styles",
+            markReady: element => { element.dataset.loaded = "true"; }
+          }).then(() => {
+            projectCssError = null;
+            projectCssPromise = Promise.resolve(true);
+            document.querySelectorAll('[data-project-style-warning]').forEach(node => node.remove());
+            return true;
+          }).catch(error => {
+            projectCssError = error;
+            projectCssPromise = Promise.resolve(false);
+            // Stylesheet loading can finish after the app runtime. Notify only
+            // currently open mounts; loadRoom also attaches the warning after
+            // its own mount completes, covering the opposite race.
+            document.querySelectorAll(".room-window.open .room-mount").forEach(mount => {
+              const room = mount.closest(".room-window");
+              if (room && (room.dataset.loaded === "true" || room.dataset.loading === "true")) {
+                attachProjectStyleWarning(mount);
+              }
+            });
+            return false;
+          });
+          return projectCssPromise;
+        };
+        retryProjectCss = () => loadProjectCss({ retry: true });
         const loadProjectJs = () => {
           if (window.CurioidProjects) return Promise.resolve();
-          return new Promise((resolve, reject) => {
-            const script = document.createElement("script");
-            script.src = "projects.js?v=curioid145-nourish-kitchen-game-20261121";
-            script.async = true;
-            let settled = false;
-            const finish = (error) => {
-              if (settled) return;
-              settled = true;
-              clearTimeout(timeout);
-              script.onload = null;
-              script.onerror = null;
-              if (error) { script.remove(); reject(error); }
-              else resolve();
-            };
-            const timeout = setTimeout(() => finish(new Error("Project code did not respond. Check that projects.js is in the site root and reload.")), 12000);
-            script.onload = () => window.CurioidProjects ? finish() : finish(new Error("Project code loaded but did not initialize."));
-            script.onerror = () => finish(new Error("Project code could not be loaded. Check that projects.js is in the site root."));
-            document.head.appendChild(script);
+          return loadAssetWithFallback({
+            type: "script",
+            file: "projects.js", hash: "369134c483d03787ed7106a55be4e316d691c9b6e1bf6a61d0a9cd13501d3d6c", integrity: "sha384-VnqLLJXkv5efGlKENE3LgnMmVm0dv3NKlPhOjE3rauakZOd2ZNTELAQG51UutE88",
+            expected: "Project code",
+            isReady: () => Boolean(window.CurioidProjects),
+            markReady: element => {
+              // Secondary lazy assets follow the exact verified host/path
+              // that supplied this runtime (including canonical-host fallback).
+              try {
+                const loadedUrl = new URL(element.src, window.location.href);
+                loadedUrl.search = "";
+                loadedUrl.hash = "";
+                window.CURIOID_PROJECT_ASSET_BASE_URL = new URL(".", loadedUrl).href;
+              } catch (_) {}
+            }
           });
         };
 
-        projectAssetsPromise = Promise.all([loadProjectCss(), loadProjectJs()])
+        // Start the stylesheet request before the project script and wait until
+        // the stylesheet either loads or reaches its explicit failure/retry state.
+        // Project mounts can measure layout during initialization, so mounting
+        // against an unstyled DOM is unsafe even when the JavaScript is ready.
+        // A stylesheet failure remains non-fatal: loadProjectCss converts it to
+        // false, then the runtime starts and each mount receives a retry warning.
+        let cssReady;
+        try { cssReady = loadProjectCss(); }
+        catch (error) { cssReady = Promise.reject(error); }
+        cssReady = Promise.resolve(cssReady).catch(error => {
+          projectCssError = error;
+          projectCssPromise = Promise.resolve(false);
+          return false;
+        });
+        const jsReady = loadProjectJs();
+        projectAssetsPromise = Promise.all([cssReady, jsReady])
           .then(() => {
             if (!window.CurioidProjects) throw new Error("Project code did not initialize.");
             return window.CurioidProjects;
           })
           .catch(error => { projectAssetsPromise = null; throw error; });
         return projectAssetsPromise;
+      }
+
+      function attachProjectStyleWarning(mount) {
+        if (!projectCssError || !mount || mount.querySelector('[data-project-style-warning]')) return;
+        const warning = document.createElement("aside");
+        warning.className = "project-style-warning";
+        warning.dataset.projectStyleWarning = "true";
+        warning.setAttribute("role", "status");
+        const message = document.createElement("p");
+        const failedUrls = projectCssError.attemptedUrls?.join("; ") || "the configured projects.css URL";
+        message.textContent = `The app runtime loaded, but its visual stylesheet did not. Tried: ${failedUrls}. Check that projects.css is in the same deployment folder as index.html, then retry.`;
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.textContent = "Retry styles";
+        retry.addEventListener("click", async () => {
+          retry.disabled = true;
+          retry.textContent = "Retrying…";
+          const loaded = await (retryProjectCss ? retryProjectCss() : Promise.resolve(false));
+          if (!loaded && warning.isConnected) {
+            message.textContent = `Styles still unavailable: ${projectCssError?.message || "unknown loading error"}`;
+            retry.disabled = false;
+            retry.textContent = "Try again";
+          }
+        });
+        warning.append(message, retry);
+        mount.prepend(warning);
       }
 
       function loadRoom(room) {
@@ -1548,10 +1797,7 @@
         room._loadToken = loadToken;
         room.dataset.loading = "true";
         room.setAttribute("aria-busy", "true");
-        const status = document.createElement("div");
-        status.className = "project-loading";
-        status.setAttribute("role", "status");
-        status.innerHTML = '<span class="loading-mark" aria-hidden="true"></span><span>Opening project…</span>';
+        const status = createProjectLoadingStatus("Opening project…");
         mount.appendChild(status);
         ensureProjectAssets().then(projects => {
           if (!room.isConnected || room._loadToken !== loadToken) return;
@@ -1598,6 +1844,7 @@
               }
             });
           }
+          attachProjectStyleWarning(mount);
           room.dataset.loading = "false";
           room.dataset.loaded = "true";
           room.setAttribute("aria-busy", "false");
