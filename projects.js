@@ -1,24 +1,15 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.23 / CURIOID v1.263 · CURIOIDS TINY GAME / SITE DISCOVERY HUNT / 100 FULL-BODY PROCEDURAL SPRITES · HUMAN BENCHMARK BUREAU / LOCAL OFFLINE SHELL / UMBRA DRAWING ARCADE · UMBRA PNG IHDR PRE-DECODE GUARD / IMPORT RACE + BITMAP LIFECYCLE · PRONUNCIATION SCRIPT BROWSER VOICE / SPEECH LIFECYCLE PAUSE / BUNDLE PERFORMANCE BUDGETS / ECHONOISE COUNT ACCURACY · UMBRA ARCADE / EIGHT ORIGINAL DRAWING GAMES · ROADMAP AUTOMATION / FULL ACCEPTANCE MATRIX / INTEGRITY REGEN · BELLA CONCIERGE ART / FILE-ORIGIN DOORS · TYPE CONTRACT REFINEMENT / DOM EVENT SHAPES / KERNEL MESSAGE ENVELOPES / INDEXED ARTIFACT QUERY TYPES / STORAGE QUEUE PROMISES / STRICT FILE READER GUARD · AURA WORD SERVICE REPAIR / DICTIONARY LOADER FIX / DOORS98 WINDOW STATE / WORD ANALYSIS LIMITS / IDLE INDEX / RETRYABLE DICTIONARY LOADER / STREAMING ARTIFACT INDEX REBUILD / AURA RECREATION DIRECTORATE / STRATOLADDER / QUOTA PANIC / BELLA ANIME CONCIERGE ART / UMBRA TOOL GROUPS / RUNTIME SUPERVISOR / INSTRUCTION POLICY HARDENING / NOURISH KITCHEN GAME / SANDBOX PERSONAL EXTENSIONS / CHECKLIST STARTER TEMPLATES / BELLA COMPANION v1.6.0 */
+/* Build: 2026.11.23 / CURIOID v1.271 · RUNTIME RESOURCE RESERVATION / FAILURE-SAFE STORAGE ROLLBACK / CROSS-TAB WEB LOCKS / SCOPE-ISOLATED OFFLINE CACHE / ACCESSIBLE CONTROL POLISH / FIRST-VISIT OPT-IN / CATALOGUE QUALITY-OF-LIFE / RESPONSIVE POLISH / CURIOIDS ADAPTIVE ARENA / CREATURE LIFE / BATTLE REPLAY / LOCAL SFX / SITE DISCOVERY HUNT / 100 FULL-BODY PROCEDURAL SPRITES / CROSS-OS UI AUDIO · HUMAN BENCHMARK BUREAU / LOCAL OFFLINE SHELL / UMBRA DRAWING ARCADE · UMBRA PNG IHDR PRE-DECODE GUARD / IMPORT RACE + BITMAP LIFECYCLE · PRONUNCIATION SCRIPT BROWSER VOICE / SPEECH LIFECYCLE PAUSE / BUNDLE PERFORMANCE BUDGETS / ECHONOISE COUNT ACCURACY · UMBRA ARCADE / EIGHT ORIGINAL DRAWING GAMES · ROADMAP AUTOMATION / FULL ACCEPTANCE MATRIX / INTEGRITY REGEN · BELLA + PIP BELL-CREATURE COMPANIONS / BROWSER TTS QUEUE / FILE-ORIGIN DOORS · TYPE CONTRACT REFINEMENT / DOM EVENT SHAPES / KERNEL MESSAGE ENVELOPES / INDEXED ARTIFACT QUERY TYPES / STORAGE QUEUE PROMISES / STRICT FILE READER GUARD · AURA WORD SERVICE REPAIR / DICTIONARY LOADER FIX / DOORS98 WINDOW STATE / WORD ANALYSIS LIMITS / IDLE INDEX / RETRYABLE DICTIONARY LOADER / STREAMING ARTIFACT INDEX REBUILD / AURA RECREATION DIRECTORATE / STRATOLADDER / QUOTA PANIC / BELLA ANIME CONCIERGE ART / UMBRA TOOL GROUPS / RUNTIME SUPERVISOR / INSTRUCTION POLICY HARDENING / NOURISH KITCHEN GAME / SANDBOX PERSONAL EXTENSIONS / CHECKLIST STARTER TEMPLATES / BELLA COMPANION v1.6.0 */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
   const window = globalThis.window;
 
-  // Bella's full companion portrait is a bundled, optimized transparent image.
-  // The compact vector bell remains intentionally separate for taskbar and header use.
+  // Companion artwork is original inline SVG: no portrait downloads, CDNs or remote assets.
+  // Bella is a gentle bell-creature; Pip is her smaller, more chaotic little brother.
   const CURIOID_BELLA_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Bella, a golden service bell with a red bow"><defs><linearGradient id="miniBellGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bc"/><stop offset=".48" stop-color="#efc15d"/><stop offset="1" stop-color="#b77b31"/></linearGradient><linearGradient id="miniBowRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8b9d"/><stop offset="1" stop-color="#c91f4d"/></linearGradient></defs><path d="M29 21C25 9 40 8 37 21" fill="none" stroke="#98642a" stroke-width="3.2" stroke-linecap="round"/><path d="M32 20C22 10 12 13 13 21C14 29 23 30 31 25C27 32 30 35 33 32C36 29 34 23 32 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><path d="M33 20C43 10 53 13 52 21C51 29 42 30 34 25C38 32 35 35 32 32C29 29 31 23 33 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><circle cx="32.5" cy="23.5" r="3.2" fill="#e83e62" stroke="#9f2342" stroke-width="1"/><path d="M19 34C20 27 25 24 32 24C39 24 44 27 45 34C46 42 47 45 52 49C55 51 52 54 47 55C38 58 26 58 17 55C12 54 9 51 12 49C17 45 18 42 19 34Z" fill="url(#miniBellGold)" stroke="#986629" stroke-width="1.8"/><path d="M12 49Q32 55 52 49L51 54Q32 60 13 54Z" fill="#d7a24a" stroke="#986629" stroke-width="1.3"/><ellipse cx="25" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="39" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="25.7" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><ellipse cx="38.3" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><circle cx="26.2" cy="39.5" r=".85" fill="#fff"/><circle cx="38.8" cy="39.5" r=".85" fill="#fff"/><path d="M28 47Q32 50 36 47" fill="none" stroke="#8f4b57" stroke-width="1.5" stroke-linecap="round"/><path d="M16 31Q14 40 12 45" fill="none" stroke="#fff5d8" stroke-width="2" stroke-linecap="round" opacity=".8"/><circle cx="32" cy="58" r="2.5" fill="#d8aa55" stroke="#986629" stroke-width="1"/></svg>`;
-  const CURIOID_BELLA_ICON_DATA_URL = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(CURIOID_BELLA_ICON_SVG);
-  const curioidBellaConciergeSrc = () => {
-    try {
-      // Resolve when Doors98 mounts, after the loader has recorded the exact
-      // project-asset host (including any canonical-host fallback).
-      const base = window.CURIOID_PROJECT_ASSET_BASE_URL || new URL('.', document.baseURI || window.location.href).href;
-      return new URL('bella-concierge.webp', base).href;
-    } catch (_) {
-      return 'bella-concierge.webp';
-    }
-  };
+  const CURIOID_BELLA_ICON_DATA_URL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CURIOID_BELLA_ICON_SVG)}`;
+  const CURIOID_BELLA_CREATURE_SVG = `<svg class="bella-avatar-creature-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260" role="img" aria-label="Bella, a cute golden bell creature with a red bow"><defs><linearGradient id="bellaCreatureGold" x1=".12" y1="0" x2=".85" y2="1"><stop stop-color="#fff5c9"/><stop offset=".42" stop-color="#f5ca67"/><stop offset=".82" stop-color="#d9933e"/><stop offset="1" stop-color="#a86732"/></linearGradient><linearGradient id="bellaCreatureBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c1f2e4"/><stop offset="1" stop-color="#55b7ad"/></linearGradient><linearGradient id="bellaCreatureRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff9bb1"/><stop offset=".55" stop-color="#ed466c"/><stop offset="1" stop-color="#b91e4e"/></linearGradient></defs><ellipse cx="120" cy="242" rx="57" ry="9" fill="#213d46" opacity=".14"/><path d="M91 178Q66 187 69 213Q72 225 91 216L105 203M149 178Q174 187 171 213Q168 225 149 216L135 203" fill="none" stroke="#4b8c89" stroke-width="12" stroke-linecap="round"/><path d="M100 173Q120 162 140 173L155 217Q120 238 85 217Z" fill="url(#bellaCreatureBody)" stroke="#438b84" stroke-width="3"/><path d="M107 184Q120 191 133 184" fill="none" stroke="#e8fff4" stroke-width="5" stroke-linecap="round"/><path d="M96 221L89 236Q85 244 99 245L116 244L119 230M144 221L151 236Q155 244 141 245L124 244L121 230" fill="#f0c06b" stroke="#a86f3a" stroke-width="3" stroke-linejoin="round"/><path d="M105 235Q113 231 119 237M121 237Q129 231 137 235" fill="none" stroke="#fff0cc" stroke-width="2.4" stroke-linecap="round"/><path d="M119 47C101 22 139 15 127 49" fill="none" stroke="#9b672e" stroke-width="8" stroke-linecap="round"/><path class="bella-avatar-bow" d="M120 36C91 12 72 22 77 42C81 59 103 62 119 47C108 67 114 76 122 71C133 65 128 47 120 36Z" fill="url(#bellaCreatureRed)" stroke="#9d2449" stroke-width="3"/><path class="bella-avatar-bow" d="M122 36C151 12 170 22 165 42C161 59 139 62 123 47C134 67 128 76 120 71C109 65 114 47 122 36Z" fill="url(#bellaCreatureRed)" stroke="#9d2449" stroke-width="3"/><path d="M119 36Q121 48 122 57" fill="none" stroke="#ffd4df" stroke-width="2" opacity=".8"/><circle cx="120" cy="48" r="8" fill="#e93560" stroke="#9d2449" stroke-width="2"/><path d="M75 95Q81 65 120 65Q159 65 165 95L174 155Q179 179 154 190Q120 207 86 190Q61 179 66 155Z" fill="url(#bellaCreatureGold)" stroke="#9c672f" stroke-width="4"/><path d="M78 155Q120 173 162 155L169 174Q120 202 71 174Z" fill="#d99b48" stroke="#98632f" stroke-width="3"/><path d="M82 100Q87 76 111 76" fill="none" stroke="#fff8dd" stroke-width="7" stroke-linecap="round" opacity=".72"/><ellipse class="bella-avatar-eye" cx="101" cy="125" rx="11" ry="14" fill="#fffdfa" stroke="#79513c" stroke-width="2"/><ellipse class="bella-avatar-eye" cx="139" cy="125" rx="11" ry="14" fill="#fffdfa" stroke="#79513c" stroke-width="2"/><path d="M90 115Q98 106 109 114M130 114Q141 106 150 115" class="bella-avatar-lashes" fill="none" stroke="#634442" stroke-width="3" stroke-linecap="round"/><ellipse class="bella-avatar-pupil" cx="103" cy="128" rx="5.8" ry="8" fill="#236f78"/><ellipse class="bella-avatar-pupil" cx="137" cy="128" rx="5.8" ry="8" fill="#236f78"/><circle class="bella-avatar-glint" cx="101" cy="124" r="2.7" fill="#fff"/><circle class="bella-avatar-glint-small" cx="106" cy="131" r="1.2" fill="#fff"/><circle class="bella-avatar-glint" cx="135" cy="124" r="2.7" fill="#fff"/><circle class="bella-avatar-glint-small" cx="140" cy="131" r="1.2" fill="#fff"/><ellipse class="bella-avatar-blush" cx="81" cy="145" rx="10" ry="5.5" fill="#f18ca8" opacity=".62"/><ellipse class="bella-avatar-blush" cx="159" cy="145" rx="10" ry="5.5" fill="#f18ca8" opacity=".62"/><path class="bella-avatar-smile" d="M111 151Q120 160 129 151" fill="none" stroke="#99525b" stroke-width="3.5" stroke-linecap="round"/><path d="M120 190L120 201" stroke="#a66a36" stroke-width="3" stroke-linecap="round"/><circle cx="120" cy="205" r="7" fill="#f7d98e" stroke="#a66a36" stroke-width="2"/><path class="bella-avatar-spark" d="M186 77L190 88L201 92L190 96L186 107L182 96L171 92L182 88Z" fill="#fff1ac" stroke="#d4a14d" stroke-width="1.5"/><path d="M49 117L53 124L61 127L53 130L49 138L46 130L38 127L46 124Z" fill="#fff4cc" opacity=".9"/></svg>`;
   const curioidCreateBellaIcon = (className) => {
     const image = document.createElement('img');
     image.className = className;
@@ -29,7 +20,181 @@
     image.draggable = false;
     return image;
   };
+  const CURIOID_PIP_CREATURE_SVG = `<svg class="eno-pip-creature-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 190" role="img" aria-label="Pip, Bella's mischievous little bell-creature brother"><defs><linearGradient id="pipBellMint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4ffb5"/><stop offset=".45" stop-color="#b5f06b"/><stop offset="1" stop-color="#399b8c"/></linearGradient><linearGradient id="pipBowRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffb1a0"/><stop offset="1" stop-color="#ec365d"/></linearGradient><linearGradient id="pipBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8af4e0"/><stop offset="1" stop-color="#2ba6c6"/></linearGradient></defs><ellipse cx="90" cy="180" rx="43" ry="6" fill="#071b25" opacity=".35"/><path d="M84 32C70 13 104 8 96 34" fill="none" stroke="#8ad65d" stroke-width="7" stroke-linecap="round"/><path class="pip-bow" d="M90 29C69 10 55 17 60 32C64 45 78 47 89 37C82 50 86 58 93 55C101 50 96 35 90 29Z" fill="url(#pipBowRed)" stroke="#a9274e" stroke-width="2.4"/><path class="pip-bow" d="M92 29C113 10 127 17 122 32C118 45 104 47 93 37C100 50 96 58 89 55C81 50 86 35 92 29Z" fill="url(#pipBowRed)" stroke="#a9274e" stroke-width="2.4"/><circle cx="91" cy="35" r="5.5" fill="#f13c65" stroke="#a9274e" stroke-width="1.4"/><path d="M70 74Q74 52 90 52Q106 52 110 74L119 116Q121 132 105 140Q90 148 75 140Q59 132 62 116Z" fill="url(#pipBody)" stroke="#247b94" stroke-width="3"/><path d="M69 119Q53 116 48 130Q45 141 59 137L72 132M111 119Q127 116 132 130Q135 141 121 137L108 132" fill="none" stroke="#49b8c6" stroke-width="9" stroke-linecap="round"/><path d="M79 136L73 152Q71 162 83 162L91 160L92 145M101 136L107 152Q109 162 97 162L89 160" fill="#b8f4d8" stroke="#247b94" stroke-width="2.6"/><path d="M67 80Q72 56 90 55Q108 56 113 80L120 116Q122 133 105 140Q90 147 75 140Q58 133 60 116Z" fill="url(#pipBellMint)" stroke="#568b4e" stroke-width="3.5"/><path d="M62 116Q90 130 118 116L120 128Q90 145 60 128Z" fill="#71ba61" stroke="#568b4e" stroke-width="2.3"/><path d="M69 84Q73 69 84 67" fill="none" stroke="#fffbd2" stroke-width="5" stroke-linecap="round" opacity=".75"/><ellipse cx="79" cy="100" rx="8" ry="10" fill="#fff" stroke="#4a684d" stroke-width="1.5"/><ellipse cx="102" cy="100" rx="8" ry="10" fill="#fff" stroke="#4a684d" stroke-width="1.5"/><ellipse cx="82" cy="103" rx="4.5" ry="6" fill="#173a63"/><ellipse cx="105" cy="103" rx="4.5" ry="6" fill="#173a63"/><circle cx="80" cy="100" r="2.2" fill="#fff"/><circle cx="103" cy="100" r="2.2" fill="#fff"/><path d="M71 91L80 88M99 88L109 91" stroke="#3c674b" stroke-width="3" stroke-linecap="round"/><ellipse cx="65" cy="116" rx="7" ry="4" fill="#ff8ea5" opacity=".6"/><ellipse cx="115" cy="116" rx="7" ry="4" fill="#ff8ea5" opacity=".6"/><path d="M83 120Q94 128 105 117" fill="none" stroke="#7a4050" stroke-width="2.7" stroke-linecap="round"/><path d="M139 57L143 68L154 72L143 76L139 87L135 76L124 72L135 68Z" fill="#f8ffc7" stroke="#8dcb6a" stroke-width="1.6"/><path d="M31 91L34 99L42 102L34 105L31 113L28 105L20 102L28 99Z" fill="#c1fff0" opacity=".9"/></svg>`;
 
+  function createCurioidSpeechQueue(defaultStatus = () => {}) {
+    const speech = window.speechSynthesis && typeof window.speechSynthesis.speak === 'function' ? window.speechSynthesis : null;
+    let generation = 0, pending = [], active = null, startTimer = 0, watchdog = 0, disposed = false;
+    const report = (state, detail = '') => { try { defaultStatus(state, detail); } catch (_) {} };
+    const splitText = value => {
+      const text = String(value || '').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 5000);
+      if (!text) return [];
+      const sentences = text.match(/[^.!?;]+[.!?;]?/g) || [text], chunks = [];
+      for (const sentence of sentences) {
+        let rest = sentence.trim();
+        while (rest.length > 210) {
+          let cut = Math.max(rest.lastIndexOf(' ', 210), rest.lastIndexOf(',', 210), rest.lastIndexOf(';', 210));
+          if (cut < 90) cut = rest.lastIndexOf(' ', 210);
+          if (cut < 1) cut = 210;
+          chunks.push(rest.slice(0, cut).trim());
+          rest = rest.slice(cut).trim();
+        }
+        if (rest) chunks.push(rest);
+      }
+      return chunks.slice(0, 40);
+    };
+    const stop = (notify = false) => {
+      generation++;
+      pending = [];
+      active = null;
+      clearTimeout(startTimer); clearTimeout(watchdog); watchdog = 0;
+      if (speech) { try { speech.cancel(); } catch (_) {} }
+      if (notify) report('stopped');
+    };
+    const speak = (value, options = {}) => {
+      if (disposed) return false;
+      if (!speech || typeof window.SpeechSynthesisUtterance !== 'function') { report('unsupported'); return false; }
+      const pieces = splitText(value);
+      if (!pieces.length) { report('empty'); return false; }
+      stop(false);
+      const token = generation;
+      pending = pieces.slice();
+      const settings = {
+        voice: options.voice || null,
+        lang: String(options.lang || options.voice?.lang || 'en-US').slice(0, 32),
+        rate: Math.min(2, Math.max(.5, Number(options.rate) || 1)),
+        pitch: Math.min(2, Math.max(.5, Number(options.pitch) || 1)),
+        volume: Math.min(1, Math.max(0, Number.isFinite(Number(options.volume)) ? Number(options.volume) : 1))
+      };
+      const next = () => {
+        if (disposed || token !== generation) return;
+        const phrase = pending.shift();
+        if (!phrase) { active = null; report('finished'); return; }
+        const utterance = new window.SpeechSynthesisUtterance(phrase);
+        utterance.lang = settings.lang;
+        utterance.rate = settings.rate;
+        utterance.pitch = settings.pitch;
+        utterance.volume = settings.volume;
+        if (settings.voice) utterance.voice = settings.voice;
+        utterance.onstart = () => { if (token === generation) report('speaking'); };
+        utterance.onend = () => { if (token === generation) { clearTimeout(watchdog); watchdog = 0; active = null; setTimeout(next, 48); } };
+        utterance.onerror = event => {
+          if (token !== generation) return;
+          clearTimeout(watchdog); watchdog = 0;
+          const reason = String(event?.error || 'voice unavailable').slice(0, 100);
+          if (reason === 'canceled' || reason === 'interrupted') return;
+          pending = [];
+          active = null;
+          report('error', reason);
+        };
+        active = utterance;
+        watchdog = setTimeout(() => {
+          if (token !== generation || active !== utterance) return;
+          active = null; pending = [];
+          try { speech.cancel(); } catch (_) {}
+          report('error', 'speech engine timed out');
+        }, Math.min(45000, Math.max(8500, phrase.length * 240)));
+        try { speech.speak(utterance); report('queued'); }
+        catch (error) { pending = []; active = null; report('error', String(error?.message || error).slice(0, 100)); }
+      };
+      try { speech.cancel(); speech.resume?.(); } catch (_) {}
+      // A tiny gap after cancel avoids Chromium's stale-utterance race.
+      startTimer = setTimeout(next, 70);
+      return true;
+    };
+    return Object.freeze({ supported: Boolean(speech && typeof window.SpeechSynthesisUtterance === 'function'), speak, stop, dispose() { stop(false); disposed = true; } });
+  }
+
+  function bindCurioidOsSoundLayer(host, experienceId) {
+    if (!host || host.querySelector('[data-curioid-os-sound-dock]')) return () => {};
+    const storageKey = 'curioid-shared-os-sounds-v1';
+    let preferences = { enabled: true, volume: .18 };
+    try {
+      const raw = JSON.parse(localStorage.getItem(storageKey) || 'null');
+      if (raw && typeof raw === 'object') preferences = { enabled: raw.enabled !== false, volume: Math.min(.45, Math.max(0, Number(raw.volume ?? .18) || 0)) };
+    } catch (_) {}
+    const originalPosition = host.style.position;
+    if (!originalPosition || originalPosition === 'static') host.style.position = 'relative';
+    const dock = document.createElement('div'); dock.className = 'curioid-os-sound-dock'; dock.dataset.curioidOsSoundDock = '';
+    const toggle = document.createElement('button'); toggle.type = 'button'; toggle.className = 'curioid-os-sound-button'; toggle.textContent = '♫'; toggle.setAttribute('aria-label', 'Open operating-system sound settings'); toggle.setAttribute('aria-expanded', 'false'); toggle.title = 'Operating-system sound settings';
+    const panel = document.createElement('div'); panel.className = 'curioid-os-sound-panel'; panel.hidden = true;
+    const powerLabel = document.createElement('label'); powerLabel.className = 'curioid-os-sound-power';
+    const power = document.createElement('input'); power.type = 'checkbox'; power.checked = preferences.enabled;
+    const powerText = document.createElement('span'); powerText.textContent = 'Interface sound effects'; powerLabel.append(power, powerText);
+    const levelLabel = document.createElement('label'); levelLabel.className = 'curioid-os-sound-level'; levelLabel.textContent = 'Volume';
+    const level = document.createElement('input'); level.type = 'range'; level.min = '0'; level.max = '45'; level.step = '1'; level.value = String(Math.round(preferences.volume * 100)); level.setAttribute('aria-label', `${experienceId} sound effect volume`);
+    const levelOutput = document.createElement('output'); levelOutput.textContent = `${level.value}%`; levelLabel.append(level, levelOutput);
+    const previewButton = document.createElement('button'); previewButton.type = 'button'; previewButton.className = 'curioid-os-sound-preview'; previewButton.textContent = 'Preview sound'; previewButton.setAttribute('aria-label', `Preview ${experienceId} interface sounds`);
+    const description = document.createElement('small'); description.textContent = 'Soft local sounds · no downloads · no autoplay';
+    panel.append(powerLabel, levelLabel, previewButton, description); dock.append(toggle, panel); host.append(dock);
+    const save = () => { try { localStorage.setItem(storageKey, JSON.stringify(preferences)); } catch (_) {} };
+    let context = null, disposed = false;
+    const getContext = () => {
+      if (disposed) return null;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!context || context.state === 'closed') context = new AC();
+      return context;
+    };
+    const tones = {
+      click: [[660, .045, 'sine']],
+      select: [[520, .035, 'sine'], [720, .045, 'sine']],
+      open: [[480, .055, 'triangle'], [720, .075, 'sine']],
+      close: [[650, .055, 'triangle'], [430, .075, 'sine']],
+      confirm: [[520, .045, 'sine'], [660, .045, 'sine'], [820, .085, 'sine']],
+      error: [[260, .07, 'triangle'], [190, .11, 'sine']]
+    };
+    const play = kind => {
+      if (!preferences.enabled || preferences.volume <= 0 || disposed || document.hidden) return;
+      const audio = getContext(); if (!audio) return;
+      const render = () => {
+        if (disposed || !preferences.enabled || document.hidden || audio.state !== 'running') return;
+        const sequence = tones[kind] || tones.click, now = audio.currentTime + .012;
+        sequence.forEach(([frequency, duration, wave], index) => {
+          const oscillator = audio.createOscillator(), gain = audio.createGain(), at = now + sequence.slice(0, index).reduce((sum, item) => sum + item[1] * .82, 0);
+          oscillator.type = wave; oscillator.frequency.setValueAtTime(frequency, at);
+          gain.gain.setValueAtTime(.0001, at); gain.gain.exponentialRampToValueAtTime(Math.max(.0002, preferences.volume * .045), at + .009); gain.gain.exponentialRampToValueAtTime(.0001, at + duration);
+          oscillator.connect(gain); gain.connect(audio.destination); oscillator.start(at); oscillator.stop(at + duration + .012);
+          oscillator.addEventListener('ended', () => { try { oscillator.disconnect(); gain.disconnect(); } catch (_) {} }, { once: true });
+        });
+      };
+      if (audio.state === 'suspended') { try { const resumed = audio.resume(); if (resumed && typeof resumed.then === 'function') { resumed.then(render).catch(() => {}); return; } } catch (_) {} }
+      render();
+    };
+    const sync = () => { toggle.dataset.enabled = String(preferences.enabled); toggle.setAttribute('aria-pressed', String(preferences.enabled)); toggle.title = preferences.enabled ? 'Interface sounds are on · open settings' : 'Interface sounds are muted · open settings'; power.checked = preferences.enabled; level.value = String(Math.round(preferences.volume * 100)); levelOutput.textContent = `${level.value}%`; };
+    const onToggle = () => { panel.hidden = !panel.hidden; toggle.setAttribute('aria-expanded', String(!panel.hidden)); };
+    const onPreview = () => { if (!preferences.enabled) { preferences.enabled = true; save(); sync(); } play('confirm'); };
+    const onPower = () => { preferences.enabled = power.checked; save(); sync(); if (preferences.enabled) play('confirm'); };
+    const onLevel = () => { preferences.volume = Math.min(.45, Math.max(0, Number(level.value) / 100)); save(); sync(); };
+    const classify = element => {
+      const label = `${element.getAttribute('aria-label') || ''} ${element.title || ''} ${element.textContent || ''}`.slice(0, 180).toLowerCase();
+      if (/\b(delete|remove|reset|clear|stop|close|cancel|back)\b/.test(label)) return 'close';
+      if (/\b(save|apply|create|generate|done|finish|export|success)\b/.test(label)) return 'confirm';
+      if (/\b(open|launch|start|enter|new)\b/.test(label)) return 'open';
+      if (/\b(error|failed|reject)\b/.test(label)) return 'error';
+      return 'click';
+    };
+    const onClick = event => {
+      const target = event.target instanceof Element ? event.target : null; if (!target) return;
+      if (target.closest('[data-curioid-os-sound-dock]')) return;
+      const control = target.closest('button,[role="button"],a,input[type="checkbox"],input[type="radio"],select,summary');
+      if (!control || !host.contains(control) || control.disabled || control.closest('[data-curioid-sfx-ignore],.eno-sequencer-grid,.eno-piano-roll,.umbra-canvas-wrap,.aura-benchmark-stage')) return;
+      play(classify(control));
+    };
+    const onChange = event => {
+      const target = event.target;
+      if (target instanceof Element && target.matches('select,input[type="checkbox"],input[type="radio"]') && !target.closest('[data-curioid-os-sound-dock],[data-curioid-sfx-ignore]')) play('select');
+    };
+    toggle.addEventListener('click', onToggle); previewButton.addEventListener('click', onPreview); power.addEventListener('change', onPower); level.addEventListener('input', onLevel);
+    host.addEventListener('click', onClick, true); host.addEventListener('change', onChange, true);
+    sync();
+    return () => {
+      disposed = true; toggle.removeEventListener('click', onToggle); previewButton.removeEventListener('click', onPreview); power.removeEventListener('change', onPower); level.removeEventListener('input', onLevel);
+      host.removeEventListener('click', onClick, true); host.removeEventListener('change', onChange, true); dock.remove();
+      if (context && context.state !== 'closed') { try { context.close(); } catch (_) {} }
+      if (host.style.position === 'relative') host.style.position = originalPosition;
+    };
+  }
   /** @typedef {Omit<Element, 'closest'> & Pick<HTMLElement, 'dataset'|'style'|'hidden'|'offsetWidth'|'offsetHeight'|'focus'|'click'|'title'> & {closest: (selectors: string) => CurioidEventElement|null, value?: string, files?: FileList|null, checked?: boolean, disabled?: boolean, type?: string, selectedOptions?: HTMLCollectionOf<HTMLOptionElement>, options?: HTMLOptionsCollection}} CurioidEventElement */
   /** @typedef {Omit<Event, 'target'> & {target: CurioidEventElement|null, key?: string, code?: string, keyCode?: number, ctrlKey?: boolean, metaKey?: boolean, altKey?: boolean, shiftKey?: boolean, clientX?: number, clientY?: number, button?: number, buttons?: number, pointerId?: number, pointerType?: string, isPrimary?: boolean, dataTransfer?: DataTransfer|null, data?: string|null, inputType?: string, deltaX?: number, deltaY?: number, relatedTarget?: EventTarget|null, detail?: number, repeat?: boolean, which?: number, touches?: TouchList, changedTouches?: TouchList}} CurioidDOMEvent */
   const $ = (s, r = document) => r.querySelector(s);
@@ -671,6 +836,235 @@
     }
   });
   window.CurioidBellaDialogueEngine = CurioidBellaDialogueEngine;
+
+
+  // Shared assistant hub. One bounded local dialogue engine powers all OS
+  // companions; each operating system supplies only its persona and visual skin.
+  const CURIOID_ASSISTANT_PERSONAS = Object.freeze({
+    bella:{id:'bella',name:'Bella',short:'BELLA',tagline:'A thoughtful little 90s desktop companion.',tone:'warm',greeting:'Hello again! I have kept the little desk lamp on for you.',voice:{lang:'en-US',rate:.96,pitch:1.08,volume:.68},accent:'#d6a65b'},
+    pip:{id:'pip',name:'Pip',short:'PIP',tagline:'Bella’s neon little brother. Quiet is not installed.',tone:'chaotic',greeting:'BEEP BEEP! YOU PRESSED THE PIP BUTTON! I WAS ALREADY HERE!',voice:{lang:'en-US',rate:1.12,pitch:1.62,volume:.62},accent:'#b5f06b'},
+    nourish:{id:'nourish',name:'Miso',short:'MISO',tagline:'A friendly kitchen-side helper for NOURISH.',tone:'gentle',greeting:'Hi there. Ready to stir something up?',voice:{lang:'en-US',rate:.98,pitch:1.12,volume:.64},accent:'#e5bd75'},
+    umbra:{id:'umbra',name:'Shade',short:'SHADE',tagline:'A quiet creative studio companion.',tone:'quiet',greeting:'Hello. The canvas is yours. I will keep the noise down.',voice:{lang:'en-US',rate:.9,pitch:.88,volume:.58},accent:'#a99acb'},
+    aeon:{id:'aeon',name:'Aeon',short:'AEON',tagline:'A curious guide to connected ideas.',tone:'curious',greeting:'Hello. What are we connecting today?',voice:{lang:'en-US',rate:.96,pitch:1.02,volume:.62},accent:'#8de9e4'},
+    aura:{id:'aura',name:'Compliance Clerk',short:'CLERK',tagline:'Your request has been received and filed.',tone:'bureaucratic',greeting:'Your presence has been recorded. Please state the purpose of this interruption.',voice:{lang:'en-US',rate:.82,pitch:.78,volume:.58},accent:'#a8a9ad'}
+  });
+  const CURIOID_ASSISTANT_OS_PERSONA = Object.freeze({
+    'dead-interface':'bella','food-alchemy':'nourish','echonoise-os':'pip',
+    'umbra-os':'umbra','aether-os':'aeon','aura-synthesis':'aura'
+  });
+  const CURIOID_ASSISTANT_REPLIES = Object.freeze({
+    bella:{thanks:'You are very welcome. I am right here at the desk.',bored:'A little wander might help. Try a world you have not visited in a while.',unknown:'Hmm. I do not have a good answer for that yet, but I can help you find the right CURIOID world.'},
+    pip:{thanks:'YOU ARE WELCOME! I ACCEPT PAYMENT IN BUTTON PRESSES AND ATTENTION!',bored:'BORED? Open the sequencer! Make a noise! Make seventeen noises! I HAVE IDEAS!',unknown:'HUH? My ears are made of bells, not databases. Try asking me about music, sound or the other worlds.'},
+    nourish:{thanks:'You are welcome. Keep experimenting; the best discoveries are often unexpected.',bored:'Try a new ingredient combination in NOURISH. There is always another recipe to uncover.',unknown:'I am not sure yet. Tell me what you are trying to make or discover.'},
+    umbra:{thanks:'You are welcome. Enjoy making something.',bored:'A small sketch, a colour study or a strange shape could be a good starting point.',unknown:'I do not have a reliable answer for that. Tell me what you are making and I will point you to the right tool.'},
+    aeon:{thanks:'Glad to help. Keep the useful connections and discard the rest.',bored:'Start with one question and connect three related notes. See where the structure leads.',unknown:'I cannot verify that from the local context yet. Add a source or a note and I can help organise it.'},
+    aura:{thanks:'Acknowledgement received. The matter is now considered concluded.',bored:'A period of recreational activity may be requested. Please select an approved application.',unknown:'The request cannot be actioned because the required information was not supplied in the prescribed format.'}
+  });
+  function curioidAssistantReply(message, personaId='bella', experienceId='') {
+    const persona=CURIOID_ASSISTANT_PERSONAS[personaId]||CURIOID_ASSISTANT_PERSONAS.bella;
+    const engine=window.CurioidBellaDialogueEngine;
+    let classified={intent:'unknown'};
+    try{classified=engine?.classify?.(message,{})||classified;}catch(_){}
+    const world=(()=>{try{return engine?.recommendWorld?.(message)||null;}catch(_){return null;}})();
+    const n=String(message||'').trim().slice(0,500);
+    const names={umbra:'UMBRA',echonoise:'Echonoise',nourish:'NOURISH',aether:'Aether.OS',aura:'AURA//SYNTHESIS',sandbox:'Sandbox OS',doors98:'Doors98'};
+    let text='';
+    switch(classified.intent){
+      case 'empty': text='Type a message and I will do my best to help.';break;
+      case 'greeting': text=persona.greeting;break;
+      case 'assistant-introduction': text=`I am ${persona.name}. ${persona.tagline} I run locally using CURIOID’s shared, rule-based conversation engine; I am not a cloud AI.`;break;
+      case 'assistant-nature': text=`I am a small local software companion, not a person or a remote AI model. My personality is part of this ${names[experienceId]||'CURIOID'} interface.`;break;
+      case 'wellbeing-question': text=persona.tone==='bureaucratic'?'SYSTEM STATUS: FUNCTIONAL. Personal wellbeing is outside the scope of this office.':'I am running smoothly, thank you. What are you working on?';break;
+      case 'thanks': text=CURIOID_ASSISTANT_REPLIES[persona.id].thanks;break;
+      case 'farewell': text=persona.tone==='chaotic'?'BYEEEE! I WILL BE HERE WHEN YOU PRESS THE BUTTON AGAIN!':'Until next time. Your work stays in this browser.';break;
+      case 'bored': text=CURIOID_ASSISTANT_REPLIES[persona.id].bored;break;
+      case 'mood-share': text=persona.tone==='bureaucratic'?'Your status has been entered into the personal record. No corrective action will be taken without a completed request.':persona.tone==='chaotic'?'OH NO! I AM DEPLOYING A COMPLIMENT AND A VERY SMALL CONFETTI CANNON. Want to make something?':'Thanks for telling me. No need to solve everything at once. A small, manageable next step is enough.';break;
+      case 'local-time-question': text=`Your browser's local time is ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}.`;break;
+      case 'local-system-question': text='CURIOID is a collection of independent browser-based operating systems, creative tools and games. Their shared services help them exchange selected local data without erasing their individual identities.';break;
+      case 'world-overview': text='Doors98 is the retro desktop; NOURISH is a playful ingredient-discovery world; Echonoise is for music and voice creation; UMBRA is for image editing; Aether organises connected knowledge; AURA is a deliberately dull creative administration office; Sandbox OS lets you build a personal desktop.';break;
+      case 'world-recommendation': {
+        const target=world||engine?.recommendWorld?.(n);
+        text=target?`Try ${names[target.id]||target.name}. ${target.reason||''}${target.note||''}`:'I could not confidently match that to a world. Try naming the kind of work you want to do.';
+        break;
+      }
+      case 'command': text=persona.tone==='bureaucratic'?'This office accepts requests through its designated application controls. Free-form instructions do not constitute an approved work order.':'I cannot safely control every app through chat yet. Use the OS launcher, desktop shortcuts or app controls; I can still help you find the right place.';break;
+      case 'local-how-to': text='Most apps keep their main actions in the toolbar or application menu. Tell me which OS or app you are using and what you are trying to do, and I can give more specific guidance.';break;
+      case 'joke-request': text=persona.tone==='chaotic'?'Why did the synth cross the road? TO GET TO THE OTHER SIDE OF THE MIX!':persona.tone==='bureaucratic'?'A joke was submitted. It has been placed under review. Expected processing time: indefinite.':'Why did the computer get cold? It left its Windows open.';break;
+      case 'opinion-request': case 'assistant-preference': case 'chat-invitation': text=persona.tone==='bureaucratic'?'Opinions are not required for this filing. Please proceed with the next actionable item.':'I can talk it through with you. Give me the subject and we can explore a few angles.';break;
+      case 'story-request': text=persona.tone==='chaotic'?'Once upon a time, a tiny bell creature pressed one button, then another, then ALL THE BUTTONS. The sound engineer resigned. The end!':'Once, a little desktop light stayed on in an empty room. One evening, someone returned and found that the room had saved their unfinished idea exactly where they left it.';break;
+      case 'personal-update': case 'interest-share': case 'preference-share': text=persona.tone==='bureaucratic'?'Your preference has been recorded. No further action is required at this time.':'That sounds interesting. What part of it are you enjoying most?';break;
+      default: text=CURIOID_ASSISTANT_REPLIES[persona.id].unknown;
+    }
+    return Object.freeze({text:String(text).slice(0,900),intent:classified.intent,world:world?.id||null,persona:persona.id});
+  }
+  function bindCurioidAssistantHub(host, options={}) {
+    if(!host)return()=>{};
+    const experienceId=String(options.experienceId||host.dataset.curioidExperience||'sandbox-os');
+    const nativeBella=experienceId==='dead-interface'?host.querySelector('[data-bella-toggle]'):null;
+    if(nativeBella&&!options.forceSharedPanel){
+      nativeBella.dataset.curioidAssistantPersona='bella';
+      nativeBella.setAttribute('aria-label','Open Bella · shared CURIOID assistant hub');
+      nativeBella.title='Bella · CURIOID assistant hub';
+      host.dataset.curioidAssistantHub='bella';
+      const open=()=>nativeBella.click();
+      host.__curioidAssistantOpen=open;
+      return()=>{if(host.__curioidAssistantOpen===open)delete host.__curioidAssistantOpen;};
+    }
+    if(host.querySelector('[data-curioid-assistant-panel]'))return()=>{};
+    const taskbar=options.taskbar||host.querySelector('.retro-taskbar,.food-os-taskbar,.eno-taskbar,.umbra-taskbar,.aether-statusbar,.aura-taskbar,.cos-desktop-taskbar');
+    const personaId=options.personaId||CURIOID_ASSISTANT_OS_PERSONA[experienceId]||'bella';
+    const savedSandbox=experienceId==='sandbox-os'?(()=>{try{return localStorage.getItem('curioid-sandbox-assistant-persona-v1')||'bella';}catch(_){return'bella';}})():personaId;
+    let selectedPersona=CURIOID_ASSISTANT_PERSONAS[options.allowPersonaSelect?savedSandbox:personaId]? (options.allowPersonaSelect?savedSandbox:personaId):'bella';
+    const trigger=options.triggerButton||document.createElement('button');
+    let triggerLabel=null;if(!options.triggerButton){trigger.type='button';trigger.className='curioid-assistant-task-button';trigger.dataset.curioidAssistantToggle='';const glyph=document.createElement('span');glyph.setAttribute('aria-hidden','true');glyph.textContent='✦';triggerLabel=document.createElement('b');triggerLabel.textContent='ASSISTANT';trigger.append(glyph,triggerLabel);taskbar?.append(trigger);}
+    trigger.setAttribute('aria-haspopup','dialog');trigger.setAttribute('aria-expanded','false');trigger.title=`Open ${CURIOID_ASSISTANT_PERSONAS[selectedPersona].name}`;
+    const panel=document.createElement('section');panel.className='curioid-assistant-panel';panel.dataset.curioidAssistantPanel='';panel.dataset.persona=selectedPersona;panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-label','CURIOID shared assistant');
+    const head=document.createElement('header');head.className='curioid-assistant-head';
+    const identity=document.createElement('div');identity.className='curioid-assistant-identity';
+    const avatar=document.createElement('div');avatar.className='curioid-assistant-avatar';avatar.setAttribute('aria-hidden','true');
+    const titles=document.createElement('div');const name=document.createElement('b'),tagline=document.createElement('small');titles.append(name,tagline);identity.append(avatar,titles);
+    const headActions=document.createElement('div');headActions.className='curioid-assistant-head-actions';
+    const voiceButton=document.createElement('button');voiceButton.type='button';voiceButton.textContent='SPEAK';voiceButton.title='Read the latest assistant reply aloud';voiceButton.dataset.assistantVoice='';
+    const closeButton=document.createElement('button');closeButton.type='button';closeButton.textContent='×';closeButton.setAttribute('aria-label','Close assistant');headActions.append(voiceButton,closeButton);head.append(identity,headActions);
+    const personaPicker=document.createElement('label');personaPicker.className='curioid-assistant-persona-picker';personaPicker.textContent='ASSISTANT PERSONA';
+    const personaSelect=document.createElement('select');personaSelect.setAttribute('aria-label','Choose assistant persona');
+    for(const item of Object.values(CURIOID_ASSISTANT_PERSONAS)){const option=document.createElement('option');option.value=item.id;option.textContent=`${item.name} · ${item.tagline}`;personaSelect.append(option);}
+    personaPicker.hidden=!options.allowPersonaSelect;personaPicker.append(personaSelect);
+    const log=document.createElement('div');log.className='curioid-assistant-log';log.setAttribute('role','log');log.setAttribute('aria-live','polite');log.setAttribute('aria-relevant','additions text');
+    const welcome=document.createElement('div');welcome.className='curioid-assistant-message from-assistant';welcome.textContent='Hello! I am part of the shared CURIOID assistant hub. My personality and appearance change with this OS.';log.append(welcome);
+    const form=document.createElement('form');form.className='curioid-assistant-form';
+    const input=document.createElement('input');input.type='text';input.maxLength=500;input.placeholder='Ask me something…';input.setAttribute('aria-label','Message your assistant');
+    const send=document.createElement('button');send.type='submit';send.textContent='SEND';form.append(input,send);
+    const foot=document.createElement('p');foot.className='curioid-assistant-foot';foot.textContent='SHARED LOCAL ENGINE · NO CLOUD MODEL · NO REMOTE REQUESTS';
+    panel.append(head,personaPicker,log,form,foot);host.append(panel);
+    let disposed=false,lastReply='',speech=createCurioidSpeechQueue((state)=>{if(state==='error')foot.textContent='VOICE UNAVAILABLE · TEXT CHAT STILL WORKS';else if(state==='unsupported')foot.textContent='NO BROWSER VOICE · TEXT CHAT STILL WORKS';});
+    const renderPersona=()=>{
+      const p=CURIOID_ASSISTANT_PERSONAS[selectedPersona]||CURIOID_ASSISTANT_PERSONAS.bella;panel.dataset.persona=p.id;panel.style.setProperty('--assistant-accent',p.accent);trigger.style.setProperty('--assistant-accent',p.accent);if(triggerLabel)triggerLabel.textContent=options.allowPersonaSelect?'ASSISTANT':p.short;name.textContent=p.name;tagline.textContent=p.tagline;avatar.replaceChildren();
+      if(p.id==='bella'||p.id==='pip'){const image=document.createElement('img');image.alt='';image.setAttribute('aria-hidden','true');image.decoding='async';image.src=`data:image/svg+xml;charset=utf-8,${encodeURIComponent(p.id==='bella'?CURIOID_BELLA_CREATURE_SVG:CURIOID_PIP_CREATURE_SVG)}`;avatar.append(image);}
+      else{const glyph=document.createElement('b');glyph.textContent=({nourish:'◒',umbra:'◈',aeon:'✧',aura:'A//'}[p.id]||'✦');avatar.append(glyph);}
+      trigger.title=`Open ${p.name}`;trigger.setAttribute('aria-label',`Open ${p.name} assistant`);personaSelect.value=p.id;
+    };
+    const addMessage=(role,text)=>{const node=document.createElement('div');node.className=`curioid-assistant-message ${role==='user'?'from-user':'from-assistant'}`;node.textContent=String(text||'').slice(0,900);log.append(node);while(log.children.length>40)log.firstElementChild.remove();log.scrollTop=log.scrollHeight;};
+    const open=()=>{if(disposed)return;panel.hidden=false;trigger.setAttribute('aria-expanded','true');input.focus({preventScroll:true});if(!log.dataset.greeted){const p=CURIOID_ASSISTANT_PERSONAS[selectedPersona];addMessage('assistant',p.greeting);log.dataset.greeted='1';lastReply=p.greeting;}};
+    const close=()=>{panel.hidden=true;trigger.setAttribute('aria-expanded','false');speech.stop();};
+    const onTrigger=()=>{if(panel.hidden)open();else close();};
+    const onClose=()=>close();
+    const onVoice=()=>{if(lastReply)speech.speak(lastReply,CURIOID_ASSISTANT_PERSONAS[selectedPersona].voice);};
+    const onPersona=()=>{selectedPersona=CURIOID_ASSISTANT_PERSONAS[personaSelect.value]?personaSelect.value:'bella';if(options.allowPersonaSelect){try{localStorage.setItem('curioid-sandbox-assistant-persona-v1',selectedPersona);}catch(_){}}speech.stop();renderPersona();addMessage('assistant',CURIOID_ASSISTANT_PERSONAS[selectedPersona].greeting);lastReply=CURIOID_ASSISTANT_PERSONAS[selectedPersona].greeting;};
+    const onSubmit=event=>{event.preventDefault();const message=input.value.trim();if(!message||disposed)return;input.value='';addMessage('user',message);const reply=curioidAssistantReply(message,selectedPersona,experienceId);lastReply=reply.text;addMessage('assistant',reply.text);avatar.classList.add('is-speaking');clearTimeout(avatar.__curioidSpeakTimer);avatar.__curioidSpeakTimer=setTimeout(()=>avatar.classList.remove('is-speaking'),1100);if(reply.world&&reply.world!==experienceId){foot.textContent=`SUGGESTED WORLD · ${reply.world.toUpperCase()} · USE THE SITE LAUNCHER TO SWITCH`; }else foot.textContent='SHARED LOCAL ENGINE · NO CLOUD MODEL · NO REMOTE REQUESTS';};
+    const onKey=event=>{if(event.key==='Escape'&&!panel.hidden){event.stopPropagation();close();trigger.focus({preventScroll:true});}};
+    trigger.addEventListener('click',onTrigger);closeButton.addEventListener('click',onClose);voiceButton.addEventListener('click',onVoice);personaSelect.addEventListener('change',onPersona);form.addEventListener('submit',onSubmit);host.addEventListener('keydown',onKey);
+    renderPersona();
+    const cleanup=()=>{if(disposed)return;disposed=true;close();speech.dispose();trigger.removeEventListener('click',onTrigger);closeButton.removeEventListener('click',onClose);voiceButton.removeEventListener('click',onVoice);personaSelect.removeEventListener('change',onPersona);form.removeEventListener('submit',onSubmit);host.removeEventListener('keydown',onKey);if(panel.isConnected)panel.remove();if(!options.triggerButton&&trigger.isConnected)trigger.remove();if(host.__curioidAssistantOpen===open)delete host.__curioidAssistantOpen;};
+    host.__curioidAssistantOpen=open;
+    return cleanup;
+  }
+  window.CurioidAssistantHub=Object.freeze({
+    version:'1.0.0',engine:'bounded-local-intent-classification',
+    listPersonas:()=>Object.values(CURIOID_ASSISTANT_PERSONAS).map(item=>Object.freeze({id:item.id,name:item.name,tagline:item.tagline})),
+    respond:(message,options={})=>curioidAssistantReply(message,options.personaId||'bella',options.experienceId||''),
+    attach:(host,options={})=>bindCurioidAssistantHub(host,options),
+    open:(host,options={})=>{if(host?.__curioidAssistantOpen){host.__curioidAssistantOpen();return true;}const button=host?.querySelector?.('[data-curioid-assistant-toggle],[data-bella-toggle]');if(button){button.click();return true;}return false;}
+  });
+
+  const CURIOID_DESKTOP_DB='curioid-user-desktops-v1';
+  function curioidDesktopOpenDB(){return new Promise((resolve,reject)=>{if(!window.indexedDB){reject(new Error('This browser does not provide IndexedDB.'));return;}const request=indexedDB.open(CURIOID_DESKTOP_DB,1);request.onupgradeneeded=()=>{const db=request.result;if(!db.objectStoreNames.contains('files')){const store=db.createObjectStore('files',{keyPath:'id'});store.createIndex('owner','owner',{unique:false});}};request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error||new Error('Desktop file storage could not be opened.'));});}
+  function curioidDesktopStore(db,mode,action){return new Promise((resolve,reject)=>{const tx=db.transaction('files',mode),store=tx.objectStore('files');let result;try{result=action(store);}catch(error){reject(error);return;}tx.oncomplete=()=>resolve(result?.result);tx.onerror=()=>reject(tx.error||new Error('Desktop storage transaction failed.'));tx.onabort=()=>reject(tx.error||new Error('Desktop storage transaction was cancelled.'));});}
+  function bindCurioidUniversalDesktop(host,experienceId,api={}){
+    if(!host||!OS_PROJECT_IDS.has(experienceId))return()=>{};
+    const map={
+      'dead-interface':{shell:'.retro-desktop',surface:'.retro-desktop',taskbar:'.retro-taskbar',persona:'bella'},
+      'food-alchemy':{shell:'.food-os',surface:'.food-os-desktop-surface',taskbar:'.food-os-taskbar',persona:'nourish'},
+      'echonoise-os':{shell:'.echonoise-os',surface:'.eno-desktop',taskbar:'.eno-taskbar',persona:'pip'},
+      'umbra-os':{shell:'.umbra-os',surface:'.umbra-desktop',taskbar:'.umbra-taskbar',persona:'umbra'},
+      'aether-os':{shell:'.aether-os',surface:'.aether-stage',taskbar:'.aether-statusbar',persona:'aeon'},
+      'aura-synthesis':{shell:'.aura-synthesis',surface:'.aura-desktop',taskbar:'.aura-taskbar',persona:'aura'}
+    }[experienceId];
+    if(!map)return()=>{};
+    const shell=host.querySelector(map.shell),surface=host.querySelector(map.surface),taskbar=host.querySelector(map.taskbar);
+    if(!shell||!surface||!taskbar)return()=>{};
+    const hostStyle=host.style,oldContainerType=hostStyle.containerType,oldContainerName=hostStyle.containerName;
+    host.dataset.curioidOsRoot=experienceId;hostStyle.containerType='inline-size';hostStyle.containerName='curioidOs';
+    shell.dataset.curioidWallpaper='identity';
+    const prefKey=`curioid-user-desktop-v1:${experienceId}`;
+    const cleanPrefs=value=>({wallpaper:['identity','aurora','midnight','paper','sunset'].includes(value?.wallpaper)?value.wallpaper:'identity',iconSize:['small','normal','large'].includes(value?.iconSize)?value.iconSize:'normal',layout:['row','grid'].includes(value?.layout)?value.layout:'row',pinned:Array.isArray(value?.pinned)?value.pinned.filter(x=>typeof x==='string').slice(0,24):[]});
+    let prefs=cleanPrefs(null);try{prefs=cleanPrefs(JSON.parse(localStorage.getItem(prefKey)||'null'));}catch(_){}
+    const savePrefs=()=>{try{localStorage.setItem(prefKey,JSON.stringify(prefs));}catch(_){notice('Desktop preferences could not be saved by this browser.');}};
+    const notice=message=>{api.toast?.(message);const status=host.querySelector('[data-a-status],[data-os-runtime-status],[data-aura-notice],[data-u-save-status]');if(status)status.textContent=String(message).slice(0,180);};
+    let shelf=surface.querySelector(':scope > .curioid-user-desktop');if(shelf)shelf.remove();
+    shelf=document.createElement('nav');shelf.className='curioid-user-desktop';shelf.setAttribute('aria-label','Your desktop shortcuts and files');shelf.dataset.curioidUserDesktop='';surface.append(shelf);
+    const buildTargetList=()=>{
+      const selectors={dockApp:'[data-dock-app]',roomShortcut:'[data-room-shortcut]',foodLaunch:'[data-food-launch]',enoLaunch:'[data-eno-launch]',uLaunch:'[data-u-launch]',aAddNote:'[data-a-add-note]',aAddLink:'[data-a-add-link]',aAddCode:'[data-a-add-code]',aAddFile:'[data-a-add-file]',auraOpen:'[data-aura-open]'};
+      const out=[],seen=new Set();for(const [key,selector] of Object.entries(selectors)){host.querySelectorAll(selector).forEach(el=>{if(el.closest('.curioid-user-desktop,.curioid-desktop-settings,.curioid-assistant-panel'))return;const value=el.dataset[key];if(value===undefined||el.disabled||el.hidden)return;const itemId=`${key}:${value}`;if(seen.has(itemId))return;seen.add(itemId);const label=(el.getAttribute('aria-label')||el.dataset.launchName||el.dataset.title||el.textContent||key).replace(/\s+/g,' ').trim().slice(0,40)||key;const icon=(el.querySelector('svg')?'◇':(el.querySelector('span')?.textContent||el.textContent||'▣').trim().slice(0,3))||'▣';out.push({id:itemId,key,value,label,icon,element:el});});}
+      return out;
+    };
+    const launchables=buildTargetList();
+    if(!prefs.pinned.length){prefs.pinned=launchables.slice(0,Math.min(5,launchables.length)).map(item=>item.id);savePrefs();}
+    const settings=document.createElement('dialog');settings.className='curioid-desktop-settings';settings.setAttribute('aria-label','Desktop preferences');
+    const settingsHead=document.createElement('header'),settingsTitle=document.createElement('b'),settingsClose=document.createElement('button');settingsTitle.textContent='DESKTOP PERSONALISATION';settingsClose.type='button';settingsClose.textContent='×';settingsClose.setAttribute('aria-label','Close desktop settings');settingsHead.append(settingsTitle,settingsClose);
+    const wallpaperLabel=document.createElement('label');wallpaperLabel.textContent='Wallpaper';const wallpaperSelect=document.createElement('select');for(const [value,label] of [['identity','Original OS wallpaper'],['aurora','Aurora gradient'],['midnight','Midnight'],['paper','Warm paper'],['sunset','Sunset glow']]){const option=document.createElement('option');option.value=value;option.textContent=label;wallpaperSelect.append(option);}wallpaperLabel.append(wallpaperSelect);
+    const sizeLabel=document.createElement('label');sizeLabel.textContent='Desktop icon size';const sizeSelect=document.createElement('select');for(const [v,l] of [['small','Small'],['normal','Normal'],['large','Large']]){const o=document.createElement('option');o.value=v;o.textContent=l;sizeSelect.append(o);}sizeLabel.append(sizeSelect);
+    const layoutLabel=document.createElement('label');layoutLabel.textContent='Shortcut layout';const layoutSelect=document.createElement('select');for(const [v,l] of [['row','Flexible row'],['grid','Grid']]){const o=document.createElement('option');o.value=v;o.textContent=l;layoutSelect.append(o);}layoutLabel.append(layoutSelect);
+    const appLabel=document.createElement('label');appLabel.textContent='Pin an application';const appSelect=document.createElement('select');const appEmpty=document.createElement('option');appEmpty.value='';appEmpty.textContent='Choose an application…';appSelect.append(appEmpty);for(const item of launchables){const o=document.createElement('option');o.value=item.id;o.textContent=item.label;appSelect.append(o);}appLabel.append(appSelect);
+    const actions=document.createElement('div');actions.className='curioid-desktop-settings-actions';const addPin=document.createElement('button');addPin.type='button';addPin.textContent='Pin shortcut';const importFiles=document.createElement('button');importFiles.type='button';importFiles.textContent='Add files';const resetPins=document.createElement('button');resetPins.type='button';resetPins.textContent='Reset shortcuts';actions.append(addPin,importFiles,resetPins);
+    const hint=document.createElement('p');hint.textContent='Shortcuts and files stay in this browser. Files are stored as data and are never executed by CURIOID.';settings.append(settingsHead,wallpaperLabel,sizeLabel,layoutLabel,appLabel,actions,hint);host.append(settings);
+    const fileInput=document.createElement('input');fileInput.type='file';fileInput.multiple=true;fileInput.hidden=true;fileInput.setAttribute('aria-label','Choose desktop files');host.append(fileInput);
+    const fileKeyPrefix=`${experienceId}:`;
+    let dbPromise=null,db=null,fileRecords=[];
+    const openDb=()=>dbPromise||(dbPromise=curioidDesktopOpenDB().then(value=>(db=value,value)));
+    const requestFiles=async()=>{try{const d=await openDb();const tx=d.transaction('files','readonly');const request=tx.objectStore('files').index('owner').getAll(fileKeyPrefix);request.onsuccess=()=>{fileRecords=request.result||[];renderShelf();};request.onerror=()=>notice('Desktop files could not be listed.');}catch(_){fileRecords=[];renderShelf();}};
+    const renderShelf=()=>{
+      if(!shelf.isConnected)return;shelf.replaceChildren();shelf.dataset.iconSize=prefs.iconSize;shelf.dataset.layout=prefs.layout;
+      const available=buildTargetList();const byId=new Map(available.map(item=>[item.id,item]));
+      const items=prefs.pinned.map(id=>byId.get(id)).filter(Boolean);
+      for(const item of items){const button=document.createElement('button');button.type='button';button.className='curioid-desktop-shortcut';button.title=`Open ${item.label}`;button.dataset.shortcutId=item.id;button.draggable=true;const icon=document.createElement('span'),label=document.createElement('small');icon.className='curioid-shortcut-icon';icon.textContent=item.icon;label.textContent=item.label;button.append(icon,label);button.addEventListener('click',()=>{const current=buildTargetList().find(x=>x.id===item.id);if(current)current.element.click();else notice('That application shortcut is no longer available.');});shelf.append(button);}
+      for(const file of fileRecords){const button=document.createElement('button');button.type='button';button.className='curioid-desktop-shortcut curioid-file-shortcut';button.title=`Download ${file.name}`;button.dataset.fileId=file.id;button.draggable=true;const icon=document.createElement('span'),label=document.createElement('small');icon.className='curioid-shortcut-icon';icon.textContent='▤';label.textContent=file.name;button.append(icon,label);button.addEventListener('click',()=>downloadFile(file));button.addEventListener('contextmenu',event=>{event.preventDefault();if(window.confirm(`Remove “${file.name}” from this desktop? The original file on your device is not affected.`))deleteFile(file.id);});shelf.append(button);}
+      if(!items.length&&!fileRecords.length){const empty=document.createElement('span');empty.className='curioid-desktop-empty';empty.textContent='YOUR DESKTOP · PIN APPS OR ADD FILES';shelf.append(empty);}
+    };
+    const applyPrefs=()=>{shell.dataset.curioidWallpaper=prefs.wallpaper;shell.dataset.curioidIconSize=prefs.iconSize;shell.dataset.curioidDesktopLayout=prefs.layout;wallpaperSelect.value=prefs.wallpaper;sizeSelect.value=prefs.iconSize;layoutSelect.value=prefs.layout;renderShelf();};
+    const persistFile=async file=>{
+      if(file.size>8*1024*1024)throw new Error('Each desktop file is limited to 8 MB.');
+      const existing=fileRecords.reduce((n,item)=>n+(Number(item.size)||0),0);if(fileRecords.length>=20)throw new Error('This desktop can hold up to 20 imported files.');if(existing+file.size>40*1024*1024)throw new Error('The desktop file storage limit is 40 MB per OS.');
+      const id=`${experienceId}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;const record={id,owner:fileKeyPrefix,name:String(file.name||'Untitled file').slice(0,120),type:String(file.type||'application/octet-stream').slice(0,120),size:file.size,blob:file,addedAt:Date.now()};
+      const d=await openDb();await curioidDesktopStore(d,'readwrite',store=>store.put(record));fileRecords.push(record);renderShelf();
+    };
+    const deleteFile=async id=>{try{const d=await openDb();await curioidDesktopStore(d,'readwrite',store=>store.delete(id));fileRecords=fileRecords.filter(item=>item.id!==id);renderShelf();}catch(error){notice(error.message);}};
+    const downloadFile=file=>{try{const url=URL.createObjectURL(file.blob);const a=document.createElement('a');a.href=url;a.download=file.name;a.hidden=true;host.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}catch(_){notice('This file could not be prepared for download.');}};
+    const onWallpaper=()=>{prefs.wallpaper=wallpaperSelect.value;savePrefs();applyPrefs();};const onSize=()=>{prefs.iconSize=sizeSelect.value;savePrefs();applyPrefs();};const onLayout=()=>{prefs.layout=layoutSelect.value;savePrefs();applyPrefs();};
+    const onAddPin=()=>{const id=appSelect.value;if(!id)return;const item=launchables.find(x=>x.id===id);if(!item){notice('That application cannot be pinned from this desktop.');return;}if(!prefs.pinned.includes(id))prefs.pinned.push(id);prefs.pinned=prefs.pinned.slice(0,24);savePrefs();renderShelf();appSelect.value='';};
+    const onImport=()=>fileInput.click();const onFiles=async()=>{for(const file of [...(fileInput.files||[])]){try{await persistFile(file);}catch(error){notice(error.message);break;}}fileInput.value='';};
+    const onReset=()=>{prefs.pinned=launchables.slice(0,Math.min(5,launchables.length)).map(item=>item.id);savePrefs();renderShelf();};
+    const onOpenSettings=()=>{if(settings.showModal)settings.showModal();else settings.setAttribute('open','');};const onCloseSettings=()=>settings.close?.();
+    const settingsButton=document.createElement('button');settingsButton.type='button';settingsButton.className='curioid-desktop-task-button';settingsButton.textContent='▦ DESKTOP';settingsButton.title='Personalise your desktop, pin shortcuts or add local files';settingsButton.setAttribute('aria-haspopup','dialog');taskbar.append(settingsButton);
+    const onDragStart=event=>{const item=event.target.closest('[data-shortcut-id],[data-file-id]');if(!item)return;event.dataTransfer?.setData('text/plain',item.dataset.shortcutId||`file:${item.dataset.fileId}`);if(event.dataTransfer)event.dataTransfer.effectAllowed='move';};
+    const onDragOver=event=>{if(event.target.closest('[data-shortcut-id],[data-file-id]'))event.preventDefault();};
+    const onDrop=event=>{const from=event.dataTransfer?.getData('text/plain')||'',to=event.target.closest('[data-shortcut-id],[data-file-id]');if(!to||!from)return;event.preventDefault();const current=[...shelf.children];const fromEl=current.find(el=>el.dataset.shortcutId===from||el.dataset.fileId===from.replace(/^file:/,''));if(fromEl&&fromEl!==to){shelf.insertBefore(fromEl,to);const ordered=[...shelf.querySelectorAll('[data-shortcut-id]')].map(el=>el.dataset.shortcutId);prefs.pinned=ordered;savePrefs();}};
+    const onDragEnd=()=>{const ordered=[...shelf.querySelectorAll('[data-shortcut-id]')].map(el=>el.dataset.shortcutId);if(ordered.length){prefs.pinned=ordered;savePrefs();}};
+    const onShortcutContextMenu=event=>{const shortcut=event.target.closest('[data-shortcut-id]');if(!shortcut)return;event.preventDefault();const id=shortcut.dataset.shortcutId;const item=buildTargetList().find(entry=>entry.id===id);if(!id||!prefs.pinned.includes(id))return;if(!window.confirm(`Remove ${item?.label||'this shortcut'} from the desktop? The application will remain installed.`))return;prefs.pinned=prefs.pinned.filter(value=>value!==id);savePrefs();renderShelf();};
+    const onSurfaceDragOver=event=>{if(event.dataTransfer?.types?.includes('Files'))event.preventDefault();};const onSurfaceDrop=event=>{if(!event.dataTransfer?.files?.length)return;event.preventDefault();for(const file of [...event.dataTransfer.files])persistFile(file).catch(error=>notice(error.message));};
+    surface.addEventListener('dragover',onSurfaceDragOver);surface.addEventListener('drop',onSurfaceDrop);
+    settingsButton.addEventListener('click',onOpenSettings);settingsClose.addEventListener('click',onCloseSettings);wallpaperSelect.addEventListener('change',onWallpaper);sizeSelect.addEventListener('change',onSize);layoutSelect.addEventListener('change',onLayout);addPin.addEventListener('click',onAddPin);importFiles.addEventListener('click',onImport);resetPins.addEventListener('click',onReset);fileInput.addEventListener('change',onFiles);shelf.addEventListener('dragstart',onDragStart);shelf.addEventListener('dragover',onDragOver);shelf.addEventListener('drop',onDrop);shelf.addEventListener('dragend',onDragEnd);shelf.addEventListener('contextmenu',onShortcutContextMenu);
+    applyPrefs();requestFiles();
+    const assistantCleanup=bindCurioidAssistantHub(shell,{experienceId,personaId:map.persona,taskbar});
+    // UMBRA's primary editor and the Aether/AURA central workspaces now expose
+    // the same taskbar restore + min/max/close semantics as floating app windows.
+    let primaryTarget=null,primaryTask=null,primaryNote=null;
+    if(experienceId==='umbra-os'){
+      const editor=shell.querySelector('.umbra-editor-window'),buttons=editor?.querySelector('.umbra-window-buttons');
+      if(buttons&&!buttons.querySelector('[data-u-action="close-editor"]')){const close=document.createElement('button');close.type='button';close.dataset.uAction='close-editor';close.title='Close editor to desktop';close.textContent='×';buttons.append(close);}
+    }
+    if(experienceId==='aether-os'){
+      primaryTarget=shell.querySelector('.aether-main');const titlebar=document.createElement('header');titlebar.className='curioid-primary-window-titlebar';const title=document.createElement('b');title.textContent='AETHER / MAIN WORKSPACE';const group=document.createElement('div');for(const [action,label,caption] of [['minimize','_','Minimize Aether workspace'],['maximize','□','Maximize Aether workspace'],['close','×','Close Aether workspace']]){const button=document.createElement('button');button.type='button';button.dataset.curioidPrimaryAction=action;button.setAttribute('aria-label',caption);button.title=caption;button.textContent=label;group.append(button);}titlebar.append(title,group);primaryTarget?.prepend(titlebar);primaryTask=document.createElement('button');primaryTask.type='button';primaryTask.className='curioid-primary-task-button';primaryTask.textContent='AETHER';primaryTask.dataset.curioidPrimaryRestore='';taskbar.prepend(primaryTask);primaryNote=document.createElement('div');primaryNote.className='curioid-primary-desktop-note';primaryNote.textContent='Aether workspace is tucked away. Select AETHER on the taskbar to restore it.';primaryNote.hidden=true;shell.append(primaryNote);
+    }else if(experienceId==='aura-synthesis'){
+      primaryTarget=shell.querySelector('.aura-desktop');const head=shell.querySelector('.aura-workspace-head');if(head){const controls=document.createElement('div');controls.className='curioid-primary-window-controls';for(const [action,label,caption] of [['minimize','_','Minimize AURA home'],['maximize','□','Maximize AURA home'],['close','×','Close AURA home']]){const button=document.createElement('button');button.type='button';button.dataset.curioidPrimaryAction=action;button.setAttribute('aria-label',caption);button.title=caption;button.textContent=label;controls.append(button);}head.append(controls);}primaryTask=document.createElement('button');primaryTask.type='button';primaryTask.className='curioid-primary-task-button';primaryTask.textContent='AURA HOME';primaryTask.dataset.curioidPrimaryRestore='';taskbar.prepend(primaryTask);primaryNote=document.createElement('div');primaryNote.className='curioid-primary-desktop-note';primaryNote.textContent='The main office has been temporarily closed. Use AURA HOME to reopen it.';primaryNote.hidden=true;shell.querySelector('.aura-desktop')?.append(primaryNote);
+    }
+    const setPrimary=(action)=>{if(!primaryTarget)return;if(action==='restore'){primaryTarget.classList.remove('curioid-primary-minimized');primaryTarget.classList.remove('curioid-primary-maximized');primaryNote&&(primaryNote.hidden=true);primaryTask?.setAttribute('aria-pressed','true');return;}if(action==='maximize'){primaryTarget.classList.toggle('curioid-primary-maximized');return;}primaryTarget.classList.add('curioid-primary-minimized');primaryTarget.classList.remove('curioid-primary-maximized');if(primaryNote)primaryNote.hidden=false;primaryTask?.setAttribute('aria-pressed','false');};
+    const onPrimaryClick=event=>{const action=event.target.closest('[data-curioid-primary-action]')?.dataset.curioidPrimaryAction;if(action){setPrimary(action);return;}if(event.target.closest('[data-curioid-primary-restore]'))setPrimary('restore');};
+    shell.addEventListener('click',onPrimaryClick);
+    const cleanup=()=>{assistantCleanup();if(db)db.close();settingsButton.removeEventListener('click',onOpenSettings);settingsClose.removeEventListener('click',onCloseSettings);wallpaperSelect.removeEventListener('change',onWallpaper);sizeSelect.removeEventListener('change',onSize);layoutSelect.removeEventListener('change',onLayout);addPin.removeEventListener('click',onAddPin);importFiles.removeEventListener('click',onImport);resetPins.removeEventListener('click',onReset);fileInput.removeEventListener('change',onFiles);shelf.removeEventListener('dragstart',onDragStart);shelf.removeEventListener('dragover',onDragOver);shelf.removeEventListener('drop',onDrop);shelf.removeEventListener('dragend',onDragEnd);shelf.removeEventListener('contextmenu',onShortcutContextMenu);surface.removeEventListener('dragover',onSurfaceDragOver);surface.removeEventListener('drop',onSurfaceDrop);shell.removeEventListener('click',onPrimaryClick);shelf.remove();settings.remove();fileInput.remove();settingsButton.remove();primaryTask?.remove();primaryNote?.remove();if(primaryTarget){primaryTarget.classList.remove('curioid-primary-minimized','curioid-primary-maximized');}if(host.dataset.curioidOsRoot===experienceId)delete host.dataset.curioidOsRoot;hostStyle.containerType=oldContainerType;hostStyle.containerName=oldContainerName;surface.style.position=oldSurfacePosition;};
+    return cleanup;
+  }
+
   const CURIOID_CONNECT_PROTOCOL = 'curioid-connect';
   const CURIOID_CONNECT_VERSION = '1.0.0';
   const CURIOID_CONNECT_MANIFEST_FORMAT = 'curioid-connect-manifest';
@@ -7441,6 +7835,7 @@ window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID O
       throw new Error('Unsupported CURIOID OS SDK request.');
     }
     const shellRoot=overlay.querySelector('[data-cos-desktop-shell]'),shellStage=overlay.querySelector('[data-cos-desktop-stage]'),shellWindow=overlay.querySelector('[data-cos-desktop-window]'),shellStart=overlay.querySelector('[data-cos-start-menu]'),shellStatus=overlay.querySelector('[data-os-runtime-status]'),shellToast=overlay.querySelector('[data-cos-shell-toast]'),shellTaskbarApps=overlay.querySelector('[data-cos-shell-task-apps]');
+    const sandboxAssistantCleanup=bindCurioidAssistantHub(shellRoot,{experienceId:'sandbox-os',personaId:'bella',taskbar:shellTaskbar,allowPersonaSelect:true});overlay.addEventListener('click',event=>{if(event.target.closest('[data-os-runtime-close],[data-cos-shell-recovery-close]'))sandboxAssistantCleanup();},{capture:true});
     const shellSetStartOpen=open=>{const next=Boolean(open&&shellStart&&shellStartButton);if(shellStart)shellStart.hidden=!next;shellStartButton?.setAttribute('aria-expanded',String(next));};
     let shellWindowZ=10,shellActiveWindowId='primary',shellCreateAppWindow=null;const shellWindowRecords=new Map();const shellPrimaryRecord={id:'primary',appId:shellApps[0].id,workspaceAppId:shellApps[0].id,name:shellApps[0].name,icon:shellApps[0].icon,element:shellWindow,iframe,frame:primaryFrame,taskButton:overlay.querySelector('[data-cos-primary-task]'),primary:true};primaryFrame.windowEl=shellWindow;shellWindow.dataset.shellWindowId='primary';shellWindow.dataset.shellAppId=shellApps[0].id;shellWindowRecords.set('primary',shellPrimaryRecord);
     const shellDocName=overlay.querySelector('[data-shell-doc-name]'),shellDocBody=overlay.querySelector('[data-shell-doc-body]'),shellDocStatus=overlay.querySelector('[data-shell-doc-status]');
@@ -13176,9 +13571,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
           </header>
           <div class="retro-bella-avatar-stage" data-bella-avatar-stage>
             <div class="retro-bella-character" data-bella-character role="button" tabindex="0" aria-label="Bella the desktop companion. Activate for a friendly greeting." title="Click Bella for a little hello">
-              <div class="bella-avatar-art" data-bella-art>
-                <img class="bella-avatar-concierge" src="${curioidBellaConciergeSrc()}" alt="" aria-hidden="true" decoding="async" fetchpriority="low" draggable="false">
-              </div>
+              <div class="bella-avatar-art" data-bella-art>${CURIOID_BELLA_CREATURE_SVG}</div>
             </div>
             <div class="retro-bella-avatar-caption" role="status" aria-live="polite" aria-atomic="true"><strong>Bella</strong><small data-bella-speech>Oh, hello! I was just making sure the little doors are all behaving.</small></div>
           </div>
@@ -16254,19 +16647,21 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
         const key='DOORS98-WORK-LOG.JSON',form=$('[data-work-form]',appContent),entries=$('[data-work-entries]',appContent),total=$('[data-work-total]',appContent),status=document.createElement('p');status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.className='tool-small';entries.before(status);let file=virtualFiles.find(f=>f.name===key),items=[],loadError='',rawLog=String(file?.content||'[]');const safeMinutes=value=>{const n=Number(value);return Number.isFinite(n)?Math.max(0,Math.min(1000000,n)):0;};try{if(rawLog.length>2000000)throw new Error('This saved log is larger than the safe 2 MB import limit.');const parsed=JSON.parse(rawLog);if(!Array.isArray(parsed))throw new Error('The saved log is not a list of entries.');items=parsed.filter(x=>x&&typeof x==='object'&&!Array.isArray(x)).slice(-5000).map(x=>({date:String(x.date??'').slice(0,32),project:String(x.project??'').slice(0,120),task:String(x.task??'').slice(0,300),minutes:safeMinutes(x.minutes),notes:String(x.notes??'').slice(0,2000)}));}catch(error){loadError=error.message||'The saved log could not be read safely.';}form.elements.date.value=new Date().toISOString().slice(0,10);let mutationInFlight=false;const persist=async()=>{if(loadError){status.textContent='SAVE BLOCKED. DOWNLOAD THE ORIGINAL LOG FIRST.';return false;}try{file=await saveTextToDriveVerified(key,JSON.stringify(items,null,2),'workshop',file?.id||null,'application/json');return true;}catch(error){status.textContent=`WORK LOG NOT SAVED: ${String(error?.message||error).slice(0,160)}`;return false;}};const draw=()=>{const mins=items.reduce((n,x)=>n+safeMinutes(x.minutes),0);total.textContent=`${mins.toLocaleString()} MINUTES / ${(mins/60).toFixed(1)} HOURS`;if(loadError){entries.replaceChildren();const message=document.createElement('p');message.textContent=`${loadError} Your original file has not been changed.`;const backup=document.createElement('button');backup.type='button';backup.className='tool-button';backup.textContent='Download original log for recovery';backup.addEventListener('click',()=>downloadBlob(new Blob([rawLog],{type:'application/json'}),'doors98-work-log-recovery.json'));entries.append(message,backup);return;}const fragment=document.createDocumentFragment();items.forEach((item,index)=>{const article=document.createElement('article'),task=document.createElement('b'),meta=document.createElement('small'),notes=document.createElement('p'),remove=document.createElement('button');task.textContent=item.task;meta.textContent=`${item.date} · ${item.project} · ${safeMinutes(item.minutes)} min`;notes.textContent=item.notes||'';remove.type='button';remove.dataset.workRemove=String(index);remove.textContent='Remove';article.append(task,meta,notes,remove);fragment.append(article);});entries.replaceChildren(fragment);};$('[data-work-save]',appContent).addEventListener('click',async()=>{if(loadError||mutationInFlight)return;const button=$('[data-work-save]',appContent);const f=form.elements;if(!f.task.value.trim())return;mutationInFlight=true;button.disabled=true;try{items.unshift({date:String(f.date.value).slice(0,32),project:String(f.project.value).slice(0,120),task:String(f.task.value).slice(0,300),minutes:Math.max(1,safeMinutes(f.minutes.value)),notes:String(f.notes.value).slice(0,2000)});items=items.slice(0,5000);const saved=await persist();draw();if(saved){f.task.value='';f.notes.value='';status.textContent='WORK LOG SAVED TO C:.';}else status.textContent='WORK LOG NOT DURABLY SAVED. THE CURRENT ENTRY REMAINS IN THIS TAB FOR RECOVERY; EXPORT IT BEFORE RELOADING.';}catch(error){draw();status.textContent=`WORK LOG SAVE FAILED: ${String(error?.message||error).slice(0,160)}. Current entries remain in this tab for recovery.`;}finally{mutationInFlight=false;button.disabled=false;}});entries.addEventListener('click',/** @param {CurioidDOMEvent} e */ async e=>{const b=e.target.closest('[data-work-remove]');if(!b||loadError||mutationInFlight)return;const index=Number(b.dataset.workRemove);if(!Number.isInteger(index)||index<0||index>=items.length)return;mutationInFlight=true;b.disabled=true;try{items.splice(index,1);const saved=await persist();draw();if(!saved)status.textContent='REMOVAL IS SESSION-ONLY. KEEP THIS TAB OPEN AND EXPORT A RECOVERY COPY BEFORE RELOADING.';}finally{mutationInFlight=false;}});$('[data-work-export]',appContent).addEventListener('click',()=>{if(loadError){downloadBlob(new Blob([rawLog],{type:'application/json'}),'doors98-work-log-recovery.json');return;}downloadBlob(new Blob(['date,project,task,minutes,notes\n'+items.map(x=>[x.date,x.project,x.task,safeMinutes(x.minutes),x.notes].map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}),'doors98-work-log.csv');});draw();
       }
       if(app==='speech-studio'){
-        const text=$('[data-speech-text]',appContent),out=$('[data-speech-output]',appContent),status=$('[data-speech-status]',appContent),voiceSelect=$('[data-speech-voice]',appContent),rateSelect=$('[data-speech-rate]',appContent),speakButton=$('[data-speech-speak]',appContent),stopButton=$('[data-speech-stop]',appContent);let report=null,activeUtterance=null,availableVoices=[],speechDisposed=false;
-        const speech=window.speechSynthesis&&typeof window.speechSynthesis.speak==='function'?window.speechSynthesis:null;if(stopButton)stopButton.disabled=true;
+        const text=$('[data-speech-text]',appContent),out=$('[data-speech-output]',appContent),status=$('[data-speech-status]',appContent),voiceSelect=$('[data-speech-voice]',appContent),rateSelect=$('[data-speech-rate]',appContent),speakButton=$('[data-speech-speak]',appContent),stopButton=$('[data-speech-stop]',appContent);let report=null,availableVoices=[],speechDisposed=false;
+        const speech=window.speechSynthesis&&typeof window.speechSynthesis.speak==='function'?window.speechSynthesis:null;
+        const speechPlayer=createCurioidSpeechQueue((state,detail)=>{if(speechDisposed)return;if(state==='speaking')status.textContent='SPEAKING / ONE PHRASE AT A TIME';else if(state==='queued')status.textContent='VOICE QUEUED / PRESS STOP TO CANCEL';else if(state==='finished'){if(stopButton)stopButton.disabled=true;status.textContent='SPEECH FINISHED';}else if(state==='stopped'){if(stopButton)stopButton.disabled=true;}else if(state==='unsupported')status.textContent='TTS UNAVAILABLE / THIS BROWSER DOES NOT PROVIDE SPEECH OUTPUT';else if(state==='error'){if(stopButton)stopButton.disabled=true;status.textContent=`TTS ERROR / ${detail||'VOICE UNAVAILABLE'}`;}});
+        if(stopButton)stopButton.disabled=true;
         const voiceSignature=voice=>String(voice?.voiceURI||`${voice?.name||''}|${voice?.lang||''}`);
         const refreshVoices=()=>{if(speechDisposed||!voiceSelect)return;const previousIndex=Number(voiceSelect.value),previousVoice=voiceSelect.value!==''&&Number.isInteger(previousIndex)?availableVoices[previousIndex]:null,previousSignature=previousVoice?voiceSignature(previousVoice):'';availableVoices=speech?.getVoices?.()||[];const fragment=document.createDocumentFragment(),fallback=document.createElement('option');fallback.value='';fallback.textContent='Default browser voice';fragment.append(fallback);availableVoices.forEach((voice,index)=>{const option=document.createElement('option');option.value=String(index);option.textContent=`${String(voice.name||'Voice').slice(0,100)} · ${String(voice.lang||'unknown').slice(0,24)}${voice.localService===false?' · may be remote':''}`;fragment.append(option);});voiceSelect.replaceChildren(fragment);const restored=previousSignature?availableVoices.findIndex(voice=>voiceSignature(voice)===previousSignature):-1;if(restored>=0)voiceSelect.value=String(restored);else{const localEnglish=availableVoices.findIndex(voice=>voice.localService!==false&&/^en(?:-|$)/i.test(voice.lang||''));if(localEnglish>=0)voiceSelect.value=String(localEnglish);}};
-        const stopSpeech=()=>{if(!speech)return;try{speech.cancel();}catch(_){}activeUtterance=null;if(stopButton)stopButton.disabled=true;};
+        const stopSpeech=()=>{speechPlayer.stop();if(stopButton)stopButton.disabled=true;};
         const analyze=async()=>{const value=text.value.trim();if(!value){status.textContent='ADD TEXT TO ANALYZE';out.textContent='';report=null;return;}status.textContent='LOADING SHARED LOCAL PRONUNCIATION DATA';try{const tools=await ensureCurioidWordData(),analysis=tools.analyzeText(value),last=analysis.wordEntries[analysis.wordEntries.length-1],rhymes=last?await tools.rhymes(last.word,16):[];report={format:'curioid-pronunciation-script-report',version:1,source:'Shared local CMU pronunciation register',createdAt:new Date().toISOString(),...analysis,rhymesForFinalWord:{word:last?.word||null,words:rhymes}};const lines=[`PRONUNCIATION SCRIPT REPORT`,`WORDS: ${analysis.tokenCount}${analysis.availableTokenCount!==analysis.tokenCount?` of ${analysis.availableTokenCount} tokens in analyzed text`:''} / MATCHED: ${analysis.knownCount} / SYLLABLES: ${analysis.syllableCount}`,...(analysis.truncated?[`PARTIAL ANALYSIS: ${analysis.truncationReasons.join(', ')} limit reached (${analysis.limits.characters} characters / ${analysis.limits.tokens} words / ${analysis.limits.lines} lines / ${analysis.limits.wordsPerLine} words per line / ${analysis.limits.charactersPerLine} characters per line).`]:[]),``,`WORD STRESS`,...(analysis.wordEntries.length?analysis.wordEntries.map(item=>`${item.word}: ${item.ipa||'IPA unavailable'} · ${item.syllables} syllable(s) · ${item.stress} · ${item.phones.join(' ')}`):['No pronunciation entries found.']),...(analysis.wordEntriesTruncated?[`WORD DETAIL SAMPLE: first ${analysis.wordEntries.length} of ${analysis.wordEntriesAvailable} matched words.`]:[]),``,`LINE RHYTHM`,...(analysis.lineProfiles.length?analysis.lineProfiles.map((line,index)=>`${index+1}. ${line.syllables} syllables · ${line.stress||'no known stress pattern'}`):['No complete lines to inspect.']),``,`ALLITERATION`,...(analysis.alliteration.length?analysis.alliteration.map(group=>`${group.sound}: ${group.words.join(', ')}`):['No repeated initial-sound groups found.']),``,`ASSONANCE`,...(analysis.assonance.length?analysis.assonance.map(group=>`${group.sound}: ${group.words.join(', ')}`):['No repeated stressed-vowel groups found.']),``,`END RHYMES`,...(analysis.endRhymes.length?analysis.endRhymes.map(group=>group.words.join(' ↔ ')):['No repeated line-ending rhyme keys found.']),``,`RHYMES FOR FINAL WORD (${last?.word||'none'})`,...(rhymes.length?rhymes:['No exact phonetic rhymes found.']),``,`UNMATCHED WORDS`,...(analysis.unknownWords.length?analysis.unknownWords:['Every token matched the register.']),...(analysis.unknownWordsTruncated?[`UNMATCHED WORD SAMPLE: first ${analysis.limits.unknownWordExamples} of ${analysis.unknownWordCount} unmatched words.`]:[]),``,`Unmatched words are not automatically spelling errors. Proper names, specialist terms and newly coined words may be valid.`];out.textContent=lines.join('\n');status.textContent=analysis.truncated?`PARTIAL ANALYSIS / ${analysis.truncationReasons.join(', ')} limit reached / ${analysis.knownCount} MATCHED WORDS`:`ANALYSIS READY / ${analysis.lineProfiles.length} LINES / ${analysis.knownCount} MATCHED WORDS / ${analysis.syllableCount} SYLLABLES`;}catch(error){report=null;out.textContent=String(error?.message||'Analysis failed.');status.textContent='ANALYSIS ERROR / LOCAL DICTIONARY UNAVAILABLE';}};
-        const speakText=()=>{const value=String(text.value||'').trim().slice(0,5000);if(!value){status.textContent='ADD TEXT BEFORE SPEAKING';return;}if(!speech||typeof window.SpeechSynthesisUtterance!=='function'){status.textContent='SPEECH OUTPUT NOT SUPPORTED BY THIS BROWSER';return;}stopSpeech();const utterance=new window.SpeechSynthesisUtterance(value),index=voiceSelect?.value===''?-1:Number(voiceSelect?.value),voice=Number.isInteger(index)&&index>=0?availableVoices[index]:null;if(voice){utterance.voice=voice;utterance.lang=voice.lang||'en-US';}else utterance.lang='en-US';utterance.rate=clamp(Number(rateSelect?.value)||.9,.5,2);utterance.onstart=()=>{if(activeUtterance===utterance)status.textContent='SPEAKING / BROWSER OR DEVICE VOICE';};utterance.onend=()=>{if(activeUtterance===utterance){activeUtterance=null;if(stopButton)stopButton.disabled=true;status.textContent='SPEECH FINISHED';}};utterance.onerror=event=>{if(activeUtterance===utterance){activeUtterance=null;if(stopButton)stopButton.disabled=true;status.textContent=`SPEECH ERROR / ${String(event?.error||'VOICE UNAVAILABLE').slice(0,100)}`;}};activeUtterance=utterance;if(stopButton)stopButton.disabled=false;try{speech.speak(utterance);status.textContent='VOICE QUEUED / PRESS STOP TO CANCEL';}catch(error){activeUtterance=null;if(stopButton)stopButton.disabled=true;status.textContent=`SPEECH UNAVAILABLE / ${String(error?.message||error).slice(0,120)}`;}};
+        const speakText=()=>{const value=String(text.value||'').trim().slice(0,5000);if(!value){status.textContent='ADD TEXT BEFORE SPEAKING';return;}if(!speechPlayer.supported){status.textContent='TTS UNAVAILABLE / ENABLE A BROWSER OR DEVICE SPEECH ENGINE';return;}const index=voiceSelect?.value===''?-1:Number(voiceSelect?.value),voice=Number.isInteger(index)&&index>=0?availableVoices[index]:null;if(voice&&voice.localService===false)status.textContent='SELECTED VOICE MAY SEND TEXT TO AN EXTERNAL VOICE PROVIDER. SPEAK IS STILL MANUAL.';if(stopButton)stopButton.disabled=false;const started=speechPlayer.speak(value,{voice,lang:voice?.lang||'en-US',rate:clamp(Number(rateSelect?.value)||.9,.5,2),pitch:1,volume:1});if(!started&&stopButton)stopButton.disabled=true;};
         const onVisibilityChange=()=>{if(document.hidden)stopSpeech();};
         const onVoiceSelectionChange=()=>{const voice=availableVoices[Number(voiceSelect?.value)];if(voice&&voice.localService===false)status.textContent='SELECTED VOICE MAY SEND TEXT TO AN EXTERNAL VOICE PROVIDER. SPEAK IS STILL MANUAL.';else if(voice)status.textContent='LOCAL VOICE SELECTED. PRESS SPEAK WHEN READY.';};
         speakButton?.addEventListener('click',speakText);stopButton?.addEventListener('click',()=>{stopSpeech();status.textContent='VOICE STOPPED';});voiceSelect?.addEventListener('change',onVoiceSelectionChange);text.addEventListener('input',stopSpeech);$('[data-speech-play]',appContent).addEventListener('click',analyze);$('[data-speech-clear]',appContent).addEventListener('click',()=>{stopSpeech();text.value='';out.textContent='Your phonetic report will appear here.';report=null;status.textContent='CLEARED';});
-        const onVoicesChanged=()=>refreshVoices();speech?.addEventListener?.('voiceschanged',onVoicesChanged);document.addEventListener('visibilitychange',onVisibilityChange);refreshVoices();if(!speech||typeof window.SpeechSynthesisUtterance!=='function'){if(speakButton)speakButton.disabled=true;if(voiceSelect)voiceSelect.disabled=true;if(stopButton)stopButton.disabled=true;status.textContent='LOCAL ANALYSIS READY / SPEECH OUTPUT UNSUPPORTED';}
+        const onVoicesChanged=()=>refreshVoices();speech?.addEventListener?.('voiceschanged',onVoicesChanged);document.addEventListener('visibilitychange',onVisibilityChange);refreshVoices();if(!speechPlayer.supported){if(speakButton)speakButton.disabled=true;if(voiceSelect)voiceSelect.disabled=true;if(stopButton)stopButton.disabled=true;status.textContent='LOCAL ANALYSIS READY / BROWSER TTS UNAVAILABLE';}
         $('[data-speech-save]',appContent).addEventListener('click',async()=>{const button=$('[data-speech-save]',appContent);if(button.disabled)return;if(!report){status.textContent='ANALYZE TEXT BEFORE SAVING';return;}button.disabled=true;try{const file=await saveTextToDriveVerified(`PRONUNCIATION-${Date.now()}.JSON`,JSON.stringify(report,null,2),'signals',null,'application/json');status.textContent=`REPORT SAVED TO C: / ${file.name}`;}catch(error){status.textContent=`REPORT NOT SAVED: ${String(error?.message||error).slice(0,180)}`;}finally{button.disabled=false;}});
-        entry.pause=stopSpeech;entry.cleanup=()=>{speechDisposed=true;stopSpeech();speech?.removeEventListener?.('voiceschanged',onVoicesChanged);document.removeEventListener('visibilitychange',onVisibilityChange);};
+        entry.pause=stopSpeech;entry.cleanup=()=>{speechDisposed=true;speechPlayer.dispose();speech?.removeEventListener?.('voiceschanged',onVoicesChanged);document.removeEventListener('visibilitychange',onVisibilityChange);};
       }
       if(app==='system-dashboard'){
         const cards=$('[data-dashboard-cards]',appContent),status=$('[data-dashboard-status]',appContent);const report=()=>({generated:new Date().toISOString(),system:'Doors98 by Minitender',projects:53,applications:Object.keys(appNames).length,openApplications:windowRegistry.size,rooms:allRoomIds().length,activeKeys:virtualFiles.length,returnedKeys:virtualRecycleBin.length,storageBytes:currentDriveBytes(),internalServices:window.CurioidKernel?.status?.().capabilityCount||0});const draw=()=>{const r=report();const rows=[['OPEN PROGRAMS',r.openApplications],['INSTALLED APPS',r.applications],['ROOMS',r.rooms],['C: KEYS',r.activeKeys],['RETURNED KEYS',r.returnedKeys],['C: DATA',`${(r.storageBytes/1024).toFixed(1)} KB`],['INTERNAL CAPABILITIES',r.internalServices],['NETWORK','CURIOID INTERNAL']];const fragment=document.createDocumentFragment();rows.forEach(([label,value])=>{const article=document.createElement('article'),small=document.createElement('small'),strong=document.createElement('b');small.textContent=label;strong.textContent=String(value);article.append(small,strong);fragment.append(article);});cards.replaceChildren(fragment);status.textContent=`REPORT / ${new Date().toLocaleString()} / VIRTUAL SYSTEM`;};$('[data-dashboard-refresh]',appContent).addEventListener('click',draw);$('[data-dashboard-export]',appContent).addEventListener('click',async()=>{const button=$('[data-dashboard-export]',appContent);if(button.disabled)return;button.disabled=true;try{const f=await saveTextToDriveVerified(`SYSTEM-REPORT-${Date.now()}.json`,JSON.stringify(report(),null,2),'service',null,'application/json');status.textContent=`SAVED TO C: / SERVICE WING / ${f.name}`;}catch(error){status.textContent=`REPORT NOT SAVED: ${String(error?.message||error).slice(0,180)}`;}finally{button.disabled=false;}});$('[data-dashboard-task]',appContent).addEventListener('click',()=>open('task-manager'));$('[data-dashboard-drive]',appContent).addEventListener('click',()=>open('computer'));draw();
@@ -17349,17 +17744,30 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
 
   function curioidsMarkup(){
     return `<div class="curioids-room">
-      <header class="curioids-room-intro"><div><p class="tool-eyebrow">TINY GAMES / FIELD EXPEDITION 00</p><h3>Curioids: The Oddity League</h3><p>Recruit a five-creature squad, discover combinations and battle through the arena. Hidden field missions reward you for exploring the rest of CURIOID. Every creature is drawn locally in SVG; no external images or libraries are used.</p></div><div class="curioids-room-stamp"><span>100</span><small>FULL-BODY<br>CREATURES</small></div></header>
-      <div class="curioids-room-strip"><span>LOCAL SAVE</span><span>100 ORIGINAL SPRITES</span><span>38 FIELD MISSIONS</span><span>OFFLINE-READY AFTER CACHE</span></div>
-      <div class="curioids-embed-frame-wrap"><iframe class="curioids-embed-frame" data-curioids-frame src="curioids.html" title="Curioids creature auto-battler and website discovery game" loading="lazy" referrerpolicy="same-origin"></iframe></div>
-      <p class="curioids-room-foot">Your collection and expedition progress are stored on this device. Site-wide missions count project IDs and action totals only; they never read or store your text, files or creative content.</p>
+      <header class="curioids-room-intro"><div><p class="tool-eyebrow">TINY GAMES / FIELD EXPEDITION 00</p><h3>Curioids: The Oddity League</h3><p>Build a five-creature team, recruit from the shop, discover synergies and battle through a replayable arena run. Permanent collection creatures are found separately by spotting small, timed eggs around CURIOID. Every creature is drawn locally in SVG.</p></div><div class="curioids-room-stamp"><span>100</span><small>FULL-BODY<br>CREATURES</small></div></header>
+      <div class="curioids-room-strip"><span>LOCAL SAVE</span><span>100 ORIGINAL CREATURES</span><span>100 HIDDEN EGG TASKS</span><span>ARENA RUNS ARE RESTARTABLE</span></div>
+      <div class="curioids-room-toolbar"><span>Play here in your browser, or open the game as its own page.</span><div><a class="tool-button" data-curioids-open href="curioids.html" target="_blank" rel="noopener">Open standalone ↗</a><button class="tool-button tool-button-primary" type="button" data-curioids-fullscreen>⛶ Fullscreen</button></div></div>
+      <div class="curioids-embed-frame-wrap" data-curioids-frame-wrap><iframe class="curioids-embed-frame" data-curioids-frame src="curioids.html" title="Curioids creature auto-battler" loading="eager" referrerpolicy="same-origin" allow="fullscreen" allowfullscreen></iframe></div>
+      <p class="curioids-room-foot">Permanent creatures are earned by completing secret activities around the site and clicking their shaking egg within five seconds. The shop only recruits creatures for the current arena run. Your saved collection is kept on this device.</p>
     </div>`;
   }
   function bindCurioids(root){
     const frame=$('[data-curioids-frame]',root);
-    if(!frame)return()=>{};
+    const wrap=$('[data-curioids-frame-wrap]',root);
+    const fullscreen=$('[data-curioids-fullscreen]',root);
+    if(!frame||!wrap)return()=>{};
     const detach=window.CurioidSiteActivity?.attachFrame(frame)||(()=>{});
-    return()=>{try{detach();}catch(_){};try{frame.src='about:blank';}catch(_){};};
+    const toggleFullscreen=()=>{
+      try{
+        if(document.fullscreenElement){document.exitFullscreen?.();return;}
+        const request=wrap.requestFullscreen||wrap.webkitRequestFullscreen;
+        if(request)request.call(wrap);
+      }catch(error){console.warn('Curioids fullscreen is unavailable in this browser:',error);}
+    };
+    const syncFullscreen=()=>{if(fullscreen)fullscreen.textContent=document.fullscreenElement===wrap?'✕ Exit fullscreen':'⛶ Fullscreen';};
+    fullscreen?.addEventListener('click',toggleFullscreen);
+    document.addEventListener('fullscreenchange',syncFullscreen);
+    return()=>{try{detach();}catch(_){};fullscreen?.removeEventListener('click',toggleFullscreen);document.removeEventListener('fullscreenchange',syncFullscreen);try{frame.src='about:blank';}catch(_){};};
   }
 
   function showTinyGameCongratulations(root,message,next){
@@ -18872,7 +19280,7 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
   const enoScales = {minor:[0,2,3,5,7,8,10],major:[0,2,4,5,7,9,11],dorian:[0,2,3,5,7,9,10],phrygian:[0,1,3,5,7,8,10],lydian:[0,2,4,6,7,9,11],pentatonic:[0,2,4,7,9]};
   const enoMidiFreq = midi => 440*Math.pow(2,(midi-69)/12);
   function echonoiseMarkup(){
-    const apps=[['studio','🎹','Sound Studio','Edit patterns and run the live sequencer'],['piano','▥','Piano Roll','Draw and audition individual notes'],['arrangement','▤','Song Arrangement','Arrange patterns into a short song'],['vocal','🎤','Vocal Synth','Two browser-based lyric synthesis modes'],['lexicon','🔤','Lexicon Lab','Explore pronunciations, phonetic matches, rhythm and sound patterns'],['voicebank','🎙️','Voicebank Manager','Map imported vocal samples to phoneme aliases'],['choir','🎼','Choir Matrix','Shape the five synthetic choir voices'],['effects','🌌','Echo Chamber','Adjust delay, tone and master effects'],['mixer','🎚️','Audio Console','Balance and pan the five voices'],['songbook','💾','Songbook','Save, import and export sessions'],['settings','⚙️','Control Panel','Appearance, audio and system settings'],['arcade','🎮','Music Arcade','Rhythm challenges, interval ear-training and chord recognition']];
+    const apps=[['studio','🎹','Sound Studio','Edit patterns and run the live sequencer'],['piano','▥','Piano Roll','Draw and audition individual notes'],['arrangement','▤','Song Arrangement','Arrange patterns into a short song'],['vocal','🎤','Vocal Synth','Basic vowel-choir and advanced phoneme-singer modes'],['lexicon','🔤','Lexicon Lab','Explore pronunciations, phonetic matches, rhythm and sound patterns'],['voicebank','🎙️','Voicebank Manager','Map imported vocal samples to phoneme aliases'],['choir','🎼','Choir Matrix','Shape the five synthetic choir voices'],['effects','🌌','Echo Chamber','Adjust delay, tone and master effects'],['mixer','🎚️','Audio Console','Balance and pan the five voices'],['songbook','💾','Songbook','Save, import and export sessions'],['settings','⚙️','Control Panel','Appearance, audio and system settings'],['arcade','🎮','Music Arcade','Rhythm challenges, interval ear-training and chord recognition']];
     const rows=enoVoices.map((v,r)=>`<div class="eno-track-row" data-eno-track-row="${r}"><div class="eno-track-name"><i style="--voice:${v.color}"></i><span><b>${v.name}</b><small>${['SUB / PULSE','LOW / VEIL','MID / LEAD','HIGH / HALO','GHOST / AIR'][r]}</small></span></div><div class="eno-track-steps">${Array.from({length:16},(_,i)=>`<button type="button" class="eno-step${enoDefaultPattern[r][i]?' is-on':''}${i%4===0?' is-beat':''}" data-eno-track="${r}" data-eno-step="${i}" aria-label="${v.name} step ${i+1}" aria-pressed="${enoDefaultPattern[r][i]}"></button>`).join('')}</div></div>`).join('');
     return projectFrame('Sound & Motion / 01 · Chambers of Echoes','Chambers of Echoes','A cybernetic sound chamber for five synthetic voices, lyric-born melodies and living reflections. Your studio runs locally in this browser.',
       `<div class="echonoise-os" data-echonoise data-theme="neon">
@@ -18886,7 +19294,7 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
             <button type="button" class="eno-desktop-icon" data-eno-launch="piano"><span aria-hidden="true">▥</span><b>Piano Roll</b></button>
             <button type="button" class="eno-desktop-icon" data-eno-launch="arcade"><span aria-hidden="true">🎮</span><b>Music Arcade</b></button>
           </nav>
-          <div class="eno-desktop-welcome" aria-hidden="true"><b>CHAMBERS OF ECHOES</b><span>LOCAL AUDIO WORKSTATION</span><small>RIGHT-CLICK FOR SYSTEM OPTIONS</small></div><aside class="eno-neon-assistant" data-eno-assistant aria-label="Pip, Echonoise singing assistant"><img src="bella-concierge.webp" alt="Pip, a neon-styled bell-headed assistant"><div class="eno-neon-assistant-copy"><b>P.I.P. / PITCH-IMPROVEMENT PERSONALITY</b><p data-eno-assistant-line>Hiiii! I am Pip! I can help! I can also sing! Everything is a song!</p><div><button type="button" data-eno-assistant-speak>♪ SING MESSAGE</button><button type="button" data-eno-assistant-stop>STOP</button></div></div></aside>
+          <div class="eno-desktop-welcome" aria-hidden="true"><b>CHAMBERS OF ECHOES</b><span>LOCAL AUDIO WORKSTATION</span><small>RIGHT-CLICK FOR SYSTEM OPTIONS</small></div><aside class="eno-neon-assistant" data-eno-assistant aria-label="Pip, Bella’s mischievous little brother and Echonoise assistant"><button type="button" class="eno-pip-art-button" data-eno-assistant-random aria-label="Ask Pip for another comment" title="Pip has another comment">${CURIOID_PIP_CREATURE_SVG}</button><div class="eno-neon-assistant-copy"><b>P.I.P. / BELLA’S LITTLE BROTHER</b><small class="eno-pip-subtitle">PERSISTENTLY INTRUSIVE PITCHER</small><p data-eno-assistant-line>Hiiii! I’m Pip! Bella says I should stop interrupting. I have decided to sing instead.</p><div><button type="button" data-eno-assistant-speak>♪ SAY IT</button><button type="button" data-eno-assistant-stop>STOP</button></div></div></aside>
           <section class="eno-main-window is-active" data-eno-main-window>
             <header class="eno-main-window-titlebar" data-eno-main-drag><span class="eno-main-window-mark">♫</span><b>Sound Studio <small>FIVE-VOICE SEQUENCER</small></b><div><button type="button" data-eno-main-min title="Minimize Sound Studio" aria-label="Minimize Sound Studio">-</button><button type="button" data-eno-main-max title="Maximize Sound Studio" aria-label="Maximize Sound Studio">□</button><button type="button" data-eno-main-close title="Close Sound Studio" aria-label="Close Sound Studio">×</button></div></header>
             <div class="eno-main-window-body"><main class="eno-workspace">
@@ -18912,7 +19320,24 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
     const KEY='curioid-echonoise-state-v1',BOOK='curioid-echonoise-songbook-v1',LEXICON_BOOK='curioid-echonoise-lexicon-studies-v1',OLD_ECHO='curioid-echo-cabinet-pattern-v1',OLD_CHOIR='curioid-noise-choir-voices-v2';
     const $e=s=>$(s,root),$$e=s=>Array.from(root.querySelectorAll(s));
     function setEnoStartMenuOpen(open){const menu=$e('[data-eno-start-menu]'),toggle=$e('[data-eno-start-toggle]');if(!menu||!toggle)return;const next=Boolean(open);menu.hidden=!next;toggle.setAttribute('aria-expanded',String(next));toggle.setAttribute('aria-label',next?'Close Echonoise application launcher':'Open Echonoise application launcher');if(next)requestAnimationFrame(()=>$e('[data-eno-launch-search]')?.focus({preventScroll:true}));}
-    let pipUtterances=[],pipGeneration=0;const pipSpeak=()=>{if(!('speechSynthesis'in window)){const line=$e('[data-eno-assistant-line]');if(line)line.textContent='My singing voice is unavailable in this browser. The studio still works!';return;}window.speechSynthesis.cancel();pipUtterances=[];const line=$e('[data-eno-assistant-line]')?.textContent||'Hello!';const words=line.match(/[\p{L}\p{N}’'-]+[.,!?]?/gu)||[line];const gen=++pipGeneration;words.slice(0,80).forEach((word,i)=>{const utterance=new SpeechSynthesisUtterance(word.replace(/[.,!?]+$/,''));utterance.rate=.72;utterance.pitch=[1.55,1.9,1.35,2.0,1.65][i%5];utterance.volume=.8;utterance.onend=()=>{if(gen===pipGeneration&&i===words.length-1){const status=$e('[data-eno-feedback]');if(status)status.textContent='P.I.P. has completed another extremely necessary musical announcement.';}};pipUtterances.push(utterance);});pipUtterances.forEach(u=>window.speechSynthesis.speak(u));};$e('[data-eno-assistant-speak]')?.addEventListener('click',pipSpeak);$e('[data-eno-assistant-stop]')?.addEventListener('click',()=>{pipGeneration++;window.speechSynthesis?.cancel();});
+    const pipRemarks=[
+      'I am Pip! Bella says I should behave. I have chosen to be memorable instead.',
+      'That melody is nearly perfect. I would add one tiny bell sound. To every note. You’re welcome.',
+      'I am not interrupting. I am providing surprise commentary at a very high frequency.',
+      'Bella is the responsible older sister. I am the quality-control department. There is no quality control.',
+      'Your chorus needs more sparkle. I have no evidence for this, but I feel strongly about it.',
+      'I pressed a button in my imagination and three imaginary lights came on. Excellent progress.',
+      'Can I have a solo? No? I have already prepared seventeen.',
+      'I am the little brother. I make noise, ask questions, and occasionally improve the rhythm.'
+    ];
+    let pipRemarkIndex=0;
+    const pipSpeech=createCurioidSpeechQueue((state,detail)=>{const status=$e('[data-eno-feedback]');if(!status)return;if(state==='finished')status.textContent='Pip has finished talking. He is already thinking of something else.';else if(state==='unsupported')status.textContent='Pip cannot speak aloud because this browser has no speech engine. The rest of the studio still works.';else if(state==='error')status.textContent=`Pip’s voice failed: ${detail}. Try another browser/device voice.`;});
+    const pipSpeak=()=>{const line=$e('[data-eno-assistant-line]')?.textContent||'Hello!';pipSpeech.speak(line,{lang:'en-US',rate:.88,pitch:1.62,volume:.82});};
+    const pipNewRemark=()=>{pipRemarkIndex=(pipRemarkIndex+1)%pipRemarks.length;const line=$e('[data-eno-assistant-line]');if(line)line.textContent=pipRemarks[pipRemarkIndex];const art=$e('.eno-pip-creature-svg');art?.classList.remove('pip-pounce');void art?.getBoundingClientRect();art?.classList.add('pip-pounce');};
+    $e('[data-eno-assistant-speak]')?.addEventListener('click',pipSpeak);
+    $e('[data-eno-assistant-stop]')?.addEventListener('click',()=>pipSpeech.stop());
+    $e('[data-eno-assistant-random]')?.addEventListener('click',pipNewRemark);
+
     const safeGet=(k,d='')=>{try{return localStorage.getItem(k)??d;}catch(_){return d;}};
     const safeSet=(k,v)=>{const serialized=String(v);try{localStorage.setItem(k,serialized);if(localStorage.getItem(k)!==serialized)throw new Error('Browser storage did not confirm the saved value.');return true;}catch(error){const feedback=$e('[data-eno-feedback]');if(feedback)feedback.textContent=`Browser storage could not verify this save (${String(error?.message||'storage unavailable').slice(0,100)}). Export your Songbook to keep a backup.`;return false;}};
     const blankPattern=()=>Array.from({length:5},()=>Array(16).fill(false));
@@ -19127,8 +19552,8 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
       </div>`;
       if(id==='vocal')body=`<div class="eno-vocal-shell">
         <div class="eno-vocal-modebar" role="group" aria-label="Vocal synthesis mode">
-          <button type="button" data-eno-vocal-mode="echo" class="${state.vocalMode==='echo'?'is-active':''}"><b>01</b><span><strong>Echo Voice</strong><small>Instant formant choir · no voicebank</small></span></button>
-          <button type="button" data-eno-vocal-mode="singer" class="${state.vocalMode==='singer'?'is-active':''}"><b>02</b><span><strong>Phoneme Singer</strong><small>Built-in phonemes · no installs required</small></span></button>
+          <button type="button" data-eno-vocal-mode="echo" class="${state.vocalMode==='echo'?'is-active':''}"><b>01</b><span><strong>Basic · Echo Voice</strong><small>Smooth vowel choir · instant formant synthesis</small></span></button>
+          <button type="button" data-eno-vocal-mode="singer" class="${state.vocalMode==='singer'?'is-active':''}"><b>02</b><span><strong>Advanced · Phoneme Singer</strong><small>Dictionary phonemes · precise consonants · voicebank support</small></span></button>
         </div>
         <div class="eno-vocal-layout">
           <section class="eno-vocal-editor">
@@ -19711,14 +20136,15 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     }
 
     async function singVoicebank(){
-      if(!voicebank.aliases.size){singPhoneticPreview();setFeedback('No recorded singer loaded. Playing the phoneme-aware synthetic preview instead.');return;}
+      if(!voicebank.aliases.size){singPhoneticPreview();setFeedback('No recorded voicebank loaded. The built-in Advanced Phoneme Singer is playing the complete dictionary phoneme sequence.');return;}
       const a=makeAudio();if(!a)return;try{await a.ctx.resume();}catch(_){return;}stop(false);stopChoir();stopSynthPhrase();const queue=[];let missing=0;
       let previousVowel='';generated.forEach(note=>{let cursor=note.start*60/state.bpm,phones=(note.phones||[]).slice();if(!phones.length)phones=[String(note.vowel||'AH').toUpperCase()];const allocated=allocatePhonemeDurations(phones,note.duration*60/state.bpm);while(phones.length){const resolved=resolveVoiceAlias(phones,previousVowel),count=resolved?clamp(Number(resolved.count)||1,1,phones.length):1,part=phones.splice(0,count),dur=allocated.splice(0,count).reduce((sum,value)=>sum+value,0),vowels=part.filter(phone=>arpabetVowels.has(normalizePhone(phone)));if(vowels.length)previousVowel=normalizePhone(vowels[vowels.length-1]);if(!resolved){missing++;queue.push({fallback:part[0],note,at:cursor,duration:dur});}else queue.push({entry:resolved.entry,note,at:cursor,duration:dur});cursor+=dur;}if(/[.!?…]/.test(note.punctuation||''))previousVowel='';});
       const unique=[...new Set(queue.filter(x=>x.entry).map(x=>x.entry.file))];try{await Promise.all(unique.map(decodeVoiceSample));}catch(error){setFeedback(`Could not decode one or more voicebank samples: ${error?.message||'unsupported or damaged audio file'}. Check that the bank uses readable WAV files.`);return;}queue.forEach(item=>{if(item.entry){item.entry.buffer=voicebank.buffers.get(item.entry.file);playVoiceSample(item.entry,item.note.midi,a.ctx.currentTime+.06+item.at,item.duration,state.vocalVoice,item.note.stress===1?1.1:.94);}else{const n={...item.note,start:item.at/(60/state.bpm),duration:item.duration/(60/state.bpm),phones:[item.fallback]};synthPhoneticSyllable(n,state.vocalVoice,a.ctx.currentTime+.06,60/state.bpm,.42);}});
       if(missing)setFeedback(`${voicebank.name} is singing. ${missing} phoneme(s) had no alias and used the synthetic fallback. Add mappings in Voicebank Manager.`);else setFeedback(`${voicebank.name} is singing your phonetic line with recorded voicebank samples.`);
     }
-    function singPhoneticPreview(){const a=makeAudio();if(!a)return;a.ctx.resume().then(()=>{stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,include=state.vocalHarmonies,base=a.ctx.currentTime+.09,beat=60/state.bpm,offsets=state.intervals||[-12,-5,0,7,12];generated.forEach(n=>{const accent=n.stress===1?1.08:n.stress===2?1:.82;if(include){enoVoices.forEach((v,voice)=>{if(state.voices[voice])synthPhoneticSyllable(n,voice,base,beat,(voice===lead?1:.52)*accent,offsets[voice]);});}else synthPhoneticSyllable(n,lead,base,beat,accent,0);});setFeedback('Phoneme-aware synthetic preview is singing. No plugins, model downloads or account are required. The built-in engine uses dictionary-backed English phonemes and original formant synthesis; optional recordings are only for people who already own a compatible singer bank.');});}
-    async function singVocal(){if(!generated.length&&!await generateVocal())return;const a=makeAudio();if(!a)return;if(state.vocalMode==='singer'){await singVoicebank();return;}try{await a.ctx.resume();}catch(_){return;}stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,include=state.vocalHarmonies,base=a.ctx.currentTime+.09,beat=60/state.bpm,offsets=state.intervals||[-12,-5,0,7,12];generated.forEach(n=>{const accent=n.stress===1?1.08:n.stress===2?1:.82;if(include){enoVoices.forEach((v,voice)=>{if(state.voices[voice])synthPhoneticSyllable(n,voice,base,beat,(voice===lead?1:.68)*accent,offsets[voice],.58);});}else synthPhoneticSyllable(n,lead,base,beat,accent,0,.58);});setFeedback('Echo Voice is singing your dictionary-backed phonetic phrase with softened consonants and formant harmonies.');}
+    function singPhoneticPreview(){const a=makeAudio();if(!a)return;a.ctx.resume().then(()=>{stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,include=state.vocalHarmonies,base=a.ctx.currentTime+.09,beat=60/state.bpm,offsets=state.intervals||[-12,-5,0,7,12];generated.forEach(n=>{const accent=n.stress===1?1.14:n.stress===2?1.04:.78;if(include){enoVoices.forEach((v,voice)=>{if(state.voices[voice])synthPhoneticSyllable(n,voice,base,beat,(voice===lead?1:.58)*accent,offsets[voice],1.22);});}else synthPhoneticSyllable(n,lead,base,beat,accent,0,1.22);});setFeedback('Advanced Phoneme Singer is using the full ARPABET sequence: consonants, vowel transitions, stress and syllable timing.');});}
+    function singEchoVoice(){const a=makeAudio();if(!a)return;a.ctx.resume().then(()=>{stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,include=state.vocalHarmonies,base=a.ctx.currentTime+.09,beat=60/state.bpm,offsets=state.intervals||[-12,-5,0,7,12];generated.forEach(note=>{const phones=Array.isArray(note.phones)?note.phones:[],vowel=phones.find(phone=>arpabetVowels.has(normalizePhone(phone)))||note.vowel||'AH',duration=Math.max(.045,note.duration*beat),at=base+Math.max(0,note.start||0)*beat,accent=note.stress===1?1.12:note.stress===2?1.02:.84;if(include){enoVoices.forEach((v,voice)=>{if(state.voices[voice])synthVowel(note.midi,vowel,voice,at,duration,(voice===lead?1:.58)*accent,offsets[voice],phones);});}else synthVowel(note.midi,vowel,lead,at,duration,accent,0,phones);});setFeedback('Basic Echo Voice is singing a smooth vowel-led choir. Switch to Advanced Phoneme Singer for the full consonant-by-consonant pronunciation engine.');});}
+    async function singVocal(){if(!generated.length&&!await generateVocal())return;const a=makeAudio();if(!a)return;if(state.vocalMode==='singer'){if(voicebank.aliases.size)await singVoicebank();else singPhoneticPreview();return;}singEchoVoice();}
     function exportPhonemeSheet(){downloadJSON({app:'Echonoise Phoneme Sheet',version:1,mode:state.vocalMode,lyrics:state.lyrics,key:enoKeys[state.key],scale:state.scale,bpm:state.bpm,syllables:generated.map(n=>({word:n.text||String(n.word??''),wordIndex:n.word,phones:n.phones||[],midi:n.midi,start:n.start,duration:n.duration,stress:n.stress||0}))},'echonoise-phoneme-sheet.json');}
     function playChoir(){const a=makeAudio();if(!a)return;a.ctx.resume().then(()=>{stopChoir();const mood=state.mood,root=60+state.key,offsets=state.intervals||({warm:[0,7,3,12,-5],glass:[0,12,19,24,28],low:[-12,-5,0,7,12],uneasy:[0,6,3,10,13],bright:[0,7,12,16,19]}[mood]||[0,7,3,12,-5]),vowel={warm:'o',glass:'i',low:'u',uneasy:'a',bright:'e'}[mood]||'o',now=a.ctx.currentTime+.08;audio.choirNodes=[];state.voices.forEach((on,i)=>{if(!on)return;const node=synthVowel(root,vowel,i,now,18,.78,offsets[i]);if(node)audio.choirNodes.push(node);});const s=$e('[data-eno-choir-state]');if(s)s.textContent=`${mood.toUpperCase()} / SINGING`;});}
     function randomVoices(){const previous=state.voices.slice();state.voices=state.voices.map(()=>Math.random()>.24);if(!state.voices.some(Boolean))state.voices[2]=true;if(!persist())state.voices=previous;syncUI();}
@@ -20030,7 +20456,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
         if(lexiconStudies.length>=40)throw new Error('Lexicon Lab is limited to 40 studies. Export the archive and remove an existing study before importing another.');const nextStudies=[...lexiconStudies,study];if(!persistLexiconStudies(nextStudies))throw new Error('The Lexicon Lab prompt could not be saved. Existing studies were preserved.');const lexWin=$e('[data-eno-window="lexicon"]');if(lexWin)renderLexiconStudies(lexWin);return{message:'Imported as a new Lexicon Lab prompt. Open Lexicon Lab to scan its sounds and stress.',count:1};
       }
     });
-    return()=>{echoDisposed=true;playRequestToken++;pipGeneration++;window.speechSynthesis?.cancel();enoShell.removeEventListener('curioid:open-app',onCurioidOpenApp);document.removeEventListener('visibilitychange',onVisibilityChange);window.removeEventListener('pagehide',onPageHide);removeLexiconCapabilities();unregisterEchonoiseAdapter();stopArcade(false);arcadeWindow=null;hardStopAudio();clearInterval(clockTimer);enoFullscreen.destroy();voicebank.files.clear();voicebank.aliases.clear();voicebank.buffers.clear();};
+    return()=>{echoDisposed=true;playRequestToken++;pipSpeech.dispose();enoShell.removeEventListener('curioid:open-app',onCurioidOpenApp);document.removeEventListener('visibilitychange',onVisibilityChange);window.removeEventListener('pagehide',onPageHide);removeLexiconCapabilities();unregisterEchonoiseAdapter();stopArcade(false);arcadeWindow=null;hardStopAudio();clearInterval(clockTimer);enoFullscreen.destroy();voicebank.files.clear();voicebank.aliases.clear();voicebank.buffers.clear();};
   }
 
   // UMBRA Studio: a lightweight, local-first layered image workstation.
@@ -20060,7 +20486,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       </header>
       <div class="umbra-desktop">
         <section class="umbra-editor-window" aria-label="UMBRA image editor">
-          <header class="umbra-editor-titlebar"><span class="umbra-window-glyph">◈</span><b data-u-doc-title>Untitled - UMBRA Editor</b><span class="umbra-title-spacer"></span><span class="umbra-doc-state" data-u-doc-state>UNSAVED DOCUMENT</span><div class="umbra-window-buttons"><button type="button" data-u-action="minimize-editor" title="Minimize editor">-</button><button type="button" data-u-action="maximize-editor" title="Maximize editor">□</button></div></header>
+          <header class="umbra-editor-titlebar"><span class="umbra-window-glyph">◈</span><b data-u-doc-title>Untitled - UMBRA Editor</b><span class="umbra-title-spacer"></span><span class="umbra-doc-state" data-u-doc-state>UNSAVED DOCUMENT</span><div class="umbra-window-buttons"><button type="button" data-u-action="minimize-editor" title="Minimize editor">-</button><button type="button" data-u-action="maximize-editor" title="Maximize editor">□</button><button type="button" data-u-action="close-editor" title="Close editor to desktop">×</button></div></header>
           <div class="umbra-toolbar-main">
             <button type="button" data-u-action="new">NEW</button><button type="button" data-u-action="open">OPEN</button><span class="umbra-toolbar-divider"></span>
             <button type="button" data-u-action="undo" title="Undo (Ctrl+Z)">↶</button><button type="button" data-u-action="redo" title="Redo (Ctrl+Y)">↷</button><span class="umbra-toolbar-divider"></span>
@@ -20727,7 +21153,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       case 'new':openWindow('new');break;case 'open':q('[data-u-open-file]').click();break;case 'save':exportProject();break;case 'export-png':exportImage('image/png');break;case 'export-jpg':exportImage('image/jpeg');break;case 'export-webp':exportImage('image/webp');break;case 'export-project':exportProject();break;
       case 'undo':undo();break;case 'redo':redo();break;case 'add-layer':checkpoint('New layer');createLayer('Layer '+String(layers.length+1).padStart(2,'0'));break;case 'move-layer-up':moveLayer(1);break;case 'move-layer-down':moveLayer(-1);break;case 'delete-layer':deleteLayer();break;case 'duplicate-layer':checkpoint('Duplicate layer');duplicateLayer();break;case 'toggle-mask':checkpoint('Add layer mask');addMask();break;case 'merge-down':mergeDown();break;case 'rename-layer':renameSelectedLayer();break;case 'mask-mode':if(!current()?.mask){checkpoint('Add layer mask');addMask();}maskMode=!maskMode;q('[data-u-action="mask-mode"]').setAttribute('aria-pressed',String(maskMode));note(maskMode?'Mask paint mode: brush hides, eraser reveals.':'Normal pixel painting.');break;
       case 'select-all':selectAll();break;case 'deselect':clearSelection();break;case 'copy-selection':copySelection();break;case 'cut-selection':cutSelection();break;case 'paste-selection':pasteSelection();break;case 'delete-selection':deleteSelection();break;case 'rotate-left':transformDocument('rotate-left');break;case 'rotate-right':transformDocument('rotate-right');break;case 'flip-horizontal':flipSelectedPixels('horizontal');break;case 'flip-vertical':flipSelectedPixels('vertical');break;case 'toggle-grid':{const grid=q('[data-u-grid]');grid.hidden=!grid.hidden;$$u('[data-u-action="toggle-grid"]').forEach(b=>b.setAttribute('aria-pressed',String(!grid.hidden)));break;}case 'update-text':updateSelectedText();break;case 'load-text':editSelectedText();break;case 'apply-transform':transformSelectedLayer();break;case 'reset-transform':q('[data-u-transform-scale]').value=100;q('[data-u-transform-rotation]').value=0;q('[data-u-transform-x]').value=0;q('[data-u-transform-y]').value=0;q('[data-u-transform-flip-x]').checked=false;q('[data-u-transform-flip-y]').checked=false;note('Transform values reset.');break;case 'fit':fitMode=true;fitZoom();break;case 'zoom-in':setZoom(zoom*1.15);break;case 'zoom-out':setZoom(zoom/1.15);break;case 'swap-colors':[fg,bg]=[bg,fg];syncUI();break;case 'reset-adjustments':checkpoint('Reset grade');adjustments={brightness:100,contrast:100,saturation:100,hue:0,blur:0,grayscale:0,sepia:0,invert:0};syncUI();markChanged('Grade reset');break;case 'create-document':newDocument();break;case 'extract-palette':extractPalette();break;case 'sound-palette':generateSoundPalette().catch(error=>note(error.message));break;case 'add-text-center':checkpoint('Add text');addTextAt(doc.width*.08,doc.height*.36,q('[data-u-text-input]').value||'UMBRA',Number(q('[data-u-text-size]').value)||72,q('[data-u-text-font]').value,q('[data-u-text-weight]').value);break;case 'flatten':checkpoint('Flatten grade');{const flat=makeCanvas();const fc=flat.getContext('2d');fc.drawImage(canvas,0,0);layers=[{...makeLayer('Flattened image'),canvas:flat}];activeLayerId=layers[0].id;adjustments={brightness:100,contrast:100,saturation:100,hue:0,blur:0,grayscale:0,sepia:0,invert:0};syncUI();markChanged('Flattened current grade');}break;
-      case 'fullscreen':break;case 'show-desktop':$$u('[data-u-window]').forEach(w=>{w.hidden=true;w.classList.remove('is-active');});{const editor=q('.umbra-editor-window');editor?.classList.add('is-minimized');editor?.classList.remove('is-active');}activeTaskWindow='';updateTaskTabs();break;case 'minimize-editor':{const editor=q('.umbra-editor-window'),minimized=!editor.classList.contains('is-minimized');editor.classList.toggle('is-minimized',minimized);if(minimized){editor.classList.remove('is-active');const next=$$u('[data-u-window]').filter(w=>!w.hidden&&!w.classList.contains('is-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeTaskWindow=next?.dataset.uWindow||'';if(next)next.classList.add('is-active');}else{activeTaskWindow='editor';editor.classList.add('is-active');$$u('[data-u-window]').forEach(w=>w.classList.remove('is-active'));}updateTaskTabs();break;}case 'maximize-editor':q('.umbra-editor-window').classList.toggle('is-maximized');break;
+      case 'fullscreen':break;case 'show-desktop':$$u('[data-u-window]').forEach(w=>{w.hidden=true;w.classList.remove('is-active');});{const editor=q('.umbra-editor-window');editor?.classList.add('is-minimized');editor?.classList.remove('is-active');}activeTaskWindow='';updateTaskTabs();break;case 'minimize-editor':{const editor=q('.umbra-editor-window'),minimized=!editor.classList.contains('is-minimized');editor.classList.toggle('is-minimized',minimized);if(minimized){editor.classList.remove('is-active');const next=$$u('[data-u-window]').filter(w=>!w.hidden&&!w.classList.contains('is-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeTaskWindow=next?.dataset.uWindow||'';if(next)next.classList.add('is-active');}else{activeTaskWindow='editor';editor.classList.add('is-active');$$u('[data-u-window]').forEach(w=>w.classList.remove('is-active'));}updateTaskTabs();break;}case 'maximize-editor':q('.umbra-editor-window').classList.toggle('is-maximized');break;case 'close-editor':{const editor=q('.umbra-editor-window');editor?.classList.add('is-minimized');editor?.classList.remove('is-active');const next=$$u('[data-u-window]').filter(w=>!w.hidden&&!w.classList.contains('is-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeTaskWindow=next?.dataset.uWindow||'';if(next)next.classList.add('is-active');updateTaskTabs();break;}
     }}
     function click(e){if(!e.target.closest('[data-u-tool-group]'))closeToolFlyouts();const t=e.target.closest('button,[data-u-launch],label');if(!t)return;if(t.dataset.uaAction){uaHandleAction(t.dataset.uaAction);return;}if(t.dataset.uaGame){uaSelectGame(t.dataset.uaGame);return;}if(t.dataset.uAction){handleAction(t.dataset.uAction);return;}if(t.dataset.uTheme){applyUmbraAppearance(t.dataset.uTheme);return;}if(t.dataset.uThemeReset!==undefined){applyUmbraAppearance('signal');return;}if(t.dataset.uToolGroupToggle!==undefined){toggleToolFlyout(t);return;}if(t.dataset.uToolOption){setTool(t.dataset.uToolOption);t.closest('[data-u-tool-group]')?.querySelector('[data-u-tool-primary]')?.focus();return;}if(t.dataset.uTool){setTool(t.dataset.uTool);return;}if(t.dataset.uLaunch){openWindow(t.dataset.uLaunch);return;}if(t.dataset.uWinClose!==undefined){closeWindow(t.closest('[data-u-window]'));return;}if(t.dataset.uWinMin!==undefined){const w=t.closest('[data-u-window]');if(w.dataset.uWindow==='arcade')uaPause();w.classList.add('is-minimized');w.classList.remove('is-active');if(activeTaskWindow===w.dataset.uWindow){const next=$$u('[data-u-window]').filter(item=>item!==w&&!item.hidden&&!item.classList.contains('is-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeTaskWindow=next?.dataset.uWindow||'editor';if(next)next.classList.add('is-active');else q('.umbra-editor-window')?.classList.add('is-active');}updateTaskTabs();return;}if(t.dataset.uWinMax!==undefined){t.closest('[data-u-window]').classList.toggle('is-maximized');return;}if(t.dataset.uTaskWindow){const w=q(`[data-u-window="${t.dataset.uTaskWindow}"]`);if(!w)return;const id=t.dataset.uTaskWindow,minimized=w.classList.contains('is-minimized'),active=activeTaskWindow===id&&!minimized;if(minimized){w.hidden=false;w.classList.remove('is-minimized');activeTaskWindow=id;$$u('[data-u-window]').forEach(item=>item.classList.toggle('is-active',item===w));q('.umbra-editor-window')?.classList.remove('is-active');w.style.zIndex=String(++zCounter);if(id==='arcade'){uaUpdateUi();uaRender();}}else if(active){if(id==='arcade')uaPause();w.classList.add('is-minimized');w.classList.remove('is-active');const next=$$u('[data-u-window]').filter(item=>item!==w&&!item.hidden&&!item.classList.contains('is-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeTaskWindow=next?.dataset.uWindow||'editor';if(next)next.classList.add('is-active');else q('.umbra-editor-window')?.classList.add('is-active');}else{activeTaskWindow=id;$$u('[data-u-window]').forEach(item=>item.classList.toggle('is-active',item===w));q('.umbra-editor-window')?.classList.remove('is-active');w.style.zIndex=String(++zCounter);}updateTaskTabs();return;}if(t.dataset.uHistoryIndex!==undefined){const back=Number(t.dataset.uHistoryIndex);const index=history.length-1-back;if(index>=0&&!historyBusy){const item=history[index],before=makeSnapshot('Redo'),nextHistory=history.slice(0,index);historyBusy=true;restoreData(item.data).then(()=>{future.push(before);trimSnapshots(future);history=nextHistory;umbraEditEpoch++;dirty=true;note('Restored: '+item.label);queueAutosave();renderHistory();}).catch(err=>note('History restore failed: '+err.message)).finally(()=>{historyBusy=false;});}return;}if(t.dataset.uLayerLock){const l=layers.find(x=>x.id===t.dataset.uLayerLock);if(l){checkpoint('Toggle layer lock');l.locked=!l.locked;updateLayerList();markChanged(l.locked?'Layer locked':'Layer unlocked');}return;}if(t.dataset.uLayerSelect){activeLayerId=t.dataset.uLayerSelect;cloneSource=null;updateLayerList();return;}if(t.dataset.uLayerVisible){const l=layers.find(x=>x.id===t.dataset.uLayerVisible);if(l){checkpoint('Layer visibility');l.visible=!l.visible;updateLayerList();markChanged('Layer visibility changed');}return;}if(t.dataset.uPreset){applyPreset(t.dataset.uPreset);return;}if(t.dataset.uForge){applyPixelForge(t.dataset.uForge);return;}if(t.dataset.uSwatch){fg=t.dataset.uSwatch;syncUI();note('Foreground color updated.');return;}if(t.dataset.uStartToggle!==undefined){const m=q('[data-u-start]');setUmbraStartOpen(m.hidden);return;}if(t.dataset.uEditorTab!==undefined){const editor=q('.umbra-editor-window'),visible=editor&&!editor.classList.contains('is-minimized'),active=activeTaskWindow==='editor'&&visible;if(active){editor.classList.add('is-minimized');editor.classList.remove('is-active');const next=$$u('[data-u-window]').filter(item=>!item.hidden&&!item.classList.contains('is-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeTaskWindow=next?.dataset.uWindow||'';if(next)next.classList.add('is-active');}else{editor?.classList.remove('is-minimized');editor?.classList.add('is-active');activeTaskWindow='editor';$$u('[data-u-window]').forEach(item=>item.classList.remove('is-active'));if(editor)editor.style.zIndex=String(++zCounter);}updateTaskTabs();return;}}
     root.addEventListener('dblclick',/** @param {CurioidDOMEvent} e */ e=>{const row=e.target.closest('[data-u-layer-row]');if(row){const layer=layers.find(x=>x.id===row.dataset.uLayerRow);if(layer){activeLayerId=layer.id;renameSelectedLayer();}}});
@@ -22335,8 +22761,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     }
     function buildWindow(id){
       const win=document.createElement('section');win.className='aura-window';win.dataset.auraWindow=id;win.style.zIndex=String(++zIndex);
-      const noClose=id==='critiquedaemon';
-      win.innerHTML=`<header class="aura-window-title" data-aura-drag><span class="aura-window-icon">${appIcon(id)}</span><b>${appTitle(id)}</b><small>ENTERPRISE UTILITY / ${id.toUpperCase()}</small><div><button type="button" data-aura-window-action="minimize" aria-label="Minimize window">–</button><button type="button" data-aura-window-action="maximize" aria-label="Maximize window">□</button>${noClose?'':`<button type="button" data-aura-window-action="close" aria-label="Close window">×</button>`}</div></header><div class="aura-window-content">${windowContent(id)}</div>`;
+      win.innerHTML=`<header class="aura-window-title" data-aura-drag><span class="aura-window-icon">${appIcon(id)}</span><b>${appTitle(id)}</b><small>ENTERPRISE UTILITY / ${id.toUpperCase()}</small><div><button type="button" data-aura-window-action="minimize" aria-label="Minimize window">–</button><button type="button" data-aura-window-action="maximize" aria-label="Maximize window">□</button><button type="button" data-aura-window-action="close" aria-label="Close window">×</button></div></header><div class="aura-window-content">${windowContent(id)}</div>`;
       q('[data-aura-window-layer]').append(win);activeWindows.set(id,win);addTaskTab(id);win.addEventListener('pointerdown',()=>focusAuraWindow(win));if(id==='polyhedron')drawCube(q('[data-aura-cube]',win));if(id==='personavault'){paintPersona(win,defaultPersona());renderPersonaArchive(win);}if(id==='chromaforge')renderPaletteArchive(win);if(id==='universe')renderUniverseInbox(win);if(id==='release-office'){renderReleaseOffice(win);renderReleasePackageImport(win);}if(id==='creator-workbench')renderCreatorWorkbench(win);if(id==='recreation-office')initArcadeWindow(win);renderAuraStatus();renderAuraHistory(win);return win;
     }
     function addTaskTab(id){const host=q('[data-aura-task-tabs]');if(host.querySelector(`[data-aura-task="${id}"]`))return;const b=document.createElement('button');b.type='button';b.dataset.auraTask=id;b.innerHTML=`<span>${appIcon(id)}</span>${appTitle(id)}`;b.title=appTitle(id);b.setAttribute('aria-label',`Focus ${appTitle(id)}`);b.setAttribute('aria-pressed','false');host.append(b);}
@@ -22344,7 +22769,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     function focusAuraWindow(win){if(!win)return;win.hidden=false;win.classList.remove('aura-minimized');activeAuraWindow=win.dataset.auraWindow;activeWindows.forEach(other=>other.classList.toggle('is-active',other===win));win.style.zIndex=String(++zIndex);updateAuraTaskTabs();}
     function minimizeAuraWindow(win){if(!win)return;win.hidden=true;win.classList.add('aura-minimized');win.classList.remove('is-active');if(activeAuraWindow===win.dataset.auraWindow){const next=[...activeWindows.values()].filter(item=>item!==win&&!item.hidden&&!item.classList.contains('aura-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeAuraWindow=next?.dataset.auraWindow||'';if(next){next.classList.add('is-active');next.style.zIndex=String(++zIndex);}}updateAuraTaskTabs();}
     function openApp(id){if(!auraApps.some(a=>a[0]===id))return;let win=activeWindows.get(id);if(!win)win=buildWindow(id);focusAuraWindow(win);setStartMenuOpen(false);}const previousAuraOpenApp=window.CurioidAuraOpenApp;const auraOpenAppBridge=id=>{if(!root.isConnected||!auraApps.some(app=>app[0]===id))return false;openApp(id);return true;};window.CurioidAuraOpenApp=auraOpenAppBridge;
-    function removeWindow(id){const win=activeWindows.get(id);if(!win)return;if(id==='aetherdaw')stopDaw();if(id==='recreation-office')clearArcadeTimers();if(id==='critiquedaemon')return;const wasActive=activeAuraWindow===id;win.remove();activeWindows.delete(id);q(`[data-aura-task="${id}"]`)?.remove();if(wasActive){activeAuraWindow='';const next=[...activeWindows.values()].filter(item=>!item.hidden&&!item.classList.contains('aura-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];if(next)focusAuraWindow(next);}updateAuraTaskTabs();}
+    function removeWindow(id){const win=activeWindows.get(id);if(!win)return;if(id==='critiquedaemon'){minimizeAuraWindow(win);return;}if(id==='aetherdaw')stopDaw();if(id==='recreation-office')clearArcadeTimers();const wasActive=activeAuraWindow===id;win.remove();activeWindows.delete(id);q(`[data-aura-task="${id}"]`)?.remove();if(wasActive){activeAuraWindow='';const next=[...activeWindows.values()].filter(item=>!item.hidden&&!item.classList.contains('aura-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];if(next)focusAuraWindow(next);}updateAuraTaskTabs();}
     function toggleAmbient(){if(ambientOsc){ambientOsc.stop();ambientOsc.disconnect();ambientGain?.disconnect();ambientOsc=null;ambientGain=null;qa('[data-aura-action="ambient"]').forEach(b=>b.setAttribute('aria-pressed','false'));q('[data-aura-hum-state]').textContent='OFF';const control=q('[data-aura-control-hum]');if(control)control.textContent='OFF';say('Studio atmosphere disabled. Silence has been formally approved.');return;}try{const AC=window.AudioContext||/** @type {Window & {webkitAudioContext?: typeof AudioContext}} */ (window).webkitAudioContext;if(!AC)throw new Error('Web Audio is unavailable.');ambientContext=ambientContext||new AC();if(ambientContext.state==='suspended')ambientContext.resume();ambientOsc=ambientContext.createOscillator();ambientGain=ambientContext.createGain();ambientOsc.type='sine';ambientOsc.frequency.value=220;ambientGain.gain.setValueAtTime(.0001,ambientContext.currentTime);ambientGain.gain.setTargetAtTime(.022,ambientContext.currentTime,.08);ambientOsc.connect(ambientGain);ambientGain.connect(ambientContext.destination);ambientOsc.start();qa('[data-aura-action="ambient"]').forEach(b=>b.setAttribute('aria-pressed','true'));q('[data-aura-hum-state]').textContent='ON';const control=q('[data-aura-control-hum]');if(control)control.textContent='ON';say('The low studio hum is active at 220 Hz. Adjust your system volume to taste.');}catch(e){say(e.message||'Audio could not be initialized.');}}
     function stopDaw(){try{dawOsc?.stop();}catch(_){}try{dawLfo?.stop();}catch(_){}[dawOsc,dawLfo,dawGain,dawLfoDepth].forEach(n=>{try{n?.disconnect();}catch(_){}});dawOsc=dawLfo=dawGain=dawLfoDepth=null;const state=q('[data-aura-daw-state]');if(state)state.textContent='OUTPUT STANDBY';}
     function updateDawGain(){if(!dawGain||!dawContext)return;const active=trackState.filter(Boolean).length,reverb=Number(q('[data-aura-reverb]')?.value||0)/100;const volume=Math.max(0,active/128)*(.018+reverb*.075);dawGain.gain.setTargetAtTime(volume,dawContext.currentTime,.06);const out=q('[data-aura-track-count]');if(out)out.textContent=`${active} / 128`;const rev=q('[data-aura-reverb-out]');if(rev)rev.textContent=`${Math.round(reverb*100)}%`;}
@@ -23291,73 +23716,254 @@ const PALETTES = [
   }
 
 
-  // Site-wide Curioid expedition bridge. Only catalogue IDs and bounded action
-  // counters are persisted; form values, search terms, file names and content are never read.
-  const CURIOID_SITE_ACTIVITY_KEY='curioid-site-expedition-v1';
+  // Site-wide Curioid Egg Hunt. Only stable catalogue IDs and bounded counters
+  // are recorded; never read or store your text, files or creative content.
+  const CURIOID_SITE_ACTIVITY_KEY='curioid-site-expedition-v2';
+  const CURIOID_EGG_COLLECTION_KEY='curioid-egg-collection-v1';
   const CURIOID_ACTIVITY_PROJECTS=new Map((window.CurioidCatalogue?.projects||[]).map(item=>[item.id,item]));
   const CURIOID_ACTIVITY_CATEGORIES=new Set((window.CurioidCatalogue?.categories||[]).map(item=>item.id));
   const CURIOID_ACTIVITY_FRAMES=new Set();
-  const CURIOID_ACTIVITY_DEFAULT={version:1,projects:[],categories:[],stats:{creates:0,exports:0,canvas:0,forms:0,searches:0,actions:0,imports:0}};
-  const curioidFreshActivity=()=>({version:1,projects:[],categories:[],stats:{...CURIOID_ACTIVITY_DEFAULT.stats}});
-  function curioidReadActivity(){
-    try{
-      const raw=localStorage.getItem(CURIOID_SITE_ACTIVITY_KEY);if(!raw)return curioidFreshActivity();
-      const value=JSON.parse(raw);if(!value||value.version!==1)return curioidFreshActivity();
-      return {version:1,projects:Array.isArray(value.projects)?[...new Set(value.projects.filter(id=>CURIOID_ACTIVITY_PROJECTS.has(id)))].slice(0,256):[],categories:Array.isArray(value.categories)?[...new Set(value.categories.filter(id=>CURIOID_ACTIVITY_CATEGORIES.has(id)))].slice(0,16):[],stats:Object.fromEntries(Object.keys(CURIOID_ACTIVITY_DEFAULT.stats).map(key=>[key,Math.max(0,Math.min(100000,Number(value.stats?.[key])||0))]))};
-    }catch(_){return curioidFreshActivity();}
+  const CURIOID_ACTIVITY_DEFAULT_STATS={creates:0,exports:0,canvas:0,forms:0,searches:0,actions:0,imports:0};
+  const CURIOID_ACTIVITY_DEFAULT={version:2,projects:[],categories:[],stats:{...CURIOID_ACTIVITY_DEFAULT_STATS}};
+  const curioidFreshActivity=()=>({version:2,projects:[],categories:[],stats:{...CURIOID_ACTIVITY_DEFAULT_STATS}});
+  function curioidBuildEggTasks(projects,categories){
+    const tasks=[];
+    const add=(kind,key,label)=>{const number=tasks.length+1;tasks.push({id:`egg-${String(number).padStart(3,'0')}`,creatureId:`c${String(number).padStart(2,'0')}`,kind,key,label});};
+    (Array.isArray(projects)?projects:[]).forEach(item=>add('project',item.id,`Visit ${item.title||item.id}`));
+    (Array.isArray(categories)?categories:[]).forEach(item=>add('category',item.id,`Explore ${item.title||item.id}`));
+    const thresholds={
+      creates:[1,3,5,10,20,35], exports:[1,2,4,8,12], forms:[1,2,4,8,12],
+      canvas:[1,2,3,5,8], searches:[1,3,5,10], imports:[1,2,3], actions:[10,25,50,100,200]
+    };
+    Object.entries(thresholds).forEach(([stat,values])=>values.forEach(value=>add('stat',`${stat}:${value}`,`${value} ${stat} activity`)));
+    [6,12,24].forEach(value=>add('projects',String(value),`Visit ${value} different rooms`));
+    [4,7].forEach(value=>add('categories',String(value),`Explore ${value} different districts`));
+    return tasks.slice(0,100);
   }
-  let curioidActivityState=curioidReadActivity();
-  // Keep open Curioids frames in other same-origin tabs in step with site-wide
-  // exploration. The storage event carries only the validated ID/counter snapshot.
-  window.addEventListener('storage',event=>{
-    if(event.key!==CURIOID_SITE_ACTIVITY_KEY)return;
-    curioidActivityState=curioidReadActivity();
-    curioidBroadcastActivity();
-  });
-  function curioidActivitySnapshot(){return JSON.parse(JSON.stringify(curioidActivityState));}
+  const CURIOID_EGG_TASKS=curioidBuildEggTasks(window.CurioidCatalogue?.projects||[],window.CurioidCatalogue?.categories||[]);
+  const CURIOID_EGG_TASKS_BY_ID=new Map(CURIOID_EGG_TASKS.map(task=>[task.id,task]));
+  const CURIOID_EGG_TASKS_BY_PROJECT=new Map(CURIOID_EGG_TASKS.filter(task=>task.kind==='project').map(task=>[task.key,task]));
+  const CURIOID_EGG_TASKS_BY_CATEGORY=new Map(CURIOID_EGG_TASKS.filter(task=>task.kind==='category').map(task=>[task.key,task]));
+  const CURIOID_EGG_ATTEMPTS=new Set();
+  const CURIOID_EGG_QUEUE=[];
+  let curioidActiveEgg=null;
+  function curioidNormalizeActivityRecord(value){
+    if(!value||typeof value!=='object'||Array.isArray(value)||![1,2].includes(value.version))return null;
+    if(value.projects!==undefined&&!Array.isArray(value.projects))return null;
+    if(value.categories!==undefined&&!Array.isArray(value.categories))return null;
+    if(value.stats!==undefined&&(!value.stats||typeof value.stats!=='object'||Array.isArray(value.stats)))return null;
+    const projects=[...new Set((value.projects||[]).filter(id=>typeof id==='string'&&CURIOID_ACTIVITY_PROJECTS.has(id)))].slice(0,256);
+    const categories=[...new Set((value.categories||[]).filter(id=>typeof id==='string'&&CURIOID_ACTIVITY_CATEGORIES.has(id)))].slice(0,16);
+    const stats={};
+    for(const key of Object.keys(CURIOID_ACTIVITY_DEFAULT_STATS)){
+      const numeric=value.stats&&Object.prototype.hasOwnProperty.call(value.stats,key)?Number(value.stats[key]):0;
+      if(!Number.isFinite(numeric)||numeric<0)return null;
+      stats[key]=Math.min(100000,Math.trunc(numeric));
+    }
+    return {version:2,projects,categories,stats};
+  }
+  function curioidReadActivityStorage(rawOverride){
+    try{
+      const raw=arguments.length?rawOverride:localStorage.getItem(CURIOID_SITE_ACTIVITY_KEY);
+      if(raw===null||raw==='')return {valid:true,state:curioidFreshActivity()};
+      if(typeof raw!=='string'||raw.length>32768)return {valid:false,state:curioidFreshActivity(),reason:'oversized'};
+      const normalized=curioidNormalizeActivityRecord(JSON.parse(raw));
+      return normalized?{valid:true,state:normalized}:{valid:false,state:curioidFreshActivity(),reason:'corrupt'};
+    }catch(_){return {valid:false,state:curioidFreshActivity(),reason:'unavailable'};}
+  }
+  const initialActivityRead=curioidReadActivityStorage();
+  let curioidActivityState=initialActivityRead.state;
+  let curioidActivityStorageValid=initialActivityRead.valid;
+  let curioidStorageWarningIssued=false;
+  function curioidNotifyStorageIssue(message){
+    if(curioidStorageWarningIssued)return;
+    curioidStorageWarningIssued=true;
+    curioidAnnounceEgg(message||'CURIOID could not access saved progress. Your progress was not overwritten; check browser storage and try again.');
+  }
+  // Web Locks provide a real same-origin critical section across tabs. Browsers
+  // without the API retain the verified synchronous localStorage fallback.
+  function curioidWithStorageLock(name,action){
+    let locks=null;
+    try{locks=window.navigator&&window.navigator.locks;}catch(_){}
+    if(locks&&typeof locks.request==='function'){
+      let controller=null,timer=null;
+      try{
+        controller=new window.AbortController();
+        timer=window.setTimeout(()=>controller.abort(),5000);
+        return locks.request(name,{mode:'exclusive',signal:controller.signal},action).catch(()=>{curioidNotifyStorageIssue('CURIOID could not coordinate a safe save across tabs. Please retry this action.');return false;}).finally(()=>window.clearTimeout(timer));
+      }catch(_){if(timer!==null)window.clearTimeout(timer);curioidNotifyStorageIssue('CURIOID could not coordinate a safe save across tabs. Please retry this action.');return false;}
+    }
+    try{return action();}catch(_){curioidNotifyStorageIssue();return false;}
+  }
+  function curioidRefreshActivityState(){
+    const latest=curioidReadActivityStorage();
+    if(!latest.valid){curioidActivityStorageValid=false;curioidNotifyStorageIssue();return false;}
+    curioidActivityState=latest.state;curioidActivityStorageValid=true;return true;
+  }
+  function curioidReadEggCollection(){
+    const empty={version:1,creatures:[],claimedTasks:[]};
+    try{
+      const raw=localStorage.getItem(CURIOID_EGG_COLLECTION_KEY);
+      if(raw===null||raw==='')return {...empty,valid:true};
+      if(typeof raw!=='string'||raw.length>32768)return {...empty,valid:false,reason:'oversized'};
+      const value=JSON.parse(raw);
+      if(!value||typeof value!=='object'||Array.isArray(value)||value.version!==1||!Array.isArray(value.creatures)||!Array.isArray(value.claimedTasks)||value.creatures.length>100||value.claimedTasks.length>100)return {...empty,valid:false,reason:'corrupt'};
+      const validCreature=id=>typeof id==='string'&&/^c(?:0[1-9]|[1-9][0-9]|100)$/.test(id);
+      if(value.creatures.some(id=>!validCreature(id))||value.claimedTasks.some(id=>typeof id!=='string'||!CURIOID_EGG_TASKS_BY_ID.has(id)))return {...empty,valid:false,reason:'corrupt'};
+      return {version:1,creatures:[...new Set(value.creatures)],claimedTasks:[...new Set(value.claimedTasks)],valid:true};
+    }catch(_){return {...empty,valid:false,reason:'unavailable'};}
+  }
+  function curioidOwnedCreatureIds(){
+    const ids=new Set(Array.from({length:12},(_,index)=>`c${String(index+1).padStart(2,'0')}`));
+    const collection=curioidReadEggCollection();if(collection.valid)collection.creatures.forEach(id=>ids.add(id));
+    try{const raw=localStorage.getItem('curioids_save_v4');if(raw&&raw.length<=262144){const saved=JSON.parse(raw);if(Array.isArray(saved?.unlocked))saved.unlocked.forEach(id=>{if(/^c(?:0[1-9]|[1-9][0-9]|100)$/.test(id))ids.add(id);});}}catch(_){}
+    return ids;
+  }
+  function curioidPersistEggCollection(collection){
+    try{
+      const payload=JSON.stringify({version:1,creatures:collection.creatures,claimedTasks:collection.claimedTasks});
+      if(payload.length>32768)return false;
+      localStorage.setItem(CURIOID_EGG_COLLECTION_KEY,payload);
+      return localStorage.getItem(CURIOID_EGG_COLLECTION_KEY)===payload;
+    }catch(_){return false;}
+  }
+  function curioidAnnounceEgg(message){
+    let node=document.getElementById('curioid-egg-announcer');if(!node){node=document.createElement('div');node.id='curioid-egg-announcer';node.className='curioid-egg-announcer';node.setAttribute('role','status');node.setAttribute('aria-live','polite');document.body.appendChild(node);}node.textContent=message;node.classList.add('is-visible');clearTimeout(node._hideTimer);node._hideTimer=setTimeout(()=>node.classList.remove('is-visible'),4200);
+  }
+  function curioidHideActiveEgg(){
+    if(!curioidActiveEgg)return;clearTimeout(curioidActiveEgg.timer);document.removeEventListener('visibilitychange',curioidActiveEgg.visibilityHandler);curioidActiveEgg.button.remove();CURIOID_EGG_ATTEMPTS.delete(curioidActiveEgg.task.id);curioidActiveEgg=null;
+  }
+  function curioidShowNextEgg(){
+    if(curioidActiveEgg||document.hidden||!CURIOID_EGG_QUEUE.length)return;
+    const task=CURIOID_EGG_QUEUE[0];
+    const collection=curioidReadEggCollection();
+    if(!collection.valid){curioidNotifyStorageIssue('CURIOID cannot read your creature collection. No egg was removed or awarded; check browser storage to continue.');return;}
+    CURIOID_EGG_QUEUE.shift();
+    if(!task||curioidOwnedCreatureIds().has(task.creatureId)||collection.claimedTasks.includes(task.id)){CURIOID_EGG_ATTEMPTS.delete(task?.id);curioidShowNextEgg();return;}
+    const button=document.createElement('button');button.type='button';button.className='curioid-hidden-egg';button.setAttribute('aria-label','A hidden Curioid egg is here. Click to collect it before it disappears.');button.title='A Curioid egg! Click quickly!';
+    const shell=document.createElement('span');shell.className='curioid-hidden-egg-shell';shell.setAttribute('aria-hidden','true');button.appendChild(shell);
+    const size=46;const maxX=Math.max(12,window.innerWidth-size-12);const maxY=Math.max(105,window.innerHeight-size-18);
+    button.style.left=`${Math.round(12+Math.random()*Math.max(0,maxX-12))}px`;button.style.top=`${Math.round(92+Math.random()*Math.max(0,maxY-92))}px`;
+    document.body.appendChild(button);
+    const entry={task,button,remaining:5000,started:Date.now(),timer:null,visibilityHandler:null};
+    const expire=()=>{curioidHideActiveEgg();curioidShowNextEgg();};
+    const resume=()=>{if(document.hidden)return;entry.started=Date.now();entry.timer=setTimeout(expire,entry.remaining);};
+    entry.visibilityHandler=()=>{if(document.hidden){clearTimeout(entry.timer);entry.remaining=Math.max(0,entry.remaining-(Date.now()-entry.started));}else if(curioidActiveEgg===entry){if(entry.remaining<=0)expire();else resume();}};
+    curioidActiveEgg=entry;document.addEventListener('visibilitychange',entry.visibilityHandler);resume();
+    button.addEventListener('click',()=>{
+      if(curioidActiveEgg!==entry||entry.saving)return;
+      entry.saving=true;button.disabled=true;clearTimeout(entry.timer);entry.timer=null;
+      entry.remaining=Math.max(0,entry.remaining-Math.max(0,Date.now()-entry.started));
+      const saveResult=curioidWithStorageLock('CURIOID:egg-collection:v1',()=>{
+        const latest=curioidReadEggCollection();
+        if(!latest.valid)return 'invalid';
+        if(latest.creatures.includes(task.creatureId)||latest.claimedTasks.includes(task.id))return 'already-collected';
+        latest.creatures.push(task.creatureId);latest.claimedTasks.push(task.id);
+        return curioidPersistEggCollection(latest)?'saved':'save-failed';
+      });
+      Promise.resolve(saveResult).then(result=>{
+        if(curioidActiveEgg!==entry)return;
+        if(result==='saved'){
+          for(const frame of [...CURIOID_ACTIVITY_FRAMES]){if(!frame.isConnected||!frame.contentWindow){CURIOID_ACTIVITY_FRAMES.delete(frame);continue;}try{frame.contentWindow.postMessage({channel:'CURIOID_EGG_HUNT',type:'collection-update',creatureId:task.creatureId,taskId:task.id},window.location.origin);}catch(_){}}
+          curioidHideActiveEgg();curioidAnnounceEgg('New Curioid caught! Open Curioids → Creature Collection to see it.');curioidShowNextEgg();return;
+        }
+        if(result==='already-collected'){curioidHideActiveEgg();curioidAnnounceEgg('This egg was already collected in another tab.');curioidShowNextEgg();return;}
+        entry.saving=false;button.disabled=false;
+        curioidNotifyStorageIssue(result==='invalid'?'Your creature collection could not be read safely. No progress was changed; check browser storage and try again.':'The creature was not saved. The egg will remain while its collection is retried; free browser storage and try again.');
+        if(entry.remaining<=0)expire();else resume();
+      }).catch(()=>{
+        if(curioidActiveEgg!==entry)return;
+        entry.saving=false;button.disabled=false;curioidNotifyStorageIssue('The creature was not saved. The egg is still available; please retry.');
+        if(entry.remaining<=0)expire();else resume();
+      });
+    });
+  }
+  function curioidAttemptEggTask(task){
+    if(!task)return;
+    const collection=curioidReadEggCollection();
+    if(!collection.valid){curioidNotifyStorageIssue();return;}
+    if(curioidOwnedCreatureIds().has(task.creatureId)||collection.claimedTasks.includes(task.id))return;
+    if(CURIOID_EGG_ATTEMPTS.has(task.id)||CURIOID_EGG_QUEUE.some(item=>item.id===task.id)||curioidActiveEgg?.task.id===task.id)return;
+    CURIOID_EGG_ATTEMPTS.add(task.id);if(CURIOID_EGG_QUEUE.length<3)CURIOID_EGG_QUEUE.push(task);else CURIOID_EGG_ATTEMPTS.delete(task.id);curioidShowNextEgg();
+  }
+  function curioidCheckActivityMilestones(){
+    if(!curioidActivityStorageValid)return;
+    const projects=curioidActivityState.projects.length,categories=curioidActivityState.categories.length;
+    for(const task of CURIOID_EGG_TASKS){
+      if(task.kind==='projects'&&projects>=Number(task.key))curioidAttemptEggTask(task);
+      if(task.kind==='categories'&&categories>=Number(task.key))curioidAttemptEggTask(task);
+    }
+    const stats=curioidActivityState.stats;
+    for(const task of CURIOID_EGG_TASKS){if(task.kind!=='stat')continue;const [name,threshold]=task.key.split(':');if((stats[name]||0)>=Number(threshold))curioidAttemptEggTask(task);}
+  }
+  function curioidPersistActivity(previous){
+    try{
+      const payload=JSON.stringify(curioidActivityState);
+      if(payload.length>32768)throw new Error('Activity data exceeds its safety limit.');
+      localStorage.setItem(CURIOID_SITE_ACTIVITY_KEY,payload);
+      if(localStorage.getItem(CURIOID_SITE_ACTIVITY_KEY)!==payload)throw new Error('Activity data read-back did not match the saved state.');
+      curioidActivityStorageValid=true;curioidStorageWarningIssued=false;curioidBroadcastActivity();return true;
+    }catch(_){curioidActivityState=previous;curioidActivityStorageValid=false;curioidNotifyStorageIssue('CURIOID could not save your site activity. Your previous progress was restored and no egg was awarded.');return false;}
+  }
+  function curioidActivitySnapshot(){return {version:2,projects:[...curioidActivityState.projects],categories:[...curioidActivityState.categories],stats:{...curioidActivityState.stats}};}
   function curioidBroadcastActivity(){
     const message={channel:'CURIOID_SITE_ACTIVITY',type:'snapshot',snapshot:curioidActivitySnapshot()};
-    for(const frame of [...CURIOID_ACTIVITY_FRAMES]){
-      if(!frame.isConnected||!frame.contentWindow){CURIOID_ACTIVITY_FRAMES.delete(frame);continue;}
-      try{frame.contentWindow.postMessage(message,window.location.origin);}catch(_){}
-    }
-  }
-  function curioidPersistActivity(){
-    try{localStorage.setItem(CURIOID_SITE_ACTIVITY_KEY,JSON.stringify(curioidActivityState));}catch(_){}
-    curioidBroadcastActivity();
+    for(const frame of [...CURIOID_ACTIVITY_FRAMES]){if(!frame.isConnected||!frame.contentWindow){CURIOID_ACTIVITY_FRAMES.delete(frame);continue;}try{frame.contentWindow.postMessage(message,window.location.origin);}catch(_){}}
   }
   function curioidRecordCategory(id){
-    if(!CURIOID_ACTIVITY_CATEGORIES.has(id)||curioidActivityState.categories.includes(id))return;
-    curioidActivityState.categories.push(id);curioidPersistActivity();
+    if(!CURIOID_ACTIVITY_CATEGORIES.has(id))return false;
+    return curioidWithStorageLock('CURIOID:site-activity:v1',()=>{
+      if(!curioidRefreshActivityState())return false;
+      const previous=curioidActivitySnapshot();
+      if(!curioidActivityState.categories.includes(id)){
+        curioidActivityState.categories.push(id);
+        if(!curioidPersistActivity(previous))return false;
+      }
+      const task=CURIOID_EGG_TASKS_BY_CATEGORY.get(id);if(task)curioidAttemptEggTask(task);
+      curioidCheckActivityMilestones();return true;
+    });
   }
   function curioidRecordProject(id){
-    const item=CURIOID_ACTIVITY_PROJECTS.get(id);if(!item)return;
-    let changed=false;
-    if(!curioidActivityState.projects.includes(id)){curioidActivityState.projects.push(id);changed=true;}
-    if(item.category&&!curioidActivityState.categories.includes(item.category)){curioidActivityState.categories.push(item.category);changed=true;}
-    if(changed)curioidPersistActivity();
+    const item=CURIOID_ACTIVITY_PROJECTS.get(id);if(!item)return false;
+    return curioidWithStorageLock('CURIOID:site-activity:v1',()=>{
+      if(!curioidRefreshActivityState())return false;
+      const previous=curioidActivitySnapshot();let changed=false;
+      if(!curioidActivityState.projects.includes(id)){curioidActivityState.projects.push(id);changed=true;}
+      if(item.category&&!curioidActivityState.categories.includes(item.category)){curioidActivityState.categories.push(item.category);changed=true;}
+      if(changed&&!curioidPersistActivity(previous))return false;
+      const task=CURIOID_EGG_TASKS_BY_PROJECT.get(id);if(task)curioidAttemptEggTask(task);
+      curioidCheckActivityMilestones();return true;
+    });
   }
   function curioidRecordStat(name){
-    if(!(name in curioidActivityState.stats))return;
-    curioidActivityState.stats[name]=Math.min(100000,curioidActivityState.stats[name]+1);curioidPersistActivity();
+    if(typeof name!=='string'||!Object.prototype.hasOwnProperty.call(CURIOID_ACTIVITY_DEFAULT_STATS,name))return false;
+    return curioidWithStorageLock('CURIOID:site-activity:v1',()=>{
+      if(!curioidRefreshActivityState())return false;
+      const previous=curioidActivitySnapshot();
+      curioidActivityState.stats[name]=Math.min(100000,curioidActivityState.stats[name]+1);
+      if(curioidPersistActivity(previous))curioidCheckActivityMilestones();
+      else return false;
+      return true;
+    });
   }
   window.CurioidSiteActivity=Object.freeze({
-    snapshot:curioidActivitySnapshot,
-    recordProject:curioidRecordProject,
-    recordCategory:curioidRecordCategory,
+    snapshot:curioidActivitySnapshot,recordProject:curioidRecordProject,recordCategory:curioidRecordCategory,recordStat:curioidRecordStat,
     attachFrame(frame){
-      if(!(frame instanceof HTMLIFrameElement))return()=>{};
-      CURIOID_ACTIVITY_FRAMES.add(frame);
+      if(!(frame instanceof HTMLIFrameElement))return()=>{};CURIOID_ACTIVITY_FRAMES.add(frame);
       const send=()=>{if(frame.contentWindow)try{frame.contentWindow.postMessage({channel:'CURIOID_SITE_ACTIVITY',type:'snapshot',snapshot:curioidActivitySnapshot()},window.location.origin);}catch(_){}};
-      frame.addEventListener('load',send);
-      send();
-      return()=>{frame.removeEventListener('load',send);CURIOID_ACTIVITY_FRAMES.delete(frame);};
+      frame.addEventListener('load',send);send();return()=>{frame.removeEventListener('load',send);CURIOID_ACTIVITY_FRAMES.delete(frame);};
     }
+  });
+  window.addEventListener('storage',event=>{
+    if(event.key!==CURIOID_SITE_ACTIVITY_KEY)return;
+    const latest=curioidReadActivityStorage(event.newValue);
+    if(!latest.valid){curioidActivityStorageValid=false;curioidNotifyStorageIssue();return;}
+    curioidActivityState=latest.state;curioidActivityStorageValid=true;curioidStorageWarningIssued=false;
+    curioidBroadcastActivity();curioidCheckActivityMilestones();
   });
   window.addEventListener('message',event=>{
     if(event.origin!==window.location.origin||!event.data||event.data.channel!=='CURIOID_SITE_ACTIVITY'||event.data.type!=='hello')return;
-    const frame=[...CURIOID_ACTIVITY_FRAMES].find(item=>item.contentWindow===event.source);
-    if(frame)try{frame.contentWindow.postMessage({channel:'CURIOID_SITE_ACTIVITY',type:'snapshot',snapshot:curioidActivitySnapshot()},window.location.origin);}catch(_){}
+    const frame=[...CURIOID_ACTIVITY_FRAMES].find(item=>item.contentWindow===event.source);if(frame)try{frame.contentWindow.postMessage({channel:'CURIOID_SITE_ACTIVITY',type:'snapshot',snapshot:curioidActivitySnapshot()},window.location.origin);}catch(_){}
   });
   document.addEventListener('click',event=>{
     const target=event.target instanceof Element?event.target:null;if(!target)return;
@@ -23365,14 +23971,16 @@ const PALETTES = [
     const experience=target.closest('[data-curioid-experience]');if(!experience)return;
     const control=target.closest('button,[role="button"],a,[data-project-export],[data-project-snapshot]');if(!control)return;
     curioidRecordStat('actions');
-    const actionName=String(control.dataset.action||control.dataset.projectAction||control.getAttribute('aria-label')||control.textContent||'').toLowerCase();
+    const actionName=String(control.dataset.action||control.dataset.projectAction||control.getAttribute('aria-label')||'').toLowerCase();
     if(control.hasAttribute('data-project-export')||control.hasAttribute('data-project-snapshot')||/export|download|backup|save|snapshot/.test(actionName))curioidRecordStat('exports');
-    if(/create|generate|build|compose|synthesi[sz]e|render|produce|make|new |random|paint|draw|transform|run|sort/.test(actionName))curioidRecordStat('creates');
+    if(/create|generate|build|compose|synthesi[sz]e|render|produce|make|new-|random|paint|draw|transform|run|sort/.test(actionName))curioidRecordStat('creates');
   },true);
   document.addEventListener('submit',event=>{const form=event.target;if(form instanceof HTMLFormElement&&form.closest('[data-curioid-experience]')){curioidRecordStat('forms');curioidRecordStat('creates');}},true);
   document.addEventListener('pointerdown',event=>{const target=event.target instanceof Element?event.target:null;if(target?.closest('[data-curioid-experience]')&&target.closest('canvas'))curioidRecordStat('canvas');},true);
   document.addEventListener('input',event=>{const target=event.target;if(!(target instanceof HTMLInputElement))return;if(target.type==='search'||target.id==='projectSearch'||target.matches('[data-command-search]'))curioidRecordStat('searches');},true);
   document.addEventListener('change',event=>{const target=event.target;if(target instanceof HTMLInputElement&&target.type==='file'&&target.closest('[data-curioid-experience]'))curioidRecordStat('imports');},true);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)curioidShowNextEgg();});
+  if(curioidActivityStorageValid)curioidCheckActivityMilestones();
 
   const modules={
     'gravity-garden':[gravityMarkup,bindGravity], 'pattern-engine':[patternMarkup,bindPattern], 'impossible-objects':[impossibleMarkup,bindImpossible], 'pixel-weather':[weatherMarkup,bindWeather], 'dream-index':[dreamMarkup,bindDream],
@@ -23460,8 +24068,12 @@ const PALETTES = [
         const returnedCleanup = item[1](host, moduleApi);
         moduleCleanup = typeof returnedCleanup === 'function' ? returnedCleanup : (() => {});
         registerOwnedCleanup(returnedCleanup, 'module-unmount');
+        if (OS_PROJECT_IDS.has(id) && id !== 'dead-interface') {
+          const soundCleanup = bindCurioidOsSoundLayer(host, id);
+          if (!registerOwnedCleanup(soundCleanup, 'shared-os-interface-sounds')) resources.push(soundCleanup);
+        }
         window.CurioidSiteActivity?.recordProject(id);
-        if (OS_PROJECT_IDS.has(id)) { bindOsDataCenter(host, id, api); bindCurioidExchange(host, id, api); }
+        if (OS_PROJECT_IDS.has(id)) { bindOsDataCenter(host, id, api); const desktopCleanup = bindCurioidUniversalDesktop(host, id, api); if (!registerOwnedCleanup(desktopCleanup, 'universal-desktop-and-assistant-hub')) resources.push(desktopCleanup); bindCurioidExchange(host, id, api); }
         utilityCleanup = bindProjectUtilities(host, id, api);
         registerOwnedCleanup(utilityCleanup, 'project-utilities');
         return cleanup;

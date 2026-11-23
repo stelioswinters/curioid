@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="description" content="Curioids: a local full-body creature auto-battler and CURIOID website exploration game." />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BcHqeeQvaO+q3JSG/E+INHmbqoY9I/DInLQPZPT4x20='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-4FiyyiWiYT5uUCrsqc0YyQy01Olkv3DRZ0jLH8QcgoI='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
   <title>Curioids — The Oddity League</title>
   <style>
     :root {
@@ -384,7 +384,12 @@
 
 
     .body-figure { width: 76px; height: 76px; overflow: visible; background: radial-gradient(circle at 50% 65%, rgba(117, 255, 226, .16), transparent 72%); }
-    .curioid-sprite { width: 100%; height: 100%; display: block; overflow: visible; filter: drop-shadow(0 5px 4px rgba(0,0,0,.34)); animation: curioidFloat 3.8s ease-in-out infinite; }
+    .curioid-sprite { width: 100%; height: 100%; display: block; overflow: visible; transform-origin: 50% 72%; filter: drop-shadow(0 5px 4px rgba(0,0,0,.34)); animation-duration: var(--idle-duration,3.8s); animation-delay: var(--idle-delay,0s); animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+    .curioid-sprite[data-motion="0"] { animation-name: curioid-bob; }
+    .curioid-sprite[data-motion="1"] { animation-name: curioid-wiggle; }
+    .curioid-sprite[data-motion="2"] { animation-name: curioid-breathe; }
+    .curioid-sprite[data-motion="3"] { animation-name: curioid-sway; }
+    .curioid-eyes { transform-box: fill-box; transform-origin: center; animation: curioid-blink 5.2s ease-in-out infinite; }
     .curioid-mode-prismatic { filter: saturate(1.42) contrast(1.08) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
     .curioid-mode-inverted { filter: hue-rotate(180deg) saturate(1.3) contrast(1.18) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
     .curioid-mode-ultraviolet { filter: hue-rotate(78deg) saturate(1.72) brightness(1.07) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
@@ -392,10 +397,49 @@
     .curioid-mode-chromatic { filter: grayscale(.7) saturate(1.55) contrast(1.28) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
     .curioid-mode-afterimage { filter: hue-rotate(265deg) saturate(1.58) contrast(1.2) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
     .curioid-sprite.curioid-silhouette { filter: brightness(0) saturate(0) !important; }
-    .enemy-slot .curioid-sprite { transform: scaleX(-1); }
+    .enemy-slot .curioid-sprite { --facing: -1; }
     .creature-mini { width: 66px !important; height: 62px !important; flex: 0 0 66px; }
     .slot .unit-name { max-width: 100%; overflow-wrap: anywhere; }
-    @keyframes curioidFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 -2px; } }
+    @keyframes curioid-bob { 0%,100% { transform: translateY(0) rotate(-1deg) scaleX(var(--facing,1)); } 50% { transform: translateY(-3px) rotate(1deg) scaleX(var(--facing,1)); } }
+    @keyframes curioid-wiggle { 0%,100% { transform: translateY(0) rotate(-1.6deg) scaleX(var(--facing,1)); } 50% { transform: translateY(-2px) rotate(1.6deg) scaleX(var(--facing,1)); } }
+    @keyframes curioid-breathe { 0%,100% { transform: translateY(0) scaleY(1) scaleX(var(--facing,1)); } 50% { transform: translateY(-1px) scaleY(1.035) scaleX(var(--facing,1)); } }
+    @keyframes curioid-sway { 0%,100% { transform: translateX(0) rotate(-1deg) scaleX(var(--facing,1)); } 50% { transform: translateX(2px) rotate(1.8deg) scaleX(var(--facing,1)); } }
+    @keyframes curioid-blink { 0%,43%,46%,100% { transform: scaleY(1); } 44.5% { transform: scaleY(.12); } }
+    .slot.occupied { transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease; }
+    .slot.occupied:hover { transform: translateY(-2px); border-color: color-mix(in srgb,var(--accent) 62%,var(--border)); }
+    .selected-slot { box-shadow: 0 0 0 2px color-mix(in srgb,var(--accent) 52%,transparent), 0 0 24px color-mix(in srgb,var(--accent) 25%,transparent); }
+    .selected-slot .curioid-sprite { filter: drop-shadow(0 0 9px color-mix(in srgb,var(--accent) 65%,transparent)); }
+    .audio-control { display:inline-flex; align-items:center; gap:7px; padding:4px 8px; border:1px solid var(--border); border-radius:999px; background:var(--surface-2); }
+    .audio-control button { min-height:30px; padding:4px 8px; font-size:.76rem; }
+    .audio-control input { width:76px; min-width:60px; accent-color:var(--accent); }
+    .audio-control output { min-width:2.5em; color:var(--muted); font-size:.72rem; font-variant-numeric:tabular-nums; }
+    .battle-stage { margin:16px 0 18px; padding:14px; overflow:hidden; border:1px solid color-mix(in srgb,var(--accent) 55%,var(--border)); border-radius:16px; background:radial-gradient(ellipse at 50% 0%,color-mix(in srgb,var(--accent) 13%,transparent),transparent 65%),var(--surface-2); box-shadow:0 14px 34px rgba(0,0,0,.22); }
+    .battle-stage[hidden] { display:none !important; }
+    .battle-stage-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; color:var(--accent-2); font-size:.72rem; font-weight:900; letter-spacing:.14em; }
+    .battle-stage-duel { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:12px; min-height:154px; }
+    .fx-creature { position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; text-align:center; }
+    .fx-creature .body-figure { width:116px; height:112px; }
+    .fx-creature strong { max-width:100%; overflow-wrap:anywhere; font-size:.82rem; }
+    .fx-creature small { color:var(--muted); font-size:.7rem; }
+    .fx-creature.enemy .curioid-sprite { --facing:-1; }
+    .fx-creature.attacking.player { animation: fx-lunge-right .28s ease-out; }
+    .fx-creature.attacking.enemy { animation: fx-lunge-left .28s ease-out; }
+    .fx-creature.taking-hit { animation: fx-flinch .32s ease-out; }
+    .fx-creature.fading { animation: fx-faint .46s ease-in forwards; }
+    .fx-versus { color:var(--muted); font-weight:1000; letter-spacing:.1em; }
+    .fx-damage { position:absolute; top:5px; right:calc(50% - 62px); min-width:35px; padding:5px 8px; border-radius:999px; color:#fff; background:#b91c1c; font-size:.88rem; font-weight:1000; box-shadow:0 4px 14px rgba(0,0,0,.35); animation:fx-pop .42s ease-out both; }
+    .fx-damage.blocked { background:#64748b; }
+    .fx-damage.poison { background:#7c3aed; }
+    .fx-caption { min-height:22px; margin:5px 0 0; color:var(--text); text-align:center; font-size:.8rem; font-weight:800; }
+    .battle-stage-foot { display:flex; justify-content:center; margin-top:8px; }
+    .battle-stage-foot button { padding:6px 12px; font-size:.76rem; }
+    @keyframes fx-lunge-right { 50% { transform:translateX(16px) scale(1.05); } }
+    @keyframes fx-lunge-left { 50% { transform:translateX(-16px) scale(1.05); } }
+    @keyframes fx-flinch { 20%,60% { transform:translateX(-5px) rotate(-2deg); } 40%,80% { transform:translateX(5px) rotate(2deg); } }
+    @keyframes fx-faint { to { transform:translateY(18px) scale(.62) rotate(12deg); opacity:0; filter:grayscale(1); } }
+    @keyframes fx-pop { from { transform:translateY(12px) scale(.5); opacity:0; } to { transform:translateY(0) scale(1); opacity:1; } }
+    .battle-stage.is-heavy { border-color:color-mix(in srgb,#fb7185 75%,var(--border)); box-shadow:0 0 25px rgba(244,63,94,.14); }
+    .battle-stage.is-reduced .fx-creature { animation:none !important; }
     .hatch-backdrop { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgba(3,7,18,.78); backdrop-filter: blur(12px); }
     .hatch-dialog { width: min(460px, 100%); text-align: center; padding: 25px 24px 22px; color: var(--text); background: radial-gradient(circle at 50% 0%, color-mix(in srgb,var(--accent) 21%,var(--surface)), var(--surface) 65%); border: 1px solid color-mix(in srgb,var(--accent-2) 52%,var(--border)); border-radius: 22px; box-shadow: 0 24px 90px rgba(0,0,0,.58), 0 0 40px color-mix(in srgb,var(--accent) 18%,transparent); }
     .hatch-kicker { color: var(--accent); font-size: .68rem; font-weight: 900; letter-spacing: .17em; }
@@ -417,12 +461,37 @@
     .hatch-tier { font-size: .74rem; font-weight: 900; letter-spacing: .16em; }
     .hatch-tags { margin: 12px 0 15px; padding: 8px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface-2); font-size: .8rem; font-weight: 700; }
     @keyframes hatchReveal { from { transform: scale(.2) rotate(-28deg); opacity: 0; filter: blur(8px); } to { transform: scale(1) rotate(0); opacity: 1; filter: blur(0); } }
-    @media (prefers-reduced-motion: reduce) { .curioid-sprite,.hatch-egg,.hatch-reveal-art { animation: none !important; } }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; } .curioid-sprite,.curioid-eyes,.hatch-egg,.hatch-reveal-art { animation:none !important; } }
     @media (max-width: 720px) { .body-figure { width: 58px; height: 56px; } .creature-mini { width: 54px !important; height: 52px !important; flex-basis: 54px; } .hatch-dialog { padding: 22px 17px 17px; } }
 
     @media (max-width: 720px) {
-      .board-row { grid-template-columns: repeat(5, minmax(62px, 1fr)); gap: 6px; }
+      .board-row { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+      .board-row .slot { min-width: 0; padding: 8px 2px; }
+      .board-row .body-figure { width: 42px; height: 44px; }
+      .board-row .unit-name { font-size: .66rem; line-height: 1.15; }
+      .board-row .stats-line { flex-direction: column; align-items: center; gap: 1px; font-size: .7rem; line-height: 1.1; }
+      .board-row .perk-tag { top: 3px; right: 3px; font-size: .72rem; }
+      .audio-control { gap:4px; padding:3px 6px; }
+      .audio-control input { width:58px; }
+      .battle-stage { padding:10px; }
+      .battle-stage-duel { gap:4px; min-height:130px; }
+      .fx-creature .body-figure { width:82px; height:84px; }
+      .fx-creature strong { font-size:.72rem; }
     }
+
+    .collection-progress-track{height:9px;overflow:hidden;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);margin:12px 0 4px}
+    .collection-progress-track span{display:block;height:100%;background:linear-gradient(90deg,#a9dc70,#f2d27d);border-radius:inherit;transition:width .24s ease}
+    .collection-grid{grid-template-columns:repeat(auto-fill,minmax(168px,1fr));align-items:stretch}
+    .collection-card{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;min-width:0;overflow:hidden}
+    .collection-card:not(.done){opacity:.72}
+    .collection-art{width:min(100%,125px);height:118px;display:grid;place-items:center;overflow:hidden}
+    .collection-art .curioid-sprite{width:100%;height:100%;max-height:118px}
+    .collection-card strong{font-size:.9rem;overflow-wrap:anywhere}
+    .collection-card .muted{font-size:.74rem;line-height:1.4}
+    #tab-collection>.row{gap:12px}
+    #fullscreen-toggle{white-space:nowrap}
+    @media(max-width:560px){.collection-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.collection-card{padding:9px}.collection-art{height:100px}.collection-art .curioid-sprite{max-height:100px}.hud-group{gap:5px}.tabs{gap:5px}.tabs .tab-btn,.tabs>button{font-size:.76rem;padding:7px 9px}}
+    @media(prefers-reduced-motion:reduce){.collection-progress-track span{transition:none}}
   </style>
 </head>
 <body>
@@ -442,14 +511,21 @@
       <span class="pill" id="hud-lives">❤️ 5</span>
       <span class="pill" id="hud-tier">🏪 Shop Tier 1</span>
       <span class="pill" id="hud-pool">🧬 Pool: 0/20</span>
-      <span class="pill" id="hud-shard">✧ Luck Shards: 0/4</span>
+      <span class="pill" id="hud-collection">🥚 Collection: 12/100</span>
     </div>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="arena">⚔️ Battle Arena</button>
       <button class="tab-btn" data-tab="pool">🧬 20-Pool Builder</button>
-      <button class="tab-btn" data-tab="quests">❓ Mystery List</button>
+      <button class="tab-btn" data-tab="collection">🥚 Creature Collection</button>
       <button class="tab-btn" data-tab="world">🌐 Website Playground</button>
+      <div class="audio-control" aria-label="Curioids sound effects">
+        <button id="sound-toggle" type="button" aria-pressed="false">🔇 Sound Off</button>
+        <label class="sr-only" for="sound-volume">Sound effects volume</label>
+        <input id="sound-volume" type="range" min="0" max="100" step="5" value="45" aria-label="Sound effects volume">
+        <output id="sound-volume-value" for="sound-volume">45%</output>
+      </div>
+      <button id="fullscreen-toggle" type="button" aria-label="Toggle fullscreen">⛶ Fullscreen</button>
       <button id="theme-toggle">🌓 Theme</button>
       <button id="reset-save">🗑️ Reset</button>
     </div>
@@ -463,7 +539,7 @@
       <div class="row" style="justify-content:space-between; margin-bottom:8px;">
         <div>
           <h2 style="margin:0;">Curioids Auto-Arena</h2>
-          <div class="muted">Click two board slots to swap. End Turn triggers End-of-Turn buffs, then Start of Battle fires highest-ATK-first.</div>
+          <div class="muted">This is a replayable run: recruit with gold, build synergies and battle. Restarting resets the run, not your permanent egg collection.</div>
         </div>
         <div class="row">
           <button class="btn-primary" id="btn-end-turn">▶️ End Turn &amp; Battle</button>
@@ -472,6 +548,12 @@
       </div>
 
       <div class="synergy-bar" id="synergy-bar"></div>
+
+      <section id="battle-stage" class="battle-stage" hidden aria-label="Animated battle replay">
+        <div class="battle-stage-head"><span>⚡ BATTLE REPLAY</span><span id="battle-stage-step">Preparing…</span></div>
+        <div id="battle-stage-content"></div>
+        <div class="battle-stage-foot"><button id="btn-skip-battle" type="button">Skip replay</button></div>
+      </section>
 
       <h3>Enemy Team (Front is Left)</h3>
       <div class="board-row" id="enemy-board"></div>
@@ -525,21 +607,22 @@
       <div class="roster-grid" id="roster-grid"></div>
     </section>
 
-    <section class="panel" id="tab-quests">
-      <div class="row" style="justify-content:space-between;">
+    <section class="panel" id="tab-collection">
+      <div class="row" style="justify-content:space-between;align-items:flex-start;">
         <div>
-          <h2 style="margin:0;">Hidden Website Mysteries</h2>
-          <div class="muted">Explore offline interactions to uncover ??? mysteries. Each discovery opens a persistent hatch sequence with weighted rarity odds. You never lose a reward by missing a timer.</div>
+          <h2 style="margin:0;">Creature Collection</h2>
+          <div class="muted">100 Curioids are hidden across the CURIOID website. Complete activities in different rooms to make a small shaking egg appear, then click it within five seconds. Missed eggs can be tried again by repeating the activity. Arena shop purchases are temporary and never change this permanent collection.</div>
         </div>
-        <span class="pill" id="quest-progress">0 / 38 Unlocked</span>
+        <span class="pill" id="collection-progress">12 / 100 discovered</span>
       </div>
-      <div class="quest-list" id="quest-list"></div>
+      <div class="collection-progress-track"><span id="collection-progress-bar" style="width:12%;"></span></div>
+      <div class="quest-list collection-grid" id="collection-grid"></div>
     </section>
 
     <section class="panel" id="tab-world">
       <div class="site-hero">
         <h2 style="margin-top:0;">CurioidHub — Offline Interactive World</h2>
-        <p class="muted">Every interaction on this page can awaken hidden eggs. Click, scroll, type secrets, or switch tabs.</p>
+        <p class="muted">This local practice area lets you test the arena systems. Permanent collection eggs are discovered by exploring the wider CURIOID website.</p>
         <div class="row">
           <button id="btn-feed" class="btn-primary">🍪 Feed Clicker (<span id="feed-count">0</span>/10)</button>
           <button id="btn-ping">📡 Ping Signal</button>
@@ -897,13 +980,34 @@
       };
     }
 
+    const EGG_COLLECTION_STORAGE_KEY = "curioid-egg-collection-v1";
+    function readExternalCreatureIds() {
+      const ids = new Set();
+      try {
+        const raw = localStorage.getItem(EGG_COLLECTION_STORAGE_KEY);
+        if (!raw || raw.length > 32768) return ids;
+        const saved = JSON.parse(raw);
+        if (saved && saved.version === 1 && Array.isArray(saved.creatures)) {
+          saved.creatures.forEach(id => { if (typeof id === "string" && CREATURE_BY_ID.has(id)) ids.add(id); });
+        }
+      } catch { /* Site collection is optional; keep the local arena save playable. */ }
+      return ids;
+    }
+    function mergeExternalCollection(savedState) {
+      const merged = new Set(savedState.unlocked);
+      readExternalCreatureIds().forEach(id => merged.add(id));
+      savedState.unlocked = [...merged].filter(id => CREATURE_BY_ID.has(id)).slice(0, CREATURES.length);
+      savedState.pool = (savedState.pool || []).filter(id => savedState.unlocked.includes(id)).slice(0, 20);
+      return savedState;
+    }
     function loadState() {
+      const base = defaultState();
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw || raw.length > 262144) return defaultState();
-        return curioidNormalizeStoredState(JSON.parse(raw), defaultState());
+        if (!raw || raw.length > 262144) return mergeExternalCollection(base);
+        return mergeExternalCollection(curioidNormalizeStoredState(JSON.parse(raw), base));
       } catch {
-        return defaultState();
+        return mergeExternalCollection(base);
       }
     }
 
@@ -945,6 +1049,103 @@
       };
     }
 
+    // Sound is opt-in, local Web Audio only, and never starts until a player gesture.
+    const AUDIO_STORAGE_KEY = "curioids_audio_v1";
+    let audioEnabled = false;
+    let audioVolume = 0.45;
+    let audioContext = null;
+    let audioMaster = null;
+    let battleFx = [];
+    let skipBattleAnimation = false;
+
+    function loadAudioSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(AUDIO_STORAGE_KEY) || "null");
+        if (saved && typeof saved === "object") {
+          audioEnabled = saved.enabled === true;
+          const volume = Number(saved.volume);
+          if (Number.isFinite(volume)) audioVolume = Math.max(0, Math.min(1, volume));
+        }
+      } catch { /* Optional sound preferences must never block game startup. */ }
+    }
+
+    function saveAudioSettings() {
+      try { localStorage.setItem(AUDIO_STORAGE_KEY, JSON.stringify({ enabled: audioEnabled, volume: audioVolume })); }
+      catch { /* Keep sound preferences in memory when storage is unavailable. */ }
+    }
+
+    function updateAudioControls() {
+      const toggle = document.getElementById("sound-toggle");
+      const slider = document.getElementById("sound-volume");
+      const output = document.getElementById("sound-volume-value");
+      if (toggle) {
+        toggle.textContent = audioEnabled ? "🔊 Sound On" : "🔇 Sound Off";
+        toggle.setAttribute("aria-pressed", String(audioEnabled));
+      }
+      if (slider) slider.value = String(Math.round(audioVolume * 100));
+      if (output) output.textContent = `${Math.round(audioVolume * 100)}%`;
+    }
+
+    function getAudioGraph() {
+      if (!audioEnabled) return null;
+      const AudioCtor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtor) return null;
+      try {
+        if (!audioContext) {
+          audioContext = new AudioCtor();
+          audioMaster = audioContext.createGain();
+          audioMaster.gain.value = audioVolume;
+          audioMaster.connect(audioContext.destination);
+        }
+        if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+        if (audioMaster) audioMaster.gain.setTargetAtTime(audioVolume, audioContext.currentTime, .025);
+        return audioContext;
+      } catch { return null; }
+    }
+
+    function playSfx(kind = "ui", strength = 1) {
+      const context = getAudioGraph();
+      if (!context || !audioMaster || audioVolume <= 0 || document.hidden) return;
+      const now = context.currentTime;
+      const recipes = {
+        ui: [440, 560, .055, "sine", .18],
+        purchase: [520, 880, .17, "triangle", .35],
+        roll: [300, 620, .12, "sine", .24],
+        hit: [180, 68, .14, "square", .31],
+        critical: [240, 52, .23, "sawtooth", .42],
+        poison: [380, 145, .19, "triangle", .22],
+        faint: [210, 72, .3, "sine", .34],
+        hatch: [420, 1040, .36, "triangle", .38],
+        win: [540, 980, .42, "sine", .3],
+        lose: [260, 110, .4, "triangle", .26]
+      };
+      const [startHz, endHz, duration, wave, loudness] = recipes[kind] || recipes.ui;
+      try {
+        const oscillator = context.createOscillator();
+        const gain = context.createGain();
+        oscillator.type = wave;
+        oscillator.frequency.setValueAtTime(startHz, now);
+        oscillator.frequency.exponentialRampToValueAtTime(Math.max(35, endHz), now + duration);
+        gain.gain.setValueAtTime(.0001, now);
+        gain.gain.exponentialRampToValueAtTime(Math.max(.0001, audioVolume * loudness * Math.max(.2, Math.min(1.5, strength))), now + .012);
+        gain.gain.exponentialRampToValueAtTime(.0001, now + duration);
+        oscillator.connect(gain);
+        gain.connect(audioMaster);
+        oscillator.start(now);
+        oscillator.stop(now + duration + .025);
+      } catch { /* Unsupported audio must not affect gameplay. */ }
+    }
+
+    function recordBattleFx(event) {
+      if (battleFx.length < 120) battleFx.push(event);
+    }
+
+    function escapeGameText(value) {
+      return String(value ?? "").replace(/[&<>"]/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[char]));
+    }
+
+    loadAudioSettings();
+
     function toast(msg) {
       const box = document.getElementById("toast-container");
       const d = document.createElement("div");
@@ -966,8 +1167,8 @@
     // =========================================================================
     // 2. SHOP, FREEZE & ECONOMY
     // =========================================================================
-    function rollShop(free = false) {
-      if (battling || state.gameOver || state.victory) return;
+    function rollShop(free = false, internalBattleRefresh = false) {
+      if ((battling && !internalBattleRefresh) || state.gameOver || state.victory) return;
       if (!free) {
         if (state.gold < 1) return toast("Need 1G to roll.");
         state.gold -= 1;
@@ -1147,13 +1348,56 @@
       };
     }
 
+    function enemyCandidateScore(creature, selected, playerTeam, roundNum) {
+      const chosen = selected.filter(Boolean);
+      const player = (playerTeam || []).filter(Boolean);
+      const tagCounts = Object.create(null);
+      const playerTags = Object.create(null);
+      chosen.forEach(unit => (CREATURE_BY_ID.get(unit.cid)?.tags || []).forEach(tag => tagCounts[tag] = (tagCounts[tag] || 0) + 1));
+      player.forEach(unit => (CREATURE_BY_ID.get(unit.cid)?.tags || []).forEach(tag => playerTags[tag] = (playerTags[tag] || 0) + 1));
+      const front = player[0] ? CREATURE_BY_ID.get(player[0].cid) : null;
+      const frontStats = player[0] ? effStats(player[0]) : { atk: 0, hp: 0 };
+      const maxHp = player.reduce((max, unit) => Math.max(max, effStats(unit).hp), 0);
+      const maxAtk = player.reduce((max, unit) => Math.max(max, effStats(unit).atk), 0);
+      const kind = creature.ab.kind;
+      let score = 1 + (creature.tier / 14) + Math.random() * .45;
+
+      // Build real trait synergies rather than rolling five unrelated creatures.
+      for (const tag of creature.tags) score += Math.min(1.25, (tagCounts[tag] || 0) * .42);
+      if (chosen.some(unit => unit.cid === creature.id)) score -= .32;
+
+      // Read the visible player formation and choose sensible counters.
+      if (maxHp >= 9 && (kind === 'poison_all' || kind === 'poison_front' || kind === 'poison_two' || kind === 'dmg_poison_front')) score += 2.0;
+      if (player.length >= 3 && (kind === 'poison_all' || kind === 'dmg_random' || kind === 'buff_all_both')) score += 1.35;
+      if (frontStats.atk >= 8 && (creature.ab.when === 'hurt' || kind === 'debuff_atk' || kind === 'dmg_front_buff_self')) score += 1.65;
+      if (frontStats.hp >= 10 && (kind === 'poison_front' || kind === 'poison_all' || kind === 'poison_two')) score += 1.5;
+      if ((playerTags.Beast || 0) >= 3 && (kind === 'dmg_random' || kind === 'poison_all' || kind === 'snipe_second')) score += .8;
+      if ((playerTags.Tech || 0) >= 3 && (kind === 'poison_all' || kind === 'debuff_atk')) score += .75;
+      if ((playerTags.Venom || 0) >= 3 && creature.tags.includes('Guardian')) score += .85;
+      if (front && creature.ab.when === 'hurt' && maxAtk >= 7) score += .85;
+      if (roundNum <= 3 && creature.tier >= 4) score -= .45;
+      return Math.max(.12, score);
+    }
+
+    function chooseEnemyCreature(pool, selected, playerTeam, roundNum) {
+      if (!pool.length) return CREATURES[0];
+      const weighted = pool.map(creature => ({ creature, weight: enemyCandidateScore(creature, selected, playerTeam, roundNum) }));
+      const total = weighted.reduce((sum, item) => sum + item.weight, 0);
+      let roll = Math.random() * total;
+      for (const item of weighted) {
+        roll -= item.weight;
+        if (roll <= 0) return item.creature;
+      }
+      return weighted[weighted.length - 1].creature;
+    }
+
     function generateEnemyLineupForRound(roundNum) {
       const count = Math.min(5, 2 + Math.floor(roundNum / 2));
       const maxTier = Math.min(4, 1 + Math.floor(roundNum / 3));
       const pool = CREATURES.filter(c => c.tier <= maxTier);
       const out = [];
       for (let i = 0; i < count; i++) {
-        const c = pool[Math.floor(Math.random() * pool.length)];
+        const c = chooseEnemyCreature(pool, out, state.board, roundNum);
         const copies = roundNum >= 7 && i === 0 ? 3 : roundNum >= 4 && i === 0 ? 2 : 1;
         out.push({
           cid: c.id,
@@ -1211,6 +1455,14 @@
         logs.push({ text: `🍈 ${target.name}'s Melon blocks the heavy blow!`, imp: true });
       }
       target.hp -= finalDmg;
+      recordBattleFx({
+        kind: finalDmg === 0 ? "block" : "hit",
+        attacker: attacker ? { cid: attacker.cid, name: attacker.name, side: attacker.side } : null,
+        target: { cid: target.cid, name: target.name, side: target.side },
+        damage: finalDmg,
+        remainingHp: Math.max(0, target.hp),
+        critical: finalDmg >= 10
+      });
       logs.push({ text: `${attacker ? attacker.name : "Effect"} → ${target.name} for <b>${finalDmg}</b> dmg (${Math.max(0, target.hp)} HP).`, imp: false });
 
       if (target.hp > 0 && target.ab.when === "hurt") {
@@ -1234,6 +1486,7 @@
             const u = own[i];
             if (u.hp <= 0) {
               loop = true;
+              recordBattleFx({ kind: "faint", unit: { cid: u.cid, name: u.name, side: u.side }, remainingHp: 0 });
               own.splice(i, 1);
               logs.push({ text: `💀 <b>${u.name}</b> fainted.`, imp: true });
 
@@ -1358,11 +1611,90 @@
       return logs;
     }
 
-    function endTurnAndBattle() {
+    function battleReplayUnitMarkup(unit, stateClass = "", badgeMarkup = "") {
+      if (!unit) return `<div class="fx-creature player ${stateClass}"><div class="body-figure"></div><strong>Field effect</strong><small>Ability trigger</small>${badgeMarkup}</div>`;
+      const creature = CREATURE_BY_ID.get(unit.cid) || SPECIAL_CREATURES[unit.cid] || null;
+      const art = creature ? `<div class="body-figure">${creatureSpriteSVG(creature)}</div>` : `<div class="body-figure">✦</div>`;
+      const side = unit.side === "enemy" ? "enemy" : "player";
+      const name = escapeGameText(unit.name || creature?.name || "Curioid");
+      return `<div class="fx-creature ${side} ${stateClass}">${art}<strong>${name}</strong><small>${side === "enemy" ? "OPPONENT" : "YOUR TEAM"}</small>${badgeMarkup}</div>`;
+    }
+
+    function battleReplayMarkup(event, index, total) {
+      const target = event.target || event.unit;
+      const attacker = event.attacker || null;
+      const leftUnit = (attacker?.side === "player" || target?.side === "enemy") ? attacker || { name: "FIELD EFFECT", side: "player" } : target;
+      const rightUnit = (attacker?.side === "enemy" || target?.side === "player") ? attacker || { name: "FIELD EFFECT", side: "enemy" } : target;
+      const isHit = ["hit", "poison", "block"].includes(event.kind);
+      const leftClass = event.kind === "faint" && target?.side === "player" ? "fading" : isHit && target?.side === "player" ? "taking-hit" : event.kind === "hit" && attacker?.side === "player" ? "attacking" : "";
+      const rightClass = event.kind === "faint" && target?.side === "enemy" ? "fading" : isHit && target?.side === "enemy" ? "taking-hit" : event.kind === "hit" && attacker?.side === "enemy" ? "attacking" : "";
+      const badge = event.kind === "block" ? "BLOCKED" : event.kind === "poison" ? `☠ −${event.damage}` : `−${event.damage}`;
+      const badgeMarkup = isHit ? `<span class="fx-damage ${event.kind === "block" ? "blocked" : event.kind === "poison" ? "poison" : ""}">${badge}</span>` : "";
+      const label = event.kind === "faint" ? `${escapeGameText(target?.name)} is out!` : event.kind === "poison" ? `${escapeGameText(target?.name)} is damaged by poison.` : event.kind === "block" ? `${escapeGameText(target?.name)} blocks the blow.` : `${escapeGameText(attacker?.name || "Field effect")} hits ${escapeGameText(target?.name)} for ${event.damage}.`;
+      return `<div class="battle-stage-head"><span>⚡ BATTLE REPLAY</span><span id="battle-stage-step">${Math.min(index + 1,total)} / ${total}</span></div><div class="battle-stage-duel">${battleReplayUnitMarkup(leftUnit,leftClass,isHit && target?.side === "player" ? badgeMarkup : "")}<div class="fx-versus">VS</div>${battleReplayUnitMarkup(rightUnit,rightClass,isHit && target?.side === "enemy" ? badgeMarkup : "")}</div><p class="fx-caption" aria-live="polite">${label}</p>`;
+    }
+
+    async function animateBattleReplay(events, roundPlayed, outcome) {
+      const stage = document.getElementById("battle-stage");
+      const content = document.getElementById("battle-stage-content");
+      if (!stage || !content || !events.length) return;
+      const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+      const sequence = events.slice(0, 34);
+      const remainder = events.length - sequence.length;
+      skipBattleAnimation = false;
+      stage.hidden = false;
+      stage.classList.toggle("is-reduced", reduced);
+      stage.classList.remove("is-heavy");
+      stage.setAttribute("aria-label", `Round ${roundPlayed} animated battle replay`);
+      const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+      if (reduced) {
+        const hits = events.filter(item => item.kind === "hit" || item.kind === "poison").length;
+        const faints = events.filter(item => item.kind === "faint").length;
+        const headline = outcome === "win" ? "🏆 VICTORY" : outcome === "loss" ? "💔 DEFEAT" : "🤝 DRAW";
+        content.innerHTML = `<p class="fx-caption">ROUND ${roundPlayed} · ${headline}</p><p class="fx-caption">${hits} impact events · ${faints} creatures fainted</p>`;
+        await wait(900);
+        stage.hidden = true;
+        content.replaceChildren();
+        stage.classList.remove("is-heavy", "is-reduced");
+        return;
+      }
+      for (let index = 0; index < sequence.length; index++) {
+        if (skipBattleAnimation) break;
+        const item = sequence[index];
+        content.innerHTML = battleReplayMarkup(item, index, sequence.length);
+        stage.classList.toggle("is-heavy", item.critical === true || item.kind === "faint");
+        void content.offsetWidth;
+        if (item.kind === "faint") playSfx("faint");
+        else if (item.kind === "poison") playSfx("poison");
+        else if (item.kind === "hit" || item.kind === "block") playSfx(item.critical ? "critical" : "hit", item.critical ? 1.1 : .8);
+        if (!reduced) await wait(item.kind === "faint" ? 310 : 205);
+      }
+      if (remainder > 0 && !skipBattleAnimation) {
+        const more = document.createElement("p");
+        more.className = "fx-caption";
+        more.textContent = `+ ${remainder} more combat events resolved`;
+        content.appendChild(more);
+      }
+      const outcomeText = outcome === "win" ? "🏆 VICTORY — your team held the field" : outcome === "loss" ? "💔 DEFEAT — the enemy broke through" : "🤝 DRAW — both teams fell";
+      if (!skipBattleAnimation) {
+        const summary = document.createElement("p");
+        summary.className = "fx-caption";
+        summary.textContent = `ROUND ${roundPlayed} · ${outcomeText}`;
+        content.appendChild(summary);
+        if (!reduced) await wait(460);
+      }
+      stage.hidden = true;
+      content.replaceChildren();
+      stage.classList.remove("is-heavy", "is-reduced");
+    }
+
+    async function endTurnAndBattle() {
       if (battling || state.gameOver || state.victory) return;
       if (!state.board.some(Boolean)) return toast("Add at least 1 Curioid to your team.");
 
       battling = true;
+      battleFx = [];
+      const roundPlayed = state.round;
       document.getElementById("btn-end-turn").disabled = true;
 
       const logs = [{ text: `<b>=== Round ${state.round} End Turn &amp; Battle ===</b>`, imp: true }];
@@ -1480,6 +1812,7 @@
           for (const u of t) {
             if (u.poison > 0 && u.hp > 0) {
               u.hp -= u.poison;
+              recordBattleFx({ kind: "poison", attacker: null, target: { cid: u.cid, name: u.name, side: u.side }, damage: u.poison, remainingHp: Math.max(0, u.hp) });
               logs.push({ text: `☠️ ${u.name} takes ${u.poison} Poison.`, imp: false });
             }
           }
@@ -1528,7 +1861,9 @@
       state.gold = 10;
       state.nextEnemy = null;
 
+      let battleOutcome = "draw";
       if (pTeam.length > 0 && eTeam.length === 0) {
+        battleOutcome = "win";
         state.trophies += 1;
         logs.push({ text: `🏆 <b style="color:var(--good)">Win! Earned Trophy #${state.trophies}.</b>`, imp: true });
         if (state.trophies >= 10) {
@@ -1536,6 +1871,7 @@
           toast("🎉 10 Trophies! You won the Curioids run!");
         }
       } else if (eTeam.length > 0 && pTeam.length === 0) {
+        battleOutcome = "loss";
         state.lives -= 1;
         logs.push({ text: `💔 <b style="color:var(--bad)">Loss! Lost 1 ❤️.</b>`, imp: true });
         if (state.lives <= 0) {
@@ -1551,230 +1887,55 @@
         state.nextEnemy = generateEnemyLineupForRound(state.round);
         state.shopUnits = state.shopUnits.map(x => (x && x.frozen ? x : null));
         state.shopFoods = state.shopFoods.map(x => (x && x.frozen ? x : null));
-        rollShop(true);
+        rollShop(true, true);
       }
 
       for (let i = logs.length - 1; i >= 0; i--) logLine(logs[i].text, logs[i].imp);
 
+      // Save the completed result before the optional presentation layer runs.
+      saveState();
+      await animateBattleReplay(battleFx, roundPlayed, battleOutcome);
+      playSfx(battleOutcome === "win" ? "win" : battleOutcome === "loss" ? "lose" : "ui");
       battling = false;
       document.getElementById("btn-end-turn").disabled = false;
-      saveState();
       renderAll();
       recordFieldSurvey();
     }
 
     // =========================================================================
-    // 4. MYSTERY QUESTS & SHAKING EGGS
+    // 4. PERMANENT COLLECTION IS SHARED WITH THE SITE-WIDE EGG HUNT
+    // Legacy quest fields remain readable for old saves, but no longer award
+    // creatures. The parent site owns egg discovery; this page owns the arena.
     // =========================================================================
-    let hatchOverlay = null;
-    let siteDiscovery = { projects: [], categories: [], stats: { creates: 0, exports: 0, canvas: 0, forms: 0, searches: 0, actions: 0, imports: 0 } };
+    function recordFieldSurvey() { return false; }
+    function unlockQuest() { return false; }
 
-    function recordFieldSurvey() {
-      if (state.unlocked.length >= CREATURES.length) return;
-      if (state.fieldSurveyProgress < 1) {
-        state.fieldSurveyProgress = 1;
-        toast("FIELD SURVEY · 1/2 battles recorded. One more battle reveals an unmapped signal.");
-      } else {
-        state.fieldSurveyProgress = 0;
-        state.fieldSurveys = Math.min(1000000, (Number(state.fieldSurveys) || 0) + 1);
-        const biasTier = getShopTier();
-        state.pendingRewards.push({ qid: "survey", biasTier });
-        if (state.fieldSurveys % 3 === 0) {
-          state.luckyShard = Math.min(4, state.luckyShard + 1);
-          toast("✧ SURVEY STREAK — a Luck Shard strengthens your next hatch.");
-        }
-        toast(`✦ UNMAPPED SIGNAL ${state.fieldSurveys} — two battles completed; a new Curioid is waiting.`);
-        showNextQuestReward();
-      }
-      saveState();
-      renderQuests();
-      renderHud();
-    }
-
-    function unlockQuest(qid) {
-      if (state.completedQuests.includes(qid)) return;
-      const q = QUESTS.find(x => x.id === qid);
-      if (!q) return;
-      state.completedQuests.push(qid);
-      state.pendingRewards.push({ qid: q.id, biasTier: q.bias });
-      if (state.completedQuests.length % 3 === 0) {
-        state.luckyShard = Math.min(4, state.luckyShard + 1);
-        toast("✧ LUCK SHARD CHARGED — your next hatch has improved rare-tier odds.");
-      }
-      saveState();
-      toast("✦ FIELD ANOMALY FOUND — a Curioid egg is waiting.");
-      renderQuests();
-      renderHud();
-      if (qid !== "q12" && state.completedQuests.length >= 6) unlockQuest("q12");
-      showNextQuestReward();
-    }
-
-    function tierOdds(biasTier = 1) {
-      const bias = Math.max(1, Math.min(4, Number(biasTier) || 1));
-      const shard = Math.min(4, Math.max(0, Number(state.luckyShard) || 0));
-      const shift = (bias - 1) * 8 + shard * 4;
-      const raw = [Math.max(5, 58 - shift * 1.25), 27 + shift * 0.35, 11 + shift * 0.55, 4 + shift * 0.35];
-      const total = raw.reduce((sum, value) => sum + value, 0);
-      return raw.map(value => value / total);
-    }
-
-    function rollEggCreature(biasTier) {
-      const odds = tierOdds(biasTier);
-      const roll = Math.random();
-      let tier = 1, cumulative = 0;
-      for (let i = 0; i < odds.length; i++) { cumulative += odds[i]; if (roll <= cumulative) { tier = i + 1; break; } }
-      const unlocked = new Set(state.unlocked);
-      const newCreatures = CREATURES.filter(c => !unlocked.has(c.id));
-      let bucket = newCreatures.filter(c => c.tier === tier);
-      if (!bucket.length && newCreatures.length) {
-        bucket = [...newCreatures].sort((a, b) => Math.abs(a.tier - tier) - Math.abs(b.tier - tier)).slice(0, 1);
-      }
-      const source = bucket.length ? bucket : CREATURES.filter(c => c.tier === tier);
-      const creature = source[Math.floor(Math.random() * source.length)];
-      state.luckyShard = 0;
-      if (!creature) return null;
-      const isNew = !unlocked.has(creature.id);
-      if (isNew) {
-        state.unlocked.push(creature.id);
-        if (state.pool.length < 20) state.pool.push(creature.id);
-        toast(`✦ NEW CURIOID REGISTERED · ${creature.name} · TIER ${creature.tier}`);
-      } else {
-        state.gold += 2;
-        toast(`Duplicate Curioid converted into 2G · ${creature.name}`);
-      }
-      if (state.activeReward) state.activeReward.hatchedCreatureId = creature.id;
+    function addCollectedCreature(creatureId) {
+      if (typeof creatureId !== "string" || !CREATURE_BY_ID.has(creatureId)) return false;
+      if (state.unlocked.includes(creatureId)) return false;
+      state.unlocked.push(creatureId);
       saveState();
       renderAll();
-      return creature;
+      const creature = CREATURE_BY_ID.get(creatureId);
+      toast(`🥚 NEW CURIOID REGISTERED · ${creature.name} · Add it to your 20-Pool when ready.`);
+      return true;
     }
 
-    function showNextQuestReward() {
-      if (hatchOverlay) return;
-      if (!state.activeReward && state.pendingRewards.length) {
-        state.activeReward = state.pendingRewards.shift();
-        saveState();
-      }
-      if (state.activeReward) spawnEgg(state.activeReward.biasTier, state.activeReward.qid);
-    }
-
-    function hatchDialogMarkup(reward, revealed = null) {
-      const odds = tierOdds(reward.biasTier || 1).map((value, index) => `T${index + 1} ${Math.round(value * 100)}%`).join(" · ");
-      if (!revealed) return `
-        <div class="hatch-kicker">CURIOID FIELD DISCOVERY / ${String(reward.qid || "q").toUpperCase()}</div>
-        <div class="hatch-orbit"><div class="hatch-egg" aria-hidden="true"><span>✦</span><i></i></div></div>
-        <h2>Something is inside.</h2>
-        <p>A field mission has resonated with an unknown lifeform. Hatch it to add one Curioid to your collection.</p>
-        <div class="hatch-odds">${odds}</div>
-        <button type="button" class="btn-gold hatch-action" data-hatch-open>BREAK THE SHELL</button>
-        <small class="muted">Your discovery is saved. You cannot miss this hatch.</small>`;
-      const creature = CREATURE_BY_ID.get(revealed);
-      if (!creature) return `<div class="hatch-kicker">FIELD RECOVERY</div><h2>Signal retained</h2><p>Your hatch is safe. Close this panel to continue.</p><button type="button" class="btn-primary hatch-action" data-hatch-close>CONTINUE</button>`;
-      const already = !state.unlocked.includes(creature.id);
-      return `
-        <div class="hatch-kicker">FIELD DISCOVERY COMPLETE / ${String(reward.qid || "q").toUpperCase()}</div>
-        <div class="hatch-reveal-art">${creatureSpriteSVG(creature)}</div>
-        <div class="tier-${creature.tier} hatch-tier">TIER ${creature.tier} · ${creature.tier === 4 ? "ANOMALOUS" : creature.tier === 3 ? "RARE" : creature.tier === 2 ? "UNCOMMON" : "COMMON"}</div>
-        <h2>${creature.name}</h2>
-        <p>${creature.text}</p>
-        <div class="hatch-tags">${creature.tags.join(" / ")} · ${creature.atk} ATK · ${creature.hp} HP</div>
-        <button type="button" class="btn-primary hatch-action" data-hatch-close>OK · RETURN TO THE ARENA</button>`;
-    }
-
-    function spawnEgg(biasTier = 1, qid = "q") {
-      if (hatchOverlay || !state.activeReward) return;
-      const reward = state.activeReward;
-      const revealedId = reward.hatchedCreatureId || null;
-      hatchOverlay = document.createElement("div");
-      hatchOverlay.className = "hatch-backdrop";
-      hatchOverlay.setAttribute("role", "presentation");
-      const dialog = document.createElement("section");
-      dialog.className = "hatch-dialog";
-      dialog.setAttribute("role", "dialog");
-      dialog.setAttribute("aria-modal", "true");
-      dialog.setAttribute("aria-labelledby", "hatch-title");
-      dialog.innerHTML = hatchDialogMarkup(reward, revealedId);
-      const title = dialog.querySelector("h2");
-      if (title) title.id = "hatch-title";
-      hatchOverlay.appendChild(dialog);
-      document.body.appendChild(hatchOverlay);
-
-      dialog.addEventListener("click", event => {
-        const hatchButton = event.target.closest("[data-hatch-open]");
-        if (hatchButton) {
-          hatchButton.disabled = true;
-          dialog.classList.add("is-hatching");
-          const creature = rollEggCreature(reward.biasTier || biasTier);
-          setTimeout(() => {
-            if (!hatchOverlay || !dialog.isConnected) return;
-            dialog.classList.remove("is-hatching");
-            dialog.innerHTML = hatchDialogMarkup(reward, creature?.id || reward.hatchedCreatureId);
-            const newTitle = dialog.querySelector("h2");
-            if (newTitle) newTitle.id = "hatch-title";
-            dialog.querySelector("[data-hatch-close]")?.focus();
-          }, 620);
-          return;
-        }
-        if (event.target.closest("[data-hatch-close]")) {
-          hatchOverlay?.remove();
-          hatchOverlay = null;
-          state.activeReward = null;
-          saveState();
-          showNextQuestReward();
-        }
-      });
-      if (revealedId) dialog.querySelector("[data-hatch-close]")?.focus();
-      else dialog.querySelector("[data-hatch-open]")?.focus();
-    }
-
-    function evaluateSiteMissions(snapshot) {
-      if (!snapshot || typeof snapshot !== "object") return;
-      const projects = new Set(Array.isArray(snapshot.projects) ? snapshot.projects : []);
-      const categories = new Set(Array.isArray(snapshot.categories) ? snapshot.categories : []);
-      const stats = snapshot.stats && typeof snapshot.stats === "object" ? snapshot.stats : {};
-      siteDiscovery = { projects: [...projects], categories: [...categories], stats: { ...siteDiscovery.stats, ...stats } };
-      const checks = [
-        ["q15", categories.has("operating-systems")],
-        ["q16", projects.has("aura-synthesis")],
-        ["q17", projects.has("umbra-os")],
-        ["q18", projects.has("aether-os")],
-        ["q19", projects.has("sandbox-os")],
-        ["q20", categories.has("digital-art")],
-        ["q21", categories.has("sound-motion")],
-        ["q22", categories.has("strange-archives")],
-        ["q23", categories.has("web-experiments")],
-        ["q24", categories.has("creative-tools")],
-        ["q25", Number(stats.creates) >= 1],
-        ["q26", Number(stats.exports) >= 1],
-        ["q27", Number(stats.searches) >= 1],
-        ["q28", Number(stats.canvas) >= 1],
-        ["q29", projects.size >= 6],
-        ["q30", categories.size >= 7],
-        ["q31", Number(stats.forms) >= 1],
-        ["q32", Number(stats.imports) >= 1],
-        ["q33", Number(stats.actions) >= 10],
-        ["q34", projects.size >= 10],
-        ["q35", categories.has("tiny-games")],
-        ["q36", projects.has("dead-interface")],
-        ["q37", projects.has("food-alchemy")],
-        ["q38", projects.has("echonoise-os")]
-      ];
-      for (const [qid, complete] of checks) if (complete) unlockQuest(qid);
-    }
-
-    function connectSiteDiscoveryBridge() {
-      if (window.parent === window) return;
-      const channel = "CURIOID_SITE_ACTIVITY";
-      const sendHello = () => {
-        try { window.parent.postMessage({ channel, type: "hello" }, window.location.origin); } catch (_) {}
-      };
+    function connectEggCollectionBridge() {
       window.addEventListener("message", event => {
-        if (event.source !== window.parent || event.origin !== window.location.origin) return;
+        if (window.parent === window || event.source !== window.parent || event.origin !== window.location.origin) return;
         const data = event.data;
-        if (!data || data.channel !== channel || data.type !== "snapshot") return;
-        evaluateSiteMissions(data.snapshot);
+        if (!data || data.channel !== "CURIOID_EGG_HUNT" || data.type !== "collection-update") return;
+        addCollectedCreature(data.creatureId);
       });
-      sendHello();
-      window.addEventListener("pageshow", sendHello);
+      window.addEventListener("storage", event => {
+        if (event.key !== EGG_COLLECTION_STORAGE_KEY || !event.newValue) return;
+        try {
+          const value = JSON.parse(event.newValue);
+          if (!value || value.version !== 1 || !Array.isArray(value.creatures)) return;
+          value.creatures.forEach(addCollectedCreature);
+        } catch { /* Ignore damaged cross-tab collection records. */ }
+      });
     }
 
     // Procedural local creature art: no image URLs, emoji glyphs, fonts or remote assets.
@@ -1839,7 +2000,12 @@
       const label = String(creature?.name || "Unknown Curioid").replace(/[&<>\"]/g, "");
       const grad = `curioid-grad-${id || "unknown"}`;
       const bodyPath = body;
-      return `<svg class="curioid-sprite curioid-mode-${mode.toLowerCase()} ${options.silhouette ? "curioid-silhouette" : ""}" viewBox="0 0 100 88" role="img" aria-label="${label}, a full-body ${mode.toLowerCase()} Curioid" xmlns="http://www.w3.org/2000/svg" ${hidden}>
+      const motion = seed % 4;
+      const idleDuration = [3.5, 4.2, 3.15, 4.65][motion];
+      const idleDelay = -(((seed >>> 4) % 18) / 10);
+      const blinkDelay = -(((seed >>> 10) % 48) / 10);
+      const eyeGroupStyle = `animation-delay:${blinkDelay}s`;
+      return `<svg class="curioid-sprite curioid-mode-${mode.toLowerCase()} ${options.silhouette ? "curioid-silhouette" : ""}" data-motion="${motion}" style="--idle-duration:${idleDuration}s;--idle-delay:${idleDelay}s" viewBox="0 0 100 88" role="img" aria-label="${label}, a full-body ${mode.toLowerCase()} Curioid" xmlns="http://www.w3.org/2000/svg" ${hidden}>
         <defs><linearGradient id='${grad}' x1='0' y1='0' x2='1' y2='1'><stop stop-color='hsl(${mainHue} 92% 78%)'/><stop offset='.48' stop-color='hsl(${trimHue} 83% 58%)'/><stop offset='1' stop-color='hsl(${glowHue} 85% 38%)'/></linearGradient><radialGradient id='${grad}-shine'><stop stop-color='#fff' stop-opacity='.88'/><stop offset='1' stop-color='#fff' stop-opacity='0'/></radialGradient></defs>
         <ellipse cx='50' cy='79' rx='25' ry='5' fill='#050914' opacity='.28'/>
         <g stroke='hsl(${trimHue} 90% 24%)' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' fill='none'>${legPath}</g>
@@ -1849,8 +2015,8 @@
         <g fill='none' stroke='hsl(${trimHue} 95% 24%)' stroke-width='2.5' stroke-linecap='round'>${antennaPath}</g>
         <g fill='hsl(${trimHue} 95% 20%)' stroke='hsl(${glowHue} 90% 85%)' stroke-width='1.5'>${marks}</g>
         <path d='M${headX-13} ${headY+7}Q${headX-13} ${headY-10} ${headX} ${headY-11}Q${headX+15} ${headY-10} ${headX+13} ${headY+8}Q${headX+8} ${headY+21} ${headX-3} ${headY+19}Q${headX-15} ${headY+16} ${headX-13} ${headY+7}Z' fill='url(#${grad})' stroke='hsl(${trimHue} 90% 24%)' stroke-width='2.5'/>
-        <ellipse cx='${headX-5}' cy='${headY+5}' rx='3.3' ry='4.2' fill='#f7fbff'/><ellipse cx='${headX+5}' cy='${headY+5}' rx='3.3' ry='4.2' fill='#f7fbff'/>
-        <circle cx='${headX-4.4}' cy='${headY+5.8}' r='1.9' fill='#15192b'/><circle cx='${headX+5.6}' cy='${headY+5.8}' r='1.9' fill='#15192b'/>
+        <g class='curioid-eyes' style='${eyeGroupStyle}'><ellipse cx='${headX-5}' cy='${headY+5}' rx='3.3' ry='4.2' fill='#f7fbff'/><ellipse cx='${headX+5}' cy='${headY+5}' rx='3.3' ry='4.2' fill='#f7fbff'/>
+        <circle cx='${headX-4.4}' cy='${headY+5.8}' r='1.9' fill='#15192b'/><circle cx='${headX+5.6}' cy='${headY+5.8}' r='1.9' fill='#15192b'/></g>
         <path d='M${headX-3} ${headY+13}Q${headX} ${headY+16} ${headX+4} ${headY+13}' fill='none' stroke='hsl(${trimHue} 90% 20%)' stroke-width='1.8' stroke-linecap='round'/>
         <path d='M32 75L27 78M43 78L39 81M61 78L65 81M76 72L81 74' stroke='hsl(${glowHue} 90% 83%)' stroke-width='2.5' stroke-linecap='round'/>
         <circle cx='50' cy='51' r='2.2' fill='#fff' opacity='.8'/>
@@ -1866,7 +2032,7 @@
       document.getElementById("hud-lives").textContent = `❤️ ${state.lives}`;
       document.getElementById("hud-tier").textContent = `🏪 Shop Tier ${getShopTier()}`;
       document.getElementById("hud-pool").textContent = `🧬 Pool: ${state.pool.length}/20`;
-      document.getElementById("hud-shard").textContent = `✧ Luck Shards: ${state.luckyShard}/4`;
+      document.getElementById("hud-collection").textContent = `🥚 Collection: ${state.unlocked.length}/100`;
       document.getElementById("btn-new-run").style.display = (state.gameOver || state.victory) ? "inline-block" : "none";
     }
 
@@ -2000,8 +2166,8 @@
               <div class="muted" style="font-size:0.77rem; margin-top:4px;">${c.text}</div>
             </div>
             <div class="row">
-              <button class="btn-primary" style="flex:1;" onclick="buyUnit(${idx})">Buy 3G</button>
-              <button class="btn-freeze ${slot.frozen ? "frozen" : ""}" onclick="toggleFreezeUnit(${idx})">❄️</button>
+              <button type="button" class="btn-primary" style="flex:1;" data-shop-action="buy-unit" data-shop-index="${idx}">Recruit · 3G</button>
+              <button type="button" class="btn-freeze ${slot.frozen ? "frozen" : ""}" data-shop-action="freeze-unit" data-shop-index="${idx}" aria-label="Freeze creature offer">❄️</button>
             </div>
           `;
         }
@@ -2025,8 +2191,8 @@
               <div class="muted" style="font-size:0.77rem; margin-top:4px;">${f.desc}</div>
             </div>
             <div class="row">
-              <button class="btn-gold" style="flex:1;" onclick="buyFood(${idx})">Buy ${f.cost}G</button>
-              <button class="btn-freeze ${slot.frozen ? "frozen" : ""}" onclick="toggleFreezeFood(${idx})">❄️</button>
+              <button type="button" class="btn-gold" style="flex:1;" data-shop-action="buy-food" data-shop-index="${idx}">Buy ${f.cost}G</button>
+              <button type="button" class="btn-freeze ${slot.frozen ? "frozen" : ""}" data-shop-action="freeze-food" data-shop-index="${idx}" aria-label="Freeze food offer">❄️</button>
             </div>
           `;
         }
@@ -2040,20 +2206,15 @@
       const q = (document.getElementById("roster-search")?.value || "").trim().toLowerCase();
       const tierFilter = document.getElementById("roster-tier")?.value || "all";
       const statusFilter = document.getElementById("roster-status")?.value || "all";
-
       const filtered = CREATURES.filter(c => {
         const unlocked = state.unlocked.includes(c.id);
         const inPool = state.pool.includes(c.id);
-        if (tierFilter !== "all" && String(c.tier) !== tierFilter) return false;
+        if (!unlocked && (q || tierFilter !== "all")) return false;
         if (statusFilter === "unlocked" && !unlocked) return false;
         if (statusFilter === "in-pool" && !inPool) return false;
-        if (q) {
-          const hay = `${c.name} ${c.tags.join(" ")} ${c.text}`.toLowerCase();
-          if (!hay.includes(q)) return false;
-        }
+        if (q && !`${c.name} ${c.tags.join(" ")} ${c.text}`.toLowerCase().includes(q)) return false;
         return true;
       });
-
       grid.innerHTML = "";
       filtered.forEach(c => {
         const unlocked = state.unlocked.includes(c.id);
@@ -2064,25 +2225,20 @@
           <div>
             <div class="row" style="justify-content:space-between;">
               <span class="body-figure creature-mini">${creatureSpriteSVG(c, { silhouette: !unlocked })}</span>
-              <span class="tier-${c.tier}" style="font-size:0.75rem; font-weight:800;">Tier ${c.tier}</span>
+              ${unlocked ? `<span class="tier-${c.tier}" style="font-size:0.75rem;font-weight:800;">Tier ${c.tier}</span>` : `<span class="muted">UNKNOWN</span>`}
             </div>
-            <strong>${unlocked ? c.name : "Locked Curioid"}</strong>
-            <div class="muted" style="font-size:0.77rem;">⚔️${c.atk} ❤️${c.hp} • ${c.tags.join("/")}</div>
-            <div class="muted" style="font-size:0.77rem; margin-top:4px;">${unlocked ? c.text : "Hatch a shaking Egg to unlock."}</div>
-          </div>
-        `;
+            <strong>${unlocked ? c.name : "Unknown Curioid"}</strong>
+            <div class="muted" style="font-size:0.77rem;">${unlocked ? `⚔️${c.atk} ❤️${c.hp} • ${c.tags.join("/")}` : "??? • ??? • ???"}</div>
+            <div class="muted" style="font-size:0.77rem;margin-top:4px;">${unlocked ? c.text : "Find a shaking egg somewhere around CURIOID."}</div>
+          </div>`;
         if (unlocked) {
           const btn = document.createElement("button");
           btn.textContent = inPool ? "✓ In 20-Pool" : "+ Add to Pool";
           btn.className = inPool ? "btn-primary" : "";
           btn.addEventListener("click", () => {
             if (inPool) state.pool = state.pool.filter(id => id !== c.id);
-            else {
-              if (state.pool.length >= 20) return toast("Pool max is 20 Curioids.");
-              state.pool.push(c.id);
-            }
-            saveState();
-            renderAll();
+            else { if (state.pool.length >= 20) return toast("Pool max is 20 Curioids."); state.pool.push(c.id); }
+            saveState(); renderAll();
           });
           card.appendChild(btn);
         }
@@ -2090,18 +2246,25 @@
       });
     }
 
-    function renderQuests() {
-      document.getElementById("quest-progress").textContent = `${state.completedQuests.length} / ${QUESTS.length} missions · ${state.unlocked.length} / ${CREATURES.length} Curioids`;
-      const surveyCard = `<div class="quest-card ${state.unlocked.length >= CREATURES.length ? "done" : ""}"><div style="font-weight:800;">${state.unlocked.length >= CREATURES.length ? "✅ FIELD GUIDE COMPLETE" : "✦ REPEATABLE / UNMAPPED SIGNAL"}</div><div class="muted" style="margin-top:4px;">${state.unlocked.length >= CREATURES.length ? "Every Curioid has been registered." : `Complete ${2 - state.fieldSurveyProgress} more battle${2 - state.fieldSurveyProgress === 1 ? "" : "s"} to reveal another Curioid. Survey hatches continue until the full roster is collected.`}</div><div class="muted" style="margin-top:4px;">Survey hatches: ${state.fieldSurveys} · Progress: ${state.fieldSurveyProgress}/2 battles</div></div>`;
-      document.getElementById("quest-list").innerHTML = surveyCard + QUESTS.map(q => {
-        const done = state.completedQuests.includes(q.id);
-        return `
-          <div class="quest-card ${done ? "done" : ""}">
-            <div style="font-weight:800;">${done ? "✅ UNLOCKED" : "🔒 MYSTERY"} • Tier ${q.bias}+ Egg</div>
-            <div class="muted" style="margin-top:4px;">${done ? `Discovered (${q.id})` : q.clue}</div>
-          </div>
-        `;
-      }).join("");
+    function renderCollection() {
+      const owned = new Set(state.unlocked);
+      const count = owned.size;
+      const progress = document.getElementById("collection-progress");
+      const bar = document.getElementById("collection-progress-bar");
+      const grid = document.getElementById("collection-grid");
+      if (!grid) return;
+      if (progress) progress.textContent = `${count} / ${CREATURES.length} discovered`;
+      if (bar) bar.style.width = `${Math.min(100, count / CREATURES.length * 100)}%`;
+      grid.innerHTML = "";
+      CREATURES.forEach(creature => {
+        const unlocked = owned.has(creature.id);
+        const card = document.createElement("article");
+        card.className = `quest-card collection-card ${unlocked ? "done" : ""}`;
+        const art = document.createElement("div"); art.className = "collection-art"; art.innerHTML = creatureSpriteSVG(creature, { silhouette: !unlocked });
+        const heading = document.createElement("strong"); heading.textContent = unlocked ? creature.name : "Undiscovered Curioid";
+        const detail = document.createElement("span"); detail.className = "muted"; detail.textContent = unlocked ? `Tier ${creature.tier} · ${creature.tags.join(" / ")} · ${creature.atk} ATK / ${creature.hp} HP` : "Hidden somewhere in CURIOID · Find and click its egg";
+        card.append(art, heading, detail); grid.appendChild(card);
+      });
     }
 
     function renderAll() {
@@ -2111,13 +2274,39 @@
       if (!battling) renderEnemyBoard();
       renderShop();
       renderRoster();
-      renderQuests();
+      renderCollection();
       document.getElementById("feed-count").textContent = state.feedCount;
     }
 
     // =========================================================================
     // 6. EVENTS & MYSTERY TRIGGERS
     // =========================================================================
+    document.getElementById("shop-grid").addEventListener("click", event => {
+      const button = event.target.closest("[data-shop-action]");
+      if (!button) return;
+      const index = Number(button.dataset.shopIndex);
+      if (!Number.isInteger(index) || index < 0 || index > 4) return;
+      switch (button.dataset.shopAction) {
+        case "buy-unit": if (index < state.shopUnits.length) buyUnit(index); break;
+        case "freeze-unit": if (index < state.shopUnits.length) toggleFreezeUnit(index); break;
+        case "buy-food": if (index < state.shopFoods.length) buyFood(index); break;
+        case "freeze-food": if (index < state.shopFoods.length) toggleFreezeFood(index); break;
+      }
+    });
+
+    const fullscreenButton = document.getElementById("fullscreen-toggle");
+    function syncGameFullscreenButton() {
+      if (fullscreenButton) fullscreenButton.textContent = document.fullscreenElement ? "✕ Exit Fullscreen" : "⛶ Fullscreen";
+    }
+    fullscreenButton?.addEventListener("click", async () => {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await document.documentElement.requestFullscreen();
+      } catch { toast("Fullscreen is not available in this browser or frame."); }
+      syncGameFullscreenButton();
+    });
+    document.addEventListener("fullscreenchange", syncGameFullscreenButton);
+
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -2125,7 +2314,7 @@
         btn.classList.add("active");
         document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
         if (btn.dataset.tab === "pool") unlockQuest("q13");
-        if (btn.dataset.tab === "quests") unlockQuest("q14");
+        if (btn.dataset.tab === "collection") renderCollection();
       });
     });
 
@@ -2149,8 +2338,9 @@
     });
 
     document.getElementById("reset-save").addEventListener("click", () => {
-      if (!confirm("Reset all Curioids save data?")) return;
-      state = defaultState();
+      if (battling) return toast("Finish or skip the current battle first.");
+      if (!confirm("Reset arena progress? Your permanent creature collection will be kept.")) return;
+      state = mergeExternalCollection(defaultState());
       selectedIdx = null;
       rollShop(true);
       saveState();
@@ -2158,6 +2348,7 @@
     });
 
     document.getElementById("btn-new-run").addEventListener("click", () => {
+      if (battling) return;
       const keep = {
         unlocked: state.unlocked,
         pool: state.pool,
@@ -2176,6 +2367,25 @@
     document.getElementById("btn-roll").addEventListener("click", () => rollShop(false));
     document.getElementById("btn-sell").addEventListener("click", sellSelected);
     document.getElementById("btn-end-turn").addEventListener("click", endTurnAndBattle);
+    document.getElementById("sound-toggle").addEventListener("click", () => {
+      audioEnabled = !audioEnabled;
+      saveAudioSettings();
+      updateAudioControls();
+      if (audioEnabled) playSfx("ui");
+    });
+    document.getElementById("sound-volume").addEventListener("input", event => {
+      const next = Number(event.target.value);
+      audioVolume = Number.isFinite(next) ? Math.max(0, Math.min(1, next / 100)) : .45;
+      if (audioMaster && audioContext) audioMaster.gain.setTargetAtTime(audioEnabled ? audioVolume : 0, audioContext.currentTime, .025);
+      saveAudioSettings();
+      updateAudioControls();
+    });
+    document.getElementById("btn-skip-battle").addEventListener("click", () => { skipBattleAnimation = true; });
+    document.addEventListener("click", event => {
+      const button = event.target.closest("button");
+      if (button && !["sound-toggle", "btn-skip-battle"].includes(button.id)) playSfx("ui", .62);
+    }, true);
+    updateAudioControls();
 
     document.getElementById("btn-auto-pool").addEventListener("click", () => {
       state.pool = [...state.unlocked]
@@ -2280,8 +2490,8 @@
     ensureEnemyLineup();
     if (!state.shopUnits || state.shopUnits.length === 0) rollShop(true);
     else renderAll();
-    connectSiteDiscoveryBridge();
-    showNextQuestReward();
+    connectEggCollectionBridge();
+    syncGameFullscreenButton();
   </script>
 </body>
 </html>

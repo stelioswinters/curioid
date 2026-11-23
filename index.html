@@ -13,7 +13,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-K0rlqkiUtpwGut0AmFZKFwViaLlhFZlLXzLka5LQVa0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-QlLuirs6F12OBmVTIGvRvPOoVDuoCYeoQG4lFBOPfk4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.github.io/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
@@ -763,7 +763,7 @@
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
       <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">55 Projects</span></div>
-      <div class="topbar-right"><button class="topbar-action command-palette-trigger" id="commandPaletteOpen" type="button" aria-label="Search projects and actions" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">⌕ <span>SEARCH</span></button><label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label><button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
+      <div class="topbar-right"><button class="topbar-action command-palette-trigger" id="commandPaletteOpen" type="button" aria-label="Search projects and actions" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">⌕ <span>SEARCH</span></button><label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label><button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div><span class="status-live" id="topStatus" aria-live="polite">0 windows open</span></div>
     </header>
 
     <div class="page-wrap">
@@ -800,7 +800,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.263</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.271</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -890,16 +890,30 @@
     renderStatus(status);
   }
 
+  let latestStatus = null;
+  let statusRefreshQueued = false;
   function renderStatus(status) {
+    latestStatus = status;
     const update = () => {
+      statusRefreshQueued = false;
+      const current = latestStatus;
+      if (!current) return;
       const node = doc.querySelector('[data-control-runtime]');
       if (!node) return;
-      node.textContent = `${status.activeScopes} active · ${status.activeResources} tracked`;
-      node.title = `${status.cleanupFailures} cleanup issue(s) recorded since this page loaded. Runtime scopes: ${status.activeScopes}.`;
-      node.setAttribute('aria-label', `${status.activeScopes} active application runtime scopes and ${status.activeResources} tracked resources`);
+      node.textContent = `${current.activeScopes} active · ${current.activeResources} tracked`;
+      node.title = `${current.cleanupFailures} cleanup issue(s) recorded since this page loaded. Runtime scopes: ${current.activeScopes}.`;
+      node.setAttribute('aria-label', `${current.activeScopes} active application runtime scopes and ${current.activeResources} tracked resources`);
     };
-    if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', update, { once: true });
-    else update();
+    if (doc.readyState === 'loading') {
+      // Many resources can register during startup. Keep one pending DOM-ready
+      // callback and render the newest status instead of retaining stale closures.
+      if (!statusRefreshQueued) {
+        statusRefreshQueued = true;
+        doc.addEventListener('DOMContentLoaded', update, { once: true });
+      }
+      return;
+    }
+    update();
   }
 
   function createScope(options) {
@@ -966,19 +980,26 @@
       }
       const opts = typeof options === 'boolean' ? { capture: options } : (options || {});
       const capture = Boolean(opts.capture);
-      let release = () => false;
-      let attached = true;
+      let attached = false;
       const listener = function runtimeScopedListener(event) {
         if (state !== 'active' || !attached) return;
         if (opts.once) release();
         return callback.call(this, event);
       };
-      target.addEventListener(type, listener, { capture, passive: Boolean(opts.passive) });
-      release = addCleanup(() => {
+      // Reserve ownership before touching the external resource. A scope-limit
+      // error must never leave an untracked EventTarget listener behind.
+      const release = addCleanup(() => {
         if (!attached) return;
         attached = false;
         target.removeEventListener(type, listener, capture);
       }, 'listener');
+      try {
+        attached = true;
+        target.addEventListener(type, listener, { capture, passive: Boolean(opts.passive) });
+      } catch (error) {
+        release();
+        throw error;
+      }
       return release;
     }
 
@@ -986,14 +1007,22 @@
       if (typeof callback !== 'function') throw new TypeError('Runtime timeout() requires a function callback.');
       const numeric = Number(delay);
       const safeDelay = Math.max(0, Math.min(MAX_TIMER_DELAY, Number.isFinite(numeric) ? numeric : 0));
-      let release = () => false;
-      const timer = win.setTimeout(() => {
+      let timer = null;
+      const release = addCleanup(() => {
+        if (timer !== null) { win.clearTimeout(timer); timer = null; }
+      }, 'timeout');
+      try {
+        timer = win.setTimeout(() => {
+          timer = null;
+          release();
+          if (state === 'active') {
+            try { callback(); } catch (error) { report(error, `${owner}/timeout callback`); }
+          }
+        }, safeDelay);
+      } catch (error) {
         release();
-        if (state === 'active') {
-          try { callback(); } catch (error) { report(error, `${owner}/timeout callback`); }
-        }
-      }, safeDelay);
-      release = addCleanup(() => win.clearTimeout(timer), 'timeout');
+        throw error;
+      }
       return release;
     }
 
@@ -1002,11 +1031,22 @@
       const numeric = Number(delay);
       const safeDelay = Math.max(1, Math.min(MAX_TIMER_DELAY, Number.isFinite(numeric) ? numeric : 1));
       let active = true;
-      const timer = win.setInterval(() => {
-        if (state !== 'active' || !active) return;
-        try { callback(); } catch (error) { report(error, `${owner}/interval callback`); }
-      }, safeDelay);
-      return addCleanup(() => { if (active) { active = false; win.clearInterval(timer); } }, 'interval');
+      let timer = null;
+      const release = addCleanup(() => {
+        if (!active) return;
+        active = false;
+        if (timer !== null) { win.clearInterval(timer); timer = null; }
+      }, 'interval');
+      try {
+        timer = win.setInterval(() => {
+          if (state !== 'active' || !active) return;
+          try { callback(); } catch (error) { report(error, `${owner}/interval callback`); }
+        }, safeDelay);
+      } catch (error) {
+        release();
+        throw error;
+      }
+      return release;
     }
 
     function animationFrame(callback) {
@@ -1014,11 +1054,11 @@
       if (typeof win.requestAnimationFrame !== 'function') {
         return timeout(() => callback(Date.now()), 16);
       }
-      let frame = 0;
+      let frame = null;
       let active = true;
       let release = () => false;
       const tick = timestamp => {
-        frame = 0;
+        frame = null;
         if (!active || state !== 'active') return;
         try {
           if (callback(timestamp) !== false && active && state === 'active') frame = win.requestAnimationFrame(tick);
@@ -1030,23 +1070,28 @@
       };
       release = addCleanup(() => {
         active = false;
-        if (frame) win.cancelAnimationFrame(frame);
-        frame = 0;
+        if (frame !== null && typeof win.cancelAnimationFrame === 'function') win.cancelAnimationFrame(frame);
+        frame = null;
       }, 'animation-frame');
-      if (active && state === 'active') frame = win.requestAnimationFrame(tick);
+      if (active && state === 'active') {
+        try { frame = win.requestAnimationFrame(tick); }
+        catch (error) { release(); throw error; }
+      }
       return release;
     }
 
     function trackObserver(observer) {
       if (!observer || typeof observer.disconnect !== 'function') throw new TypeError('trackObserver() requires an observer with disconnect().');
-      addCleanup(() => observer.disconnect(), 'observer');
+      try { addCleanup(() => observer.disconnect(), 'observer'); }
+      catch (error) { try { observer.disconnect(); } catch (cleanupError) { report(cleanupError, `${owner}/untracked observer disconnect`); } throw error; }
       return observer;
     }
 
     function trackObjectURL(url) {
       const value = String(url || '');
       if (!value.startsWith('blob:')) throw new TypeError('Only blob: object URLs can be tracked by a runtime scope.');
-      addCleanup(() => { try { win.URL.revokeObjectURL(value); } catch (_) {} }, 'object-url');
+      try { addCleanup(() => { try { win.URL.revokeObjectURL(value); } catch (_) {} }, 'object-url'); }
+      catch (error) { try { win.URL.revokeObjectURL(value); } catch (cleanupError) { report(cleanupError, `${owner}/untracked object URL revoke`); } throw error; }
       return value;
     }
 
@@ -1057,25 +1102,32 @@
 
     function trackWorker(worker) {
       if (!worker || typeof worker.terminate !== 'function') throw new TypeError('trackWorker() requires a Worker-like object with terminate().');
-      addCleanup(() => worker.terminate(), 'worker');
+      try { addCleanup(() => worker.terminate(), 'worker'); }
+      catch (error) { try { worker.terminate(); } catch (cleanupError) { report(cleanupError, `${owner}/untracked worker terminate`); } throw error; }
       return worker;
     }
 
     function trackAudioContext(context) {
       if (!context || typeof context.close !== 'function') throw new TypeError('trackAudioContext() requires an AudioContext-like object.');
-      addCleanup(() => {
-        if (context.state !== 'closed') {
-          const result = context.close();
-          if (result && typeof result.catch === 'function') result.catch(error => report(error, `${owner}/audio-context close`));
-        }
-      }, 'audio-context');
+      const close = () => {
+        try {
+          if (context.state !== 'closed') {
+            const result = context.close();
+            if (result && typeof result.catch === 'function') result.catch(error => report(error, `${owner}/audio-context close`));
+          }
+        } catch (error) { report(error, `${owner}/audio-context close`); }
+      };
+      try { addCleanup(close, 'audio-context'); }
+      catch (error) { close(); throw error; }
       return context;
     }
 
     function trackAbortController(childController) {
       const value = childController || new win.AbortController();
       if (!value || typeof value.abort !== 'function') throw new TypeError('trackAbortController() requires an AbortController-like object.');
-      addCleanup(() => { if (!value.signal || !value.signal.aborted) value.abort(); }, 'abort-controller');
+      const abort = () => { if (!value.signal || !value.signal.aborted) value.abort(); };
+      try { addCleanup(abort, 'abort-controller'); }
+      catch (error) { try { abort(); } catch (cleanupError) { report(cleanupError, `${owner}/untracked abort-controller abort`); } throw error; }
       return value;
     }
 
@@ -1227,7 +1279,7 @@
         "borrowed-gravity": { title: "Borrowed Gravity", mark: "04", icon: "↕", description: "A courier game where the floor keeps changing sides", copy: "Navigate a sealed test chamber by shifting gravity between the floor and ceiling. Collect every light fragment and reach the exit without touching the moving hazards." },
         "room-remembers": { title: "The Room Remembers", mark: "05", icon: "▦", description: "A memory game where the pattern changes its mind", copy: "Watch a sequence of rooms light up, then repeat it. The room grows longer each round, and a familiar tile may not mean the same thing twice." },
 
-        "curioids": { title: "Curioids: The Oddity League", mark: "00", icon: "✹", description: "A full-body creature battler, collection hunt and website-wide expedition", copy: "Recruit a team of strange full-body lifeforms, build synergies, level duplicates, buy food, and battle through escalating rounds. Twenty-plus field missions guide you through the seven CURIOID districts; each mission hatches a randomly weighted new Curioid. All art, logic and progress run locally in your browser.", category: "tiny-games" },
+        "curioids": { title: "Curioids: The Oddity League", mark: "00", icon: "✹", description: "A full-body creature battler, collection hunt and website-wide expedition", copy: "Recruit a team of strange full-body lifeforms, build synergies, level duplicates, buy food, and battle through escalating rounds. 100 secret activities are distributed across CURIOID: find the shaking eggs before they disappear to add permanent creatures to your collection. The arena shop only recruits for the current restartable run. All creature art, game logic and progress run locally in your browser.", category: "tiny-games" },
         "pocket-universe": { title: "Pocket Universe", mark: "01", icon: "◎", description: "A tiny playable world with its own rules", copy: "Pilot a tiny courier through a miniature gravitational field, collect nine light shards and reach the gate before your hull runs out." },
         "one-button-ritual": { title: "One-Button Ritual", mark: "02", icon: "◉", description: "A game controlled by one button and bad decisions", copy: "A precision timing game with moving targets. Later rounds require one press to align two opposite marks at the same time." },
         "last-corridor": { title: "The Last Corridor", mark: "03", icon: "⌁", description: "A strange little journey through one changing space", copy: "Navigate a corridor with three choices while a watcher slowly becomes clearer and closer. Repeating a decision changes how it follows you." },
@@ -1775,7 +1827,7 @@
       function createRoomCard(roomId, index) {
         const info = ROOM_INFO[roomId];
         const projectProfile = CURIOID_PROJECT_PROFILES.get(roomId);
-        const isOpen = roomId === "dead-interface" && !SITE_SESSION_STATE.hasStored;
+        const isOpen = false; // Project rooms stay closed until the visitor explicitly opens one.
         const article = document.createElement("article");
         article.className = `room-window${isOpen ? " open" : ""}`;
         article.id = `room-${roomId}`;
@@ -1895,7 +1947,7 @@
           copy.append(kicker, title, description);
           const count = document.createElement("span");
           count.className = "category-count";
-          count.textContent = `${String(category.rooms.length).padStart(2,"0")} PROJECT WINDOWS`;
+          count.textContent = `${String(category.rooms.length).padStart(2,"0")} PROJECTS`;
           heading.append(copy, count);
           const list = document.createElement("div");
           list.className = "room-list";
@@ -2050,7 +2102,7 @@
           if (previous) previous.remove();
           projectCssPromise = loadAssetWithFallback({
             type: "link",
-            file: "projects.css", hash: "a25c490b7af005812ecfd0f6c3b286e75ffd13aae0bc1857356764b0cf49e093", integrity: "sha384-PTPckluSs3d90ddyUvsH1Ngg+aM3VfjqMsQ2FD0xkS9SHZRubNgpgcSYJHhwsMuy",
+            file: "projects.css", hash: "0ba2a1f0deb827633a84259bf2bfaefa5d1e42e97c663e9b335887e9861ae9c3", integrity: "sha384-qL3jVfOQcE9pLU5kFIFdMEJrgXLOy/B6wvNz8IDeEEHENzY2+deKuJrICV2JJbz6",
             expected: "Project styles",
             markReady: element => { element.dataset.loaded = "true"; }
           }).then(() => {
@@ -2079,7 +2131,7 @@
           if (window.CurioidProjects) return Promise.resolve();
           return loadAssetWithFallback({
             type: "script",
-            file: "projects.js", hash: "84c5c5d43eda26d0421198b7f2111da623234a9265f825a8465da30c754c2b98", integrity: "sha384-R0ck4d/POfBoWyY0JNsdxg+fF1H8LGjvAIb4MYzeD0YOk/K/nB1SXYmjreMFRmih",
+            file: "projects.js", hash: "ff2da7aac6d4de9dba2aa004b8f20efb68efb5caebdbec07837766eb8e0f5e92", integrity: "sha384-OAaDgu8Xe6hn/3w8VLWIuzGijEMvxLGTDmWShYYS0Vid0NuF+wnp0DZh8FbxrR8T",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -2285,7 +2337,7 @@
         const openCount = $$(".room-window.open").length;
         $("#topStatus").textContent = `${openCount} window${openCount === 1 ? "" : "s"} open`;
         const closeAll = $("#closeAllRooms");
-        if (closeAll) closeAll.hidden = openCount < 2;
+        if (closeAll) closeAll.hidden = openCount < 1;
       }
 
       function setActiveCategory(categoryId) {
@@ -2916,15 +2968,8 @@
         paintVolume();
       }
 
-      const firstRoom = $(".room-window[data-room='dead-interface']");
-      if (firstRoom) {
-        const startShowcaseDesktop = () => {
-          if (!firstRoom.isConnected || !firstRoom.classList.contains("open") || firstRoom.dataset.loaded === "true" || firstRoom.dataset.loading === "true") return;
-          loadRoom(firstRoom);
-        };
-        if ("requestIdleCallback" in window) window.requestIdleCallback(startShowcaseDesktop, { timeout: 1400 });
-        else window.setTimeout(startShowcaseDesktop, 250);
-      }
+      // No OS or app auto-launches on first visit. Visitors choose what to open;
+      // this keeps the catalogue calm, fast and predictable on desktop and mobile.
       // Offline-first app shell. Service workers require HTTPS or a secure localhost origin.
       if ("serviceWorker" in navigator) {
         const isSecureSite = location.protocol === "https:" ||
