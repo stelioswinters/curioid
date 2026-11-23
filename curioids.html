@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="description" content="Curioids: a local full-body creature auto-battler and CURIOID website exploration game." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-BcHqeeQvaO+q3JSG/E+INHmbqoY9I/DInLQPZPT4x20='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+  <title>Curioids — The Oddity League</title>
+  <style>
+    :root {
+      --bg: #090e1a;
+      --surface: #131c31;
+      --surface-2: #1c2944;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #fbbf24;
+      --freeze: #60a5fa;
+      --good: #22c55e;
+      --bad: #ef4444;
+      --poison: #c084fc;
+      --border: rgba(148, 163, 184, 0.2);
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.42);
+    }
+
+    body.light-theme {
+      --bg: #eef2f6;
+      --surface: #ffffff;
+      --surface-2: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0284c7;
+      --accent-2: #d97706;
+      --freeze: #2563eb;
+      --good: #16a34a;
+      --bad: #dc2626;
+      --poison: #9333ea;
+      --border: rgba(15, 23, 42, 0.14);
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    button, input, select {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: 10px;
+      padding: 8px 13px;
+      font-weight: 600;
+      transition: transform 0.12s ease, background 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .btn-gold {
+      background: var(--accent-2);
+      color: #0f172a;
+      border-color: transparent;
+    }
+
+    .btn-freeze.frozen {
+      background: color-mix(in srgb, var(--freeze) 28%, var(--surface-2));
+      border-color: var(--freeze);
+      color: var(--freeze);
+    }
+
+    .hud {
+      position: sticky;
+      top: 0;
+      z-index: 500;
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hud-group, .tabs, .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+    }
+
+    .pill {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 20px 16px 120px;
+    }
+
+    .panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .panel.active { display: block; }
+
+    .board-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(115px, 1fr));
+      gap: 10px;
+      margin: 10px 0 14px;
+    }
+
+    .slot {
+      min-height: 158px;
+      background: var(--surface-2);
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      position: relative;
+      transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .slot.occupied { border-style: solid; }
+    .slot.selected-slot {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-2) 35%, transparent);
+    }
+
+    .slot.front-slot::after {
+      content: "FRONT";
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .perk-tag {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 0.9rem;
+    }
+
+    .body-figure {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 52px;
+      border-radius: 14px;
+      background: radial-gradient(circle at 50% 65%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 72%);
+    }
+
+
+    .unit-name { font-size: 0.84rem; font-weight: 700; }
+    .stars { color: var(--accent-2); font-size: 0.78rem; min-height: 1em; }
+    .stats-line { display: flex; gap: 8px; font-size: 0.84rem; font-weight: 800; }
+    .atk-badge { color: #fb923c; }
+    .hp-badge { color: #4ade80; }
+    .poison-badge { color: var(--poison); }
+
+    .synergy-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+
+    .syn-chip {
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+
+    .syn-chip.active {
+      border-color: var(--good);
+      background: color-mix(in srgb, var(--good) 16%, var(--surface-2));
+    }
+
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .shop-card, .creature-card, .quest-card, .card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .shop-card, .creature-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .shop-card.frozen {
+      border-color: var(--freeze);
+      box-shadow: inset 0 0 0 1px var(--freeze);
+    }
+
+    .creature-card.locked { opacity: 0.58; }
+    .creature-card.in-pool { border-color: var(--accent); }
+    .quest-card.done {
+      border-color: var(--good);
+      background: color-mix(in srgb, var(--good) 12%, var(--surface-2));
+    }
+
+    .tier-1 { color: #94a3b8; }
+    .tier-2 { color: #38bdf8; }
+    .tier-3 { color: #c084fc; }
+    .tier-4 { color: #fbbf24; }
+
+    .log-box {
+      max-height: 235px;
+      overflow-y: auto;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.84rem;
+      margin-top: 14px;
+    }
+
+    .log-entry {
+      margin-bottom: 5px;
+      padding-bottom: 5px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .roster-grid, .quest-list, .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(225px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .filter-input, .filter-select {
+      padding: 7px 11px;
+      border-radius: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+    }
+
+    .site-hero {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 20%, var(--surface)), var(--surface-2));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+
+    .corner-badge {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 400;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.84rem;
+      box-shadow: var(--shadow);
+    }
+
+    .egg-spawn {
+      position: fixed;
+      z-index: 999;
+      user-select: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: var(--surface);
+      border: 2px solid var(--accent-2);
+      border-radius: 18px;
+      padding: 10px 14px;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.5);
+      animation: eggShake 0.32s infinite alternate;
+    }
+
+    @keyframes eggShake {
+      0% { transform: rotate(-7deg) scale(1); }
+      100% { transform: rotate(7deg) scale(1.06); }
+    }
+
+    .egg-emoji { font-size: 2.6rem; line-height: 1; }
+    .egg-timer { font-size: 0.75rem; font-weight: 800; color: var(--accent-2); }
+
+    .toast-container {
+      position: fixed;
+      right: 16px;
+      top: 72px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 350px;
+    }
+
+    .toast {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-left: 5px solid var(--accent);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      box-shadow: var(--shadow);
+    }
+
+    .muted { color: var(--muted); font-size: 0.86rem; }
+
+
+    .body-figure { width: 76px; height: 76px; overflow: visible; background: radial-gradient(circle at 50% 65%, rgba(117, 255, 226, .16), transparent 72%); }
+    .curioid-sprite { width: 100%; height: 100%; display: block; overflow: visible; filter: drop-shadow(0 5px 4px rgba(0,0,0,.34)); animation: curioidFloat 3.8s ease-in-out infinite; }
+    .curioid-mode-prismatic { filter: saturate(1.42) contrast(1.08) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
+    .curioid-mode-inverted { filter: hue-rotate(180deg) saturate(1.3) contrast(1.18) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
+    .curioid-mode-ultraviolet { filter: hue-rotate(78deg) saturate(1.72) brightness(1.07) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
+    .curioid-mode-toxic { filter: hue-rotate(132deg) saturate(1.9) contrast(1.15) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
+    .curioid-mode-chromatic { filter: grayscale(.7) saturate(1.55) contrast(1.28) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
+    .curioid-mode-afterimage { filter: hue-rotate(265deg) saturate(1.58) contrast(1.2) drop-shadow(0 5px 4px rgba(0,0,0,.34)); }
+    .curioid-sprite.curioid-silhouette { filter: brightness(0) saturate(0) !important; }
+    .enemy-slot .curioid-sprite { transform: scaleX(-1); }
+    .creature-mini { width: 66px !important; height: 62px !important; flex: 0 0 66px; }
+    .slot .unit-name { max-width: 100%; overflow-wrap: anywhere; }
+    @keyframes curioidFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 -2px; } }
+    .hatch-backdrop { position: fixed; inset: 0; z-index: 2000; display: grid; place-items: center; padding: 20px; background: rgba(3,7,18,.78); backdrop-filter: blur(12px); }
+    .hatch-dialog { width: min(460px, 100%); text-align: center; padding: 25px 24px 22px; color: var(--text); background: radial-gradient(circle at 50% 0%, color-mix(in srgb,var(--accent) 21%,var(--surface)), var(--surface) 65%); border: 1px solid color-mix(in srgb,var(--accent-2) 52%,var(--border)); border-radius: 22px; box-shadow: 0 24px 90px rgba(0,0,0,.58), 0 0 40px color-mix(in srgb,var(--accent) 18%,transparent); }
+    .hatch-kicker { color: var(--accent); font-size: .68rem; font-weight: 900; letter-spacing: .17em; }
+    .hatch-dialog h2 { margin: 9px 0; font-size: clamp(1.45rem,4vw,2rem); }
+    .hatch-dialog p { color: var(--muted); margin: 0 auto 14px; max-width: 36ch; }
+    .hatch-orbit { width: 180px; height: 155px; margin: 8px auto 12px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb,var(--accent) 22%,transparent), transparent 68%); position: relative; }
+    .hatch-orbit::before,.hatch-orbit::after { content: ""; position: absolute; inset: 14px 0; border: 1px solid color-mix(in srgb,var(--accent) 50%,transparent); border-radius: 50%; transform: rotate(28deg); }
+    .hatch-orbit::after { transform: rotate(-38deg) scale(.78); border-color: color-mix(in srgb,var(--accent-2) 65%,transparent); }
+    .hatch-egg { width: 82px; height: 108px; display: grid; place-items: center; border-radius: 48% 48% 44% 44%; background: radial-gradient(circle at 34% 24%,#fff 0 5%,transparent 22%), linear-gradient(135deg,#fff2bd 0%,#f3b8ef 45%,#5ecde9 100%); color: #27304a; box-shadow: inset -9px -8px 20px rgba(32,39,86,.23), 0 12px 28px rgba(0,0,0,.32), 0 0 22px rgba(115,224,255,.45); animation: hatchEggPulse 1.4s ease-in-out infinite; position: relative; z-index: 1; }
+    .hatch-egg span { font-size: 2.1rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,.2)); }
+    .hatch-egg i { position: absolute; width: 13px; height: 13px; border: 2px solid rgba(44,48,85,.55); border-left: 0; border-bottom: 0; top: 54px; left: 39px; transform: rotate(38deg); }
+    .is-hatching .hatch-egg { animation: hatchCrack .62s ease-in forwards; }
+    @keyframes hatchEggPulse { 0%,100% { transform: translateY(0) rotate(-2deg) scale(1); } 50% { transform: translateY(-7px) rotate(2deg) scale(1.04); } }
+    @keyframes hatchCrack { 0% { transform: rotate(0) scale(1); } 25% { transform: rotate(-15deg) scale(1.08); } 50% { transform: rotate(13deg) scale(1.13); } 75% { transform: rotate(-8deg) scale(1.18); filter: brightness(1.7); } 100% { transform: rotate(0) scale(.1); opacity: 0; } }
+    .hatch-odds { margin: 12px 0 18px; padding: 8px; font-size: .73rem; font-weight: 800; color: var(--accent-2); border: 1px dashed var(--border); border-radius: 9px; }
+    .hatch-action { width: 100%; min-height: 46px; margin: 3px 0 10px; letter-spacing: .06em; }
+    .hatch-reveal-art { width: 190px; height: 166px; margin: 2px auto 0; padding: 7px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb,var(--accent) 28%,transparent), transparent 72%); animation: hatchReveal .55s cubic-bezier(.2,.8,.2,1) both; }
+    .hatch-reveal-art .curioid-sprite { width: 100%; height: 100%; }
+    .hatch-tier { font-size: .74rem; font-weight: 900; letter-spacing: .16em; }
+    .hatch-tags { margin: 12px 0 15px; padding: 8px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface-2); font-size: .8rem; font-weight: 700; }
+    @keyframes hatchReveal { from { transform: scale(.2) rotate(-28deg); opacity: 0; filter: blur(8px); } to { transform: scale(1) rotate(0); opacity: 1; filter: blur(0); } }
+    @media (prefers-reduced-motion: reduce) { .curioid-sprite,.hatch-egg,.hatch-reveal-art { animation: none !important; } }
+    @media (max-width: 720px) { .body-figure { width: 58px; height: 56px; } .creature-mini { width: 54px !important; height: 52px !important; flex-basis: 54px; } .hatch-dialog { padding: 22px 17px 17px; } }
+
+    @media (max-width: 720px) {
+      .board-row { grid-template-columns: repeat(5, minmax(62px, 1fr)); gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hud">
+    <div class="hud-group">
+      <span class="brand">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2.2" />
+          <path d="M5 14c2-4 5-6 7-6s5 2 7 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+          <circle cx="9.5" cy="10.5" r="1.3" fill="currentColor" />
+          <circle cx="14.5" cy="10.5" r="1.3" fill="currentColor" />
+        </svg>
+        Curioids
+      </span>
+      <span class="pill" id="hud-gold">🪙 10G</span>
+      <span class="pill" id="hud-trophies">🏆 0/10</span>
+      <span class="pill" id="hud-lives">❤️ 5</span>
+      <span class="pill" id="hud-tier">🏪 Shop Tier 1</span>
+      <span class="pill" id="hud-pool">🧬 Pool: 0/20</span>
+      <span class="pill" id="hud-shard">✧ Luck Shards: 0/4</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="arena">⚔️ Battle Arena</button>
+      <button class="tab-btn" data-tab="pool">🧬 20-Pool Builder</button>
+      <button class="tab-btn" data-tab="quests">❓ Mystery List</button>
+      <button class="tab-btn" data-tab="world">🌐 Website Playground</button>
+      <button id="theme-toggle">🌓 Theme</button>
+      <button id="reset-save">🗑️ Reset</button>
+    </div>
+  </header>
+
+  <div class="toast-container" id="toast-container"></div>
+  <div class="corner-badge" id="corner-zone">🛰️ Radar Zone (Hover 3s)</div>
+
+  <main class="container">
+    <section class="panel active" id="tab-arena">
+      <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+        <div>
+          <h2 style="margin:0;">Curioids Auto-Arena</h2>
+          <div class="muted">Click two board slots to swap. End Turn triggers End-of-Turn buffs, then Start of Battle fires highest-ATK-first.</div>
+        </div>
+        <div class="row">
+          <button class="btn-primary" id="btn-end-turn">▶️ End Turn &amp; Battle</button>
+          <button class="btn-gold" id="btn-new-run" style="display:none;">🔄 New Run</button>
+        </div>
+      </div>
+
+      <div class="synergy-bar" id="synergy-bar"></div>
+
+      <h3>Enemy Team (Front is Left)</h3>
+      <div class="board-row" id="enemy-board"></div>
+
+      <h3>Your Curioids Team (Front is Left)</h3>
+      <div class="board-row" id="player-board"></div>
+
+      <div class="row" style="margin-top:12px;">
+        <button class="btn-gold" id="btn-roll">🎲 Roll Shop (1G)</button>
+        <button id="btn-sell" disabled>💰 Sell Selected</button>
+        <button id="btn-compact-log">📜 Full Log</button>
+        <button id="btn-clear-log">🧹 Clear Log</button>
+        <span class="muted" id="shop-tier-info">Shop Tier unlocks as you earn trophies (T1 → T4).</span>
+      </div>
+
+      <div class="shop-grid" id="shop-grid"></div>
+
+      <div class="log-box" id="battle-log">
+        <div class="muted">Combat log appears here after clicking End Turn &amp; Battle.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="tab-pool">
+      <div class="row" style="justify-content:space-between;">
+        <div>
+          <h2 style="margin:0;">20-Curioid Draft Pool (100 Full-Body Roster)</h2>
+          <div class="muted">100 original full-body Curioids with procedural art. Pick up to 20 unlocked creatures for your shop pool.</div>
+        </div>
+        <div class="row">
+          <button id="btn-auto-pool">✨ Auto-Fill Best 20</button>
+          <span class="pill" id="pool-count-label">0 / 20</span>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px;">
+        <input type="search" id="roster-search" class="filter-input" placeholder="Search weird name, icon, or tag..." style="flex:1; min-width:180px;" />
+        <select id="roster-tier" class="filter-select">
+          <option value="all">All Tiers</option>
+          <option value="1">Tier 1</option>
+          <option value="2">Tier 2</option>
+          <option value="3">Tier 3</option>
+          <option value="4">Tier 4</option>
+        </select>
+        <select id="roster-status" class="filter-select">
+          <option value="all">All Curioids</option>
+          <option value="unlocked">Unlocked Only</option>
+          <option value="in-pool">In 20-Pool</option>
+        </select>
+      </div>
+
+      <div class="roster-grid" id="roster-grid"></div>
+    </section>
+
+    <section class="panel" id="tab-quests">
+      <div class="row" style="justify-content:space-between;">
+        <div>
+          <h2 style="margin:0;">Hidden Website Mysteries</h2>
+          <div class="muted">Explore offline interactions to uncover ??? mysteries. Each discovery opens a persistent hatch sequence with weighted rarity odds. You never lose a reward by missing a timer.</div>
+        </div>
+        <span class="pill" id="quest-progress">0 / 38 Unlocked</span>
+      </div>
+      <div class="quest-list" id="quest-list"></div>
+    </section>
+
+    <section class="panel" id="tab-world">
+      <div class="site-hero">
+        <h2 style="margin-top:0;">CurioidHub — Offline Interactive World</h2>
+        <p class="muted">Every interaction on this page can awaken hidden eggs. Click, scroll, type secrets, or switch tabs.</p>
+        <div class="row">
+          <button id="btn-feed" class="btn-primary">🍪 Feed Clicker (<span id="feed-count">0</span>/10)</button>
+          <button id="btn-ping">📡 Ping Signal</button>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="margin-top:0;">🧮 Math Widget</h3>
+          <form id="calc-form" class="row">
+            <input type="number" id="calc-a" value="8" style="width:70px; padding:6px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
+            <span>×</span>
+            <input type="number" id="calc-b" value="9" style="width:70px; padding:6px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
+            <button type="submit" class="btn-primary">Run</button>
+          </form>
+          <div id="calc-result" class="muted" style="margin-top:8px;">Result: 72</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">📣 Note Stream</h3>
+          <form id="note-form" class="row">
+            <input type="text" id="note-input" placeholder="Write a weird note..." style="flex:1; min-width:120px; padding:6px 10px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
+            <button type="submit">Post</button>
+          </form>
+          <div id="note-output" class="muted" style="margin-top:8px;">No messages yet.</div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-top:0;">🧭 Abyssal Scroll</h3>
+          <p class="muted">Scroll to the bottom of the page to explore the deep trench.</p>
+          <button id="btn-jump-bottom">⬇️ Scroll to Bottom</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3 style="margin-top:0;">🌊 Deep Trench</h3>
+        <p class="muted">Scroll down to reach the bottom floor.</p>
+        <div style="height:420px; display:flex; align-items:flex-end; justify-content:center; border:1px dashed var(--border); border-radius:12px; padding:16px;">
+          <span class="muted">Bottom of CurioidHub Reached</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // =========================================================================
+    // 1. EXPANDED FULL-BODY CURIOIDS ROSTER (100 ORIGINAL CREATURES)
+    // =========================================================================
+    const CREATURES = [
+      // Tier 1 (20)
+      { id: "c01", name: "Zippelpoodle", tier: 1, atk: 3, hp: 3, tags: ["Beast"], text: "Start: +1 ATK to ally behind.", ab: { when: "start", kind: "buff_behind", val: 1 } },
+      { id: "c02", name: "Gloopstrider", tier: 1, atk: 2, hp: 5, tags: ["Beast", "Guardian"], text: "End Turn: +1/+1 if 5G+ unspent.", ab: { when: "end", kind: "self_rich", val: 1 } },
+      { id: "c03", name: "Bzzthumper", tier: 1, atk: 2, hp: 4, tags: ["Venom", "Mystic"], text: "Faint: Apply 2 Poison to front enemy.", ab: { when: "faint", kind: "poison_front", val: 2 } },
+      { id: "c04", name: "Clackersnap", tier: 1, atk: 2, hp: 5, tags: ["Guardian"], text: "Start: Gain Melon perk if none.", ab: { when: "start", kind: "self_melon", val: 1 } },
+      { id: "c05", name: "Slimecurl", tier: 1, atk: 2, hp: 4, tags: ["Mystic"], text: "Faint: Give +2 HP to random ally.", ab: { when: "faint", kind: "buff_hp_random", val: 2 } },
+      { id: "c06", name: "Klikkgrunt", tier: 1, atk: 3, hp: 3, tags: ["Tech"], text: "Buy: Give +1 ATK to 1 Tech ally.", ab: { when: "buy", kind: "buff_tag_atk", tag: "Tech", val: 1 } },
+      { id: "c07", name: "Flitterfang", tier: 1, atk: 3, hp: 2, tags: ["Beast", "Venom"], text: "Start: Deal 2 dmg to front enemy.", ab: { when: "start", kind: "dmg_front", val: 2 } },
+      { id: "c08", name: "Jinxwhisker", tier: 1, atk: 3, hp: 3, tags: ["Beast"], text: "End Turn: +1 ATK if ally ahead.", ab: { when: "end", kind: "cat_ahead", val: 1 } },
+      { id: "c09", name: "Wigglebelly", tier: 1, atk: 2, hp: 4, tags: ["Beast", "Mystic"], text: "Start: Give +1 HP to ally ahead.", ab: { when: "start", kind: "buff_ahead_hp", val: 1 } },
+      { id: "c10", name: "Puffplume", tier: 1, atk: 3, hp: 3, tags: ["Mystic"], text: "Faint: Give +1 ATK to random ally.", ab: { when: "faint", kind: "buff_atk_random", val: 1 } },
+      { id: "c11", name: "Stinkcloud", tier: 1, atk: 2, hp: 4, tags: ["Venom"], text: "Start: Apply 1 Poison to front enemy.", ab: { when: "start", kind: "poison_front", val: 1 } },
+      { id: "c12", name: "Wobblefin", tier: 1, atk: 3, hp: 3, tags: ["Tech", "Beast"], text: "Buy: Gain +1 HP self.", ab: { when: "buy", kind: "self_hp_buy", val: 1 } },
+      { id: "c13", name: "Buzzjabber", tier: 1, atk: 3, hp: 3, tags: ["Beast", "Venom"], text: "Faint: Deal 1 dmg to front enemy.", ab: { when: "faint", kind: "dmg_front", val: 1 } },
+      { id: "c14", name: "Spottypop", tier: 1, atk: 2, hp: 4, tags: ["Mystic", "Guardian"], text: "End Turn: +1 HP to ally behind.", ab: { when: "end", kind: "buff_behind_hp", val: 1 } },
+      { id: "c15", name: "Boingtail", tier: 1, atk: 3, hp: 3, tags: ["Beast"], text: "Start: +1 ATK to ally behind.", ab: { when: "start", kind: "buff_behind", val: 1 } },
+      { id: "c16", name: "Nuttygear", tier: 1, atk: 3, hp: 3, tags: ["Tech"], text: "Buy: Give +1 ATK to random ally.", ab: { when: "buy", kind: "buff_atk_random_buy", val: 1 } },
+      { id: "c17", name: "Droptail", tier: 1, atk: 3, hp: 3, tags: ["Venom"], text: "Faint: Apply 1 Poison to front enemy.", ab: { when: "faint", kind: "poison_front", val: 1 } },
+      { id: "c18", name: "Guppyspark", tier: 1, atk: 2, hp: 4, tags: ["Mystic"], text: "Start: Give +1 HP to random ally.", ab: { when: "start", kind: "buff_hp_random_start", val: 1 } },
+      { id: "c19", name: "Snorgleworm", tier: 1, atk: 2, hp: 4, tags: ["Beast", "Mystic"], text: "Faint: Give +1/+1 to random ally.", ab: { when: "faint", kind: "buff_both_random", val: 1 } },
+      { id: "c20", name: "Doodlebug", tier: 1, atk: 3, hp: 4, tags: ["Tech", "Guardian"], text: "End Turn: +1 HP if 3G+ unspent.", ab: { when: "end", kind: "rich_hp_3", val: 1 } },
+
+      // Tier 2 (18)
+      { id: "c21", name: "Kinkfang", tier: 2, atk: 4, hp: 4, tags: ["Venom"], text: "Start: Deal 2 dmg to front & 1 Poison.", ab: { when: "start", kind: "dmg_poison_front", val: 2 } },
+      { id: "c22", name: "Hootyblock", tier: 2, atk: 3, hp: 5, tags: ["Mystic", "Guardian"], text: "End Turn: Give +1/+1 to lowest-HP ally.", ab: { when: "end", kind: "buff_lowest", val: 1 } },
+      { id: "c23", name: "Pinchbot", tier: 2, atk: 4, hp: 5, tags: ["Tech", "Guardian"], text: "Faint: Summon a 2/2 Scrapshrimp.", ab: { when: "faint", kind: "summon_shrimp", val: 2 } },
+      { id: "c24", name: "Flutterspec", tier: 2, atk: 3, hp: 5, tags: ["Mystic"], text: "Start: Give +1 ATK to all allies.", ab: { when: "start", kind: "buff_all_atk", val: 1 } },
+      { id: "c25", name: "Stabtail", tier: 2, atk: 5, hp: 4, tags: ["Venom", "Beast"], text: "Before Attack: +2 ATK if target poisoned.", ab: { when: "before_atk", kind: "poison_atk", val: 2 } },
+      { id: "c26", name: "Zapmutt", tier: 2, atk: 5, hp: 4, tags: ["Tech", "Beast"], text: "End Turn: Gain +1/+1 permanently.", ab: { when: "end", kind: "self_stats", val: 1 } },
+      { id: "c27", name: "Prickleball", tier: 2, atk: 3, hp: 6, tags: ["Mystic", "Venom"], text: "End Turn: Give +1/+1 to ally ahead.", ab: { when: "end", kind: "buff_ahead", val: 1 } },
+      { id: "c28", name: "Humpdumper", tier: 2, atk: 4, hp: 6, tags: ["Beast", "Guardian"], text: "Start: Gain +2 HP self.", ab: { when: "start", kind: "self_hp", val: 2 } },
+      { id: "c29", name: "Waddleice", tier: 2, atk: 4, hp: 5, tags: ["Guardian", "Mystic"], text: "Hurt: Gain +1 ATK self.", ab: { when: "hurt", kind: "hurt_atk", val: 1 } },
+      { id: "c30", name: "Bloonpike", tier: 2, atk: 3, hp: 6, tags: ["Venom", "Guardian"], text: "Hurt: Deal 2 dmg to attacker.", ab: { when: "hurt", kind: "thorns", val: 2 } },
+      { id: "c31", name: "Snoozehang", tier: 2, atk: 3, hp: 7, tags: ["Mystic", "Guardian"], text: "End Turn: Gain +1 HP permanently.", ab: { when: "end", kind: "self_hp_only", val: 1 } },
+      { id: "c32", name: "Crowbarcomb", tier: 2, atk: 5, hp: 4, tags: ["Beast", "Tech"], text: "Start: +2 ATK if in front slot.", ab: { when: "start", kind: "front_atk", val: 2 } },
+      { id: "c33", name: "Spotdash", tier: 2, atk: 5, hp: 4, tags: ["Beast"], text: "Before Attack: Deal 1 dmg to front foe.", ab: { when: "before_atk", kind: "poke_front", val: 1 } },
+      { id: "c34", name: "Longneckglide", tier: 2, atk: 4, hp: 5, tags: ["Mystic"], text: "Start: Give +1/+1 to ally behind.", ab: { when: "start", kind: "buff_behind_both", val: 1 } },
+      { id: "c35", name: "Zingsting", tier: 2, atk: 4, hp: 4, tags: ["Venom"], text: "Start: Apply 2 Poison to front enemy.", ab: { when: "start", kind: "poison_front", val: 2 } },
+      { id: "c36", name: "Grubdig", tier: 2, atk: 5, hp: 5, tags: ["Beast", "Guardian"], text: "Hurt: Deal 2 dmg to attacker.", ab: { when: "hurt", kind: "thorns", val: 2 } },
+      { id: "c37", name: "Bloopfin", tier: 2, atk: 4, hp: 5, tags: ["Tech", "Mystic"], text: "Start: Give +1 ATK to ally ahead.", ab: { when: "start", kind: "buff_ahead_atk", val: 1 } },
+      { id: "c38", name: "Scuttleshell", tier: 2, atk: 4, hp: 4, tags: ["Tech", "Venom"], text: "Faint: Deal 2 dmg to random enemy.", ab: { when: "faint", kind: "dmg_random", val: 2 } },
+
+      // Tier 3 (18)
+      { id: "c39", name: "Hexcrow", tier: 3, atk: 6, hp: 5, tags: ["Venom", "Mystic"], text: "Faint: Reduce strongest foe's ATK by 3.", ab: { when: "faint", kind: "debuff_atk", val: 3 } },
+      { id: "c40", name: "Finchomper", tier: 3, atk: 7, hp: 5, tags: ["Tech", "Beast"], text: "Start: Deal 3 dmg to random enemy.", ab: { when: "start", kind: "dmg_random", val: 3 } },
+      { id: "c41", name: "Toxnewt", tier: 3, atk: 6, hp: 6, tags: ["Venom", "Tech"], text: "Start: Apply 3 Poison to ALL enemies.", ab: { when: "start", kind: "poison_all", val: 3 } },
+      { id: "c42", name: "Gallopblaze", tier: 3, atk: 7, hp: 7, tags: ["Beast"], text: "End Turn: Gain +2/+1 permanently.", ab: { when: "end", kind: "self_atk_hp", val: 2 } },
+      { id: "c43", name: "Talonbolt", tier: 3, atk: 7, hp: 6, tags: ["Beast", "Tech"], text: "Before Attack: Deal 2 dmg to 2nd foe.", ab: { when: "before_atk", kind: "snipe_second", val: 2 } },
+      { id: "c44", name: "Pinkstilt", tier: 3, atk: 6, hp: 7, tags: ["Mystic"], text: "Faint: Give +2/+2 to ally behind.", ab: { when: "faint", kind: "buff_behind_both", val: 2 } },
+      { id: "c45", name: "Pouchspring", tier: 3, atk: 7, hp: 6, tags: ["Beast", "Guardian"], text: "Before Attack: Gain +2 ATK once.", ab: { when: "before_atk", kind: "leap_atk", val: 2 } },
+      { id: "c46", name: "Sandtank", tier: 3, atk: 6, hp: 8, tags: ["Tech", "Guardian"], text: "End Turn: Gain +1/+2 permanently.", ab: { when: "end", kind: "self_hp_heavy", val: 2 } },
+      { id: "c47", name: "Squawkflare", tier: 3, atk: 6, hp: 6, tags: ["Mystic", "Tech"], text: "Start: Give +2 ATK to random ally.", ab: { when: "start", kind: "buff_atk_random_start", val: 2 } },
+      { id: "c48", name: "Howlpack", tier: 3, atk: 7, hp: 6, tags: ["Beast"], text: "Start: +2 ATK to ally behind.", ab: { when: "start", kind: "buff_behind", val: 2 } },
+      { id: "c49", name: "Cougarlash", tier: 3, atk: 7, hp: 6, tags: ["Beast", "Tech"], text: "Before Attack: Deal 2 dmg to front foe.", ab: { when: "before_atk", kind: "poke_front", val: 2 } },
+      { id: "c50", name: "Gobbleguard", tier: 3, atk: 6, hp: 8, tags: ["Guardian"], text: "Start: Gain +3 HP self.", ab: { when: "start", kind: "self_hp", val: 3 } },
+      { id: "c51", name: "Fluffspit", tier: 3, atk: 6, hp: 7, tags: ["Mystic", "Guardian"], text: "End Turn: Give +1/+1 to lowest-HP ally.", ab: { when: "end", kind: "buff_lowest", val: 1 } },
+      { id: "c52", name: "Curlhorn", tier: 3, atk: 7, hp: 7, tags: ["Beast", "Guardian"], text: "Start: +2 ATK if in front slot.", ab: { when: "start", kind: "front_atk", val: 2 } },
+      { id: "c53", name: "Woollycoil", tier: 3, atk: 6, hp: 8, tags: ["Mystic", "Guardian"], text: "End Turn: Gain +1 HP permanently.", ab: { when: "end", kind: "self_hp_only", val: 1 } },
+      { id: "c54", name: "Craggoat", tier: 3, atk: 7, hp: 7, tags: ["Beast"], text: "Before Attack: Gain +2 ATK once.", ab: { when: "before_atk", kind: "leap_atk", val: 2 } },
+      { id: "c55", name: "Snoutplow", tier: 3, atk: 6, hp: 8, tags: ["Beast", "Guardian"], text: "Start: Gain +2 HP self.", ab: { when: "start", kind: "self_hp", val: 2 } },
+      { id: "c56", name: "Moomoose", tier: 3, atk: 6, hp: 8, tags: ["Guardian"], text: "End Turn: Give +1 HP to lowest-HP ally.", ab: { when: "end", kind: "buff_lowest_hp_only", val: 2 } },
+
+      // Tier 4 (18)
+      { id: "c57", name: "Wyrmclock", tier: 4, atk: 8, hp: 8, tags: ["Mystic", "Beast"], text: "Start: Give +2/+2 to all allies.", ab: { when: "start", kind: "buff_all_both", val: 2 } },
+      { id: "c58", name: "Snapgator", tier: 4, atk: 9, hp: 9, tags: ["Tech", "Guardian"], text: "End Turn: Gain +2/+2 permanently.", ab: { when: "end", kind: "self_stats", val: 2 } },
+      { id: "c59", name: "Tentacleoom", tier: 4, atk: 8, hp: 8, tags: ["Venom", "Mystic"], text: "Faint: Apply 4 Poison to ALL enemies.", ab: { when: "faint", kind: "poison_all", val: 4 } },
+      { id: "c60", name: "Fanflare", tier: 4, atk: 8, hp: 8, tags: ["Mystic", "Guardian"], text: "Start: Deal 3 dmg to front & +2 ATK self.", ab: { when: "start", kind: "dmg_front_buff_self", val: 3 } },
+      { id: "c61", name: "Stomprex", tier: 4, atk: 9, hp: 10, tags: ["Beast", "Guardian"], text: "Hurt: Deal 4 dmg to attacker.", ab: { when: "hurt", kind: "thorns", val: 4 } },
+      { id: "c62", name: "Spoutleviathan", tier: 4, atk: 8, hp: 10, tags: ["Tech", "Guardian"], text: "Start: Deal 4 dmg to random enemy.", ab: { when: "start", kind: "dmg_random", val: 4 } },
+      { id: "c63", name: "Inkjetter", tier: 4, atk: 8, hp: 9, tags: ["Venom", "Guardian"], text: "Start: Apply 2 Poison to front & 2nd foe.", ab: { when: "start", kind: "poison_two", val: 2 } },
+      { id: "c64", name: "Antlerstar", tier: 4, atk: 9, hp: 8, tags: ["Mystic", "Beast"], text: "End Turn: Give +2/+2 to ally ahead.", ab: { when: "end", kind: "buff_ahead", val: 2 } },
+      { id: "c65", name: "Longneckgiga", tier: 4, atk: 8, hp: 11, tags: ["Beast", "Mystic"], text: "End Turn: Give +1/+2 to lowest-HP ally.", ab: { when: "end", kind: "buff_lowest_hp", val: 2 } },
+      { id: "c66", name: "Abyssspout", tier: 4, atk: 9, hp: 11, tags: ["Tech", "Guardian"], text: "Start: Deal 4 dmg to random enemy.", ab: { when: "start", kind: "dmg_random", val: 4 } },
+      { id: "c67", name: "Stripefang", tier: 4, atk: 10, hp: 8, tags: ["Beast", "Venom"], text: "Before Attack: Deal 2 dmg to 2nd foe.", ab: { when: "before_atk", kind: "snipe_second", val: 2 } },
+      { id: "c68", name: "Manequake", tier: 4, atk: 9, hp: 9, tags: ["Beast", "Guardian"], text: "End Turn: Gain +2/+2 permanently.", ab: { when: "end", kind: "self_stats", val: 2 } },
+      { id: "c69", name: "Hornbull", tier: 4, atk: 8, hp: 11, tags: ["Guardian"], text: "Hurt: Deal 4 dmg to attacker.", ab: { when: "hurt", kind: "thorns", val: 4 } },
+      { id: "c70", name: "Swampmauler", tier: 4, atk: 8, hp: 10, tags: ["Beast", "Guardian"], text: "Start: +2 ATK per Guardian ally.", ab: { when: "start", kind: "guardian_atk", val: 2 } },
+      { id: "c71", name: "Cinderwyrm", tier: 4, atk: 10, hp: 8, tags: ["Mystic", "Venom"], text: "Faint: Apply 4 Poison to ALL enemies.", ab: { when: "faint", kind: "poison_all", val: 4 } },
+      { id: "c72", name: "Barkhowler", tier: 4, atk: 9, hp: 9, tags: ["Beast", "Tech"], text: "Start: Give +2/+2 to all allies.", ab: { when: "start", kind: "buff_all_both", val: 2 } },
+      { id: "c73", name: "Mireclamper", tier: 4, atk: 9, hp: 10, tags: ["Tech", "Guardian"], text: "Start: Deal 3 dmg to front & +2 ATK self.", ab: { when: "start", kind: "dmg_front_buff_self", val: 3 } },
+      { id: "c74", name: "Venomfin", tier: 4, atk: 9, hp: 9, tags: ["Venom", "Mystic"], text: "Start: Apply 2 Poison to front & 2nd foe.", ab: { when: "start", kind: "poison_two", val: 2 } },
+
+      // Tier 1 additions (7) — strange hatchlings and field companions.
+      { id: "c75", name: "Glimmergait", tier: 1, atk: 2, hp: 4, tags: ["Mystic", "Beast"], text: "Start: Give +1 HP to the ally ahead.", ab: { when: "start", kind: "buff_ahead_hp", val: 1 } },
+      { id: "c76", name: "Mossmote", tier: 1, atk: 2, hp: 5, tags: ["Guardian", "Mystic"], text: "End Turn: Gain +1 HP permanently.", ab: { when: "end", kind: "self_hp_only", val: 1 } },
+      { id: "c77", name: "Voltweevil", tier: 1, atk: 3, hp: 3, tags: ["Tech"], text: "Buy: Give +1 ATK to a random ally.", ab: { when: "buy", kind: "buff_atk_random_buy", val: 1 } },
+      { id: "c78", name: "Noodlewink", tier: 1, atk: 3, hp: 3, tags: ["Beast", "Mystic"], text: "Start: Give +1 ATK to the ally behind.", ab: { when: "start", kind: "buff_behind", val: 1 } },
+      { id: "c79", name: "Prismuck", tier: 1, atk: 2, hp: 4, tags: ["Venom", "Mystic"], text: "Start: Apply 1 Poison to the front enemy.", ab: { when: "start", kind: "poison_front", val: 1 } },
+      { id: "c80", name: "Crankle", tier: 1, atk: 2, hp: 5, tags: ["Tech", "Guardian"], text: "Start: Gain Melon perk if none.", ab: { when: "start", kind: "self_melon", val: 1 } },
+      { id: "c81", name: "Pebblepup", tier: 1, atk: 3, hp: 3, tags: ["Beast"], text: "Faint: Give +1 HP to a random ally.", ab: { when: "faint", kind: "buff_hp_random", val: 1 } },
+
+      // Tier 2 additions (7) — adaptive and disruptive mid-run units.
+      { id: "c82", name: "Siltwhistle", tier: 2, atk: 4, hp: 5, tags: ["Mystic", "Guardian"], text: "End Turn: Give +1/+1 to the lowest-HP ally.", ab: { when: "end", kind: "buff_lowest", val: 1 } },
+      { id: "c83", name: "Gasketgull", tier: 2, atk: 4, hp: 4, tags: ["Tech", "Beast"], text: "Start: Deal 2 damage to a random enemy.", ab: { when: "start", kind: "dmg_random", val: 2 } },
+      { id: "c84", name: "Velcroach", tier: 2, atk: 4, hp: 5, tags: ["Tech", "Venom"], text: "Faint: Deal 2 damage to the front enemy.", ab: { when: "faint", kind: "dmg_front", val: 2 } },
+      { id: "c85", name: "Lumenlurk", tier: 2, atk: 4, hp: 4, tags: ["Mystic", "Venom"], text: "Start: Apply 2 Poison to the front enemy.", ab: { when: "start", kind: "poison_front", val: 2 } },
+      { id: "c86", name: "Tatterhorn", tier: 2, atk: 5, hp: 5, tags: ["Beast", "Guardian"], text: "Before Attack: Gain +2 ATK once.", ab: { when: "before_atk", kind: "leap_atk", val: 2 } },
+      { id: "c87", name: "Glitchmole", tier: 2, atk: 4, hp: 5, tags: ["Tech", "Guardian"], text: "End Turn: Gain +1/+1 permanently.", ab: { when: "end", kind: "self_stats", val: 1 } },
+      { id: "c88", name: "Dreadling", tier: 2, atk: 4, hp: 4, tags: ["Venom", "Mystic"], text: "Faint: Apply 2 Poison to all enemies.", ab: { when: "faint", kind: "poison_all", val: 2 } },
+
+      // Tier 3 additions (6) — unusual specialists with team-shaping abilities.
+      { id: "c89", name: "Orbitshell", tier: 3, atk: 6, hp: 7, tags: ["Mystic", "Guardian"], text: "Start: Give +2 ATK to all allies.", ab: { when: "start", kind: "buff_all_atk", val: 2 } },
+      { id: "c90", name: "Rattlejaw", tier: 3, atk: 7, hp: 6, tags: ["Beast", "Venom"], text: "Before Attack: Deal 2 damage to the front foe.", ab: { when: "before_atk", kind: "poke_front", val: 2 } },
+      { id: "c91", name: "Cablesprout", tier: 3, atk: 6, hp: 7, tags: ["Tech", "Mystic"], text: "End Turn: Give +1/+1 to the ally ahead.", ab: { when: "end", kind: "buff_ahead", val: 1 } },
+      { id: "c92", name: "Glassmantis", tier: 3, atk: 7, hp: 6, tags: ["Venom", "Tech"], text: "Start: Apply 2 Poison to the front and second enemy.", ab: { when: "start", kind: "poison_two", val: 2 } },
+      { id: "c93", name: "Boulderwisp", tier: 3, atk: 6, hp: 8, tags: ["Guardian"], text: "Start: Gain +3 HP.", ab: { when: "start", kind: "self_hp", val: 3 } },
+      { id: "c94", name: "Kitewretch", tier: 3, atk: 7, hp: 6, tags: ["Beast", "Mystic"], text: "Faint: Give +2/+2 to the ally behind.", ab: { when: "faint", kind: "buff_behind_both", val: 2 } },
+
+      // Tier 4 additions (6) — late-run anomalies.
+      { id: "c95", name: "Nullcolossus", tier: 4, atk: 8, hp: 10, tags: ["Tech", "Guardian"], text: "Start: Give +2/+2 to all allies.", ab: { when: "start", kind: "buff_all_both", val: 2 } },
+      { id: "c96", name: "Starmaw", tier: 4, atk: 9, hp: 8, tags: ["Mystic", "Venom"], text: "Faint: Apply 4 Poison to all enemies.", ab: { when: "faint", kind: "poison_all", val: 4 } },
+      { id: "c97", name: "Thundertusk", tier: 4, atk: 8, hp: 11, tags: ["Beast", "Guardian"], text: "Hurt: Deal 4 damage back to the attacker.", ab: { when: "hurt", kind: "thorns", val: 4 } },
+      { id: "c98", name: "Chronovex", tier: 4, atk: 10, hp: 8, tags: ["Tech", "Mystic"], text: "End Turn: Gain +2/+2 permanently.", ab: { when: "end", kind: "self_stats", val: 2 } },
+      { id: "c99", name: "Abyssalith", tier: 4, atk: 9, hp: 9, tags: ["Venom", "Mystic"], text: "Start: Deal 4 damage to a random enemy.", ab: { when: "start", kind: "dmg_random", val: 4 } },
+      { id: "c100", name: "Paladream", tier: 4, atk: 8, hp: 11, tags: ["Mystic", "Guardian"], text: "Start: Give +2/+2 to the ally behind.", ab: { when: "start", kind: "buff_behind_both", val: 2 } }
+    ];
+
+    const CREATURE_BY_ID = new Map(CREATURES.map(c => [c.id, c]));
+    const SPECIAL_CREATURES = {
+      bee: { id: "bee", name: "Honeybee", tier: 1, atk: 2, hp: 2, tags: ["Beast", "Mystic"], palette: 46 },
+      shrimp: { id: "shrimp", name: "Scrapshrimp", tier: 1, atk: 2, hp: 2, tags: ["Tech", "Guardian"], palette: 188 }
+    };
+
+    const FOODS = [
+      { id: "apple", name: "Apple", tier: 1, cost: 2, kind: "stat", atk: 1, hp: 1, perk: null, desc: "+1 ATK, +1 HP to 1 Curioid" },
+      { id: "honey", name: "Honey", tier: 1, cost: 2, kind: "perk", atk: 0, hp: 0, perk: "honey", desc: "Perk: Summon a 2/2 Honeybee on faint" },
+      { id: "garlic", name: "Garlic", tier: 2, cost: 2, kind: "perk", atk: 0, hp: 0, perk: "garlic", desc: "Perk: Take 2 less dmg from hits" },
+      { id: "cupcake", name: "Cupcake", tier: 2, cost: 2, kind: "temp_stat", atk: 3, hp: 3, perk: null, desc: "+3/+3 until end of battle" },
+      { id: "melon", name: "Melon", tier: 3, cost: 3, kind: "perk", atk: 0, hp: 0, perk: "melon", desc: "Perk: Block 15 dmg once in battle" },
+      { id: "pear", name: "Pear", tier: 3, cost: 3, kind: "stat", atk: 2, hp: 2, perk: null, desc: "+2 ATK, +2 HP to 1 Curioid" }
+    ];
+
+    const FOOD_BY_ID = new Map(FOODS.map(f => [f.id, f]));
+
+    const QUESTS = [
+      { id: "q1", clue: "??? — \"Reach the bottom of the Abyssal Trench.\"", bias: 2 },
+      { id: "q2", clue: "??? — \"Feed the clicker 10 times.\"", bias: 1 },
+      { id: "q3", clue: "??? — \"Run a calculation in the Math Widget.\"", bias: 2 },
+      { id: "q4", clue: "??? — \"Type 'egg' on your keyboard.\"", bias: 3 },
+      { id: "q5", clue: "??? — \"Hover over the bottom-right radar for 3s.\"", bias: 2 },
+      { id: "q6", clue: "??? — \"Switch browser tabs and come back.\"", bias: 3 },
+      { id: "q7", clue: "??? — \"Click rapidly 6 times in 1.5s.\"", bias: 2 },
+      { id: "q8", clue: "??? — \"Toggle light/dark theme.\"", bias: 1 },
+      { id: "q9", clue: "??? — \"Stay active on the site for 35s.\"", bias: 3 },
+      { id: "q10", clue: "??? — \"Post a message in the Note Stream.\"", bias: 2 },
+      { id: "q11", clue: "??? — \"Click Ping Signal.\"", bias: 1 },
+      { id: "q12", clue: "??? — \"Unlock at least 6 mysteries.\"", bias: 4 },
+      { id: "q13", clue: "??? — \"Open the 20-Pool Builder tab.\"", bias: 2 },
+      { id: "q14", clue: "??? — \"Roll the shop or inspect the Mystery List.\"", bias: 2 },
+      { id: "q15", clue: "??? — Explore the Operating Systems district.", bias: 1, site: { kind: "category", id: "operating-systems" } },
+      { id: "q16", clue: "??? — Enter AURA and inspect its Directorate.", bias: 2, site: { kind: "project", id: "aura-synthesis" } },
+      { id: "q17", clue: "??? — Descend into UMBRA Studio.", bias: 2, site: { kind: "project", id: "umbra-os" } },
+      { id: "q18", clue: "??? — Open Aether's Cognitive Field.", bias: 3, site: { kind: "project", id: "aether-os" } },
+      { id: "q19", clue: "??? — Visit the Sandbox OS workshop.", bias: 2, site: { kind: "project", id: "sandbox-os" } },
+      { id: "q20", clue: "??? — Enter the Digital Art district.", bias: 1, site: { kind: "category", id: "digital-art" } },
+      { id: "q21", clue: "??? — Explore the Sound & Motion district.", bias: 2, site: { kind: "category", id: "sound-motion" } },
+      { id: "q22", clue: "??? — Explore the Strange Archives district.", bias: 2, site: { kind: "category", id: "strange-archives" } },
+      { id: "q23", clue: "??? — Explore the Web Experiments district.", bias: 1, site: { kind: "category", id: "web-experiments" } },
+      { id: "q24", clue: "??? — Explore the Applications & Tools district.", bias: 2, site: { kind: "category", id: "creative-tools" } },
+      { id: "q25", clue: "??? — Create or generate something in a project.", bias: 2, site: { kind: "stat", id: "creates", min: 1 } },
+      { id: "q26", clue: "??? — Save or export something from a project.", bias: 3, site: { kind: "stat", id: "exports", min: 1 } },
+      { id: "q27", clue: "??? — Search the CURIOID catalogue.", bias: 1, site: { kind: "stat", id: "searches", min: 1 } },
+      { id: "q28", clue: "??? — Touch or draw on a creative canvas.", bias: 2, site: { kind: "stat", id: "canvas", min: 1 } },
+      { id: "q29", clue: "??? — Visit six different project rooms.", bias: 3, site: { kind: "projects", min: 6 } },
+      { id: "q30", clue: "??? — Explore all seven CURIOID districts.", bias: 4, site: { kind: "categories", min: 7 } },
+      { id: "q31", clue: "??? — Submit a form in any CURIOID project.", bias: 1, site: { kind: "stat", id: "forms", min: 1 } },
+      { id: "q32", clue: "??? — Import a local file into a creative project.", bias: 3, site: { kind: "stat", id: "imports", min: 1 } },
+      { id: "q33", clue: "??? — Perform ten different project actions.", bias: 2, site: { kind: "stat", id: "actions", min: 10 } },
+      { id: "q34", clue: "??? — Visit ten different project rooms.", bias: 4, site: { kind: "projects", min: 10 } },
+      { id: "q35", clue: "??? — Explore the Tiny Games district itself.", bias: 1, site: { kind: "category", id: "tiny-games" } },
+      { id: "q36", clue: "??? — Boot the Uncatalogued Desktop in Doors98.", bias: 2, site: { kind: "project", id: "dead-interface" } },
+      { id: "q37", clue: "??? — Visit NOURISH and inspect its food laboratory.", bias: 2, site: { kind: "project", id: "food-alchemy" } },
+      { id: "q38", clue: "??? — Enter the Echonoise sound world.", bias: 3, site: { kind: "project", id: "echonoise-os" } }
+    ];
+
+    const STORAGE_KEY = "curioids_save_v4";
+
+    function defaultState() {
+      const starters = ["c01", "c02", "c03", "c04", "c05", "c06", "c07", "c08", "c09", "c10", "c11", "c12"];
+      return {
+        unlocked: [...starters],
+        pool: [...starters],
+        completedQuests: [],
+        pendingRewards: [],
+        activeReward: null,
+        fieldSurveyProgress: 0,
+        fieldSurveys: 0,
+        luckyShard: 0,
+        gold: 10,
+        trophies: 0,
+        lives: 5,
+        round: 1,
+        gameOver: false,
+        victory: false,
+        board: [null, null, null, null, null],
+        nextEnemy: null,
+        shopUnits: [],
+        shopFoods: [],
+        activeSeconds: 0,
+        feedCount: 0,
+        keyBuffer: "",
+        clickTimes: [],
+        hoverStart: null
+      };
+    }
+
+    let state = loadState();
+    let selectedIdx = null;
+    let battling = false;
+    let compactLog = false;
+
+    function curioidNormalizeStoredState(parsed, base) {
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return base;
+      const boundedInt = (value, fallback, min, max) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? Math.max(min, Math.min(max, Math.trunc(number))) : fallback;
+      };
+      const boundedNumber = (value, fallback, min, max) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? Math.max(min, Math.min(max, number)) : fallback;
+      };
+      const uniqueIds = (value, registry, limit) => Array.isArray(value)
+        ? [...new Set(value.filter(id => typeof id === "string" && registry.has(id)))].slice(0, limit)
+        : [];
+      const safePerk = value => ["honey", "garlic", "melon"].includes(value) ? value : null;
+      const safeUnit = value => {
+        if (!value || typeof value !== "object" || !CREATURE_BY_ID.has(value.cid)) return null;
+        return {
+          cid: value.cid,
+          copies: boundedInt(value.copies, 1, 1, 6),
+          bonusAtk: boundedInt(value.bonusAtk, 0, 0, 500),
+          bonusHp: boundedInt(value.bonusHp, 0, 0, 500),
+          tempAtk: boundedInt(value.tempAtk, 0, -100, 100),
+          tempHp: boundedInt(value.tempHp, 0, -100, 100),
+          perk: safePerk(value.perk)
+        };
+      };
+      const unlocked = uniqueIds(parsed.unlocked, CREATURE_BY_ID, CREATURES.length);
+      const unlockedIds = new Set(unlocked.length ? unlocked : base.unlocked);
+      const pool = uniqueIds(parsed.pool, CREATURE_BY_ID, 20).filter(id => unlockedIds.has(id));
+      const board = Array.isArray(parsed.board) && parsed.board.length === 5
+        ? parsed.board.map(safeUnit)
+        : base.board;
+      const safeEnemy = value => {
+        if (!value || typeof value !== "object" || !CREATURE_BY_ID.has(value.cid)) return null;
+        return {
+          ...safeUnit(value),
+          perk: safePerk(value.perk)
+        };
+      };
+      const questIds = new Set(QUESTS.map(item => item.id));
+      const safeReward = value => {
+        if (!value || typeof value !== "object" || !(questIds.has(value.qid) || value.qid === "survey")) return null;
+        const result = { qid: value.qid, biasTier: boundedInt(value.biasTier, 1, 1, 4) };
+        if (typeof value.hatchedCreatureId === "string" && CREATURE_BY_ID.has(value.hatchedCreatureId)) result.hatchedCreatureId = value.hatchedCreatureId;
+        return result;
+      };
+      const pendingRewards = Array.isArray(parsed.pendingRewards)
+        ? parsed.pendingRewards.map(safeReward).filter(Boolean).slice(0, 32)
+        : base.pendingRewards;
+      const activeReward = safeReward(parsed.activeReward);
+      const nextEnemy = Array.isArray(parsed.nextEnemy)
+        ? parsed.nextEnemy.slice(0, 5).map(safeEnemy).filter(Boolean)
+        : base.nextEnemy;
+      const shopUnits = Array.isArray(parsed.shopUnits)
+        ? Array.from({ length: 3 }, (_, index) => {
+            const item = parsed.shopUnits[index];
+            return item && typeof item === "object" && CREATURE_BY_ID.has(item.cid)
+              ? { cid: item.cid, frozen: item.frozen === true }
+              : null;
+          })
+        : base.shopUnits;
+      const shopFoods = Array.isArray(parsed.shopFoods)
+        ? Array.from({ length: 2 }, (_, index) => {
+            const item = parsed.shopFoods[index];
+            return item && typeof item === "object" && FOOD_BY_ID.has(item.id)
+              ? { id: item.id, frozen: item.frozen === true }
+              : null;
+          })
+        : base.shopFoods;
+      return {
+        ...base,
+        unlocked: unlockedIds.size ? [...unlockedIds] : base.unlocked,
+        pool: pool.length ? pool : base.pool,
+        completedQuests: uniqueIds(parsed.completedQuests, questIds, QUESTS.length),
+        pendingRewards,
+        activeReward,
+        fieldSurveyProgress: boundedInt(parsed.fieldSurveyProgress, 0, 0, 1),
+        fieldSurveys: boundedInt(parsed.fieldSurveys, 0, 0, 1000000),
+        luckyShard: boundedInt(parsed.luckyShard, 0, 0, 4),
+        gold: boundedInt(parsed.gold, base.gold, 0, 9999),
+        trophies: boundedInt(parsed.trophies, 0, 0, 10),
+        lives: boundedInt(parsed.lives, base.lives, 0, 5),
+        round: boundedInt(parsed.round, base.round, 1, 1000),
+        gameOver: parsed.gameOver === true,
+        victory: parsed.victory === true,
+        board,
+        nextEnemy,
+        shopUnits,
+        shopFoods,
+        activeSeconds: boundedInt(parsed.activeSeconds, 0, 0, 10000000),
+        feedCount: boundedInt(parsed.feedCount, 0, 0, 10000000),
+        keyBuffer: typeof parsed.keyBuffer === "string" ? parsed.keyBuffer.slice(-40) : "",
+        clickTimes: Array.isArray(parsed.clickTimes) ? parsed.clickTimes.map(value => boundedNumber(value, NaN, 0, 1e15)).filter(Number.isFinite).slice(-8) : [],
+        hoverStart: parsed.hoverStart == null ? null : boundedNumber(parsed.hoverStart, null, 0, 1e15)
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw || raw.length > 262144) return defaultState();
+        return curioidNormalizeStoredState(JSON.parse(raw), defaultState());
+      } catch {
+        return defaultState();
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch {
+        // Ignore storage quota errors offline
+      }
+    }
+
+    function getShopTier() {
+      if (state.trophies >= 7) return 4;
+      if (state.trophies >= 4) return 3;
+      if (state.trophies >= 2) return 2;
+      return 1;
+    }
+
+    function getLevel(copies) {
+      if (copies >= 6) return 3;
+      if (copies >= 3) return 2;
+      return 1;
+    }
+
+    function scaleVal(base, lv) {
+      if (lv === 3) return Math.max(1, Math.round(base * 2.3));
+      if (lv === 2) return Math.max(1, Math.round(base * 1.55));
+      return base;
+    }
+
+    function effStats(u) {
+      const c = CREATURE_BY_ID.get(u.cid);
+      const lv = getLevel(u.copies);
+      const lvBonus = lv === 3 ? 5 : lv === 2 ? 2 : 0;
+      return {
+        atk: c.atk + (u.bonusAtk || 0) + lvBonus,
+        hp: c.hp + (u.bonusHp || 0) + lvBonus,
+        lv
+      };
+    }
+
+    function toast(msg) {
+      const box = document.getElementById("toast-container");
+      const d = document.createElement("div");
+      d.className = "toast";
+      d.textContent = msg;
+      box.appendChild(d);
+      setTimeout(() => d.remove(), 3400);
+    }
+
+    function logLine(html, important = false) {
+      if (compactLog && !important) return;
+      const box = document.getElementById("battle-log");
+      const div = document.createElement("div");
+      div.className = "log-entry";
+      div.innerHTML = html;
+      box.prepend(div);
+    }
+
+    // =========================================================================
+    // 2. SHOP, FREEZE & ECONOMY
+    // =========================================================================
+    function rollShop(free = false) {
+      if (battling || state.gameOver || state.victory) return;
+      if (!free) {
+        if (state.gold < 1) return toast("Need 1G to roll.");
+        state.gold -= 1;
+        unlockQuest("q14");
+      }
+
+      const maxTier = getShopTier();
+      const poolCreatures = (state.pool.length ? state.pool : state.unlocked)
+        .map(id => CREATURE_BY_ID.get(id))
+        .filter(c => c && c.tier <= maxTier);
+      const fallback = CREATURES.filter(c => c.tier <= maxTier);
+      const src = poolCreatures.length ? poolCreatures : fallback;
+
+      const nextUnits = [];
+      for (let i = 0; i < 3; i++) {
+        if (state.shopUnits[i] && state.shopUnits[i].frozen) {
+          nextUnits.push(state.shopUnits[i]);
+        } else {
+          const pick = src[Math.floor(Math.random() * src.length)];
+          nextUnits.push({ cid: pick.id, frozen: false });
+        }
+      }
+
+      const availFoods = FOODS.filter(f => f.tier <= maxTier);
+      const nextFoods = [];
+      for (let i = 0; i < 2; i++) {
+        if (state.shopFoods[i] && state.shopFoods[i].frozen) {
+          nextFoods.push(state.shopFoods[i]);
+        } else {
+          const f = availFoods[Math.floor(Math.random() * availFoods.length)];
+          nextFoods.push({ id: f.id, frozen: false });
+        }
+      }
+
+      state.shopUnits = nextUnits;
+      state.shopFoods = nextFoods;
+      saveState();
+      renderAll();
+    }
+
+    function toggleFreezeUnit(idx) {
+      if (!state.shopUnits[idx]) return;
+      state.shopUnits[idx].frozen = !state.shopUnits[idx].frozen;
+      saveState();
+      renderShop();
+    }
+
+    function toggleFreezeFood(idx) {
+      if (!state.shopFoods[idx]) return;
+      state.shopFoods[idx].frozen = !state.shopFoods[idx].frozen;
+      saveState();
+      renderShop();
+    }
+
+    function buyUnit(idx) {
+      if (battling || state.gameOver || state.victory) return;
+      const item = state.shopUnits[idx];
+      if (!item) return;
+      if (state.gold < 3) return toast("Need 3G to buy.");
+
+      const c = CREATURE_BY_ID.get(item.cid);
+      const mergeIdx = state.board.findIndex(u => u && u.cid === item.cid && u.copies < 6);
+
+      if (mergeIdx !== -1) {
+        state.gold -= 3;
+        const target = state.board[mergeIdx];
+        const prevLv = getLevel(target.copies);
+        target.copies += 1;
+        target.bonusAtk += 1;
+        target.bonusHp += 1;
+        const newLv = getLevel(target.copies);
+        if (newLv > prevLv) toast(`⭐ ${c.name} leveled up to Lv.${newLv}!`);
+      } else {
+        const emptyIdx = state.board.findIndex(u => u === null);
+        if (emptyIdx === -1) return toast("Board full (max 5 Curioids). Sell one first.");
+        state.gold -= 3;
+        state.board[emptyIdx] = {
+          cid: item.cid,
+          copies: 1,
+          bonusAtk: 0,
+          bonusHp: 0,
+          tempAtk: 0,
+          tempHp: 0,
+          perk: null
+        };
+      }
+
+      state.board.forEach(u => {
+        if (!u) return;
+        const uc = CREATURE_BY_ID.get(u.cid);
+        if (uc.ab.when === "buy") {
+          const v = scaleVal(uc.ab.val, getLevel(u.copies));
+          if (uc.ab.kind === "buff_tag_atk") {
+            const matches = state.board.filter(a => a && CREATURE_BY_ID.get(a.cid).tags.includes(uc.ab.tag));
+            if (matches.length) {
+              const pick = matches[Math.floor(Math.random() * matches.length)];
+              pick.bonusAtk += v;
+            }
+          } else if (uc.ab.kind === "self_hp_buy") {
+            u.bonusHp += v;
+          } else if (uc.ab.kind === "buff_atk_random_buy") {
+            const allies = state.board.filter(Boolean);
+            if (allies.length) allies[Math.floor(Math.random() * allies.length)].bonusAtk += v;
+          }
+        }
+      });
+
+      state.shopUnits[idx] = null;
+      saveState();
+      renderAll();
+    }
+
+    function buyFood(idx) {
+      if (battling || state.gameOver || state.victory) return;
+      const slot = state.shopFoods[idx];
+      if (!slot) return;
+      const food = FOOD_BY_ID.get(slot.id);
+      if (state.gold < food.cost) return toast(`Need ${food.cost}G.`);
+
+      const targetIdx = (selectedIdx !== null && state.board[selectedIdx])
+        ? selectedIdx
+        : state.board.findIndex(u => u !== null);
+      if (targetIdx === -1) return toast("Place a Curioid on your team first.");
+
+      const unit = state.board[targetIdx];
+      state.gold -= food.cost;
+
+      if (food.kind === "stat") {
+        unit.bonusAtk += food.atk;
+        unit.bonusHp += food.hp;
+      } else if (food.kind === "temp_stat") {
+        unit.tempAtk = (unit.tempAtk || 0) + food.atk;
+        unit.tempHp = (unit.tempHp || 0) + food.hp;
+      } else if (food.kind === "perk") {
+        unit.perk = food.perk;
+      }
+
+      state.shopFoods[idx] = null;
+      toast(`${food.emoji} Applied ${food.name} to ${CREATURE_BY_ID.get(unit.cid).name}!`);
+      saveState();
+      renderAll();
+    }
+
+    function sellSelected() {
+      if (battling || selectedIdx === null) return;
+      const u = state.board[selectedIdx];
+      if (!u) return;
+      const lv = getLevel(u.copies);
+      const refund = lv === 3 ? 3 : lv === 2 ? 2 : 1;
+      state.gold += refund;
+      state.board[selectedIdx] = null;
+      selectedIdx = null;
+      saveState();
+      renderAll();
+      toast(`Sold for +${refund}G.`);
+    }
+
+    // =========================================================================
+    // 3. SYNERGIES & COMBAT LOOP
+    // =========================================================================
+    function getSynergies(lineup) {
+      const counts = { Beast: 0, Tech: 0, Mystic: 0, Venom: 0, Guardian: 0 };
+      const seen = new Set();
+      for (const u of lineup) {
+        if (!u || seen.has(u.cid)) continue;
+        seen.add(u.cid);
+        const c = CREATURE_BY_ID.get(u.cid);
+        if (!c) continue;
+        c.tags.forEach(t => { if (counts[t] !== undefined) counts[t]++; });
+      }
+      return {
+        beast: { count: counts.Beast, tier: counts.Beast >= 5 ? 3 : counts.Beast >= 3 ? 2 : counts.Beast >= 2 ? 1 : 0 },
+        tech: { count: counts.Tech, tier: counts.Tech >= 5 ? 3 : counts.Tech >= 3 ? 2 : counts.Tech >= 2 ? 1 : 0 },
+        mystic: { count: counts.Mystic, tier: counts.Mystic >= 5 ? 3 : counts.Mystic >= 3 ? 2 : counts.Mystic >= 2 ? 1 : 0 },
+        venom: { count: counts.Venom, tier: counts.Venom >= 4 ? 3 : counts.Venom >= 3 ? 2 : counts.Venom >= 2 ? 1 : 0 },
+        guardian: { count: counts.Guardian, tier: counts.Guardian >= 4 ? 3 : counts.Guardian >= 3 ? 2 : counts.Guardian >= 2 ? 1 : 0 }
+      };
+    }
+
+    function generateEnemyLineupForRound(roundNum) {
+      const count = Math.min(5, 2 + Math.floor(roundNum / 2));
+      const maxTier = Math.min(4, 1 + Math.floor(roundNum / 3));
+      const pool = CREATURES.filter(c => c.tier <= maxTier);
+      const out = [];
+      for (let i = 0; i < count; i++) {
+        const c = pool[Math.floor(Math.random() * pool.length)];
+        const copies = roundNum >= 7 && i === 0 ? 3 : roundNum >= 4 && i === 0 ? 2 : 1;
+        out.push({
+          cid: c.id,
+          copies,
+          bonusAtk: Math.max(0, roundNum - 2),
+          bonusHp: Math.max(0, roundNum - 2),
+          tempAtk: 0,
+          tempHp: 0,
+          perk: i === 0 && roundNum >= 5 ? "garlic" : null
+        });
+      }
+      return out;
+    }
+
+    function ensureEnemyLineup() {
+      if (!Array.isArray(state.nextEnemy) || state.nextEnemy.length === 0) {
+        state.nextEnemy = generateEnemyLineupForRound(state.round);
+        saveState();
+      }
+      return state.nextEnemy;
+    }
+
+    function toFighter(u, side) {
+      const c = CREATURE_BY_ID.get(u.cid);
+      const st = effStats(u);
+      const atk = Math.max(1, st.atk + (u.tempAtk || 0));
+      const hp = Math.max(1, st.hp + (u.tempHp || 0));
+      return {
+        side,
+        cid: c.id,
+        name: c.name,
+        tags: [...c.tags],
+        ab: c.ab,
+        lv: st.lv,
+        atk,
+        hp,
+        maxHp: hp,
+        perk: u.perk,
+        melonUsed: false,
+        leaped: false,
+        poison: 0
+      };
+    }
+
+    function hurtUnit(target, dmg, attacker, logs) {
+      if (!target || target.hp <= 0 || dmg <= 0) return;
+      let finalDmg = dmg;
+      if (target.perk === "garlic") {
+        finalDmg = Math.max(1, finalDmg - 2);
+      }
+      if (target.perk === "melon" && !target.melonUsed && finalDmg >= 15) {
+        finalDmg = 0;
+        target.melonUsed = true;
+        target.perk = null;
+        logs.push({ text: `🍈 ${target.name}'s Melon blocks the heavy blow!`, imp: true });
+      }
+      target.hp -= finalDmg;
+      logs.push({ text: `${attacker ? attacker.name : "Effect"} → ${target.name} for <b>${finalDmg}</b> dmg (${Math.max(0, target.hp)} HP).`, imp: false });
+
+      if (target.hp > 0 && target.ab.when === "hurt") {
+        const v = scaleVal(target.ab.val || 1, target.lv);
+        if (target.ab.kind === "thorns" && attacker && attacker.hp > 0) {
+          attacker.hp -= v;
+          logs.push({ text: `🛡️ ${target.name} Hurt trigger deals <b>${v}</b> back to ${attacker.name}.`, imp: false });
+        } else if (target.ab.kind === "hurt_atk") {
+          target.atk += v;
+          logs.push({ text: `✦ ${target.name} gains +${v} ATK from taking a hit.`, imp: false });
+        }
+      }
+    }
+
+    function processFaints(teamA, teamB, logs) {
+      let loop = true;
+      while (loop) {
+        loop = false;
+        for (const [own, opp] of [[teamA, teamB], [teamB, teamA]]) {
+          for (let i = own.length - 1; i >= 0; i--) {
+            const u = own[i];
+            if (u.hp <= 0) {
+              loop = true;
+              own.splice(i, 1);
+              logs.push({ text: `💀 <b>${u.name}</b> fainted.`, imp: true });
+
+              if (u.perk === "honey" && own.length < 5) {
+                own.push({
+                  side: u.side, cid: "bee", name: "Honeybee",
+                  tags: ["Beast"], ab: { when: "none" }, lv: 1, atk: 2, hp: 2, maxHp: 2,
+                  perk: null, melonUsed: false, leaped: false, poison: 0
+                });
+                logs.push({ text: `🍯 Honey summons a 2/2 Honeybee (✣)!`, imp: true });
+              }
+
+              const v = scaleVal(u.ab.val || 1, u.lv);
+              if (u.ab.when === "faint") {
+                if (u.ab.kind === "dmg_random" && opp.length) {
+                  hurtUnit(opp[Math.floor(Math.random() * opp.length)], v, u, logs);
+                } else if (u.ab.kind === "dmg_front" && opp.length) {
+                  hurtUnit(opp[0], v, u, logs);
+                } else if (u.ab.kind === "buff_hp_random" && own.length) {
+                  const ally = own[Math.floor(Math.random() * own.length)];
+                  ally.hp += v; ally.maxHp += v;
+                  logs.push({ text: `💧 ${u.name} gives +${v} HP to ${ally.name}.`, imp: false });
+                } else if (u.ab.kind === "buff_atk_random" && own.length) {
+                  const ally = own[Math.floor(Math.random() * own.length)];
+                  ally.atk += v;
+                  logs.push({ text: `✧ ${u.name} gives +${v} ATK to ${ally.name}.`, imp: false });
+                } else if (u.ab.kind === "buff_both_random" && own.length) {
+                  const ally = own[Math.floor(Math.random() * own.length)];
+                  ally.atk += v; ally.hp += v; ally.maxHp += v;
+                  logs.push({ text: `∿ ${u.name} gives +${v}/+${v} to ${ally.name}.`, imp: false });
+                } else if (u.ab.kind === "poison_front" && opp.length) {
+                  opp[0].poison += v;
+                  logs.push({ text: `☠️ ${u.name} applies ${v} Poison to ${opp[0].name}.`, imp: false });
+                } else if (u.ab.kind === "summon_shrimp" && own.length < 5) {
+                  own.push({
+                    side: u.side, cid: "shrimp", name: "Scrapshrimp",
+                    tags: ["Tech"], ab: { when: "none" }, lv: 1, atk: v, hp: v, maxHp: v,
+                    perk: null, melonUsed: false, leaped: false, poison: 0
+                  });
+                  logs.push({ text: `⚙ ${u.name} summons a ${v}/${v} Scrapshrimp (⌁).`, imp: true });
+                } else if (u.ab.kind === "buff_behind_both") {
+                  if (i < own.length) {
+                    own[i].atk += v; own[i].hp += v; own[i].maxHp += v;
+                    logs.push({ text: `${u.name} gives +${v}/+${v} to ${own[i].name}.`, imp: false });
+                  }
+                } else if (u.ab.kind === "debuff_atk" && opp.length) {
+                  let top = opp[0];
+                  for (const f of opp) if (f.atk > top.atk) top = f;
+                  top.atk = Math.max(1, top.atk - v);
+                  logs.push({ text: `◆ ${u.name} lowers ${top.name}'s ATK by ${v}.`, imp: false });
+                } else if (u.ab.kind === "poison_all") {
+                  opp.forEach(f => { f.poison += v; });
+                  logs.push({ text: `${u.name} applies ${v} Poison to ALL enemies!`, imp: true });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    function runEndOfTurn() {
+      const logs = [];
+      state.board.forEach((u, idx) => {
+        if (!u) return;
+        const c = CREATURE_BY_ID.get(u.cid);
+        const lv = getLevel(u.copies);
+        const v = scaleVal(c.ab.val || 1, lv);
+        if (c.ab.when !== "end") return;
+
+        if (c.ab.kind === "self_rich" && state.gold >= 5) {
+          u.bonusAtk += v; u.bonusHp += v;
+          logs.push({ text: `◇ ${c.name} gains +${v}/+${v} (5G+ unspent).`, imp: false });
+        } else if (c.ab.kind === "rich_hp_3" && state.gold >= 3) {
+          u.bonusHp += v;
+          logs.push({ text: `▦ ${c.name} gains +${v} HP (3G+ unspent).`, imp: false });
+        } else if (c.ab.kind === "cat_ahead" && idx > 0 && state.board[idx - 1]) {
+          u.bonusAtk += v;
+          logs.push({ text: `✧ ${c.name} gains +${v} ATK (ally ahead).`, imp: false });
+        } else if (c.ab.kind === "buff_behind_hp" && idx + 1 < state.board.length && state.board[idx + 1]) {
+          state.board[idx + 1].bonusHp += v;
+          logs.push({ text: `✣ ${c.name} gives +${v} HP to ally behind.`, imp: false });
+        } else if (c.ab.kind === "self_stats") {
+          u.bonusAtk += v; u.bonusHp += v;
+          logs.push({ text: `📈 ${c.name} gains +${v}/+${v} permanently.`, imp: false });
+        } else if (c.ab.kind === "self_hp_only") {
+          u.bonusHp += v;
+          logs.push({ text: `◉ ${c.name} gains +${v} HP permanently.`, imp: false });
+        } else if (c.ab.kind === "self_hp_heavy") {
+          u.bonusAtk += 1; u.bonusHp += v;
+          logs.push({ text: `⬡ ${c.name} gains +1/+${v} permanently.`, imp: false });
+        } else if (c.ab.kind === "self_atk_hp") {
+          u.bonusAtk += v; u.bonusHp += 1;
+          logs.push({ text: `◈ ${c.name} gains +${v}/+1 permanently.`, imp: false });
+        } else if (c.ab.kind === "buff_ahead" && idx > 0 && state.board[idx - 1]) {
+          state.board[idx - 1].bonusAtk += v;
+          state.board[idx - 1].bonusHp += v;
+          logs.push({ text: `${c.name} buffs ally ahead +${v}/+${v}.`, imp: false });
+        } else if (c.ab.kind === "buff_lowest") {
+          const units = state.board.filter(Boolean);
+          if (units.length) {
+            units.sort((a, b) => effStats(a).hp - effStats(b).hp);
+            units[0].bonusAtk += v; units[0].bonusHp += v;
+            logs.push({ text: `${c.name} buffs lowest-HP ally +${v}/+${v}.`, imp: false });
+          }
+        } else if (c.ab.kind === "buff_lowest_hp") {
+          const units = state.board.filter(Boolean);
+          if (units.length) {
+            units.sort((a, b) => effStats(a).hp - effStats(b).hp);
+            units[0].bonusAtk += 1; units[0].bonusHp += v;
+            logs.push({ text: `✹ ${c.name} buffs lowest-HP ally +1/+${v}.`, imp: false });
+          }
+        } else if (c.ab.kind === "buff_lowest_hp_only") {
+          const units = state.board.filter(Boolean);
+          if (units.length) {
+            units.sort((a, b) => effStats(a).hp - effStats(b).hp);
+            units[0].bonusHp += v;
+            logs.push({ text: `◌ ${c.name} buffs lowest-HP ally +${v} HP.`, imp: false });
+          }
+        }
+      });
+      return logs;
+    }
+
+    function endTurnAndBattle() {
+      if (battling || state.gameOver || state.victory) return;
+      if (!state.board.some(Boolean)) return toast("Add at least 1 Curioid to your team.");
+
+      battling = true;
+      document.getElementById("btn-end-turn").disabled = true;
+
+      const logs = [{ text: `<b>=== Round ${state.round} End Turn &amp; Battle ===</b>`, imp: true }];
+      logs.push(...runEndOfTurn());
+
+      const enemyRaw = ensureEnemyLineup();
+      const pSyn = getSynergies(state.board);
+      const eSyn = getSynergies(enemyRaw);
+      const pTeam = state.board.filter(Boolean).map(u => toFighter(u, "player"));
+      const eTeam = enemyRaw.map(u => toFighter(u, "enemy"));
+
+      renderEnemyBoard(eTeam);
+
+      const startQueue = [
+        ...pTeam.filter(u => u.ab.when === "start").map(u => ({ u, own: pTeam, opp: eTeam })),
+        ...eTeam.filter(u => u.ab.when === "start").map(u => ({ u, own: eTeam, opp: pTeam }))
+      ].sort((a, b) => (b.u.atk - a.u.atk) || (Math.random() - 0.5));
+
+      for (const item of startQueue) {
+        const { u, own, opp } = item;
+        if (u.hp <= 0) continue;
+        const v = scaleVal(u.ab.val || 1, u.lv);
+        const k = u.ab.kind;
+        if (k === "buff_behind") {
+          const idx = own.indexOf(u);
+          if (idx + 1 < own.length) {
+            own[idx + 1].atk += v;
+            logs.push({ text: `✨ ${u.name} gives +${v} ATK to ${own[idx + 1].name}.`, imp: false });
+          }
+        } else if (k === "buff_ahead_hp") {
+          const idx = own.indexOf(u);
+          if (idx > 0) {
+            own[idx - 1].hp += v; own[idx - 1].maxHp += v;
+            logs.push({ text: `✧ ${u.name} gives +${v} HP to ${own[idx - 1].name}.`, imp: false });
+          }
+        } else if (k === "buff_ahead_atk") {
+          const idx = own.indexOf(u);
+          if (idx > 0) {
+            own[idx - 1].atk += v;
+            logs.push({ text: `◉ ${u.name} gives +${v} ATK to ${own[idx - 1].name}.`, imp: false });
+          }
+        } else if (k === "buff_hp_random_start" && own.length) {
+          const ally = own[Math.floor(Math.random() * own.length)];
+          ally.hp += v; ally.maxHp += v;
+          logs.push({ text: `∿ ${u.name} gives +${v} HP to ${ally.name}.`, imp: false });
+        } else if (k === "front_atk") {
+          if (own[0] === u) {
+            u.atk += v;
+            logs.push({ text: `${u.name} gains +${v} ATK in front.`, imp: false });
+          }
+        } else if (k === "buff_atk_random_start" && own.length) {
+          const ally = own[Math.floor(Math.random() * own.length)];
+          ally.atk += v;
+          logs.push({ text: `✦ ${u.name} gives +${v} ATK to ${ally.name}.`, imp: false });
+        } else if (k === "self_hp") {
+          u.hp += v; u.maxHp += v;
+          logs.push({ text: `${u.name} gains +${v} HP.`, imp: false });
+        } else if (k === "self_melon" && !u.perk) {
+          u.perk = "melon";
+          logs.push({ text: `🦀 ${u.name} equips Melon.`, imp: false });
+        } else if (k === "dmg_front" && opp.length) {
+          hurtUnit(opp[0], v, u, logs);
+        } else if (k === "dmg_poison_front" && opp.length) {
+          hurtUnit(opp[0], v, u, logs);
+          if (opp[0] && opp[0].hp > 0) opp[0].poison += 1;
+        } else if (k === "poison_front" && opp.length) {
+          opp[0].poison += v;
+          logs.push({ text: `${u.name} applies ${v} Poison to ${opp[0].name}.`, imp: false });
+        } else if (k === "buff_all_atk") {
+          own.forEach(a => { a.atk += v; });
+          logs.push({ text: `🦋 ${u.name} gives +${v} ATK to all allies.`, imp: false });
+        } else if (k === "buff_all_both") {
+          own.forEach(a => { a.atk += v; a.hp += v; a.maxHp += v; });
+          logs.push({ text: `${u.name} gives +${v}/+${v} to all allies.`, imp: false });
+        } else if (k === "dmg_random" && opp.length) {
+          hurtUnit(opp[Math.floor(Math.random() * opp.length)], v, u, logs);
+        } else if (k === "poison_all") {
+          opp.forEach(f => { f.poison += v; });
+          logs.push({ text: `🦎 ${u.name} applies ${v} Poison to all foes.`, imp: true });
+        } else if (k === "guardian_atk") {
+          const gCount = own.filter(a => a.tags.includes("Guardian")).length;
+          u.atk += gCount * v;
+          logs.push({ text: `${u.name} gains +${gCount * v} ATK.`, imp: false });
+        } else if (k === "dmg_front_buff_self" && opp.length) {
+          hurtUnit(opp[0], v, u, logs);
+          u.atk += 2;
+        } else if (k === "poison_two") {
+          [opp[0], opp[1]].filter(Boolean).forEach(f => { f.poison += v; });
+        }
+      }
+
+      if (pSyn.beast.tier > 0) {
+        const [a, h] = pSyn.beast.tier === 3 ? [4, 3] : pSyn.beast.tier === 2 ? [3, 2] : [1, 1];
+        pTeam.forEach(u => { if (u.tags.includes("Beast")) { u.atk += a; u.hp += h; u.maxHp += h; } });
+      }
+      if (pSyn.tech.tier > 0 && eTeam.length) {
+        const tDmg = pSyn.tech.tier === 3 ? 8 : pSyn.tech.tier === 2 ? 5 : 2;
+        hurtUnit(eTeam[0], tDmg, null, logs);
+      }
+      if (pSyn.mystic.tier > 0 && pTeam.length) {
+        const heal = pSyn.mystic.tier === 3 ? 9 : pSyn.mystic.tier === 2 ? 6 : 3;
+        pTeam[0].hp = Math.min(pTeam[0].maxHp, pTeam[0].hp + heal);
+      }
+      if (pSyn.guardian.tier >= 2 && pTeam.length) {
+        const gHp = pSyn.guardian.tier === 3 ? 5 : 2;
+        pTeam[0].hp += gHp; pTeam[0].maxHp += gHp;
+      }
+
+      processFaints(pTeam, eTeam, logs);
+
+      let clashCount = 0;
+      while (pTeam.length > 0 && eTeam.length > 0 && clashCount < 60) {
+        clashCount++;
+        for (const t of [pTeam, eTeam]) {
+          for (const u of t) {
+            if (u.poison > 0 && u.hp > 0) {
+              u.hp -= u.poison;
+              logs.push({ text: `☠️ ${u.name} takes ${u.poison} Poison.`, imp: false });
+            }
+          }
+        }
+        processFaints(pTeam, eTeam, logs);
+        if (!pTeam.length || !eTeam.length) break;
+
+        const pFront = pTeam[0];
+        const eFront = eTeam[0];
+
+        if (pFront.ab.when === "before_atk") {
+          const v = scaleVal(pFront.ab.val, pFront.lv);
+          if (pFront.ab.kind === "poison_atk" && eFront.poison > 0) pFront.atk += v;
+          if (pFront.ab.kind === "snipe_second" && eTeam[1]) hurtUnit(eTeam[1], v, pFront, logs);
+          if (pFront.ab.kind === "poke_front") hurtUnit(eFront, v, pFront, logs);
+          if (pFront.ab.kind === "leap_atk" && !pFront.leaped) { pFront.leaped = true; pFront.atk += v; }
+        }
+        if (eFront.ab.when === "before_atk") {
+          const v = scaleVal(eFront.ab.val, eFront.lv);
+          if (eFront.ab.kind === "poison_atk" && pFront.poison > 0) eFront.atk += v;
+          if (eFront.ab.kind === "snipe_second" && pTeam[1]) hurtUnit(pTeam[1], v, eFront, logs);
+          if (eFront.ab.kind === "poke_front") hurtUnit(pFront, v, eFront, logs);
+          if (eFront.ab.kind === "leap_atk" && !eFront.leaped) { eFront.leaped = true; eFront.atk += v; }
+        }
+
+        if (pSyn.venom.tier > 0) eFront.poison += pSyn.venom.tier === 3 ? 6 : pSyn.venom.tier === 2 ? 4 : 2;
+        if (eSyn.venom.tier > 0) pFront.poison += eSyn.venom.tier === 3 ? 6 : eSyn.venom.tier === 2 ? 4 : 2;
+
+        const pAtk = pFront.atk;
+        const eAtk = eFront.atk;
+        if (pFront.hp > 0 && eFront.hp > 0) {
+          hurtUnit(eFront, pAtk, pFront, logs);
+          hurtUnit(pFront, eAtk, eFront, logs);
+        }
+
+        processFaints(pTeam, eTeam, logs);
+      }
+
+      state.board.forEach(u => {
+        if (!u) return;
+        u.tempAtk = 0;
+        u.tempHp = 0;
+      });
+
+      state.round += 1;
+      state.gold = 10;
+      state.nextEnemy = null;
+
+      if (pTeam.length > 0 && eTeam.length === 0) {
+        state.trophies += 1;
+        logs.push({ text: `🏆 <b style="color:var(--good)">Win! Earned Trophy #${state.trophies}.</b>`, imp: true });
+        if (state.trophies >= 10) {
+          state.victory = true;
+          toast("🎉 10 Trophies! You won the Curioids run!");
+        }
+      } else if (eTeam.length > 0 && pTeam.length === 0) {
+        state.lives -= 1;
+        logs.push({ text: `💔 <b style="color:var(--bad)">Loss! Lost 1 ❤️.</b>`, imp: true });
+        if (state.lives <= 0) {
+          state.lives = 0;
+          state.gameOver = true;
+          toast("💀 0 Lives left! Start a New Run.");
+        }
+      } else {
+        logs.push({ text: `🤝 <b>Draw!</b>`, imp: true });
+      }
+
+      if (!state.gameOver && !state.victory) {
+        state.nextEnemy = generateEnemyLineupForRound(state.round);
+        state.shopUnits = state.shopUnits.map(x => (x && x.frozen ? x : null));
+        state.shopFoods = state.shopFoods.map(x => (x && x.frozen ? x : null));
+        rollShop(true);
+      }
+
+      for (let i = logs.length - 1; i >= 0; i--) logLine(logs[i].text, logs[i].imp);
+
+      battling = false;
+      document.getElementById("btn-end-turn").disabled = false;
+      saveState();
+      renderAll();
+      recordFieldSurvey();
+    }
+
+    // =========================================================================
+    // 4. MYSTERY QUESTS & SHAKING EGGS
+    // =========================================================================
+    let hatchOverlay = null;
+    let siteDiscovery = { projects: [], categories: [], stats: { creates: 0, exports: 0, canvas: 0, forms: 0, searches: 0, actions: 0, imports: 0 } };
+
+    function recordFieldSurvey() {
+      if (state.unlocked.length >= CREATURES.length) return;
+      if (state.fieldSurveyProgress < 1) {
+        state.fieldSurveyProgress = 1;
+        toast("FIELD SURVEY · 1/2 battles recorded. One more battle reveals an unmapped signal.");
+      } else {
+        state.fieldSurveyProgress = 0;
+        state.fieldSurveys = Math.min(1000000, (Number(state.fieldSurveys) || 0) + 1);
+        const biasTier = getShopTier();
+        state.pendingRewards.push({ qid: "survey", biasTier });
+        if (state.fieldSurveys % 3 === 0) {
+          state.luckyShard = Math.min(4, state.luckyShard + 1);
+          toast("✧ SURVEY STREAK — a Luck Shard strengthens your next hatch.");
+        }
+        toast(`✦ UNMAPPED SIGNAL ${state.fieldSurveys} — two battles completed; a new Curioid is waiting.`);
+        showNextQuestReward();
+      }
+      saveState();
+      renderQuests();
+      renderHud();
+    }
+
+    function unlockQuest(qid) {
+      if (state.completedQuests.includes(qid)) return;
+      const q = QUESTS.find(x => x.id === qid);
+      if (!q) return;
+      state.completedQuests.push(qid);
+      state.pendingRewards.push({ qid: q.id, biasTier: q.bias });
+      if (state.completedQuests.length % 3 === 0) {
+        state.luckyShard = Math.min(4, state.luckyShard + 1);
+        toast("✧ LUCK SHARD CHARGED — your next hatch has improved rare-tier odds.");
+      }
+      saveState();
+      toast("✦ FIELD ANOMALY FOUND — a Curioid egg is waiting.");
+      renderQuests();
+      renderHud();
+      if (qid !== "q12" && state.completedQuests.length >= 6) unlockQuest("q12");
+      showNextQuestReward();
+    }
+
+    function tierOdds(biasTier = 1) {
+      const bias = Math.max(1, Math.min(4, Number(biasTier) || 1));
+      const shard = Math.min(4, Math.max(0, Number(state.luckyShard) || 0));
+      const shift = (bias - 1) * 8 + shard * 4;
+      const raw = [Math.max(5, 58 - shift * 1.25), 27 + shift * 0.35, 11 + shift * 0.55, 4 + shift * 0.35];
+      const total = raw.reduce((sum, value) => sum + value, 0);
+      return raw.map(value => value / total);
+    }
+
+    function rollEggCreature(biasTier) {
+      const odds = tierOdds(biasTier);
+      const roll = Math.random();
+      let tier = 1, cumulative = 0;
+      for (let i = 0; i < odds.length; i++) { cumulative += odds[i]; if (roll <= cumulative) { tier = i + 1; break; } }
+      const unlocked = new Set(state.unlocked);
+      const newCreatures = CREATURES.filter(c => !unlocked.has(c.id));
+      let bucket = newCreatures.filter(c => c.tier === tier);
+      if (!bucket.length && newCreatures.length) {
+        bucket = [...newCreatures].sort((a, b) => Math.abs(a.tier - tier) - Math.abs(b.tier - tier)).slice(0, 1);
+      }
+      const source = bucket.length ? bucket : CREATURES.filter(c => c.tier === tier);
+      const creature = source[Math.floor(Math.random() * source.length)];
+      state.luckyShard = 0;
+      if (!creature) return null;
+      const isNew = !unlocked.has(creature.id);
+      if (isNew) {
+        state.unlocked.push(creature.id);
+        if (state.pool.length < 20) state.pool.push(creature.id);
+        toast(`✦ NEW CURIOID REGISTERED · ${creature.name} · TIER ${creature.tier}`);
+      } else {
+        state.gold += 2;
+        toast(`Duplicate Curioid converted into 2G · ${creature.name}`);
+      }
+      if (state.activeReward) state.activeReward.hatchedCreatureId = creature.id;
+      saveState();
+      renderAll();
+      return creature;
+    }
+
+    function showNextQuestReward() {
+      if (hatchOverlay) return;
+      if (!state.activeReward && state.pendingRewards.length) {
+        state.activeReward = state.pendingRewards.shift();
+        saveState();
+      }
+      if (state.activeReward) spawnEgg(state.activeReward.biasTier, state.activeReward.qid);
+    }
+
+    function hatchDialogMarkup(reward, revealed = null) {
+      const odds = tierOdds(reward.biasTier || 1).map((value, index) => `T${index + 1} ${Math.round(value * 100)}%`).join(" · ");
+      if (!revealed) return `
+        <div class="hatch-kicker">CURIOID FIELD DISCOVERY / ${String(reward.qid || "q").toUpperCase()}</div>
+        <div class="hatch-orbit"><div class="hatch-egg" aria-hidden="true"><span>✦</span><i></i></div></div>
+        <h2>Something is inside.</h2>
+        <p>A field mission has resonated with an unknown lifeform. Hatch it to add one Curioid to your collection.</p>
+        <div class="hatch-odds">${odds}</div>
+        <button type="button" class="btn-gold hatch-action" data-hatch-open>BREAK THE SHELL</button>
+        <small class="muted">Your discovery is saved. You cannot miss this hatch.</small>`;
+      const creature = CREATURE_BY_ID.get(revealed);
+      if (!creature) return `<div class="hatch-kicker">FIELD RECOVERY</div><h2>Signal retained</h2><p>Your hatch is safe. Close this panel to continue.</p><button type="button" class="btn-primary hatch-action" data-hatch-close>CONTINUE</button>`;
+      const already = !state.unlocked.includes(creature.id);
+      return `
+        <div class="hatch-kicker">FIELD DISCOVERY COMPLETE / ${String(reward.qid || "q").toUpperCase()}</div>
+        <div class="hatch-reveal-art">${creatureSpriteSVG(creature)}</div>
+        <div class="tier-${creature.tier} hatch-tier">TIER ${creature.tier} · ${creature.tier === 4 ? "ANOMALOUS" : creature.tier === 3 ? "RARE" : creature.tier === 2 ? "UNCOMMON" : "COMMON"}</div>
+        <h2>${creature.name}</h2>
+        <p>${creature.text}</p>
+        <div class="hatch-tags">${creature.tags.join(" / ")} · ${creature.atk} ATK · ${creature.hp} HP</div>
+        <button type="button" class="btn-primary hatch-action" data-hatch-close>OK · RETURN TO THE ARENA</button>`;
+    }
+
+    function spawnEgg(biasTier = 1, qid = "q") {
+      if (hatchOverlay || !state.activeReward) return;
+      const reward = state.activeReward;
+      const revealedId = reward.hatchedCreatureId || null;
+      hatchOverlay = document.createElement("div");
+      hatchOverlay.className = "hatch-backdrop";
+      hatchOverlay.setAttribute("role", "presentation");
+      const dialog = document.createElement("section");
+      dialog.className = "hatch-dialog";
+      dialog.setAttribute("role", "dialog");
+      dialog.setAttribute("aria-modal", "true");
+      dialog.setAttribute("aria-labelledby", "hatch-title");
+      dialog.innerHTML = hatchDialogMarkup(reward, revealedId);
+      const title = dialog.querySelector("h2");
+      if (title) title.id = "hatch-title";
+      hatchOverlay.appendChild(dialog);
+      document.body.appendChild(hatchOverlay);
+
+      dialog.addEventListener("click", event => {
+        const hatchButton = event.target.closest("[data-hatch-open]");
+        if (hatchButton) {
+          hatchButton.disabled = true;
+          dialog.classList.add("is-hatching");
+          const creature = rollEggCreature(reward.biasTier || biasTier);
+          setTimeout(() => {
+            if (!hatchOverlay || !dialog.isConnected) return;
+            dialog.classList.remove("is-hatching");
+            dialog.innerHTML = hatchDialogMarkup(reward, creature?.id || reward.hatchedCreatureId);
+            const newTitle = dialog.querySelector("h2");
+            if (newTitle) newTitle.id = "hatch-title";
+            dialog.querySelector("[data-hatch-close]")?.focus();
+          }, 620);
+          return;
+        }
+        if (event.target.closest("[data-hatch-close]")) {
+          hatchOverlay?.remove();
+          hatchOverlay = null;
+          state.activeReward = null;
+          saveState();
+          showNextQuestReward();
+        }
+      });
+      if (revealedId) dialog.querySelector("[data-hatch-close]")?.focus();
+      else dialog.querySelector("[data-hatch-open]")?.focus();
+    }
+
+    function evaluateSiteMissions(snapshot) {
+      if (!snapshot || typeof snapshot !== "object") return;
+      const projects = new Set(Array.isArray(snapshot.projects) ? snapshot.projects : []);
+      const categories = new Set(Array.isArray(snapshot.categories) ? snapshot.categories : []);
+      const stats = snapshot.stats && typeof snapshot.stats === "object" ? snapshot.stats : {};
+      siteDiscovery = { projects: [...projects], categories: [...categories], stats: { ...siteDiscovery.stats, ...stats } };
+      const checks = [
+        ["q15", categories.has("operating-systems")],
+        ["q16", projects.has("aura-synthesis")],
+        ["q17", projects.has("umbra-os")],
+        ["q18", projects.has("aether-os")],
+        ["q19", projects.has("sandbox-os")],
+        ["q20", categories.has("digital-art")],
+        ["q21", categories.has("sound-motion")],
+        ["q22", categories.has("strange-archives")],
+        ["q23", categories.has("web-experiments")],
+        ["q24", categories.has("creative-tools")],
+        ["q25", Number(stats.creates) >= 1],
+        ["q26", Number(stats.exports) >= 1],
+        ["q27", Number(stats.searches) >= 1],
+        ["q28", Number(stats.canvas) >= 1],
+        ["q29", projects.size >= 6],
+        ["q30", categories.size >= 7],
+        ["q31", Number(stats.forms) >= 1],
+        ["q32", Number(stats.imports) >= 1],
+        ["q33", Number(stats.actions) >= 10],
+        ["q34", projects.size >= 10],
+        ["q35", categories.has("tiny-games")],
+        ["q36", projects.has("dead-interface")],
+        ["q37", projects.has("food-alchemy")],
+        ["q38", projects.has("echonoise-os")]
+      ];
+      for (const [qid, complete] of checks) if (complete) unlockQuest(qid);
+    }
+
+    function connectSiteDiscoveryBridge() {
+      if (window.parent === window) return;
+      const channel = "CURIOID_SITE_ACTIVITY";
+      const sendHello = () => {
+        try { window.parent.postMessage({ channel, type: "hello" }, window.location.origin); } catch (_) {}
+      };
+      window.addEventListener("message", event => {
+        if (event.source !== window.parent || event.origin !== window.location.origin) return;
+        const data = event.data;
+        if (!data || data.channel !== channel || data.type !== "snapshot") return;
+        evaluateSiteMissions(data.snapshot);
+      });
+      sendHello();
+      window.addEventListener("pageshow", sendHello);
+    }
+
+    // Procedural local creature art: no image URLs, emoji glyphs, fonts or remote assets.
+    function creatureSpriteSVG(creature, options = {}) {
+      const id = String(creature?.id || "unknown").replace(/[^a-z0-9_-]/gi, "");
+      let seed = 0; for (const char of id) seed = (seed * 31 + char.charCodeAt(0)) >>> 0;
+      const tier = Math.max(1, Math.min(4, Number(creature?.tier) || 1));
+      const hue = (seed * 7 + (creature?.palette || 0) + tier * 41) % 360;
+      const hue2 = (hue + 132 + (seed % 63)) % 360;
+      const hue3 = (hue + 225) % 360;
+      const palettes = [
+        [hue, hue2, hue3],
+        [(hue + 180) % 360, (hue2 + 180) % 360, (hue3 + 180) % 360],
+        [(hue + 278) % 360, (hue2 + 278) % 360, (hue3 + 278) % 360],
+        [(hue + 42) % 360, (hue2 + 42) % 360, (hue3 + 42) % 360]
+      ];
+      const palette = palettes[(seed >>> 5) % palettes.length];
+      const [mainHue, trimHue, glowHue] = palette;
+      const mode = ["PRISMATIC", "INVERTED", "ULTRAVIOLET", "TOXIC", "CHROMATIC", "AFTERIMAGE"][(seed >>> 9) % 6];
+      const body = [
+        "<path d='M31 43Q22 34 28 25Q32 17 48 20Q66 17 72 30Q79 44 67 60Q58 70 43 65Q27 62 31 43Z'/>",
+        "<path d='M28 43Q21 28 36 23Q48 13 62 25Q78 36 67 56Q61 70 45 66Q28 63 28 43Z'/>",
+        "<path d='M27 44Q25 28 42 24Q55 16 69 30Q78 43 67 59Q56 72 40 64Q28 59 27 44Z'/>",
+        "<path d='M30 40Q24 25 40 21Q54 17 68 27Q80 40 69 56Q61 68 45 66Q31 62 30 40Z'/>",
+        "<path d='M28 42Q18 32 31 23Q45 15 61 24Q79 34 70 52Q64 69 47 67Q30 64 28 42Z'/>",
+        "<path d='M32 43Q22 31 34 22Q47 15 64 24Q78 34 70 53Q63 68 47 66Q33 63 32 43Z'/>",
+        "<path d='M26 43Q23 30 37 23Q51 15 66 28Q79 42 68 57Q55 70 40 64Q27 59 26 43Z'/>",
+        "<path d='M30 43Q18 34 31 24Q43 14 61 22Q79 31 72 51Q65 70 47 66Q32 63 30 43Z'/>"
+      ][seed % 8];
+      const headX = 50 + ((seed >>> 3) % 11 - 5);
+      const headY = 19 + ((seed >>> 7) % 5);
+      const legs = (seed >>> 15) % 3;
+      const antenna = (seed >>> 18) % 4;
+      const tail = (seed >>> 21) % 4;
+      const markings = (seed >>> 24) % 4;
+      const legPath = legs === 0
+        ? "<path d='M36 57L31 70L25 72M43 62L42 76L37 78M60 62L62 76L68 77M68 56L77 68L82 67'/>"
+        : legs === 1
+          ? "<path d='M35 55L25 66L19 64M42 63L38 77L32 78M59 63L63 77L69 78M68 54L79 63L85 60'/>"
+          : "<path d='M35 57L29 70L22 70M43 63L43 78L36 80M59 63L57 78L64 80M68 56L76 69L83 68'/>";
+      const antennaPath = [
+        "<path d='M42 23Q34 10 29 13M58 22Q66 8 72 12'/><circle cx='29' cy='13' r='3'/><circle cx='72' cy='12' r='3'/>",
+        "<path d='M43 22Q38 8 42 5M57 22Q65 7 61 4'/><path d='M38 5L46 5M57 4L65 4'/>",
+        "<path d='M42 22Q28 17 25 8M58 22Q72 17 75 8'/><path d='M22 8L27 5L29 11M71 11L73 5L78 8'/>",
+        "<path d='M44 21L39 8L47 3M56 21L61 8L53 3'/><circle cx='47' cy='3' r='2'/><circle cx='53' cy='3' r='2'/>",
+      ][antenna];
+      const tailPath = [
+        "<path d='M68 53Q83 51 86 39Q91 31 84 27' fill='none' stroke-width='6' stroke-linecap='round'/><circle cx='84' cy='26' r='4'/>",
+        "<path d='M67 55Q83 61 87 72L80 77L73 70Z'/>",
+        "<path d='M31 53Q18 52 15 42Q12 35 19 31' fill='none' stroke-width='5' stroke-linecap='round'/><path d='M16 28L20 34L12 35Z'/>",
+        "<path d='M66 54Q82 55 88 47Q91 43 87 39Q80 34 76 41' fill='none' stroke-width='5' stroke-linecap='round'/>",
+      ][tail];
+      const marks = [
+        "<path d='M36 34L43 29M42 49L50 44M58 39L66 34' stroke-width='3' stroke-linecap='round'/>",
+        "<circle cx='39' cy='43' r='3'/><circle cx='61' cy='48' r='4'/><circle cx='53' cy='31' r='2.5'/>",
+        "<path d='M35 38Q49 47 66 36M38 54Q50 61 63 52' fill='none' stroke-width='2.5'/>",
+        "<path d='M48 27L54 36L48 45L56 53' fill='none' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/>",
+      ][markings];
+      const wing = (seed >>> 27) % 3;
+      const wings = wing === 0 ? "<path d='M31 39Q13 21 13 38Q13 50 31 52Z' opacity='.82'/><path d='M69 39Q87 21 87 38Q87 50 69 52Z' opacity='.82'/>" : wing === 1 ? "<path d='M33 38Q12 25 18 49Q25 58 36 49Z' opacity='.68'/><path d='M67 38Q88 25 82 49Q75 58 64 49Z' opacity='.68'/>" : "";
+      const hidden = "";
+      const label = String(creature?.name || "Unknown Curioid").replace(/[&<>\"]/g, "");
+      const grad = `curioid-grad-${id || "unknown"}`;
+      const bodyPath = body;
+      return `<svg class="curioid-sprite curioid-mode-${mode.toLowerCase()} ${options.silhouette ? "curioid-silhouette" : ""}" viewBox="0 0 100 88" role="img" aria-label="${label}, a full-body ${mode.toLowerCase()} Curioid" xmlns="http://www.w3.org/2000/svg" ${hidden}>
+        <defs><linearGradient id='${grad}' x1='0' y1='0' x2='1' y2='1'><stop stop-color='hsl(${mainHue} 92% 78%)'/><stop offset='.48' stop-color='hsl(${trimHue} 83% 58%)'/><stop offset='1' stop-color='hsl(${glowHue} 85% 38%)'/></linearGradient><radialGradient id='${grad}-shine'><stop stop-color='#fff' stop-opacity='.88'/><stop offset='1' stop-color='#fff' stop-opacity='0'/></radialGradient></defs>
+        <ellipse cx='50' cy='79' rx='25' ry='5' fill='#050914' opacity='.28'/>
+        <g stroke='hsl(${trimHue} 90% 24%)' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round' fill='none'>${legPath}</g>
+        <g fill='url(#${grad})' stroke='hsl(${trimHue} 90% 24%)' stroke-width='2.2' stroke-linejoin='round'>${wings}${tailPath.replaceAll("stroke-width='6'", "stroke-width='6'")}</g>
+        <g fill='url(#${grad})' stroke='hsl(${trimHue} 90% 24%)' stroke-width='2.4' stroke-linejoin='round'>${bodyPath}</g>
+        <path d='M34 34Q39 21 51 22Q64 22 68 36Q57 29 47 32Q39 34 34 34Z' fill='url(#${grad}-shine)' opacity='.88'/>
+        <g fill='none' stroke='hsl(${trimHue} 95% 24%)' stroke-width='2.5' stroke-linecap='round'>${antennaPath}</g>
+        <g fill='hsl(${trimHue} 95% 20%)' stroke='hsl(${glowHue} 90% 85%)' stroke-width='1.5'>${marks}</g>
+        <path d='M${headX-13} ${headY+7}Q${headX-13} ${headY-10} ${headX} ${headY-11}Q${headX+15} ${headY-10} ${headX+13} ${headY+8}Q${headX+8} ${headY+21} ${headX-3} ${headY+19}Q${headX-15} ${headY+16} ${headX-13} ${headY+7}Z' fill='url(#${grad})' stroke='hsl(${trimHue} 90% 24%)' stroke-width='2.5'/>
+        <ellipse cx='${headX-5}' cy='${headY+5}' rx='3.3' ry='4.2' fill='#f7fbff'/><ellipse cx='${headX+5}' cy='${headY+5}' rx='3.3' ry='4.2' fill='#f7fbff'/>
+        <circle cx='${headX-4.4}' cy='${headY+5.8}' r='1.9' fill='#15192b'/><circle cx='${headX+5.6}' cy='${headY+5.8}' r='1.9' fill='#15192b'/>
+        <path d='M${headX-3} ${headY+13}Q${headX} ${headY+16} ${headX+4} ${headY+13}' fill='none' stroke='hsl(${trimHue} 90% 20%)' stroke-width='1.8' stroke-linecap='round'/>
+        <path d='M32 75L27 78M43 78L39 81M61 78L65 81M76 72L81 74' stroke='hsl(${glowHue} 90% 83%)' stroke-width='2.5' stroke-linecap='round'/>
+        <circle cx='50' cy='51' r='2.2' fill='#fff' opacity='.8'/>
+      </svg>`;
+    }
+
+    // =========================================================================
+    // 5. RENDERING
+    // =========================================================================
+    function renderHud() {
+      document.getElementById("hud-gold").textContent = `🪙 ${state.gold}G`;
+      document.getElementById("hud-trophies").textContent = `🏆 ${state.trophies}/10`;
+      document.getElementById("hud-lives").textContent = `❤️ ${state.lives}`;
+      document.getElementById("hud-tier").textContent = `🏪 Shop Tier ${getShopTier()}`;
+      document.getElementById("hud-pool").textContent = `🧬 Pool: ${state.pool.length}/20`;
+      document.getElementById("hud-shard").textContent = `✧ Luck Shards: ${state.luckyShard}/4`;
+      document.getElementById("btn-new-run").style.display = (state.gameOver || state.victory) ? "inline-block" : "none";
+    }
+
+    function renderSynergies() {
+      const s = getSynergies(state.board);
+      const items = [
+        ["Beast", `🐾 Beast (${s.beast.count}/2/3/5)`, s.beast.tier],
+        ["Tech", `⚙️ Tech (${s.tech.count}/2/3/5)`, s.tech.tier],
+        ["Mystic", `✨ Mystic (${s.mystic.count}/2/3/5)`, s.mystic.tier],
+        ["Venom", `☠️ Venom (${s.venom.count}/2/3/4)`, s.venom.tier],
+        ["Guardian", `🛡️ Guardian (${s.guardian.count}/2/3/4)`, s.guardian.tier]
+      ];
+      document.getElementById("synergy-bar").innerHTML = items.map(([, label, tier]) =>
+        `<div class="syn-chip ${tier > 0 ? "active" : ""}">${label}${tier > 0 ? ` ★${tier}` : ""}</div>`
+      ).join("");
+    }
+
+    function perkIcon(perk) {
+      if (perk === "honey") return "🍯";
+      if (perk === "garlic") return "🧄";
+      if (perk === "melon") return "🍈";
+      return "";
+    }
+
+    function renderPlayerBoard() {
+      const el = document.getElementById("player-board");
+      el.innerHTML = "";
+      state.board.forEach((u, idx) => {
+        const slot = document.createElement("div");
+        slot.className = `slot ${idx === 0 ? "front-slot" : ""} ${u ? "occupied" : ""} ${selectedIdx === idx ? "selected-slot" : ""}`;
+        if (u) {
+          const c = CREATURE_BY_ID.get(u.cid);
+          const st = effStats(u);
+          slot.innerHTML = `
+            ${u.perk ? `<span class="perk-tag">${perkIcon(u.perk)}</span>` : ""}
+            <div class="stars">${"★".repeat(st.lv)}</div>
+            <div class="body-figure">${creatureSpriteSVG(c)}</div>
+            <div class="unit-name">${c.name}</div>
+            <div class="stats-line">
+              <span class="atk-badge">⚔️${st.atk + (u.tempAtk || 0)}</span>
+              <span class="hp-badge">❤️${st.hp + (u.tempHp || 0)}</span>
+            </div>
+          `;
+        } else {
+          slot.innerHTML = `<span class="muted" style="margin:auto;">Empty</span>`;
+        }
+
+        slot.addEventListener("click", () => {
+          if (battling) return;
+          if (selectedIdx === null) {
+            if (u) selectedIdx = idx;
+          } else if (selectedIdx === idx) {
+            selectedIdx = null;
+          } else {
+            const tmp = state.board[selectedIdx];
+            state.board[selectedIdx] = state.board[idx];
+            state.board[idx] = tmp;
+            selectedIdx = null;
+            saveState();
+          }
+          renderAll();
+        });
+        el.appendChild(slot);
+      });
+
+      const sellBtn = document.getElementById("btn-sell");
+      if (selectedIdx !== null && state.board[selectedIdx]) {
+        const lv = getLevel(state.board[selectedIdx].copies);
+        sellBtn.disabled = false;
+        sellBtn.textContent = `💰 Sell (+${lv === 3 ? 3 : lv === 2 ? 2 : 1}G)`;
+      } else {
+        sellBtn.disabled = true;
+        sellBtn.textContent = "💰 Sell Selected";
+      }
+    }
+
+    function renderEnemyBoard(fighters = null) {
+      const el = document.getElementById("enemy-board");
+      el.innerHTML = "";
+      const list = fighters || ensureEnemyLineup();
+      for (let i = 0; i < 5; i++) {
+        const f = list[i];
+        const slot = document.createElement("div");
+        slot.className = `slot enemy-slot ${i === 0 ? "front-slot" : ""} ${f ? "occupied" : ""}`;
+        if (f) {
+          const c = CREATURE_BY_ID.get(f.cid) || SPECIAL_CREATURES[f.cid] || { id: f.cid || "enemy", name: f.name || "Curioid", tier: 1, tags: [] };
+          const name = f.name || c.name || "Curioid";
+          const atk = f.atk !== undefined ? f.atk : effStats(f).atk;
+          const hp = f.hp !== undefined ? Math.max(0, f.hp) : effStats(f).hp;
+          slot.innerHTML = `
+            ${f.perk ? `<span class="perk-tag">${perkIcon(f.perk)}</span>` : ""}
+            <div class="stars">${f.lv ? "★".repeat(f.lv) : ""}</div>
+            <div class="body-figure">${creatureSpriteSVG(c)}</div>
+            <div class="unit-name">${name}</div>
+            <div class="stats-line">
+              <span class="atk-badge">⚔️${atk}</span>
+              <span class="hp-badge">❤️${hp}</span>
+              ${f.poison > 0 ? `<span class="poison-badge">☠️${f.poison}</span>` : ""}
+            </div>
+          `;
+        } else {
+          slot.innerHTML = `<span class="muted" style="margin:auto;">—</span>`;
+        }
+        el.appendChild(slot);
+      }
+    }
+
+    function renderShop() {
+      const grid = document.getElementById("shop-grid");
+      grid.innerHTML = "";
+
+      state.shopUnits.forEach((slot, idx) => {
+        const card = document.createElement("div");
+        card.className = `shop-card ${slot && slot.frozen ? "frozen" : ""}`;
+        if (!slot) {
+          card.innerHTML = `<div class="muted" style="margin:auto;">Sold</div>`;
+        } else {
+          const c = CREATURE_BY_ID.get(slot.cid);
+          card.innerHTML = `
+            <div>
+              <div class="row" style="justify-content:space-between;">
+                <span class="body-figure creature-mini">${creatureSpriteSVG(c)}</span>
+                <span class="tier-${c.tier}" style="font-size:0.75rem; font-weight:800;">Tier ${c.tier}</span>
+              </div>
+              <div class="unit-name">${c.name}</div>
+              <div class="stats-line">
+                <span class="atk-badge">⚔️${c.atk}</span>
+                <span class="hp-badge">❤️${c.hp}</span>
+                <span class="muted">${c.tags.join("/")}</span>
+              </div>
+              <div class="muted" style="font-size:0.77rem; margin-top:4px;">${c.text}</div>
+            </div>
+            <div class="row">
+              <button class="btn-primary" style="flex:1;" onclick="buyUnit(${idx})">Buy 3G</button>
+              <button class="btn-freeze ${slot.frozen ? "frozen" : ""}" onclick="toggleFreezeUnit(${idx})">❄️</button>
+            </div>
+          `;
+        }
+        grid.appendChild(card);
+      });
+
+      state.shopFoods.forEach((slot, idx) => {
+        const card = document.createElement("div");
+        card.className = `shop-card ${slot && slot.frozen ? "frozen" : ""}`;
+        if (!slot) {
+          card.innerHTML = `<div class="muted" style="margin:auto;">Used</div>`;
+        } else {
+          const f = FOOD_BY_ID.get(slot.id);
+          card.innerHTML = `
+            <div>
+              <div class="row" style="justify-content:space-between;">
+                <span style="font-size:1.75rem;">${f.emoji}</span>
+                <span class="tier-${f.tier}" style="font-size:0.75rem; font-weight:800;">Tier ${f.tier}</span>
+              </div>
+              <div class="unit-name">${f.name}</div>
+              <div class="muted" style="font-size:0.77rem; margin-top:4px;">${f.desc}</div>
+            </div>
+            <div class="row">
+              <button class="btn-gold" style="flex:1;" onclick="buyFood(${idx})">Buy ${f.cost}G</button>
+              <button class="btn-freeze ${slot.frozen ? "frozen" : ""}" onclick="toggleFreezeFood(${idx})">❄️</button>
+            </div>
+          `;
+        }
+        grid.appendChild(card);
+      });
+    }
+
+    function renderRoster() {
+      const grid = document.getElementById("roster-grid");
+      document.getElementById("pool-count-label").textContent = `${state.pool.length} / 20`;
+      const q = (document.getElementById("roster-search")?.value || "").trim().toLowerCase();
+      const tierFilter = document.getElementById("roster-tier")?.value || "all";
+      const statusFilter = document.getElementById("roster-status")?.value || "all";
+
+      const filtered = CREATURES.filter(c => {
+        const unlocked = state.unlocked.includes(c.id);
+        const inPool = state.pool.includes(c.id);
+        if (tierFilter !== "all" && String(c.tier) !== tierFilter) return false;
+        if (statusFilter === "unlocked" && !unlocked) return false;
+        if (statusFilter === "in-pool" && !inPool) return false;
+        if (q) {
+          const hay = `${c.name} ${c.tags.join(" ")} ${c.text}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      grid.innerHTML = "";
+      filtered.forEach(c => {
+        const unlocked = state.unlocked.includes(c.id);
+        const inPool = state.pool.includes(c.id);
+        const card = document.createElement("div");
+        card.className = `creature-card ${!unlocked ? "locked" : ""} ${inPool ? "in-pool" : ""}`;
+        card.innerHTML = `
+          <div>
+            <div class="row" style="justify-content:space-between;">
+              <span class="body-figure creature-mini">${creatureSpriteSVG(c, { silhouette: !unlocked })}</span>
+              <span class="tier-${c.tier}" style="font-size:0.75rem; font-weight:800;">Tier ${c.tier}</span>
+            </div>
+            <strong>${unlocked ? c.name : "Locked Curioid"}</strong>
+            <div class="muted" style="font-size:0.77rem;">⚔️${c.atk} ❤️${c.hp} • ${c.tags.join("/")}</div>
+            <div class="muted" style="font-size:0.77rem; margin-top:4px;">${unlocked ? c.text : "Hatch a shaking Egg to unlock."}</div>
+          </div>
+        `;
+        if (unlocked) {
+          const btn = document.createElement("button");
+          btn.textContent = inPool ? "✓ In 20-Pool" : "+ Add to Pool";
+          btn.className = inPool ? "btn-primary" : "";
+          btn.addEventListener("click", () => {
+            if (inPool) state.pool = state.pool.filter(id => id !== c.id);
+            else {
+              if (state.pool.length >= 20) return toast("Pool max is 20 Curioids.");
+              state.pool.push(c.id);
+            }
+            saveState();
+            renderAll();
+          });
+          card.appendChild(btn);
+        }
+        grid.appendChild(card);
+      });
+    }
+
+    function renderQuests() {
+      document.getElementById("quest-progress").textContent = `${state.completedQuests.length} / ${QUESTS.length} missions · ${state.unlocked.length} / ${CREATURES.length} Curioids`;
+      const surveyCard = `<div class="quest-card ${state.unlocked.length >= CREATURES.length ? "done" : ""}"><div style="font-weight:800;">${state.unlocked.length >= CREATURES.length ? "✅ FIELD GUIDE COMPLETE" : "✦ REPEATABLE / UNMAPPED SIGNAL"}</div><div class="muted" style="margin-top:4px;">${state.unlocked.length >= CREATURES.length ? "Every Curioid has been registered." : `Complete ${2 - state.fieldSurveyProgress} more battle${2 - state.fieldSurveyProgress === 1 ? "" : "s"} to reveal another Curioid. Survey hatches continue until the full roster is collected.`}</div><div class="muted" style="margin-top:4px;">Survey hatches: ${state.fieldSurveys} · Progress: ${state.fieldSurveyProgress}/2 battles</div></div>`;
+      document.getElementById("quest-list").innerHTML = surveyCard + QUESTS.map(q => {
+        const done = state.completedQuests.includes(q.id);
+        return `
+          <div class="quest-card ${done ? "done" : ""}">
+            <div style="font-weight:800;">${done ? "✅ UNLOCKED" : "🔒 MYSTERY"} • Tier ${q.bias}+ Egg</div>
+            <div class="muted" style="margin-top:4px;">${done ? `Discovered (${q.id})` : q.clue}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderAll() {
+      renderHud();
+      renderSynergies();
+      renderPlayerBoard();
+      if (!battling) renderEnemyBoard();
+      renderShop();
+      renderRoster();
+      renderQuests();
+      document.getElementById("feed-count").textContent = state.feedCount;
+    }
+
+    // =========================================================================
+    // 6. EVENTS & MYSTERY TRIGGERS
+    // =========================================================================
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+        if (btn.dataset.tab === "pool") unlockQuest("q13");
+        if (btn.dataset.tab === "quests") unlockQuest("q14");
+      });
+    });
+
+    document.getElementById("roster-search").addEventListener("input", renderRoster);
+    document.getElementById("roster-tier").addEventListener("change", renderRoster);
+    document.getElementById("roster-status").addEventListener("change", renderRoster);
+
+    document.getElementById("btn-compact-log").addEventListener("click", () => {
+      compactLog = !compactLog;
+      document.getElementById("btn-compact-log").textContent = compactLog ? "📜 Highlights Log" : "📜 Full Log";
+      toast(compactLog ? "Showing key battle highlights." : "Showing full battle log.");
+    });
+
+    document.getElementById("btn-clear-log").addEventListener("click", () => {
+      document.getElementById("battle-log").innerHTML = `<div class="muted">Log cleared.</div>`;
+    });
+
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+      document.body.classList.toggle("light-theme");
+      unlockQuest("q8");
+    });
+
+    document.getElementById("reset-save").addEventListener("click", () => {
+      if (!confirm("Reset all Curioids save data?")) return;
+      state = defaultState();
+      selectedIdx = null;
+      rollShop(true);
+      saveState();
+      renderAll();
+    });
+
+    document.getElementById("btn-new-run").addEventListener("click", () => {
+      const keep = {
+        unlocked: state.unlocked,
+        pool: state.pool,
+        completedQuests: state.completedQuests,
+        fieldSurveyProgress: state.fieldSurveyProgress,
+        fieldSurveys: state.fieldSurveys,
+        luckyShard: state.luckyShard
+      };
+      state = { ...defaultState(), ...keep };
+      selectedIdx = null;
+      rollShop(true);
+      saveState();
+      renderAll();
+    });
+
+    document.getElementById("btn-roll").addEventListener("click", () => rollShop(false));
+    document.getElementById("btn-sell").addEventListener("click", sellSelected);
+    document.getElementById("btn-end-turn").addEventListener("click", endTurnAndBattle);
+
+    document.getElementById("btn-auto-pool").addEventListener("click", () => {
+      state.pool = [...state.unlocked]
+        .map(id => CREATURE_BY_ID.get(id))
+        .filter(Boolean)
+        .sort((a, b) => (b.tier * 10 + b.atk + b.hp) - (a.tier * 10 + a.atk + a.hp))
+        .slice(0, 20)
+        .map(c => c.id);
+      saveState();
+      renderAll();
+      toast("Auto-filled top 20 Curioids into pool.");
+    });
+
+    document.getElementById("btn-feed").addEventListener("click", () => {
+      state.feedCount += 1;
+      saveState();
+      renderHud();
+      document.getElementById("feed-count").textContent = state.feedCount;
+      if (state.feedCount >= 10) unlockQuest("q2");
+    });
+
+    document.getElementById("btn-ping").addEventListener("click", () => {
+      toast("📡 Ping sent!");
+      unlockQuest("q11");
+    });
+
+    document.getElementById("calc-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const a = Number(document.getElementById("calc-a").value) || 0;
+      const b = Number(document.getElementById("calc-b").value) || 0;
+      document.getElementById("calc-result").textContent = `Result: ${a * b}`;
+      unlockQuest("q3");
+    });
+
+    document.getElementById("note-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const v = document.getElementById("note-input").value.trim();
+      if (!v) return;
+      document.getElementById("note-output").textContent = `Posted: "${v}"`;
+      document.getElementById("note-input").value = "";
+      unlockQuest("q10");
+    });
+
+    document.getElementById("btn-jump-bottom").addEventListener("click", () => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    });
+
+    window.addEventListener("scroll", () => {
+      if ((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight >= 0.96) {
+        unlockQuest("q1");
+      }
+    });
+
+    window.addEventListener("click", () => {
+      const now = Date.now();
+      state.clickTimes = state.clickTimes.filter(t => now - t < 1500);
+      state.clickTimes.push(now);
+      if (state.clickTimes.length >= 6) {
+        state.clickTimes = [];
+        unlockQuest("q7");
+      }
+    });
+
+    window.addEventListener("keydown", e => {
+      if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) {
+        return;
+      }
+      if ((e.key === "Delete" || e.key === "Backspace") && selectedIdx !== null && state.board[selectedIdx]) {
+        e.preventDefault();
+        sellSelected();
+        return;
+      }
+      state.keyBuffer = (state.keyBuffer + e.key.toLowerCase()).slice(-5);
+      if (state.keyBuffer.endsWith("egg")) {
+        state.keyBuffer = "";
+        unlockQuest("q4");
+      }
+    });
+
+    const radar = document.getElementById("corner-zone");
+    radar.addEventListener("mouseenter", () => {
+      state.hoverStart = Date.now();
+      setTimeout(() => {
+        if (state.hoverStart && Date.now() - state.hoverStart >= 2900) unlockQuest("q5");
+      }, 3000);
+    });
+    radar.addEventListener("mouseleave", () => { state.hoverStart = null; });
+
+    let leftTab = false;
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) leftTab = true;
+      else if (leftTab) { leftTab = false; unlockQuest("q6"); }
+    });
+
+    setInterval(() => {
+      if (!document.hidden) {
+        state.activeSeconds += 1;
+        if (state.activeSeconds >= 35) unlockQuest("q9");
+      }
+    }, 1000);
+
+    ensureEnemyLineup();
+    if (!state.shopUnits || state.shopUnits.length === 0) rollShop(true);
+    else renderAll();
+    connectSiteDiscoveryBridge();
+    showNextQuestReward();
+  </script>
+</body>
+</html>

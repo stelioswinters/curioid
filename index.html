@@ -4,29 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101014">
-  <meta name="description" content="Explore six browser-based operating systems, 53 creative projects, tiny games and tools, plus Sandbox OS for building your own local-first desktop.">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="description" content="Explore six browser-based operating systems, 54 creative projects, tiny games and tools, plus Sandbox OS for building your own local-first desktop.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="Stelios Winters">
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Vn64fwOKt+eDtZziz4exnyISGqehCzP9S3ePw+vJ380='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-K0rlqkiUtpwGut0AmFZKFwViaLlhFZlLXzLka5LQVa0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.github.io/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
   <meta property="og:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
-  <meta property="og:description" content="Six browser-based operating systems, 53 creative projects, tiny games and tools, plus Sandbox OS for building a personal desktop.">
+  <meta property="og:description" content="Six browser-based operating systems, 54 creative projects, tiny games and tools, plus Sandbox OS for building a personal desktop.">
   <meta property="og:url" content="https://stelioswinters.github.io/curioid/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
-  <meta name="twitter:description" content="Six independent browser-based operating systems, 53 projects, tiny games and creative tools, plus Sandbox OS for building your own. Explore locally in your browser.">
+  <meta name="twitter:description" content="Six independent browser-based operating systems, 55 projects, tiny games and creative tools, plus Sandbox OS for building your own. Explore locally in your browser.">
   <meta property="og:image" content="https://stelioswinters.github.io/curioid/social-preview.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="CURIOID: six independent browser worlds and a collection of creative experiments">
   <meta name="twitter:image" content="https://stelioswinters.github.io/curioid/social-preview.png">
   <title>CURIOID</title>
-  <script defer src="curioid-runtime.js" integrity="sha384-uq1m5MFFrRyTfChj03gSeFHxEIMW0I0lYH0EulQwf2C0oxS1Gbe+9i1ZQaOv9isX" crossorigin="anonymous"></script>
+  
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CURIOID","url":"https://stelioswinters.github.io/curioid/","description":"A local-first collection of six browser-based operating environments, interactive projects, tiny games, creative tools, sound experiments and strange archives.","creator":{"@type":"Person","name":"Stelios Winters"},"inLanguage":"en","isAccessibleForFree":true}</script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 48 48%27%3E%3Crect width=%2748%27 height=%2748%27 rx=%2711%27 fill=%27%23101014%27/%3E%3Cpath d=%27M4.5 24C9.3 13.7 17.1 8.5 24 8.5S38.7 13.7 43.5 24C38.7 34.3 30.9 39.5 24 39.5S9.3 34.3 4.5 24Z%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%273.2%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%278.1%27 fill=%27none%27 stroke=%27%23d6ff69%27 stroke-width=%272.5%27/%3E%3Ccircle cx=%2724%27 cy=%2724%27 r=%273.6%27 fill=%27%23d6ff69%27/%3E%3Cpath d=%27M15.5 14.5 11 10%27 stroke=%27%23d6ff69%27 stroke-width=%272.3%27 stroke-linecap=%27round%27/%3E%3Cpath d=%27M32.5 14.5 37 10%27 stroke=%27%23d6ff69%27 stroke-width=%272.3%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
   <style>
@@ -360,18 +363,6 @@
 
     .results-word { color: var(--acid); letter-spacing: -.055em; text-shadow: 0 0 20px rgba(214,255,105,.09); }
         /* Future room content */
-    .future-room { min-height: 250px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(190px, .58fr); gap: 25px; align-items: center; padding: 25px; background: radial-gradient(ellipse at 78% 40%, rgba(186,167,255,.09), transparent 45%); }
-    .future-preview { position: relative; display: grid; place-items: center; min-height: 180px; overflow: hidden; border: 1px solid #403d4c; border-radius: 12px; background: #14141b; }
-    .future-preview::before { content: ""; position: absolute; inset: 0; opacity: .42; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 22px 22px; }
-    .future-preview svg { position: relative; width: min(88%, 245px); height: 150px; overflow: visible; }
-    .future-preview-label { position: absolute; left: 11px; bottom: 9px; color: #777582; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
-    .future-details { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; color: var(--violet); font-size:9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-    .future-details::before { content: ""; width: 16px; height: 1px; background: currentColor; }
-    .future-kicker { margin: 0 0 8px; color: var(--violet); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .15em; text-transform: uppercase; }
-    .future-room h3 { margin: 0; font-size:clamp(23px, 3vw, 34px); letter-spacing: -.05em; }
-    .future-room p { max-width: 500px; margin: 9px 0 0; color: var(--muted); font-size:11px; line-height: 1.7; }
-    .future-stamp { display: grid; place-items: center; min-height: 150px; border: 1px solid #3f3b4e; border-radius: 12px; background: rgba(186,167,255,.045); color: var(--violet); font-size:38px; }
-    .future-stamp small { display: block; margin-top: 5px; color: #8b8796; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .13em; text-transform: uppercase; }
     .site-footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line); color: #6f6d79; font-size:9px; }
     .site-footer strong { color: #a5a2ad; font-weight: 760; letter-spacing: .09em; }
     .site-footer .site-version { display: inline-block; margin-left: 5px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--dim); font-size:9px; font-weight: 700; letter-spacing: .06em; vertical-align: 1px; }
@@ -399,7 +390,6 @@
       .menu-toggle { display: grid; place-items: center; }
       .topbar { min-height: 60px; justify-content: flex-start; }
       .topbar-right { margin-left: auto; }
-      .future-room { grid-template-columns: minmax(0,1fr) 170px; }
     }
     @media (max-width: 420px) {
       .topbar { gap: 7px; }
@@ -456,8 +446,6 @@
       .room-description { max-width: 200px; }
       .room-state { display: inline-flex; align-items: center; justify-content: center; min-width: 47px; font-size:9px; padding: 4px 5px; }
       .room-body { padding: 9px; }
-      .future-room { display: block; padding: 16px; }
-      .future-preview { min-height: 145px; margin-top: 17px; }
       .site-footer { display: block; line-height: 1.8; }
       .site-footer span { display: block; }
     }
@@ -636,6 +624,49 @@
     @media(max-width:760px){.site-control-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:560px){.site-control-status-grid{grid-template-columns:1fr}.site-control-status-grid article{grid-template-columns:78px 1fr;align-items:center}.site-control-status-grid span{grid-column:2}.site-control-actions{grid-template-columns:1fr}.site-notification-panel{right:-36px}}
 
+
+    /* Fast, keyboard-first project and action launcher. Results are built with DOM nodes. */
+    .command-palette-trigger { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:30px; white-space:nowrap; }
+    .command-palette-trigger::first-letter { font-size:17px; line-height:1; }
+    .command-palette-trigger span { font-size:9px; }
+    .curioid-command-dialog { width:min(660px,calc(100vw - 28px)); max-width:none; max-height:min(78dvh,720px); margin:auto; padding:0; overflow:hidden; border:1px solid #484956; border-radius:15px; background:#171820; color:#eeedf2; box-shadow:0 28px 100px rgba(0,0,0,.62); }
+    .curioid-command-dialog::backdrop { background:rgba(5,6,10,.76); backdrop-filter:blur(5px); }
+    .command-palette-shell { display:grid; grid-template-rows:auto auto minmax(100px,1fr) auto; max-height:min(78dvh,720px); }
+    .command-palette-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 16px 10px; border-bottom:1px solid #2d2f39; }
+    .command-palette-head-copy { display:grid; gap:2px; min-width:0; }
+    .command-palette-head-copy small { color:#d6ff69; font:9px ui-monospace,monospace; letter-spacing:.15em; }
+    .command-palette-head-copy strong { font-size:13px; font-weight:650; }
+    .command-palette-close { display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border:1px solid #3b3d48; border-radius:8px; background:#20212a; color:#c8c6d0; font-size:19px; cursor:pointer; }
+    .command-palette-search-wrap { padding:12px 14px 9px; }
+    .command-palette-search { width:100%; min-height:46px; padding:10px 13px; border:1px solid #50515f; border-radius:10px; outline:none; background:#101117; color:#f3f2f6; font:14px system-ui,sans-serif; }
+    .command-palette-search:focus { border-color:#d6ff69; box-shadow:0 0 0 3px rgba(214,255,105,.12); }
+    .command-palette-private-toggle { display:flex; align-items:flex-start; gap:9px; margin:9px 2px 0; padding:8px 9px; border:1px solid #383a45; border-radius:8px; background:#1c1e27; color:#d9d7e1; cursor:pointer; }
+    .command-palette-private-toggle input { flex:0 0 auto; width:15px; height:15px; margin:2px 0 0; accent-color:#d6ff69; }
+    .command-palette-private-toggle span { display:grid; gap:3px; min-width:0; }
+    .command-palette-private-toggle strong { font-size:10px; font-weight:650; }
+    .command-palette-private-toggle small,.command-palette-private-status { color:#aaa8b5; font-size:9px; line-height:1.4; }
+    .command-palette-private-status { display:block; min-height:0; padding:0 3px; }
+    .command-palette-private-status:empty { display:none; }
+    .command-palette-results { display:grid; align-content:start; gap:4px; min-height:100px; max-height:min(51dvh,470px); padding:3px 9px 10px; overflow:auto; overscroll-behavior:contain; }
+    .command-palette-result { display:grid; grid-template-columns:32px minmax(0,1fr) auto; align-items:center; gap:10px; min-height:52px; width:100%; padding:7px 10px; border:1px solid transparent; border-radius:9px; background:transparent; color:#e9e7ef; text-align:left; cursor:pointer; }
+    .command-palette-result:hover,.command-palette-result[aria-selected="true"] { border-color:#515641; background:#25281f; }
+    .command-palette-result-icon { display:grid; place-items:center; width:30px; height:30px; border:1px solid #393b46; border-radius:8px; background:#20212b; color:#d6ff69; font-size:14px; }
+    .command-palette-result-copy { display:grid; gap:2px; min-width:0; }
+    .command-palette-result-copy strong { overflow:hidden; color:#f1eff5; font-size:11px; font-weight:620; text-overflow:ellipsis; white-space:nowrap; }
+    .command-palette-result-copy small { overflow:hidden; color:#a5a3b0; font-size:9px; line-height:1.4; text-overflow:ellipsis; white-space:nowrap; }
+    .command-palette-result-type { color:#9997a4; font:8px ui-monospace,monospace; letter-spacing:.08em; text-align:right; text-transform:uppercase; }
+    .command-palette-empty { margin:0; padding:28px 14px; color:#a5a3b0; font:11px system-ui,sans-serif; text-align:center; }
+    .command-palette-foot { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:9px 14px; border-top:1px solid #2d2f39; color:#9695a1; font:9px ui-monospace,monospace; }
+    .command-palette-foot kbd { padding:2px 5px; border:1px solid #444653; border-radius:4px; background:#20212a; color:#d5d2dc; font:9px ui-monospace,monospace; }
+    @media(max-width:560px) {
+      .command-palette-trigger { width:31px; padding:4px; font-size:16px; }
+      .command-palette-trigger span { display:none; }
+      .curioid-command-dialog { width:calc(100vw - 16px); max-height:84dvh; border-radius:12px; }
+      .command-palette-shell { max-height:84dvh; }
+      .command-palette-results { max-height:58dvh; }
+      .command-palette-result { grid-template-columns:29px minmax(0,1fr); }
+      .command-palette-result-type { display:none; }
+    }
   </style>
 </head>
 <body>
@@ -661,7 +692,7 @@
 
     <div class="project-search" role="search">
       <label class="sr-only" for="projectSearch">Find a project</label>
-      <input id="projectSearch" type="search" placeholder="Find a project… ( / or Ctrl+K )" autocomplete="off" spellcheck="false" aria-keyshortcuts="/ Control+K Meta+K" aria-controls="categorySections">
+      <input id="projectSearch" type="search" placeholder="Find a project… ( / )" autocomplete="off" spellcheck="false" aria-keyshortcuts="/" aria-controls="categorySections">
       <button id="clearProjectSearch" type="button" aria-label="Clear project search" title="Clear search" hidden>×</button>
     </div>
     <nav class="project-nav category-nav" id="categoryNav" aria-label="Project categories">
@@ -707,6 +738,7 @@
             <div class="personal-shortcuts-head">
               <span>Saved in this browser</span>
               <div class="personal-shortcuts-actions">
+                <button type="button" data-restore-site-session aria-label="Restore previously open CURIOID project windows" title="Reopen up to eight project windows from your last saved session" disabled>Restore last session</button>
                 <button type="button" data-clear-site-favorites aria-label="Clear all CURIOID favorites" disabled>Clear favorites</button>
                 <button type="button" data-clear-site-recents aria-label="Clear recently opened projects" disabled>Clear recent</button>
               </div>
@@ -730,8 +762,8 @@
   <main class="main" id="top">
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
-      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">54 Projects</span></div>
-      <div class="topbar-right"><label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label><button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
+      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">55 Projects</span></div>
+      <div class="topbar-right"><button class="topbar-action command-palette-trigger" id="commandPaletteOpen" type="button" aria-label="Search projects and actions" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">⌕ <span>SEARCH</span></button><label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label><button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div><span class="status-live" id="topStatus" aria-live="polite">1 window open</span></div>
     </header>
 
     <div class="page-wrap">
@@ -768,7 +800,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.221</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.263</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -795,6 +827,354 @@
 
 
   <script>
+    // Bundled Runtime Supervisor (kept first so all app modules share its lifecycle service).
+/* CURIOID Runtime Supervisor 1.0.0
+ * Explicit, bounded lifecycle scopes for mounted projects and operating-system apps.
+ * This manager does not monkey-patch browser APIs or claim to sandbox same-origin code.
+ */
+(function installCurioidRuntimeSupervisor(root) {
+  'use strict';
+  const win = root && root.window ? root.window : root;
+  const doc = win && win.document;
+  if (!win || !doc) return;
+  if (win.CurioidRuntimeSupervisor && win.CurioidRuntimeSupervisor.version === '1.0.0') return;
+
+  const VERSION = '1.0.0';
+  const MAX_ACTIVE_SCOPES = 256;
+  const MAX_CLEANUPS_PER_SCOPE = 1024;
+  const MAX_HISTORY = 64;
+  const MAX_TIMER_DELAY = 2147483647;
+  const activeScopes = new Map();
+  const history = [];
+  let scopeSequence = 0;
+  let cleanupFailureCount = 0;
+  let totalScopesCreated = 0;
+  let totalScopesDisposed = 0;
+
+  const safeLabel = (value, fallback) => {
+    let raw = '';
+    try { raw = String(value == null ? '' : value); } catch (_) { raw = ''; }
+    const text = raw.trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 96);
+    return text || fallback;
+  };
+  const report = (error, context) => {
+    try { win.console && win.console.error && win.console.error('CURIOID runtime cleanup issue:', context, error); } catch (_) {}
+  };
+
+  function makeStatus() {
+    let activeResources = 0;
+    const owners = [];
+    for (const scope of activeScopes.values()) {
+      const status = scope.getStatus();
+      activeResources += status.activeResources;
+      owners.push({ id: status.id, owner: status.owner, activeResources: status.activeResources, cleanupFailures: status.cleanupFailures });
+    }
+    return Object.freeze({
+      version: VERSION,
+      activeScopes: activeScopes.size,
+      activeResources,
+      totalScopesCreated,
+      totalScopesDisposed,
+      cleanupFailures: cleanupFailureCount,
+      scopes: owners.slice(0, 64)
+    });
+  }
+
+  function publishStatus() {
+    const status = makeStatus();
+    try {
+      if (typeof win.CustomEvent === 'function') {
+        win.dispatchEvent(new win.CustomEvent('curioid:runtime-change', { detail: status }));
+      }
+    } catch (_) {}
+    renderStatus(status);
+  }
+
+  function renderStatus(status) {
+    const update = () => {
+      const node = doc.querySelector('[data-control-runtime]');
+      if (!node) return;
+      node.textContent = `${status.activeScopes} active · ${status.activeResources} tracked`;
+      node.title = `${status.cleanupFailures} cleanup issue(s) recorded since this page loaded. Runtime scopes: ${status.activeScopes}.`;
+      node.setAttribute('aria-label', `${status.activeScopes} active application runtime scopes and ${status.activeResources} tracked resources`);
+    };
+    if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', update, { once: true });
+    else update();
+  }
+
+  function createScope(options) {
+    const settings = options && typeof options === 'object' ? options : {};
+    if (activeScopes.size >= MAX_ACTIVE_SCOPES) {
+      throw new RangeError(`CURIOID has reached its ${MAX_ACTIVE_SCOPES}-scope runtime limit. Close an unused project and try again.`);
+    }
+    const owner = safeLabel(settings.owner || settings.name, 'unnamed-project');
+    const requestedId = safeLabel(settings.id, '');
+    const id = requestedId || `runtime-${Date.now().toString(36)}-${(++scopeSequence).toString(36)}`;
+    if (activeScopes.has(id)) throw new Error(`A runtime scope named “${id}” is already active.`);
+
+    const controller = new win.AbortController();
+    const entries = [];
+    const cleanupEntries = new WeakMap();
+    const createdAt = Date.now();
+    let state = 'active';
+    let disposedAt = null;
+    let cleanupFailures = 0;
+
+    function runEntry(entry) {
+      if (!entry || !entry.active) return false;
+      entry.active = false;
+      try {
+        entry.cleanup();
+      } catch (error) {
+        cleanupFailures += 1;
+        cleanupFailureCount += 1;
+        report(error, `${owner}/${entry.kind}`);
+      }
+      if (state === 'active') publishStatus();
+      return true;
+    }
+
+    function addCleanup(cleanup, kind) {
+      if (typeof cleanup !== 'function') throw new TypeError('A runtime cleanup must be a function.');
+      const previous = cleanupEntries.get(cleanup);
+      if (state === 'active' && previous && previous.active) return () => runEntry(previous);
+      const entry = { cleanup, kind: safeLabel(kind, 'custom'), active: true };
+      if (state !== 'active') {
+        runEntry(entry);
+        return () => false;
+      }
+      // Fired timers and manually released resources must not consume the
+      // long-lived scope quota forever. Compact only when the bounded stack
+      // reaches its limit, keeping normal registration inexpensive.
+      if (entries.length >= MAX_CLEANUPS_PER_SCOPE) {
+        for (let index = entries.length - 1; index >= 0; index -= 1) {
+          if (!entries[index].active) entries.splice(index, 1);
+        }
+      }
+      if (entries.length >= MAX_CLEANUPS_PER_SCOPE) {
+        throw new RangeError(`Runtime scope “${owner}” reached its ${MAX_CLEANUPS_PER_SCOPE}-resource limit.`);
+      }
+      entries.push(entry);
+      cleanupEntries.set(cleanup, entry);
+      publishStatus();
+      return () => runEntry(entry);
+    }
+
+    function listen(target, type, callback, options) {
+      if (!target || typeof target.addEventListener !== 'function' || typeof callback !== 'function') {
+        throw new TypeError('Runtime listen() requires an EventTarget and a callback.');
+      }
+      const opts = typeof options === 'boolean' ? { capture: options } : (options || {});
+      const capture = Boolean(opts.capture);
+      let release = () => false;
+      let attached = true;
+      const listener = function runtimeScopedListener(event) {
+        if (state !== 'active' || !attached) return;
+        if (opts.once) release();
+        return callback.call(this, event);
+      };
+      target.addEventListener(type, listener, { capture, passive: Boolean(opts.passive) });
+      release = addCleanup(() => {
+        if (!attached) return;
+        attached = false;
+        target.removeEventListener(type, listener, capture);
+      }, 'listener');
+      return release;
+    }
+
+    function timeout(callback, delay) {
+      if (typeof callback !== 'function') throw new TypeError('Runtime timeout() requires a function callback.');
+      const numeric = Number(delay);
+      const safeDelay = Math.max(0, Math.min(MAX_TIMER_DELAY, Number.isFinite(numeric) ? numeric : 0));
+      let release = () => false;
+      const timer = win.setTimeout(() => {
+        release();
+        if (state === 'active') {
+          try { callback(); } catch (error) { report(error, `${owner}/timeout callback`); }
+        }
+      }, safeDelay);
+      release = addCleanup(() => win.clearTimeout(timer), 'timeout');
+      return release;
+    }
+
+    function interval(callback, delay) {
+      if (typeof callback !== 'function') throw new TypeError('Runtime interval() requires a function callback.');
+      const numeric = Number(delay);
+      const safeDelay = Math.max(1, Math.min(MAX_TIMER_DELAY, Number.isFinite(numeric) ? numeric : 1));
+      let active = true;
+      const timer = win.setInterval(() => {
+        if (state !== 'active' || !active) return;
+        try { callback(); } catch (error) { report(error, `${owner}/interval callback`); }
+      }, safeDelay);
+      return addCleanup(() => { if (active) { active = false; win.clearInterval(timer); } }, 'interval');
+    }
+
+    function animationFrame(callback) {
+      if (typeof callback !== 'function') throw new TypeError('Runtime animationFrame() requires a function callback.');
+      if (typeof win.requestAnimationFrame !== 'function') {
+        return timeout(() => callback(Date.now()), 16);
+      }
+      let frame = 0;
+      let active = true;
+      let release = () => false;
+      const tick = timestamp => {
+        frame = 0;
+        if (!active || state !== 'active') return;
+        try {
+          if (callback(timestamp) !== false && active && state === 'active') frame = win.requestAnimationFrame(tick);
+          else release();
+        } catch (error) {
+          report(error, `${owner}/animation frame callback`);
+          release();
+        }
+      };
+      release = addCleanup(() => {
+        active = false;
+        if (frame) win.cancelAnimationFrame(frame);
+        frame = 0;
+      }, 'animation-frame');
+      if (active && state === 'active') frame = win.requestAnimationFrame(tick);
+      return release;
+    }
+
+    function trackObserver(observer) {
+      if (!observer || typeof observer.disconnect !== 'function') throw new TypeError('trackObserver() requires an observer with disconnect().');
+      addCleanup(() => observer.disconnect(), 'observer');
+      return observer;
+    }
+
+    function trackObjectURL(url) {
+      const value = String(url || '');
+      if (!value.startsWith('blob:')) throw new TypeError('Only blob: object URLs can be tracked by a runtime scope.');
+      addCleanup(() => { try { win.URL.revokeObjectURL(value); } catch (_) {} }, 'object-url');
+      return value;
+    }
+
+    function createObjectURL(blob) {
+      if (!win.URL || typeof win.URL.createObjectURL !== 'function') throw new Error('Object URLs are unavailable in this browser.');
+      return trackObjectURL(win.URL.createObjectURL(blob));
+    }
+
+    function trackWorker(worker) {
+      if (!worker || typeof worker.terminate !== 'function') throw new TypeError('trackWorker() requires a Worker-like object with terminate().');
+      addCleanup(() => worker.terminate(), 'worker');
+      return worker;
+    }
+
+    function trackAudioContext(context) {
+      if (!context || typeof context.close !== 'function') throw new TypeError('trackAudioContext() requires an AudioContext-like object.');
+      addCleanup(() => {
+        if (context.state !== 'closed') {
+          const result = context.close();
+          if (result && typeof result.catch === 'function') result.catch(error => report(error, `${owner}/audio-context close`));
+        }
+      }, 'audio-context');
+      return context;
+    }
+
+    function trackAbortController(childController) {
+      const value = childController || new win.AbortController();
+      if (!value || typeof value.abort !== 'function') throw new TypeError('trackAbortController() requires an AbortController-like object.');
+      addCleanup(() => { if (!value.signal || !value.signal.aborted) value.abort(); }, 'abort-controller');
+      return value;
+    }
+
+    function dispose(reason) {
+      if (state !== 'active') return false;
+      state = 'disposing';
+      try { if (!controller.signal.aborted) controller.abort(reason || 'runtime-disposed'); }
+      catch (error) { cleanupFailures += 1; cleanupFailureCount += 1; report(error, `${owner}/abort`); }
+      for (let index = entries.length - 1; index >= 0; index -= 1) runEntry(entries[index]);
+      entries.length = 0;
+      state = 'disposed';
+      disposedAt = Date.now();
+      activeScopes.delete(id);
+      totalScopesDisposed += 1;
+      history.push(Object.freeze({ id, owner, reason: safeLabel(reason, 'manual'), createdAt, disposedAt, durationMs: Math.max(0, disposedAt - createdAt), cleanupFailures }));
+      if (history.length > MAX_HISTORY) history.splice(0, history.length - MAX_HISTORY);
+      publishStatus();
+      return true;
+    }
+
+    function getStatus() {
+      const kinds = Object.create(null);
+      let activeResources = 0;
+      for (const entry of entries) {
+        if (!entry.active) continue;
+        activeResources += 1;
+        kinds[entry.kind] = (kinds[entry.kind] || 0) + 1;
+      }
+      return Object.freeze({ id, owner, state, createdAt, disposedAt, activeResources, resources: Object.freeze(kinds), cleanupFailures });
+    }
+
+    const scope = Object.freeze({
+      id,
+      owner,
+      signal: controller.signal,
+      addCleanup,
+      listen,
+      timeout,
+      interval,
+      animationFrame,
+      trackObserver,
+      trackObjectURL,
+      createObjectURL,
+      trackWorker,
+      trackAudioContext,
+      trackAbortController,
+      dispose,
+      getStatus
+    });
+    activeScopes.set(id, { getStatus });
+    totalScopesCreated += 1;
+    publishStatus();
+    return scope;
+  }
+
+  function disposeAll(reason) {
+    let disposed = 0;
+    // Resolve the active scope objects by the public handle retained below.
+    for (const scope of [...scopeHandles.values()]) {
+      if (scope && scope.getStatus().state === 'active' && scope.dispose(reason || 'dispose-all')) disposed += 1;
+    }
+    return disposed;
+  }
+
+  const scopeHandles = new Set();
+  const originalCreateScope = createScope;
+  function managedCreateScope(options) {
+    const scope = originalCreateScope(options);
+    scopeHandles.add(scope);
+    // Prune old disposed handles; the history list contains the lightweight record.
+    if (scopeHandles.size > MAX_ACTIVE_SCOPES + MAX_HISTORY) {
+      for (const old of [...scopeHandles]) {
+        if (old.getStatus().state === 'disposed') scopeHandles.delete(old);
+        if (scopeHandles.size <= MAX_ACTIVE_SCOPES + MAX_HISTORY) break;
+      }
+    }
+    return scope;
+  }
+
+  const api = Object.freeze({
+    version: VERSION,
+    limits: Object.freeze({ maxActiveScopes: MAX_ACTIVE_SCOPES, maxCleanupsPerScope: MAX_CLEANUPS_PER_SCOPE, historyEntries: MAX_HISTORY }),
+    createScope: managedCreateScope,
+    getStatus: makeStatus,
+    listScopes: () => Object.freeze([...activeScopes.values()].map(scope => scope.getStatus())),
+    getHistory: () => Object.freeze(history.slice()),
+    disposeAll
+  });
+  Object.defineProperty(win, 'CurioidRuntimeSupervisor', { value: api, configurable: false, enumerable: true, writable: false });
+
+  const refresh = () => renderStatus(makeStatus());
+  win.addEventListener('curioid:runtime-change', refresh);
+  win.addEventListener('pageshow', refresh);
+  win.addEventListener('pagehide', event => { if (!event || event.persisted !== true) disposeAll('page-unload'); });
+  if (doc.readyState === 'loading') doc.addEventListener('DOMContentLoaded', refresh, { once: true });
+  else refresh();
+  publishStatus();
+})(typeof window !== 'undefined' ? window : null);
+
     // GitHub Pages cannot set frame-ancestors response headers. Refuse to run
     // interactive CURIOID UI when embedded by another site as a clickjacking fallback.
     if (window.top !== window.self) {
@@ -815,83 +1195,81 @@
       "use strict";
 
       const scrollBehavior = () => document.documentElement.classList.contains("motion-reduced") ? "auto" : "smooth";
-      const STORAGE_KEY = "curioid-face-specimens-v2";
-      const FACE_SETTINGS_KEY = "curioid-face-settings-v1";
-      const MAX_SAVED = 8;
       const CATEGORIES = [
-        { id: "operating-systems", title: "Operating Systems", kicker: "00 / INDEPENDENT WORLDS", description: "Six independent environments plus Sandbox OS, a workshop for building your own Basic, Advanced or Hybrid world. Keep each OS local and independent.", rooms: ["dead-interface", "food-alchemy", "echonoise-os", "umbra-os", "aether-os", "aura-synthesis", "sandbox-os"] },
+        { id: "operating-systems", title: "Operating Systems", kicker: "00 / INDEPENDENT WORLDS", description: "Six independent environments plus Sandbox OS, a workshop for building your own Basic, Advanced or Hybrid world. Keep each OS local and independent.", rooms: ["dead-interface", "food-alchemy", "echonoise-os", "umbra-os", "aura-synthesis", "aether-os", "sandbox-os"] },
         { id: "strange-archives", title: "Strange Archives", kicker: "01 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
         { id: "web-experiments", title: "Web Experiments", kicker: "02 / INTERACTIVE", description: "Curious machines, interactive systems and things to explore.", rooms: ["oddity-lab", "gravity-garden", "pattern-engine", "impossible-objects", "pixel-weather", "dream-index", "rule-garden", "pendulum-choir"] },
-        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers", "unreliable-lift", "moth-census"] },
+        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["curioids", "pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers", "unreliable-lift", "moth-census"] },
         { id: "digital-art", title: "Digital Art", kicker: "04 / VISUAL", description: "Generative images, strange compositions and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather", "strata-loom", "negative-space"] },
         { id: "sound-motion", title: "Sound & Motion", kicker: "05 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "listening-room", "orbit-choir", "tide-signal"] },
         { id: "creative-tools", title: "Applications & Tools", kicker: "06 / STUDIO", description: "Standalone creative tools, generators and useful experiments that work without a separate operating system.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio", "print-room", "poster-press"] }
       ];
 
       const ROOM_INFO = {
-        "sandbox-os": { title: "Sandbox OS", mark: "07", icon: "✳", description: "Build your own operating system in Basic, Advanced or Hybrid mode", copy: "Start with a blank OS or a starter recipe. Add modules one by one, create your own private tools, or switch to Advanced and Hybrid when you want more control. Your OS packages and data stay in this browser. Open the workshop to build, test, save, export and manage your personal operating systems.", visual: "interface", category: "operating-systems" },
-        "aether-os": { title: "The Contextual Mesh", mark: "01", icon: "✧", description: "A spatial workspace for notes, links, files, code and connected ideas", copy: "A local-first project canvas with up to 300 cards per workspace and 2,000 pinned connections. Add notes, links, API references, code, tasks and file references, then arrange them spatially. A local text-similarity worker suggests relationships from material you add; it does not download or run a language model. Workspaces are stored in IndexedDB. Attachments use OPFS when available, with an IndexedDB fallback. Save a project package privately inside Browser Vault. Projects remain within this browser and are not sent to other devices. Aether never pairs with other devices or sends workspace snapshots over a network. Projects remain in browser storage and can be shared with other CURIOID worlds only through explicitly approved local Kernel artifacts.", visual: "interface", category: "operating-systems" },
+        "sandbox-os": { title: "Sandbox OS", mark: "07", icon: "✳", description: "Build your own operating system in Basic, Advanced or Hybrid mode", copy: "Start with a blank OS or a starter recipe. Add modules one by one, create your own private tools, or switch to Advanced and Hybrid when you want more control. Your OS packages and data stay in this browser. Open the workshop to build, test, save, export and manage your personal operating systems.", category: "operating-systems" },
+        "aether-os": { title: "Aether / Cognitive Field", mark: "06", icon: "✧", description: "A local cognitive environment for semantic constellations, evidence synthesis and temporal knowledge mapping", copy: "Aether is a local-first cognitive field for notes, links, code, files and connected ideas. Its Dream Engine proposes explainable semantic relationships; Synthesis creates traceable extractive briefs from your own source cards; Chronoscope arranges knowledge by time. It does not claim sentience or invent facts. Processing stays on-device, with a local worker, IndexedDB and OPFS when supported. WebGPU is optional and not required. No cloud model or remote service is used.", category: "operating-systems" },
         "oddity-lab": { title: "Face Machine", mark: "02", icon: "◉", description: "Generate almost-human faces that feel quietly alive", category: "web-experiments" },
-        "aura-synthesis": { title: "Administrative Creative Environment", mark: "01", icon: "◈", description: "A governed creative office for routine tasking, personal standing and approved production records", copy: "AURA//SYNTHESIS is the standard administrative workspace for creative production. It maintains a personal standing account, issues small continuity directives and records routine acknowledgements. Its color, language, spatial and audio departments operate under fixed office procedures. Local records remain in this browser. AURA does not inspect activity outside its own workspace or control access to other CURIOID worlds.", visual: "interface", category: "operating-systems" },
-        "gravity-garden": { title: "Gravity Garden", mark: "03", icon: "◌", description: "A rotating flower-planet system with a rare singularity", copy: "Build a miniature solar system, drag planets into place, change the speed and watch gravity pull their paths into unexpected orbits.", visual: "orbit" },
-        "pattern-engine": { title: "Pattern Engine", mark: "04", icon: "▦", description: "Repeating shapes, broken symmetry and visual noise", copy: "Create repeating geometry, broken symmetry and intricate visual systems. Change the rules, randomize the composition and export a clean image.", visual: "pattern" },
-        "impossible-objects": { title: "Impossible Objects", mark: "05", icon: "◇", description: "Objects that should not exist, but somehow do", copy: "Rotate and inspect impossible structures, change their perspective and discover where a convincing object stops making physical sense.", visual: "object" },
-        "pixel-weather": { title: "Pixel Weather", mark: "06", icon: "☼", description: "Tiny digital climates from places off the map", copy: "Generate miniature climates from imaginary places. Change the atmosphere, shift the weather and export a snapshot of the forecast.", visual: "weather" },
-        "dream-index": { title: "Dream Index", mark: "07", icon: "✳", description: "A visual index of places that never existed", copy: "Explore invented locations, collect fragments and tune the scene with haze, drift and memory-grain controls.", visual: "dream" },
+        "aura-synthesis": { title: "Administrative Creative Environment", mark: "01", icon: "◈", description: "A governed creative office for routine tasking, personal standing and approved production records", copy: "AURA//SYNTHESIS is the standard administrative workspace for creative production. It maintains a personal standing account, issues small continuity directives and records routine acknowledgements. Its color, language, spatial and audio departments operate under fixed office procedures. Local records remain in this browser. AURA does not inspect activity outside its own workspace or control access to other CURIOID worlds.", category: "operating-systems" },
+        "gravity-garden": { title: "Gravity Garden", mark: "03", icon: "◌", description: "A rotating flower-planet system with a rare singularity", copy: "Build a miniature solar system, drag planets into place, change the speed and watch gravity pull their paths into unexpected orbits." },
+        "pattern-engine": { title: "Pattern Engine", mark: "04", icon: "▦", description: "Repeating shapes, broken symmetry and visual noise", copy: "Create repeating geometry, broken symmetry and intricate visual systems. Change the rules, randomize the composition and export a clean image." },
+        "impossible-objects": { title: "Impossible Objects", mark: "05", icon: "◇", description: "Objects that should not exist, but somehow do", copy: "Rotate and inspect impossible structures, change their perspective and discover where a convincing object stops making physical sense." },
+        "pixel-weather": { title: "Pixel Weather", mark: "06", icon: "☼", description: "Tiny digital climates from places off the map", copy: "Generate miniature climates from imaginary places. Change the atmosphere, shift the weather and export a snapshot of the forecast." },
+        "dream-index": { title: "Dream Index", mark: "07", icon: "✳", description: "A visual index of places that never existed", copy: "Explore invented locations, collect fragments and tune the scene with haze, drift and memory-grain controls." },
 
-        "faultline-portrait": { title: "Faultline Portrait", mark: "05", icon: "◍", description: "Portraits assembled from misaligned pieces of memory", copy: "Build a fractured portrait from contour bands, displaced features and geological color layers. Push the face toward abstraction without losing its uneasy likeness, then export a high-resolution image.", visual: "paint" },
-        "velvet-weather": { title: "Velvet Weather", mark: "06", icon: "☁", description: "A forecast for skies that do not occur naturally", copy: "Generate slow-moving atmospheric landscapes with impossible cloud formations, unfamiliar horizons and weather systems that behave almost correctly.", visual: "weather" },
+        "faultline-portrait": { title: "Faultline Portrait", mark: "05", icon: "◍", description: "Portraits assembled from misaligned pieces of memory", copy: "Build a fractured portrait from contour bands, displaced features and geological color layers. Push the face toward abstraction without losing its uneasy likeness, then export a high-resolution image." },
+        "velvet-weather": { title: "Velvet Weather", mark: "06", icon: "☁", description: "A forecast for skies that do not occur naturally", copy: "Generate slow-moving atmospheric landscapes with impossible cloud formations, unfamiliar horizons and weather systems that behave almost correctly." },
 
-        "umbra-os": { title: "UMBRA Studio", mark: "01", icon: "◐", description: "A darkroom OS for layers, light, texture and impossible images", copy: "Enter UMBRA Studio, a self-contained creative desktop with a lightweight layered image editor. Paint, erase, mask, blend, add type, generate textures, tune color and export polished artwork. Your images stay in your browser.", visual: "umbra" },
-        "chromatic-fossils": { title: "Chromatic Fossils", mark: "02", icon: "◈", description: "Color studies that look excavated from another world", copy: "Layered color fields, strange material studies and abstract compositions with the feeling of found objects. Build layered geological color compositions, adjust the strata and export an original digital artwork.", visual: "paint" },
-        "organic-errors": { title: "Organic Errors", mark: "03", icon: "✣", description: "Beautiful accidents, warped forms and digital growths", copy: "Grow branching forms and cellular structures, mutate their patterns and export the moments when the system almost becomes something familiar.", visual: "organic" },
-        "afterimage-studio": { title: "Afterimage Studio", mark: "04", icon: "▤", description: "Layered images, visual echoes and color ghosts", copy: "Load an image locally and create echoes, offsets, grain and color ghosts. Your source image stays in your browser.", visual: "afterimage" },
+        "umbra-os": { title: "UMBRA Studio", mark: "01", icon: "◐", description: "A darkroom OS for layers, light, texture and impossible images", copy: "Enter UMBRA Studio, a self-contained creative desktop with a lightweight layered image editor. Paint, erase, mask, blend, add type, generate textures, tune color and export polished artwork. Your images stay in your browser." },
+        "chromatic-fossils": { title: "Chromatic Fossils", mark: "02", icon: "◈", description: "Color studies that look excavated from another world", copy: "Layered color fields, strange material studies and abstract compositions with the feeling of found objects. Build layered geological color compositions, adjust the strata and export an original digital artwork." },
+        "organic-errors": { title: "Organic Errors", mark: "03", icon: "✣", description: "Beautiful accidents, warped forms and digital growths", copy: "Grow branching forms and cellular structures, mutate their patterns and export the moments when the system almost becomes something familiar." },
+        "afterimage-studio": { title: "Afterimage Studio", mark: "04", icon: "▤", description: "Layered images, visual echoes and color ghosts", copy: "Load an image locally and create echoes, offsets, grain and color ghosts. Your source image stays in your browser." },
 
-        "borrowed-gravity": { title: "Borrowed Gravity", mark: "04", icon: "↕", description: "A courier game where the floor keeps changing sides", copy: "Navigate a sealed test chamber by shifting gravity between the floor and ceiling. Collect every light fragment and reach the exit without touching the moving hazards.", visual: "game" },
-        "room-remembers": { title: "The Room Remembers", mark: "05", icon: "▦", description: "A memory game where the pattern changes its mind", copy: "Watch a sequence of rooms light up, then repeat it. The room grows longer each round, and a familiar tile may not mean the same thing twice.", visual: "corridor" },
+        "borrowed-gravity": { title: "Borrowed Gravity", mark: "04", icon: "↕", description: "A courier game where the floor keeps changing sides", copy: "Navigate a sealed test chamber by shifting gravity between the floor and ceiling. Collect every light fragment and reach the exit without touching the moving hazards." },
+        "room-remembers": { title: "The Room Remembers", mark: "05", icon: "▦", description: "A memory game where the pattern changes its mind", copy: "Watch a sequence of rooms light up, then repeat it. The room grows longer each round, and a familiar tile may not mean the same thing twice." },
 
-        "pocket-universe": { title: "Pocket Universe", mark: "01", icon: "◎", description: "A tiny playable world with its own rules", copy: "Pilot a tiny courier through a miniature gravitational field, collect nine light shards and reach the gate before your hull runs out.", visual: "game" },
-        "one-button-ritual": { title: "One-Button Ritual", mark: "02", icon: "◉", description: "A game controlled by one button and bad decisions", copy: "A precision timing game with moving targets. Later rounds require one press to align two opposite marks at the same time.", visual: "button" },
-        "last-corridor": { title: "The Last Corridor", mark: "03", icon: "⌁", description: "A strange little journey through one changing space", copy: "Navigate a corridor with three choices while a watcher slowly becomes clearer and closer. Repeating a decision changes how it follows you.", visual: "corridor" },
+        "curioids": { title: "Curioids: The Oddity League", mark: "00", icon: "✹", description: "A full-body creature battler, collection hunt and website-wide expedition", copy: "Recruit a team of strange full-body lifeforms, build synergies, level duplicates, buy food, and battle through escalating rounds. Twenty-plus field missions guide you through the seven CURIOID districts; each mission hatches a randomly weighted new Curioid. All art, logic and progress run locally in your browser.", category: "tiny-games" },
+        "pocket-universe": { title: "Pocket Universe", mark: "01", icon: "◎", description: "A tiny playable world with its own rules", copy: "Pilot a tiny courier through a miniature gravitational field, collect nine light shards and reach the gate before your hull runs out." },
+        "one-button-ritual": { title: "One-Button Ritual", mark: "02", icon: "◉", description: "A game controlled by one button and bad decisions", copy: "A precision timing game with moving targets. Later rounds require one press to align two opposite marks at the same time." },
+        "last-corridor": { title: "The Last Corridor", mark: "03", icon: "⌁", description: "A strange little journey through one changing space", copy: "Navigate a corridor with three choices while a watcher slowly becomes clearer and closer. Repeating a decision changes how it follows you." },
 
-        "listening-room": { title: "The Listening Room", mark: "04", icon: "◖", description: "A room that turns synthetic signals into moving architecture", copy: "Explore generated waveforms as an evolving visual instrument. The signal is created entirely inside CURIOID and never uses a microphone or external device.", visual: "wave" },
-        "orbit-choir": { title: "Orbit Choir", mark: "05", icon: "◎", description: "Three voices circling the same note without agreeing", copy: "Build an evolving ambient chord from three orbiting oscillators. Change their paths, tuning and speed, then listen to the harmony almost settle.", visual: "sound" },
+        "listening-room": { title: "The Listening Room", mark: "04", icon: "◖", description: "A room that turns synthetic signals into moving architecture", copy: "Explore generated waveforms as an evolving visual instrument. The signal is created entirely inside CURIOID and never uses a microphone or external device." },
+        "orbit-choir": { title: "Orbit Choir", mark: "05", icon: "◎", description: "Three voices circling the same note without agreeing", copy: "Build an evolving ambient chord from three orbiting oscillators. Change their paths, tuning and speed, then listen to the harmony almost settle." },
 
-        "echonoise-os": { title: "Chambers of Echoes", mark: "01", icon: "♫", description: "A sound-making world with five synthetic voices, lyric-born melodies and a phonetic songwriting lab", copy: "Build a sound world in Echonoise OS 2126. Program five choir voices across a 16-step sequencer, write lyrics and map them to a generated melody, explore 23,193 English pronunciations in Lexicon Lab, scan stress and meter, reverse-search phonemes, discover rhyme and sound palettes, shape reflections with EchoWeave effects, and save sessions in your local Songbook.", visual: "sound" },
-        "frequency-garden": { title: "Frequency Garden", mark: "02", icon: "〰", description: "Living shapes that respond to sound", copy: "Plant tone-generating blooms in a responsive sound garden. Their positions decide pitch, while the controls shape the sound.", visual: "wave" },
-        "motion-residue": { title: "Motion Residue", mark: "03", icon: "⌁", description: "Movement that leaves strange traces behind", copy: "Draw with a mouse, finger or pen. Build mirrored trails and motion echoes, then export the resulting composition.", visual: "afterimage" },
+        "echonoise-os": { title: "Chambers of Echoes", mark: "01", icon: "♫", description: "A sound-making world with five synthetic voices, lyric-born melodies and a phonetic songwriting lab", copy: "Build a sound world in Echonoise OS 2126. Program five choir voices across a 16-step sequencer, write lyrics and map them to a generated melody, explore 125,093 US-English headwords and 134,119 pronunciation variants in Lexicon Lab, scan stress and meter, reverse-search phonemes, discover rhyme and sound palettes, shape reflections with EchoWeave effects, and save sessions in your local Songbook." },
+        "frequency-garden": { title: "Frequency Garden", mark: "02", icon: "〰", description: "Living shapes that respond to sound", copy: "Plant tone-generating blooms in a responsive sound garden. Their positions decide pitch, while the controls shape the sound." },
+        "motion-residue": { title: "Motion Residue", mark: "03", icon: "⌁", description: "Movement that leaves strange traces behind", copy: "Draw with a mouse, finger or pen. Build mirrored trails and motion echoes, then export the resulting composition." },
 
-        "missing-minutes": { title: "The Office of Missing Minutes", mark: "04", icon: "◷", description: "A public records office for time that went missing", copy: "Search reports from people who lost small portions of their day. Claim a record, inspect the circumstances and see what the office has decided to call it.", visual: "interface" },
-        "unreturned-doors": { title: "The Registry of Unreturned Doors", mark: "05", icon: "▯", description: "A building directory where some rooms are not on the plan", copy: "Inspect a directory of unusual doors, open their entries and discover the rooms behind them. The registry remembers which doors you have visited.", visual: "corridor" },
+        "missing-minutes": { title: "The Office of Missing Minutes", mark: "04", icon: "◷", description: "A public records office for time that went missing", copy: "Search reports from people who lost small portions of their day. Claim a record, inspect the circumstances and see what the office has decided to call it." },
+        "unreturned-doors": { title: "The Registry of Unreturned Doors", mark: "05", icon: "▯", description: "A building directory where some rooms are not on the plan", copy: "Inspect a directory of unusual doors, open their entries and discover the rooms behind them. The registry remembers which doors you have visited." },
 
-        "museum-almost": { title: "Museum of Almost Real Things", mark: "02", icon: "▣", description: "A collection of objects with invented histories", copy: "Browse eight fictional artifacts with detailed acquisition records, object descriptions and notes from the collection staff.", visual: "museum" },
-        "dead-interface": { title: "The Uncatalogued Desktop", mark: "01", icon: "▤", description: "A working computer from a neighbouring timeline", copy: "Explore a complete late-1990s personal computer with practical programs, miniature games, scientific instruments, saved keys, room-based storage and utilities that do not appear in the manual.", visual: "interface", category: "operating-systems" },
-        "unbuilt-tomorrow": { title: "Unbuilt Tomorrow", mark: "03", icon: "⌂", description: "Futures imagined, designed, then forgotten", copy: "Browse shelved proposals for transit, housing, civic design and domestic technology from futures that almost arrived.", visual: "city" },
+        "museum-almost": { title: "Museum of Almost Real Things", mark: "02", icon: "▣", description: "A collection of objects with invented histories", copy: "Browse eight fictional artifacts with detailed acquisition records, object descriptions and notes from the collection staff." },
+        "dead-interface": { title: "The Uncatalogued Desktop", mark: "01", icon: "▤", description: "A working computer from a neighbouring timeline", copy: "Explore a complete late-1990s personal computer with practical programs, miniature games, scientific instruments, saved keys, room-based storage and utilities that do not appear in the manual.", category: "operating-systems" },
+        "unbuilt-tomorrow": { title: "Unbuilt Tomorrow", mark: "03", icon: "⌂", description: "Futures imagined, designed, then forgotten", copy: "Browse shelved proposals for transit, housing, civic design and domestic technology from futures that almost arrived." },
 
-        "color-alchemist": { title: "Color Alchemist", mark: "02", icon: "◍", description: "Mix, bend and discover unusual color relationships", copy: "Generate color harmonies, lock the swatches you like, check text contrast and export CSS variables or a palette file.", visual: "palette" },
-        "type-foundry": { title: "Type Foundry", mark: "03", icon: "Aa", description: "A playground for letters, forms and tiny type tools", copy: "Create a typographic poster with editable phrases, type styles, layout, scale and distortion. Export the composition as PNG.", visual: "type" },
-        "idea-tumbler": { title: "Idea Tumbler", mark: "04", icon: "✳", description: "Shake unrelated ideas together and see what sticks", copy: "Combine subjects, formats and constraints into original project seeds. Save ideas locally or copy a concept to develop further.", visual: "ideas" },
-        "texture-press": { title: "Texture Press", mark: "05", icon: "▧", description: "Make repeatable surfaces, patterns and material studies", copy: "Generate seamless tiles for backgrounds, game surfaces and print work. Adjust scale, texture and irregularity, then export large PNG tiles.", visual: "pattern" },
-        "sprite-sheet-studio": { title: "Sprite Sheet Studio", mark: "06", icon: "▦", description: "Build small animated game characters and sprite sheets", copy: "Choose a character, motion and palette. Preview its loop, export a sprite sheet and copy a CSS animation snippet.", visual: "game" },
-        "vector-mark-studio": { title: "Vector Mark Studio", mark: "07", icon: "◇", description: "Create compact symbols, emblems and identity marks", copy: "Combine simple geometry into a distinctive vector mark. Edit its initials, silhouette and colors, then export SVG or PNG.", visual: "object" },
-        "layout-composer": { title: "Layout Composer", mark: "08", icon: "▤", description: "Compose posters, covers and social graphics", copy: "Set a canvas size, choose a layout rhythm and build a finished typographic composition. Export clean artwork for further editing.", visual: "type" },
-        "palette-extractor": { title: "Palette Extractor", mark: "09", icon: "◍", description: "Pull useful color systems from your own images", copy: "Choose an image stored on your device and extract a balanced palette locally. Copy CSS variables or export a palette file; the image is never uploaded.", visual: "palette" },
-        "gradient-atlas": { title: "Gradient Atlas", mark: "10", icon: "◒", description: "Build expressive gradient systems and save CSS", copy: "Mix color stops, choose linear, radial or conic geometry, add grain and export the result as CSS or PNG.", visual: "palette" },
-        "contact-sheet": { title: "Contact Sheet", mark: "11", icon: "▦", description: "Turn a folder of images into a clean visual index", copy: "Select a batch of local images, arrange them into a labelled contact sheet, adjust spacing and export a print-ready PNG.", visual: "type" },
-        "pixel-sort-lab": { title: "Pixel Sort Lab", mark: "12", icon: "▥", description: "Reorder image pixels into controlled visual distortions", copy: "Sort selected pixel runs by luminance, hue or saturation. Compare vertical and horizontal passes, tune thresholds and export the altered image.", visual: "afterimage" },
-        "shape-composer": { title: "Shape Composer", mark: "13", icon: "◇", description: "Compose bold abstract graphics from modular geometry", copy: "Build a layered graphic from repeatable shapes, symmetry, palette and controlled chaos. Export crisp large-format artwork.", visual: "object" },
-        "icon-set-studio": { title: "Icon Set Studio", mark: "14", icon: "⌘", description: "Design a coherent family of tiny interface symbols", copy: "Set a shared stroke, grid and visual language, generate a 12-icon family and export a reusable SVG sprite sheet.", visual: "interface" },
-        "rule-garden": { title: "Rule Garden", mark: "08", icon: "▥", description: "Grow intricate worlds from a handful of local rules", copy: "Choose a cellular automaton rule, seed a small disturbance and watch a simple row of cells unfold into an intricate visual system.", visual: "pattern" },
-        "pendulum-choir": { title: "Pendulum Choir", mark: "09", icon: "〰", description: "A field of pendulums that gradually lose agreement", copy: "Tune gravity, coupling and the number of pendulums. Watch their paths braid together, then export a trace of the movement.", visual: "wave" },
-        "strata-loom": { title: "Strata Loom", mark: "07", icon: "▧", description: "Weave a surface from bands, threads and imperfect tension", copy: "Generate woven surfaces with variable warp, weft, knots, slippage and material palettes. Save a seamless-looking visual study as an image.", visual: "paint" },
-        "negative-space": { title: "Negative Space Department", mark: "08", icon: "◩", description: "Make a composition from the parts that are missing", copy: "Cut holes, windows and shifting silhouettes from a layered poster field. Adjust the balance of positive and negative space, then export.", visual: "object" },
-        "unreliable-lift": { title: "Unreliable Lift", mark: "06", icon: "↕", description: "Deliver passengers through a building with uncertain floors", copy: "Read the destination requests, choose the lift route and try to complete the run before the floor indicators begin to disagree.", visual: "game" },
-        "moth-census": { title: "Moth Census", mark: "07", icon: "✦", description: "Count the visitors that gather around a very strange lamp", copy: "A short observation game. Identify moths among decoys, build a streak and keep the census alive until the lamp changes its mind.", visual: "game" },
-        "tide-signal": { title: "Tide Signal", mark: "06", icon: "≈", description: "A small radio that listens to a tide that is not on a map", copy: "Shape a local ambient signal using slow oscillators, filters and modulated noise. It only makes sound after you start it.", visual: "sound" },
-        "atlas-unclaimed": { title: "Atlas of Unclaimed Names", mark: "06", icon: "⌖", description: "A registry of places that have names but no confirmed locations", copy: "Search an archive of invented place names, inspect their notes and claim entries for a local collection.", visual: "archive" },
-        "print-room": { title: "Print Room", mark: "15", icon: "▤", description: "Turn ordinary images into strange print processes", copy: "Apply risograph, overprint, halftone, photocopy and threshold treatments to a sample or local image. Everything happens in your browser.", visual: "afterimage" },
-        "poster-press": { title: "Poster Press", mark: "16", icon: "▣", description: "Build a finished poster from type, color and a few strong shapes", copy: "Compose a poster with editable copy, layout systems, typography, graphic marks and print texture. Export a high-resolution PNG.", visual: "type" },
-        "food-alchemy": { title: "The Recipe Foundry", mark: "08", icon: "♨", description: "Explore a futuristic kitchen desktop. Combine ingredients into new creations and chain them into dishes.", copy: "Welcome to NOURISH OS 2126. Select one ingredient, then another, or drag one onto another to discover new creations. Every discovery appears on your desktop and can become part of another chain. Launch Pantry, Recipe Library, Kitchen Timer, Shopping List or Food Journal from the desktop or Start menu. Your experiments save locally on this device.", visual: "ideas" },
+        "color-alchemist": { title: "Color Alchemist", mark: "02", icon: "◍", description: "Mix, bend and discover unusual color relationships", copy: "Generate color harmonies, lock the swatches you like, check text contrast and export CSS variables or a palette file." },
+        "type-foundry": { title: "Type Foundry", mark: "03", icon: "Aa", description: "A playground for letters, forms and tiny type tools", copy: "Create a typographic poster with editable phrases, type styles, layout, scale and distortion. Export the composition as PNG." },
+        "idea-tumbler": { title: "Idea Tumbler", mark: "04", icon: "✳", description: "Shake unrelated ideas together and see what sticks", copy: "Combine subjects, formats and constraints into original project seeds. Save ideas locally or copy a concept to develop further." },
+        "texture-press": { title: "Texture Press", mark: "05", icon: "▧", description: "Make repeatable surfaces, patterns and material studies", copy: "Generate seamless tiles for backgrounds, game surfaces and print work. Adjust scale, texture and irregularity, then export large PNG tiles." },
+        "sprite-sheet-studio": { title: "Sprite Sheet Studio", mark: "06", icon: "▦", description: "Build small animated game characters and sprite sheets", copy: "Choose a character, motion and palette. Preview its loop, export a sprite sheet and copy a CSS animation snippet." },
+        "vector-mark-studio": { title: "Vector Mark Studio", mark: "07", icon: "◇", description: "Create compact symbols, emblems and identity marks", copy: "Combine simple geometry into a distinctive vector mark. Edit its initials, silhouette and colors, then export SVG or PNG." },
+        "layout-composer": { title: "Layout Composer", mark: "08", icon: "▤", description: "Compose posters, covers and social graphics", copy: "Set a canvas size, choose a layout rhythm and build a finished typographic composition. Export clean artwork for further editing." },
+        "palette-extractor": { title: "Palette Extractor", mark: "09", icon: "◍", description: "Pull useful color systems from your own images", copy: "Choose an image stored on your device and extract a balanced palette locally. Copy CSS variables or export a palette file; the image is never uploaded." },
+        "gradient-atlas": { title: "Gradient Atlas", mark: "10", icon: "◒", description: "Build expressive gradient systems and save CSS", copy: "Mix color stops, choose linear, radial or conic geometry, add grain and export the result as CSS or PNG." },
+        "contact-sheet": { title: "Contact Sheet", mark: "11", icon: "▦", description: "Turn a folder of images into a clean visual index", copy: "Select a batch of local images, arrange them into a labelled contact sheet, adjust spacing and export a print-ready PNG." },
+        "pixel-sort-lab": { title: "Pixel Sort Lab", mark: "12", icon: "▥", description: "Reorder image pixels into controlled visual distortions", copy: "Sort selected pixel runs by luminance, hue or saturation. Compare vertical and horizontal passes, tune thresholds and export the altered image." },
+        "shape-composer": { title: "Shape Composer", mark: "13", icon: "◇", description: "Compose bold abstract graphics from modular geometry", copy: "Build a layered graphic from repeatable shapes, symmetry, palette and controlled chaos. Export crisp large-format artwork." },
+        "icon-set-studio": { title: "Icon Set Studio", mark: "14", icon: "⌘", description: "Design a coherent family of tiny interface symbols", copy: "Set a shared stroke, grid and visual language, generate a 12-icon family and export a reusable SVG sprite sheet." },
+        "rule-garden": { title: "Rule Garden", mark: "08", icon: "▥", description: "Grow intricate worlds from a handful of local rules", copy: "Choose a cellular automaton rule, seed a small disturbance and watch a simple row of cells unfold into an intricate visual system." },
+        "pendulum-choir": { title: "Pendulum Choir", mark: "09", icon: "〰", description: "A field of pendulums that gradually lose agreement", copy: "Tune gravity, coupling and the number of pendulums. Watch their paths braid together, then export a trace of the movement." },
+        "strata-loom": { title: "Strata Loom", mark: "07", icon: "▧", description: "Weave a surface from bands, threads and imperfect tension", copy: "Generate woven surfaces with variable warp, weft, knots, slippage and material palettes. Save a seamless-looking visual study as an image." },
+        "negative-space": { title: "Negative Space Department", mark: "08", icon: "◩", description: "Make a composition from the parts that are missing", copy: "Cut holes, windows and shifting silhouettes from a layered poster field. Adjust the balance of positive and negative space, then export." },
+        "unreliable-lift": { title: "Unreliable Lift", mark: "06", icon: "↕", description: "Deliver passengers through a building with uncertain floors", copy: "Read the destination requests, choose the lift route and try to complete the run before the floor indicators begin to disagree." },
+        "moth-census": { title: "Moth Census", mark: "07", icon: "✦", description: "Count the visitors that gather around a very strange lamp", copy: "A short observation game. Identify moths among decoys, build a streak and keep the census alive until the lamp changes its mind." },
+        "tide-signal": { title: "Tide Signal", mark: "06", icon: "≈", description: "A small radio that listens to a tide that is not on a map", copy: "Shape a local ambient signal using slow oscillators, filters and modulated noise. It only makes sound after you start it." },
+        "atlas-unclaimed": { title: "Atlas of Unclaimed Names", mark: "06", icon: "⌖", description: "A registry of places that have names but no confirmed locations", copy: "Search an archive of invented place names, inspect their notes and claim entries for a local collection." },
+        "print-room": { title: "Print Room", mark: "15", icon: "▤", description: "Turn ordinary images into strange print processes", copy: "Apply risograph, overprint, halftone, photocopy and threshold treatments to a sample or local image. Everything happens in your browser." },
+        "poster-press": { title: "Poster Press", mark: "16", icon: "▣", description: "Build a finished poster from type, color and a few strong shapes", copy: "Compose a poster with editable copy, layout systems, typography, graphic marks and print texture. Export a high-resolution PNG." },
+        "food-alchemy": { title: "The Recipe Foundry", mark: "08", icon: "♨", description: "Explore a futuristic kitchen desktop. Combine ingredients into new creations and chain them into dishes.", copy: "Welcome to NOURISH OS 2126. Select one ingredient, then another, or drag one onto another to discover new creations. Every discovery appears on your desktop and can become part of another chain. Launch Pantry, Recipe Library, Kitchen Timer, Shopping List or Food Journal from the desktop or Start menu. Your experiments save locally on this device." },
       };
 
       function projectDisplayTitle(id, title = ROOM_INFO[id]?.title || id) {
@@ -902,7 +1280,7 @@
       const ROOM_ICON_BY_ID = {
         "aether-os":"✧", "sandbox-os":"✳", "oddity-lab":"◉", "gravity-garden":"⊙", "pattern-engine":"▦", "impossible-objects":"◇", "pixel-weather":"☼", "dream-index":"☾", "rule-garden":"▥", "pendulum-choir":"⚖",
         "umbra-os":"◐", "chromatic-fossils":"◈", "organic-errors":"✿", "afterimage-studio":"▤", "faultline-portrait":"◍", "velvet-weather":"☁", "strata-loom":"▧", "negative-space":"◩",
-        "pocket-universe":"◎", "one-button-ritual":"⦿", "last-corridor":"▭", "borrowed-gravity":"↕", "room-remembers":"▧", "unreliable-lift":"⇅", "moth-census":"✦", "food-alchemy":"♨",
+        "curioids":"✹", "pocket-universe":"◎", "one-button-ritual":"⦿", "last-corridor":"▭", "borrowed-gravity":"↕", "room-remembers":"▧", "unreliable-lift":"⇅", "moth-census":"✦", "food-alchemy":"♨",
         "echonoise-os":"♫", "frequency-garden":"〰", "motion-residue":"⇢", "listening-room":"◖", "orbit-choir":"◉", "tide-signal":"≈",
         "museum-almost":"▣", "dead-interface":"▤", "unbuilt-tomorrow":"⌂", "missing-minutes":"◷", "unreturned-doors":"▯", "atlas-unclaimed":"⌖",
         "aura-synthesis":"◈", "color-alchemist":"◍", "type-foundry":"Aa", "idea-tumbler":"✳", "texture-press":"▨", "sprite-sheet-studio":"▦", "vector-mark-studio":"◇", "layout-composer":"▤", "palette-extractor":"◒", "gradient-atlas":"◓", "contact-sheet":"▩", "pixel-sort-lab":"▥", "shape-composer":"△", "icon-set-studio":"⌘", "print-room":"▱", "poster-press":"▣"
@@ -928,7 +1306,7 @@
       ]);
       const CURIOID_SHARED_SERVICES = Object.freeze([...CURIOID_LOCAL_DATA_SERVICES, ...CURIOID_WORKSHOP_SERVICES, CURIOID_WORKFLOW_SERVICE, CURIOID_UNIVERSE_WORKSHOP_SERVICE]);
       const CURIOID_WORLD_DEFINITIONS = Object.freeze([
-        Object.freeze({ id: 'dead-interface', name: 'Doors98', summary: 'A Windows-style desktop with its own rooms, keys and local C: memory.', mark: '▤' }),
+        Object.freeze({ id: 'dead-interface', name: 'Doors98', summary: 'A retro desktop with its own rooms, keys and local C: memory.', mark: '▤' }),
         Object.freeze({ id: 'food-alchemy', name: 'NOURISH OS', summary: 'A kitchen desktop for ingredients, recipes, planning and food experiments.', mark: '♨' }),
         Object.freeze({ id: 'echonoise-os', name: 'Echonoise', summary: 'A music-making environment for songs, sessions and voice experiments.', mark: '♫' }),
         Object.freeze({ id: 'umbra-os', name: 'UMBRA', summary: 'A darkroom-style image workspace for layers, light and texture.', mark: '◐' }),
@@ -1049,11 +1427,6 @@
 
       const $ = (selector, root = document) => root.querySelector(selector);
       const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-      // Shared HTML escaping for the catalogue's small, data-driven fragments.
-      // Keep this in the page shell because project modules have their own scope.
-      const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-      })[char]);
       const motionToggle = $("#motionToggle");
       const initialMotionPreference = (() => {
         try { const saved = localStorage.getItem("curioid-motion-enabled"); if (saved === "1") return true; if (saved === "0") return false; } catch (_) {}
@@ -1228,59 +1601,6 @@
         if (message) { showToast(String(message)); addSiteNotification(String(message), event.detail?.sourceId || ''); }
       });
 
-      function futurePreviewSvg(type) {
-        const common = 'fill="none" stroke="#d6ff69" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
-        const art = {
-          orbit: `<g ${common}><circle cx="120" cy="75" r="37" opacity=".65"/><circle cx="120" cy="75" r="17"/><ellipse cx="120" cy="75" rx="94" ry="27" transform="rotate(-26 120 75)"/><circle cx="199" cy="36" r="5" fill="#baa7ff" stroke="none"/><path d="M120 22v-9m0 124v-9M67 75h-9m124 0h-9"/></g>`,
-          pattern: `<g ${common}>${Array.from({length:7},(_,i)=>`<path d="M${32+i*29} 24l22 22-22 22-22-22Z" transform="translate(0 ${i%2?13:0})" opacity="${.35+i*.08}"/>`).join("")}<circle cx="120" cy="75" r="14" fill="#baa7ff" stroke="none"/></g>`,
-          wave: `<g ${common}>${Array.from({length:35},(_,i)=>`<path d="M${12+i*6} 75q3 ${Math.sin(i*.7)*38} 6 0" opacity="${.25+(i%5)*.13}"/>`).join("")}</g>`,
-          object: `<g ${common}><path d="M70 35h72v72H70zM70 35l42-20 73 0-43 20M142 35l43-20v71l-43 21"/><path d="M70 107l42 22 73-43M112 57v72" stroke="#baa7ff"/></g>`,
-          weather: `<g ${common}><path d="M22 106Q44 88 66 106t44 0 44 0 44 0"/><circle cx="165" cy="40" r="19" stroke="#baa7ff"/><path d="M165 10v-7m0 74v-7m-30-30h-7m74 0h-7"/><path d="M52 30l8 16m20-24-2 20" stroke="#baa7ff"/></g>`,
-          dream: `<g ${common}><path d="M33 120V66l35-24 35 24v54M103 120V48l38-28 38 28v72"/><path d="M53 120V82h30v38m39 0V72h39v48"/><circle cx="103" cy="24" r="5" fill="#baa7ff" stroke="none"/></g>`,
-          umbra: `<g ${common}><rect x="34" y="18" width="172" height="114" rx="7" stroke="#59606d"/><path d="M34 40h172" stroke="#59606d"/><circle cx="47" cy="29" r="3" fill="#ff718d" stroke="none"/><circle cx="58" cy="29" r="3" fill="#e7bb65" stroke="none"/><circle cx="69" cy="29" r="3" fill="#d6ff69" stroke="none"/><path d="M55 105 96 55l26 31 22-22 40 41" stroke="#baa7ff" stroke-width="3"/><path d="M55 105h130" stroke="#d6ff69"/><circle cx="145" cy="59" r="9" fill="#d6ff69" stroke="none"/><path d="M102 48l11-16 11 16" stroke="#ff9cba"/></g>`,
-          paint: `<g><path d="M40 120C20 90 43 27 92 27s84 24 90 59-37 53-71 29-48 33-71 5Z" fill="#baa7ff" opacity=".6"/><path d="M50 83q40-55 88-24t34 23" fill="none" stroke="#d6ff69" stroke-width="3"/><circle cx="83" cy="65" r="10" fill="#d6ff69"/></g>`,
-          organic: `<g ${common}><path d="M120 130C14 111 40 22 120 18c80 4 106 93 0 112Z"/><path d="M120 18Q78 73 120 130M120 18Q167 68 120 130M34 70q40-20 86 5 42 20 86-6"/><circle cx="120" cy="75" r="10" fill="#ff9cba" stroke="none"/></g>`,
-          afterimage: `<g fill="none" stroke-width="7" stroke-linecap="round"><path d="M48 105Q85 8 128 77t58-41" stroke="#baa7ff" opacity=".32"/><path d="M38 115Q77 18 120 87t58-41" stroke="#85e6da" opacity=".52"/><path d="M28 125Q67 28 110 97t58-41" stroke="#d6ff69"/></g>`,
-          game: `<g ${common}><rect x="42" y="19" width="157" height="110" rx="8"/><path d="M60 99l35-51 35 51 35-51 17 25"/><circle cx="151" cy="40" r="8" fill="#ff9cba" stroke="none"/></g>`,
-          button: `<g ${common}><circle cx="120" cy="75" r="52"/><circle cx="120" cy="75" r="34" stroke="#baa7ff" stroke-width="8"/><circle cx="120" cy="75" r="17" fill="#d6ff69" stroke="none"/><path d="M120 5v18m0 104v18M50 75H32m176 0h-18"/></g>`,
-          corridor: `<g ${common}><path d="M26 130 74 20h92l48 110M74 20v110m92-110v110M97 130V55h46v75"/><path d="M110 55l10-14 10 14" stroke="#baa7ff"/></g>`,
-          sound: `<g ${common}>${Array.from({length:9},(_,i)=>`<path d="M${27+i*24} 75q-9 -${15+i*4} 0 -${31+i*5}q9 ${31+i*5} 0 ${62+i*7}q-9 -${31+i*5} 0 -${62+i*7}" stroke="${i%3===0?'#baa7ff':'#d6ff69'}" opacity=".8"/>`).join("")}</g>`,
-          museum: `<g ${common}><rect x="34" y="24" width="174" height="105" rx="4"/><path d="M48 111h146M60 94V48h32v46m14 0V42h32v52m13 0V59h25v35"/><circle cx="77" cy="37" r="4" fill="#baa7ff" stroke="none"/></g>`,
-          interface: `<g ${common}><rect x="27" y="20" width="186" height="112" rx="7"/><path d="M27 43h186M44 57h66v60H44zm79 0h75v12h-75zm0 22h57v5h-57zm0 16h65v5h-65zm0 16h42v5h-42"/><circle cx="41" cy="32" r="3" fill="#ff9cba" stroke="none"/></g>`,
-          city: `<g ${common}><path d="M25 128V77h30v51m9 0V41h43v87m12 0V65h30v63m11 0V25h40v103"/><path d="M73 54h8m-8 14h8m-8 14h8m-8 14h8m50-20h8m-8 14h8m35-43h8m-8 15h8m-8 15h8" stroke="#baa7ff"/></g>`,
-          palette: `<g><circle cx="75" cy="75" r="48" fill="#baa7ff"/><circle cx="130" cy="65" r="43" fill="#d6ff69" opacity=".8"/><circle cx="153" cy="108" r="31" fill="#ff9cba" opacity=".85"/><circle cx="70" cy="81" r="13" fill="#17171d"/></g>`,
-          type: `<g fill="#d6ff69" font-family="Georgia,serif" text-anchor="middle"><text x="120" y="103" font-size="88">Aa</text><path d="M42 119h156" stroke="#baa7ff" stroke-width="2"/></g>`,
-          ideas: `<g ${common}><circle cx="120" cy="75" r="47"/><circle cx="72" cy="45" r="13" stroke="#baa7ff"/><circle cx="165" cy="44" r="15" stroke="#ff9cba"/><circle cx="75" cy="112" r="11" stroke="#85e6da"/><circle cx="169" cy="110" r="9"/><path d="M84 53l24 13m25-5 19-12M87 105l20-20m35 9 18 10"/></g>`
-        };
-        return `<svg viewBox="0 0 240 150" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">${art[type] || art.orbit}</svg>`;
-      }
-
-      function createFuturePreviewNode(type) {
-        // The SVG source is selected only from the fixed, source-authored art map above.
-        // Parse it as SVG XML (not HTML), then enforce a small allowlist before it enters the live DOM.
-        const namespace = "http://www.w3.org/2000/svg";
-        const fallback = document.createElementNS(namespace, "svg");
-        fallback.setAttribute("viewBox", "0 0 240 150");
-        fallback.setAttribute("aria-hidden", "true");
-        try {
-          const parsed = new DOMParser().parseFromString(futurePreviewSvg(type), "image/svg+xml");
-          const svg = parsed.documentElement;
-          if (!svg || svg.localName !== "svg" || svg.namespaceURI !== namespace || parsed.querySelector("parsererror")) return fallback;
-          const allowedTags = new Set(["svg", "g", "path", "circle", "ellipse", "rect", "text"]);
-          const allowedAttributes = new Set(["viewBox", "xmlns", "aria-hidden", "fill", "stroke", "stroke-width", "stroke-linecap", "stroke-linejoin", "opacity", "cx", "cy", "r", "rx", "ry", "transform", "d", "x", "y", "font-size", "font-family", "text-anchor"]);
-          for (const element of [svg, ...svg.querySelectorAll("*")]) {
-            if (!allowedTags.has(element.localName) || element.namespaceURI !== namespace) { element.remove(); continue; }
-            for (const attribute of Array.from(element.attributes)) {
-              if (!allowedAttributes.has(attribute.name) || /^on/i.test(attribute.name) || /url\s*\(|javascript:/i.test(attribute.value)) element.removeAttribute(attribute.name);
-            }
-          }
-          if (Array.from(svg.querySelectorAll("*")).some(element => !allowedTags.has(element.localName))) return fallback;
-          return document.importNode(svg, true);
-        } catch (_) {
-          return fallback;
-        }
-      }
-
       function createProjectLoadingStatus(message) {
         const status = document.createElement("div");
         status.className = "project-loading";
@@ -1294,41 +1614,76 @@
         return status;
       }
 
-      function renderFutureRoom(roomId) {
-        const info = ROOM_INFO[roomId];
-        const html = document.createElement("div");
-        html.className = "future-room";
-        const text = document.createElement("div");
-        const kicker = document.createElement("p");
-        kicker.className = "future-kicker";
-        kicker.textContent = `PROJECT / ${info.mark}`;
-        const title = document.createElement("h3");
-        title.textContent = info.title;
-        const description = document.createElement("p");
-        description.textContent = info.copy;
-        const recovery = document.createElement("p");
-        recovery.textContent = "This project module did not initialize. Close this window and reopen it; the rest of the collection remains available.";
-        const detail = document.createElement("span");
-        detail.className = "future-details";
-        detail.textContent = "MODULE INITIALIZATION ISSUE";
-        text.append(kicker, title, description, recovery, detail);
-        const preview = document.createElement("div");
-        preview.className = "future-preview";
-        const previewLabel = document.createElement("span");
-        previewLabel.className = "future-preview-label";
-        previewLabel.textContent = `${info.title} / 01`;
-        preview.append(createFuturePreviewNode(info.visual), previewLabel);
-        html.append(text, preview);
-        return html;
-      }
-
       const ROOM_CARD_BY_ID = new Map();
       const CATEGORY_SECTION_BY_ID = new Map();
       const CATEGORY_NAV_BY_ID = new Map();
       const ROOM_SEARCH_TEXT_BY_ID = new Map();
       const SITE_FAVORITES_KEY = 'curioid-site-favorites-v1';
       const SITE_RECENTS_KEY = 'curioid-site-recents-v1';
+      function normalizeSiteSessionData(value,knownIds,limit=8){
+        if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(key=>!['version','rooms','activeRoomId'].includes(key))||value.version!==1||!Array.isArray(value.rooms)||value.rooms.length>limit||typeof value.activeRoomId!=='string')return null;
+        if(value.rooms.some(id=>typeof id!=='string'||!Object.prototype.hasOwnProperty.call(knownIds,id))||new Set(value.rooms).size!==value.rooms.length||value.activeRoomId!==''&&!value.rooms.includes(value.activeRoomId))return null;
+        return {version:1,rooms:[...value.rooms],activeRoomId:value.activeRoomId};
+      }
+      function buildSiteSessionData(openRooms,activeRoomId,knownIds,limit=8){
+        const unique=[...new Set(openRooms.filter(id=>typeof id==='string'&&Object.prototype.hasOwnProperty.call(knownIds,id)))];
+        let rooms=unique.slice(-limit);
+        if(activeRoomId&&unique.includes(activeRoomId)&&!rooms.includes(activeRoomId))rooms=[...rooms.slice(1),activeRoomId];
+        const active=activeRoomId&&rooms.includes(activeRoomId)?activeRoomId:(rooms.at(-1)||'');
+        return {version:1,rooms,activeRoomId:active};
+      }
+      const SITE_SESSION_KEY = 'curioid-site-window-session-v1';
+      const SITE_SESSION_LIMIT = 8;
+      const SITE_SESSION_STATE = { raw:null, hasStored:false, readOnly:false, reason:'', rooms:[], activeRoomId:'' };
       const SITE_ID_STORAGE = new Map();
+      function readSiteSession(){
+        try{
+          const raw=localStorage.getItem(SITE_SESSION_KEY);
+          SITE_SESSION_STATE.raw=raw;SITE_SESSION_STATE.hasStored=raw!==null;
+          if(raw===null)return SITE_SESSION_STATE;
+          if(typeof raw!=='string'||raw.length>4096)throw new Error('The saved window session exceeds its safe size limit.');
+          const value=normalizeSiteSessionData(JSON.parse(raw),ROOM_INFO,SITE_SESSION_LIMIT);
+          if(!value)throw new Error('The saved window session has invalid project IDs or structure.');
+          SITE_SESSION_STATE.rooms=value.rooms;SITE_SESSION_STATE.activeRoomId=value.activeRoomId;
+        }catch(error){SITE_SESSION_STATE.readOnly=true;SITE_SESSION_STATE.reason=String(error?.message||error).slice(0,180);}
+        return SITE_SESSION_STATE;
+      }
+      readSiteSession();
+      function updateSiteSessionButton(){
+        const button=$('[data-restore-site-session]');if(!button)return;
+        const count=SITE_SESSION_STATE.rooms.length;
+        button.disabled=SITE_SESSION_STATE.readOnly||!SITE_SESSION_STATE.hasStored||count===0;
+        button.textContent=count?`Restore last session (${count})`:'Restore last session';
+        button.title=SITE_SESSION_STATE.readOnly?`Session restore is read-only: ${SITE_SESSION_STATE.reason}`:count?`Reopen ${count} project window${count===1?'':'s'} from your last saved session`:'No previous project session is saved.';
+      }
+      function saveSiteSession(activeRoomId=''){
+        if(SITE_SESSION_STATE.readOnly)return false;
+        const openRooms=$$('.room-window.open').map(room=>room.dataset.room);
+        const session=buildSiteSessionData(openRooms,activeRoomId,ROOM_INFO,SITE_SESSION_LIMIT);
+        const {rooms,activeRoomId:active}=session;
+        const serialized=JSON.stringify(session);
+        let previous;
+        try{
+          previous=localStorage.getItem(SITE_SESSION_KEY);
+          if(previous!==SITE_SESSION_STATE.raw){SITE_SESSION_STATE.readOnly=true;SITE_SESSION_STATE.reason='Another tab changed the saved window session. Reload before changing it.';updateSiteSessionButton();return false;}
+          localStorage.setItem(SITE_SESSION_KEY,serialized);
+          if(localStorage.getItem(SITE_SESSION_KEY)!==serialized)throw new Error('The window session failed read-back verification.');
+          SITE_SESSION_STATE.raw=serialized;SITE_SESSION_STATE.hasStored=true;SITE_SESSION_STATE.rooms=rooms;SITE_SESSION_STATE.activeRoomId=active;updateSiteSessionButton();return true;
+        }catch(error){
+          SITE_SESSION_STATE.readOnly=true;SITE_SESSION_STATE.reason=String(error?.message||error).slice(0,180);updateSiteSessionButton();return false;
+        }
+      }
+      function restoreSiteSession(){
+        if(SITE_SESSION_STATE.readOnly){showToast(`Saved window session is read-only. ${SITE_SESSION_STATE.reason}`);return;}
+        const ids=[...SITE_SESSION_STATE.rooms].filter(id=>Object.prototype.hasOwnProperty.call(ROOM_INFO,id));
+        if(!ids.length){showToast('There are no saved project windows to restore.');updateSiteSessionButton();return;}
+        const activeId=SITE_SESSION_STATE.activeRoomId||ids[ids.length-1];
+        let restored=0;
+        for(const id of ids){const room=$(`#room-${CSS.escape(id)}`);if(room&&!room.classList.contains('open')){setRoomOpen(room,true,false);restored++;}}
+        const activeRoom=$(`#room-${CSS.escape(activeId)}`);
+        if(activeRoom){const section=activeRoom.closest('[data-category-section]');if(section)setActiveCategory(section.dataset.categorySection);requestAnimationFrame(()=>activeRoom.scrollIntoView({behavior:scrollBehavior(),block:'start'}));}
+        saveSiteSession(activeId);showToast(restored?`${restored} project window${restored===1?'':'s'} restored from your last session.`:'Your last session is already open.');
+      }
       function readSiteIds(key, limit=24) {
         let raw=null;
         try {
@@ -1414,16 +1769,20 @@
         const clearRecent = $('[data-clear-site-recents]');
         if (clearFavorites) clearFavorites.disabled = siteFavorites.length === 0;
         if (clearRecent) clearRecent.disabled = siteRecents.length === 0;
+        updateSiteSessionButton();
       }
 
       function createRoomCard(roomId, index) {
         const info = ROOM_INFO[roomId];
         const projectProfile = CURIOID_PROJECT_PROFILES.get(roomId);
-        const isOpen = roomId === "dead-interface";
+        const isOpen = roomId === "dead-interface" && !SITE_SESSION_STATE.hasStored;
         const article = document.createElement("article");
         article.className = `room-window${isOpen ? " open" : ""}`;
         article.id = `room-${roomId}`;
         article.dataset.room = roomId;
+        // Each dynamically created room is an opt-in expedition surface.
+        // Generic Curioids missions count coarse actions here, never user content.
+        article.dataset.curioidExperience = "";
         const heading = document.createElement("button");
         heading.className = "room-heading";
         heading.type = "button";
@@ -1498,7 +1857,7 @@
       }
 
       function updateProjectCount() {
-        // Count includes the 53 project modules and the first-class Sandbox OS workshop.
+        // Count includes all catalogue rooms, including Curioids and the native Sandbox OS workshop.
         const total = CATEGORIES.reduce((sum, category) => sum + category.rooms.length, 0);
         const count = $("#projectCount");
         if (count) count.textContent = `${total} Projects`;
@@ -1567,7 +1926,7 @@
         // mix local files with a remote copy of another release: SRI must reject
         // that mismatch. Serve this folder over localhost or deploy it over HTTPS.
         if (window.location.protocol === "file:") {
-          const error = new Error("CURIOID cannot run by double-clicking index.html (file://). Keep all seven website files together and either run Start-CURIOID-Local.bat in this folder (Python 3 required), or publish the files to your GitHub Pages site and open its HTTPS address.");
+          const error = new Error("CURIOID cannot run by double-clicking index.html (file://). Keep all core CURIOID website files together and either run Start-CURIOID-Local.bat in this folder (Python 3 required), or publish the files to your GitHub Pages site and open its HTTPS address.");
           error.code = "CURIOID_FILE_PROTOCOL_UNSUPPORTED";
           error.attemptedUrls = [];
           return Promise.reject(error);
@@ -1621,7 +1980,7 @@
           const failures = [];
           const attempt = index => {
             if (index >= urls.length) {
-              const details = failures.map(item => `${item.url} — ${item.reason}`).join("; ");
+              const details = failures.map(item => `${item.url}: ${item.reason}`).join("; ");
               const error = new Error(`${expected} could not be loaded. Tried ${details || urls.join(", ")}. Check that ${file} is beside index.html with the exact lowercase filename and belongs to the same release. If the files are correct, hard-refresh to clear stale cached assets.`);
               error.code = "CURIOID_PROJECT_ASSET_LOAD_FAILED";
               error.attemptedUrls = urls.slice();
@@ -1691,7 +2050,7 @@
           if (previous) previous.remove();
           projectCssPromise = loadAssetWithFallback({
             type: "link",
-            file: "projects.css", hash: "701ee4a2343230fcc114dca7952a077606bad8de2387e6dee80531c51a303cb3", integrity: "sha384-wo18zeqdDZx60urGFQ6XPk//gRdao7jGMDhsg8ECu+MF4Y6U4XUrf4V4ncWFvzfs",
+            file: "projects.css", hash: "a25c490b7af005812ecfd0f6c3b286e75ffd13aae0bc1857356764b0cf49e093", integrity: "sha384-PTPckluSs3d90ddyUvsH1Ngg+aM3VfjqMsQ2FD0xkS9SHZRubNgpgcSYJHhwsMuy",
             expected: "Project styles",
             markReady: element => { element.dataset.loaded = "true"; }
           }).then(() => {
@@ -1720,7 +2079,7 @@
           if (window.CurioidProjects) return Promise.resolve();
           return loadAssetWithFallback({
             type: "script",
-            file: "projects.js", hash: "369134c483d03787ed7106a55be4e316d691c9b6e1bf6a61d0a9cd13501d3d6c", integrity: "sha384-VnqLLJXkv5efGlKENE3LgnMmVm0dv3NKlPhOjE3rauakZOd2ZNTELAQG51UutE88",
+            file: "projects.js", hash: "84c5c5d43eda26d0421198b7f2111da623234a9265f825a8465da30c754c2b98", integrity: "sha384-R0ck4d/POfBoWyY0JNsdxg+fF1H8LGjvAIb4MYzeD0YOk/K/nB1SXYmjreMFRmih",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -1911,6 +2270,7 @@
           }
         }
         updateOpenStatus();
+        saveSiteSession(open?roomId:'');
         if (shouldScroll) {
           room.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
           if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
@@ -1990,13 +2350,7 @@
         }
         if (!editing && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
           event.preventDefault();
-          if (window.matchMedia("(max-width: 900px)").matches && !document.body.classList.contains("menu-open")) {
-            document.body.classList.add("menu-open");
-            $("#menuToggle").setAttribute("aria-expanded", "true");
-            $("#menuToggle").setAttribute("aria-label", "Close project menu");
-          }
-          projectSearch.focus({ preventScroll: true });
-          projectSearch.select();
+          openCommandPalette();
         }
       });
 
@@ -2011,6 +2365,8 @@
       }
       window.CurioidNavigateToProject = openUniverseProject;
       $('#personalShortcuts')?.addEventListener('click', event => {
+        const restoreSession = event.target.closest('[data-restore-site-session]');
+        if (restoreSession) { restoreSiteSession(); return; }
         const clearFavorites = event.target.closest('[data-clear-site-favorites]');
         if (clearFavorites) {
           if (!siteFavorites.length) return;
@@ -2192,6 +2548,297 @@
       clearProjectSearch.addEventListener("click", () => { projectSearch.value = ""; applyProjectSearch(); projectSearch.focus(); });
       projectSearch.addEventListener("keydown", event => { if (event.key === "Escape") { projectSearch.value = ""; applyProjectSearch(); projectSearch.blur(); } });
 
+      // One fast launcher for projects, worlds, saved shortcuts and common site actions.
+      // Public catalogue metadata is always searchable. Private app records require both
+      // an explicit toggle and a provider-owned Connect grant for this session.
+      const commandDialog = document.createElement('dialog');
+      commandDialog.className = 'curioid-command-dialog';
+      commandDialog.setAttribute('aria-labelledby', 'commandPaletteTitle');
+      const commandShell = document.createElement('section');
+      commandShell.className = 'command-palette-shell';
+      const commandHead = document.createElement('header');
+      commandHead.className = 'command-palette-head';
+      const commandHeadCopy = document.createElement('div');
+      commandHeadCopy.className = 'command-palette-head-copy';
+      const commandKicker = document.createElement('small');
+      commandKicker.textContent = 'CURIOID / QUICK LAUNCH';
+      const commandTitle = document.createElement('strong');
+      commandTitle.id = 'commandPaletteTitle';
+      commandTitle.textContent = 'Find a project or action';
+      commandHeadCopy.append(commandKicker, commandTitle);
+      const commandClose = document.createElement('button');
+      commandClose.type = 'button';
+      commandClose.className = 'command-palette-close';
+      commandClose.setAttribute('aria-label', 'Close quick launch');
+      commandClose.textContent = '×';
+      commandHead.append(commandHeadCopy, commandClose);
+      const commandSearchWrap = document.createElement('div');
+      commandSearchWrap.className = 'command-palette-search-wrap';
+      const commandInput = document.createElement('input');
+      commandInput.type = 'search';
+      commandInput.className = 'command-palette-search';
+      commandInput.placeholder = 'Search projects, worlds and actions…';
+      commandInput.autocomplete = 'off';
+      commandInput.spellcheck = false;
+      commandInput.setAttribute('aria-label', 'Search projects, worlds and actions');
+      commandInput.setAttribute('aria-controls', 'commandPaletteResults');
+      commandInput.setAttribute('aria-autocomplete', 'list');
+      commandSearchWrap.appendChild(commandInput);
+      const commandPrivateSearchLabel = document.createElement('label');
+      commandPrivateSearchLabel.className = 'command-palette-private-toggle';
+      const commandPrivateSearchToggle = document.createElement('input');
+      commandPrivateSearchToggle.type = 'checkbox';
+      commandPrivateSearchToggle.id = 'commandPaletteSharedRecords';
+      commandPrivateSearchToggle.setAttribute('aria-describedby', 'commandPaletteSharedRecordsHelp');
+      const commandPrivateSearchCopy = document.createElement('span');
+      const commandPrivateSearchTitle = document.createElement('strong');
+      commandPrivateSearchTitle.textContent = 'Also search owner-approved app records';
+      const commandPrivateSearchHelp = document.createElement('small');
+      commandPrivateSearchHelp.id = 'commandPaletteSharedRecordsHelp';
+      commandPrivateSearchHelp.textContent = 'Off by default. Only app fields explicitly approved by their owner and granted to CURIOID Global Search are searched. Approvals are tied to this browser session and must be renewed after a reload.';
+      commandPrivateSearchCopy.append(commandPrivateSearchTitle, commandPrivateSearchHelp);
+      commandPrivateSearchLabel.append(commandPrivateSearchToggle, commandPrivateSearchCopy);
+      const commandPrivateSearchStatus = document.createElement('small');
+      commandPrivateSearchStatus.className = 'command-palette-private-status';
+      commandPrivateSearchStatus.setAttribute('role', 'status');
+      commandPrivateSearchStatus.setAttribute('aria-live', 'polite');
+      commandSearchWrap.append(commandPrivateSearchLabel, commandPrivateSearchStatus);
+      const commandResults = document.createElement('div');
+      commandResults.className = 'command-palette-results';
+      commandResults.id = 'commandPaletteResults';
+      commandResults.setAttribute('role', 'listbox');
+      commandResults.setAttribute('aria-label', 'Quick launch results');
+      const commandFoot = document.createElement('footer');
+      commandFoot.className = 'command-palette-foot';
+      const commandHint = document.createElement('span');
+      commandHint.textContent = '↑ ↓ Navigate · Enter Open';
+      const commandEsc = document.createElement('span');
+      commandEsc.append('Close ', Object.assign(document.createElement('kbd'), { textContent: 'Esc' }));
+      commandFoot.append(commandHint, commandEsc);
+      commandShell.append(commandHead, commandSearchWrap, commandResults, commandFoot);
+      commandDialog.appendChild(commandShell);
+      document.body.appendChild(commandDialog);
+
+      const commandActions = [
+        {id:'workflow',title:'Workflow Studio',description:'Build local workflows with explicit approvals.',icon:'⇄',keywords:'automation connections flow graph',target:'openWorkflowStudio'},
+        {id:'creator',title:'Creator Workshop',description:'Open the AURA project planning and creation workspace.',icon:'＋',keywords:'create plan project workbench',target:'openCreatorWorkshop'},
+        {id:'sandbox',title:'Sandbox OS Builder',description:'Design and manage your own browser desktop.',icon:'▣',keywords:'custom operating system build os',target:'openUniverseWorkshop'},
+        {id:'my-sandbox',title:'My Sandbox OS',description:'Open your saved custom worlds.',icon:'▦',keywords:'saved worlds custom desktop',target:'openMySandboxWorlds'},
+        {id:'connect',title:'Connect Console',description:'Review local components, permissions and connections.',icon:'⌘',keywords:'kernel capabilities grants events components',target:'openConnectConsole'},
+        {id:'app-library',title:'Universal App Library',description:'Find, install and manage safe local app packages.',icon:'▦',keywords:'installed custom apps packages templates data',run:()=>{window.CurioidConnectConsole?.open?.();document.querySelector('[data-ccc-tab="library"]')?.click();}},
+        {id:'control',title:'Control Center',description:'Storage, recovery, runtime health and settings.',icon:'⚙',keywords:'settings backup restore health diagnostics',target:'openControlCenter'},
+        {id:'vault',title:'Browser Vault',description:'Open locally saved outputs and recovery copies.',icon:'▤',keywords:'files exports backups packages local storage',target:'openBrowserVault'},
+        {id:'shortcuts',title:'Favorites and recent projects',description:'Show your saved shortcuts and recently opened worlds.',icon:'★',keywords:'favorite recent history saved projects',run:()=>{const panel=$('#personalShortcuts');if(panel){panel.open=true;panel.scrollIntoView({behavior:scrollBehavior(),block:'nearest'});}}},
+        {id:'restore-session',title:'Restore last session',description:'Reopen the project windows saved from your previous visit.',icon:'↶',keywords:'resume reopen restore windows',run:()=> $('[data-restore-site-session]')?.click(),enabled:()=>!!$('[data-restore-site-session]')&&!$('[data-restore-site-session]').disabled},
+        {id:'close-all',title:'Close all project windows',description:'Close every currently open project window.',icon:'×',keywords:'close quit dismiss windows',run:()=>$('#closeAllRooms')?.click(),enabled:()=>$$('.room-window.open').length>0},
+        {id:'motion',title:'Toggle project motion',description:'Pause or resume animated project backgrounds.',icon:'◌',keywords:'animation movement reduce motion',run:()=>$('#motionToggle')?.click()},
+        {id:'home',title:'Back to CURIOID home',description:'Return to the top of the project catalogue.',icon:'⌂',keywords:'home top start',run:()=>{window.scrollTo({top:0,behavior:scrollBehavior()});closeMenu();}}
+      ];
+      let commandItems = [];
+      let commandActiveIndex = -1;
+      let commandRenderedItems = [];
+      const commandNormalize = value => String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase();
+      function buildCommandItems(){
+        const items=[];
+        for(const category of CATEGORIES){
+          items.push({id:`category:${category.id}`,kind:'category',title:category.title,description:category.description||category.kicker||'Browse this project category',icon:'◈',keywords:`${category.kicker||''} ${category.id}`,categoryId:category.id,search:`${category.title} ${category.description||''} ${category.kicker||''} ${category.id}`,run:()=>{const section=CATEGORY_SECTION_BY_ID.get(category.id);if(section){if(projectSearch?.value){projectSearch.value='';applyProjectSearch();}setActiveCategory(category.id);section.scrollIntoView({behavior:scrollBehavior(),block:'start'});if(window.matchMedia('(max-width: 900px)').matches)closeMenu();}}});
+          for(const id of category.rooms){
+            const info=ROOM_INFO[id];if(!info)continue;
+            const profile=CURIOID_PROJECT_PROFILES.get(id);
+            items.push({id:`project:${id}`,kind:'project',projectId:id,title:projectDisplayTitle(id,info.title),description:info.description||category.title,icon:ROOM_ICON_BY_ID[id]||info.icon||'◈',categoryTitle:category.title,search:ROOM_SEARCH_TEXT_BY_ID.get(id)||`${info.title} ${info.description||''} ${category.title}`,role:profile?.role||'',run:()=>openUniverseProject(id)});
+          }
+        }
+        // Installed app packages are searchable by their public manifest metadata only.
+        // Private package records are never read by the global launcher.
+        try {
+          const installedPackages=window.CurioidAppPackages?.list?.({includeCounts:false})||[];
+          for(const app of installedPackages){
+            const id=String(app?.id||'').trim();
+            const manifest=app?.manifest||{};
+            const title=String(manifest.name||'Installed local app').trim().slice(0,64);
+            if(!/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(id)||!title)continue;
+            const category=String(manifest.category||'Installed app').trim().slice(0,48);
+            const description=String(manifest.description||'Open an installed local app.').trim().slice(0,180);
+            const tags=Array.isArray(manifest.tags)?manifest.tags.filter(tag=>typeof tag==='string').slice(0,24).join(' '):'';
+            items.push({id:`package:${id}`,kind:'package',packageId:id,title,description,icon:String(manifest.icon||'▦').slice(0,8),categoryTitle:category,search:`${title} ${description} ${category} ${id} ${tags}`,run:()=>window.CurioidAppPackages?.launch?.(id)});
+          }
+        } catch(error) {
+          console.warn('CURIOID could not add installed packages to quick launch:',error);
+        }
+        for(const action of commandActions){
+          items.push({...action,kind:'action',search:`${action.title} ${action.description} ${action.keywords||''}`,run:action.run||(()=>document.getElementById(action.target)?.click())});
+        }
+        return items;
+      }
+      const COMMAND_SEARCH_EXPERIENCE_ID = 'curioid-global-search';
+      let commandSharedRecordItems = [];
+      let commandSharedSearchSequence = 0;
+      let commandSharedSearchTimer = 0;
+      function ensureCommandSearchExperience(){
+        const kernel=window.CurioidKernel;
+        if(!kernel?.getExperience||!kernel?.registerExperience)return false;
+        if(!kernel.getExperience(COMMAND_SEARCH_EXPERIENCE_ID)){
+          kernel.registerExperience({id:COMMAND_SEARCH_EXPERIENCE_ID,name:'CURIOID Global Search',version:'1.0.0',category:'Core service',description:'Permission-aware search over only the app record fields that their owners explicitly approved through Connect.',profile:{localOnly:true,readOnly:true,privateRecordSearch:true}});
+        }
+        return Boolean(kernel.getExperience(COMMAND_SEARCH_EXPERIENCE_ID));
+      }
+      async function searchApprovedAppRecords(rawQuery){
+        const sequence=++commandSharedSearchSequence;
+        commandSharedRecordItems=[];
+        const query=String(rawQuery||'').trim().slice(0,160);
+        if(!commandPrivateSearchToggle.checked||query.length<2){
+          commandPrivateSearchStatus.textContent=commandPrivateSearchToggle.checked?'Type at least two characters to search approved records.':'';
+          renderCommandResults();
+          return;
+        }
+        const kernel=window.CurioidKernel,packages=window.CurioidAppPackages;
+        if(!ensureCommandSearchExperience()||!kernel?.getCapabilitiesGrantedTo||!kernel?.requestCapability||!packages?.list){
+          commandPrivateSearchStatus.textContent='The local permission-aware search service is not available in this session.';
+          renderCommandResults();
+          return;
+        }
+        commandPrivateSearchStatus.textContent='Checking Connect approvals…';
+        try{
+          const [granted,installed]=await Promise.all([
+            kernel.getCapabilitiesGrantedTo(COMMAND_SEARCH_EXPERIENCE_ID),
+            Promise.resolve(packages.list({includeCounts:false}))
+          ]);
+          if(sequence!==commandSharedSearchSequence||!commandPrivateSearchToggle.checked)return;
+          const grants=new Map(granted.map(capability=>[capability.id,capability]));
+          const eligibleAll=installed.filter(app=>{
+            const id=String(app?.id||'');
+            const capabilityId=`app-package.${id}.records.read`;
+            return app?.connectEnabled===true&&Array.isArray(app.sharedFields)&&app.sharedFields.length>0&&grants.has(capabilityId);
+          }).sort((a,b)=>String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+          const eligible=eligibleAll.slice(0,16);
+          if(!eligibleAll.length){
+            commandPrivateSearchStatus.textContent='No app has granted Global Search access. In Connect Console, open Permissions, choose an installed-app records capability and grant it to CURIOID Global Search.';
+            renderCommandResults();
+            return;
+          }
+          commandPrivateSearchStatus.textContent=eligibleAll.length>eligible.length?`Searching the ${eligible.length} most recently updated of ${eligibleAll.length} approved apps to keep local search bounded…`:`Searching ${eligible.length} app${eligible.length===1?'':'s'} with explicit grants…`;
+          const batches=await Promise.allSettled(eligible.map(async app=>{
+            const id=String(app.id),capabilityId=`app-package.${id}.records.read`,fields=app.sharedFields.slice(0,12);
+            const capability=grants.get(capabilityId);
+            if(!capability||capability.access!=='granted')return[];
+            const output=await kernel.requestCapability(capabilityId,{fields,query,limit:6},{fromExperienceId:COMMAND_SEARCH_EXPERIENCE_ID});
+            const definitions=new Map((output.fields||[]).map(field=>[field.id,field]));
+            const manifest=app.manifest||{};
+            return (output.records||[]).map(record=>{
+              const selected=fields.filter(fieldId=>definitions.has(fieldId)&&Object.hasOwn(record.fields||{},fieldId));
+              if(!selected.length)return null;
+              const primary=selected.find(fieldId=>String(record.fields[fieldId]??'').trim())||selected[0];
+              const titleValue=String(record.fields[primary]??'').trim().slice(0,110)||'Untitled record';
+              const details=selected.filter(fieldId=>fieldId!==primary).slice(0,2).map(fieldId=>`${definitions.get(fieldId).label}: ${String(record.fields[fieldId]??'').slice(0,90)}`).join(' · ');
+              return {id:`shared-record:${id}:${String(record.id).slice(0,96)}`,kind:'record',packageId:id,recordId:String(record.id).slice(0,96),title:`${String(manifest.name||'App').slice(0,48)}: ${titleValue}`,description:details||`Approved field: ${definitions.get(primary).label}`,icon:String(manifest.icon||'▦').slice(0,8),categoryTitle:'Shared app record',search:`${manifest.name||''} ${titleValue} ${details}`,run:()=>window.CurioidAppPackages?.launch?.(id,{focusRecordId:String(record.id).slice(0,96)})};
+            }).filter(Boolean);
+          }));
+          if(sequence!==commandSharedSearchSequence||!commandPrivateSearchToggle.checked)return;
+          commandSharedRecordItems=batches.flatMap(result=>result.status==='fulfilled'?result.value:[]).slice(0,36);
+          const errors=batches.filter(result=>result.status==='rejected').length;
+          commandPrivateSearchStatus.textContent=`${commandSharedRecordItems.length} matching record${commandSharedRecordItems.length===1?'':'s'} from approved fields across ${eligible.length} of ${eligibleAll.length} granted apps${errors?` · ${errors} app${errors===1?'':'s'} unavailable`:''}.`;
+          renderCommandResults();
+        }catch(error){
+          if(sequence!==commandSharedSearchSequence)return;
+          commandSharedRecordItems=[];
+          commandPrivateSearchStatus.textContent=`Private record search stopped safely: ${String(error?.message||error).slice(0,180)}`;
+          renderCommandResults();
+        }
+      }
+      function scheduleApprovedAppRecordSearch(){
+        commandSharedSearchSequence++;
+        if(commandSharedSearchTimer)window.clearTimeout(commandSharedSearchTimer);
+        commandSharedSearchTimer=0;
+        commandSharedRecordItems=[];
+        const query=String(commandInput.value||'').trim();
+        if(!commandPrivateSearchToggle.checked){commandPrivateSearchStatus.textContent='';renderCommandResults();return;}
+        if(query.length<2){commandPrivateSearchStatus.textContent='Type at least two characters to search approved records.';renderCommandResults();return;}
+        commandPrivateSearchStatus.textContent='Waiting for typing to pause…';
+        renderCommandResults();
+        commandSharedSearchTimer=window.setTimeout(()=>{commandSharedSearchTimer=0;searchApprovedAppRecords(query);},240);
+      }
+      function scoreCommandItem(item,tokens){
+        if(!tokens.length){
+          if(item.kind==='project'&&siteRecents.includes(item.projectId))return 1300-siteRecents.indexOf(item.projectId)*8;
+          if(item.kind==='project'&&siteFavorites.includes(item.projectId))return 1200-siteFavorites.indexOf(item.projectId)*3;
+          if(item.kind==='action')return 500;
+          if(item.kind==='package')return 460;
+          if(item.kind==='record')return 440;
+          if(item.kind==='category')return 300;
+          return 0;
+        }
+        const title=commandNormalize(item.title),search=commandNormalize(`${item.search||''} ${item.description||''} ${item.keywords||''}`);
+        let score=0;
+        for(const token of tokens){
+          if(!search.includes(token))return 0;
+          if(title===token)score+=140;
+          else if(title.startsWith(token))score+=90;
+          else if(title.split(/\s+/).some(word=>word.startsWith(token)))score+=60;
+          else if(title.includes(token))score+=35;
+          else score+=10;
+        }
+        if(item.kind==='project'&&siteRecents.includes(item.projectId))score+=20-siteRecents.indexOf(item.projectId);
+        if(item.kind==='project'&&siteFavorites.includes(item.projectId))score+=12;
+        if(item.kind==='action')score+=3;
+        if(item.kind==='record')score+=8;
+        return score;
+      }
+      function setCommandActive(index){
+        const buttons=[...commandResults.querySelectorAll('[role="option"]')];
+        if(!buttons.length){commandActiveIndex=-1;commandInput.removeAttribute('aria-activedescendant');return;}
+        commandActiveIndex=Math.max(0,Math.min(index,buttons.length-1));
+        buttons.forEach((button,i)=>button.setAttribute('aria-selected',String(i===commandActiveIndex)));
+        const active=buttons[commandActiveIndex];
+        commandInput.setAttribute('aria-activedescendant',active.id);
+        active.scrollIntoView({block:'nearest'});
+      }
+      function renderCommandResults(){
+        const tokens=commandNormalize(commandInput.value.trim()).split(/\s+/).filter(Boolean);
+        const ranked=[...commandItems,...commandSharedRecordItems].map(item=>({item,score:scoreCommandItem(item,tokens)})).filter(entry=>entry.score>0&&(!entry.item.enabled||entry.item.enabled())).sort((a,b)=>b.score-a.score||a.item.title.localeCompare(b.item.title)).slice(0,tokens.length?22:14);
+        commandResults.replaceChildren();commandRenderedItems=ranked.map(entry=>entry.item);
+        if(!ranked.length){const empty=document.createElement('p');empty.className='command-palette-empty';empty.textContent='No matching projects, actions or installed apps. Try a shorter search.';commandResults.appendChild(empty);commandInput.removeAttribute('aria-activedescendant');commandActiveIndex=-1;return;}
+        ranked.forEach(({item},index)=>{
+          const button=document.createElement('button');button.type='button';button.className='command-palette-result';button.id=`commandPaletteOption${index}`;button.setAttribute('role','option');button.setAttribute('aria-selected','false');
+          const icon=document.createElement('span');icon.className='command-palette-result-icon';icon.textContent=item.icon||'◈';
+          const copy=document.createElement('span');copy.className='command-palette-result-copy';const title=document.createElement('strong');title.textContent=item.title;const description=document.createElement('small');description.textContent=item.description||item.categoryTitle||'';copy.append(title,description);
+          const type=document.createElement('span');type.className='command-palette-result-type';type.textContent=item.kind==='project'?item.categoryTitle:item.kind==='category'?'Category':item.kind==='package'?'Installed app':item.kind==='record'?'Shared record':'Action';
+          button.append(icon,copy,type);button.addEventListener('mouseenter',()=>setCommandActive(index));button.addEventListener('click',()=>runCommandItem(index));commandResults.appendChild(button);
+        });
+        setCommandActive(0);
+      }
+      function runCommandItem(index){
+        const item=commandRenderedItems[index];if(!item)return;
+        commandDialog.close();
+        try{item.run?.();}catch(error){showToast(`Could not open ${item.title}: ${String(error?.message||error).slice(0,160)}`);}
+      }
+      function openCommandPalette(){
+        if(!commandDialog.isConnected)return;
+        ensureCommandSearchExperience();
+        commandPrivateSearchToggle.checked=false;commandPrivateSearchStatus.textContent='';commandSharedSearchSequence++;commandSharedRecordItems=[];if(commandSharedSearchTimer)window.clearTimeout(commandSharedSearchTimer);commandSharedSearchTimer=0;
+        commandItems=buildCommandItems();
+        if(!commandDialog.open){
+          if(typeof commandDialog.showModal==='function')commandDialog.showModal();
+          else commandDialog.setAttribute('open','');
+        }
+        commandInput.value='';renderCommandResults();requestAnimationFrame(()=>{commandInput.focus({preventScroll:true});});
+      }
+      $('#commandPaletteOpen')?.addEventListener('click',openCommandPalette);
+      commandClose.addEventListener('click',()=>commandDialog.close());
+      commandDialog.addEventListener('click',event=>{if(event.target===commandDialog)commandDialog.close();});
+      commandDialog.addEventListener('close',()=>{commandSharedSearchSequence++;commandSharedRecordItems=[];commandPrivateSearchToggle.checked=false;commandPrivateSearchStatus.textContent='';if(commandSharedSearchTimer)window.clearTimeout(commandSharedSearchTimer);commandSharedSearchTimer=0;commandInput.value='';commandInput.removeAttribute('aria-activedescendant');commandActiveIndex=-1;});
+      commandInput.addEventListener('input',()=>{renderCommandResults();scheduleApprovedAppRecordSearch();});
+      commandPrivateSearchToggle.addEventListener('change',scheduleApprovedAppRecordSearch);
+      commandInput.addEventListener('keydown',event=>{
+        if(event.key==='ArrowDown'){event.preventDefault();setCommandActive(commandActiveIndex+1);}
+        else if(event.key==='ArrowUp'){event.preventDefault();setCommandActive(commandActiveIndex-1);}
+        else if(event.key==='Home'&&commandRenderedItems.length){event.preventDefault();setCommandActive(0);}
+        else if(event.key==='End'&&commandRenderedItems.length){event.preventDefault();setCommandActive(commandRenderedItems.length-1);}
+        else if(event.key==='Escape'){event.preventDefault();commandDialog.close();}
+        else if(event.key==='Enter'&&commandActiveIndex>=0){event.preventDefault();runCommandItem(commandActiveIndex);}
+      });
+
+      // Build the index only after renderCategories() has populated the richer search text.
+
       // Give the word a small, per-visit print-registration variation without reducing legibility.
       const strange = document.querySelector('.strange-word');
       if (strange) {
@@ -2277,6 +2924,22 @@
         };
         if ("requestIdleCallback" in window) window.requestIdleCallback(startShowcaseDesktop, { timeout: 1400 });
         else window.setTimeout(startShowcaseDesktop, 250);
+      }
+      // Offline-first app shell. Service workers require HTTPS or a secure localhost origin.
+      if ("serviceWorker" in navigator) {
+        const isSecureSite = location.protocol === "https:" ||
+          (location.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname));
+        if (isSecureSite) {
+          const registerCurioidOfflineShell = () => {
+            const siteRoot = new URL("./", document.baseURI);
+            navigator.serviceWorker.register(new URL("service-worker.js", siteRoot).href, {
+              scope: siteRoot.pathname,
+              updateViaCache: "none"
+            }).catch(error => console.info("CURIOID offline shell is unavailable in this browser context.", error));
+          };
+          if (document.readyState === "complete") registerCurioidOfflineShell();
+          else window.addEventListener("load", registerCurioidOfflineShell, { once: true });
+        }
       }
       updateOpenStatus();
     })();
