@@ -163,3 +163,94 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
 .curioid-os-management-actions>.curioid-os-management-status{display:flex!important;align-items:center!important;gap:9px!important;width:100%!important;min-height:34px!important;padding:6px 9px!important;border:1px solid rgba(165,174,181,.16)!important;border-radius:6px!important;color:#aeb8c0!important;font:10px/1.3 system-ui,sans-serif!important;}
 .curioid-os-management-actions>.curioid-os-management-status>.eno-tray-network{position:static!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 26px!important;width:26px!important;height:26px!important;border:1px solid rgba(185,195,202,.24)!important;border-radius:5px!important;background:rgba(160,170,178,.08)!important;color:#c4cbd0!important;}
 .curioid-os-management-actions>[data-aura-action="ambient"]{justify-content:flex-start!important;width:100%!important;min-height:42px!important;}
+
+/* CURIOID v1.293 targeted interaction and layout repairs. */
+.curioid-assistant-panel{position:absolute;z-index:12000;right:12px;bottom:58px;width:min(344px,calc(100% - 24px));max-height:min(72%,620px);display:flex;flex-direction:column;overflow:hidden;border:1px solid color-mix(in srgb,var(--assistant-accent,#8de9e4) 48%,#39424a);border-radius:13px;background:#111922;color:#edf2f2;box-shadow:0 18px 50px rgba(0,0,0,.42);}
+.curioid-assistant-panel[hidden]{display:none!important}.curioid-assistant-panel[data-mode="chat"]{width:min(540px,calc(100% - 24px));height:min(590px,calc(100% - 88px));max-height:calc(100% - 88px)}
+.curioid-assistant-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:10px;border-bottom:1px solid #34404a;background:linear-gradient(120deg,rgba(141,233,228,.08),transparent 64%)}
+.curioid-assistant-identity{display:flex;align-items:center;gap:9px;min-width:0;flex:1}.curioid-assistant-identity>div:last-child{display:grid;min-width:0}.curioid-assistant-identity small{color:#9eabb3;font-size:10px}.curioid-assistant-avatar{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:9px;background:#1c2b34}.curioid-assistant-avatar img{max-width:100%;max-height:100%}.curioid-assistant-head-actions{display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-wrap:wrap}.curioid-assistant-head-actions button{min-width:28px;min-height:27px;padding:4px 7px;border:1px solid #43505a;border-radius:6px;background:#202d36;color:#dfe9e9;font:700 9px ui-monospace,monospace;cursor:pointer}.curioid-assistant-head-actions button[aria-pressed="true"]{border-color:var(--assistant-accent,#8de9e4);color:#fff}.curioid-assistant-persona-picker{display:flex;align-items:center;gap:9px;padding:8px 10px;color:#9faeb5;font:9px ui-monospace,monospace}.curioid-assistant-persona-picker select{min-width:0;max-width:100%;flex:1}.curioid-assistant-log{min-height:110px;flex:1;overflow:auto;padding:10px;overscroll-behavior:contain}.curioid-assistant-message{max-width:94%;margin:0 0 9px;padding:8px 10px;border-radius:10px;background:#1b2932;color:#e8eeee;font-size:12px;line-height:1.5;overflow-wrap:anywhere}.curioid-assistant-message.from-user{margin-left:auto;background:#263f49}.curioid-assistant-form{display:flex;gap:6px;padding:9px;border-top:1px solid #34404a}.curioid-assistant-form input{min-width:0;flex:1;padding:9px;border:1px solid #41505b;border-radius:7px;background:#0d151b;color:#fff}.curioid-assistant-form button{padding:8px 12px;border:1px solid var(--assistant-accent,#8de9e4);border-radius:7px;background:#20343b;color:#fff}.curioid-assistant-foot{margin:0;padding:6px 10px;color:#87969e;font:8px ui-monospace,monospace;overflow-wrap:anywhere}
+/* Bell-shaped Bella keeps a stable footprint while the input gains/loses focus. */
+.retro-desktop .retro-bella-panel{box-sizing:border-box}.retro-desktop .retro-bella-panel .retro-bella-avatar-stage{min-height:180px}.retro-desktop .retro-bella-panel .retro-bella-character{min-height:145px;display:grid;place-items:center}.retro-desktop .retro-bella-panel .bella-avatar-creature-svg{width:100%;max-width:175px;max-height:185px;overflow:visible}.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-body{transform-box:fill-box;transform-origin:50% 12%;animation:curioidBellaBodySway 4.6s ease-in-out infinite}.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-clapper{transform-box:fill-box;transform-origin:50% 0%;animation:curioidBellaClapper 1.8s ease-in-out infinite}.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-arms{transform-box:fill-box;transform-origin:50% 50%;animation:curioidBellaArms 3.2s ease-in-out infinite}.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-rim{animation:curioidBellaRim 2.2s ease-in-out infinite}.retro-desktop .retro-bella-panel .retro-bella-form:focus-within{transform:none!important;top:auto!important;bottom:auto!important}.retro-desktop .retro-bella-panel .retro-bella-form input{scroll-margin:0}.retro-desktop .retro-bella-voice-toggle{min-height:24px;padding:3px 6px;border:1px solid #7f8b72;border-radius:2px;background:#d6ddc9;color:#243429;font:700 9px Tahoma,Arial,sans-serif}
+@keyframes curioidBellaBodySway{0%,100%{transform:rotate(-1.4deg) translateY(0)}22%{transform:rotate(1deg) translateY(-2px)}50%{transform:rotate(2deg) translateY(-4px)}76%{transform:rotate(-1deg) translateY(-1px)}}@keyframes curioidBellaClapper{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}50%{transform:rotate(10deg)}75%{transform:rotate(-6deg)}}@keyframes curioidBellaArms{0%,100%{transform:rotate(0)}30%{transform:rotate(-5deg)}65%{transform:rotate(6deg)}}@keyframes curioidBellaRim{0%,100%{opacity:1}50%{opacity:.76}}
+/* Icon-only Management taskbar control. Doors98 keeps its hard square Win98 treatment. */
+.curioid-os-management-dock{position:relative;display:flex;align-items:center;flex:0 0 auto}.curioid-os-management-toggle{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;flex:0 0 30px!important;display:grid!important;place-items:center!important;padding:4px!important;border:1px solid currentColor!important;border-radius:6px!important;background:transparent!important;color:inherit!important;box-shadow:none!important;line-height:1!important}.curioid-os-management-toggle svg{display:block;width:17px!important;height:17px!important;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.dead-interface .curioid-os-management-toggle,.retro-desktop .curioid-os-management-toggle{border-radius:0!important;border:2px outset #dce2d7!important;background:linear-gradient(145deg,#eff0df,#c7d0c8)!important;color:#33433e!important;box-shadow:inset 1px 1px #fff,inset -1px -1px #8a9990!important}.dead-interface .curioid-os-management-toggle svg,.retro-desktop .curioid-os-management-toggle svg{stroke:#33433e}
+/* Doors98 System Info is hidden only while its fake reboot animation is active. */
+.retro-desktop.retro-restarting .retro-info-toggle{visibility:hidden!important;pointer-events:none!important}
+/* UMBRA: keep the Photoshop-like tool rail physically on the left. */
+.umbra-editor-layout{display:grid!important;grid-template-columns:46px minmax(0,1fr) minmax(210px,260px)!important;grid-template-rows:minmax(0,1fr)!important;align-items:stretch!important;direction:ltr!important}.umbra-editor-layout>.umbra-toolrail{grid-column:1!important;grid-row:1!important;order:0!important;direction:ltr!important;justify-self:stretch!important;align-self:stretch!important}.umbra-editor-layout>.umbra-canvas-stage{grid-column:2!important;grid-row:1!important;min-width:0!important;order:1!important}.umbra-editor-layout>.umbra-inspector{grid-column:3!important;grid-row:1!important;min-width:0!important;order:2!important;position:relative!important;inset:auto!important;width:auto!important;max-width:100%!important;display:flex;flex-direction:column;overflow:auto!important}
+@container curioidOs (max-width:760px){.umbra-editor-layout{grid-template-columns:40px minmax(0,1fr)!important;grid-template-rows:minmax(260px,1fr) auto!important}.umbra-editor-layout>.umbra-toolrail{grid-column:1!important;grid-row:1!important}.umbra-editor-layout>.umbra-canvas-stage{grid-column:2!important;grid-row:1!important}.umbra-editor-layout>.umbra-inspector{grid-column:1/3!important;grid-row:2!important;max-height:34vh!important;min-height:0!important}}
+/* Aether: futuristic workspace hierarchy with labels and buttons constrained to their cells. */
+.aether-main{min-width:0!important;overflow:hidden!important}.aether-main .aether-stage,.aether-main .aether-inspector{min-width:0!important;max-width:100%!important}.aether-main .aether-inspector{box-sizing:border-box;overflow:auto!important}.aether-main :is(button,[role="button"]){max-width:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.25}.aether-main .aether-toolbar,.aether-main .aether-header-actions,.aether-main .aether-project-actions,.aether-main .aether-node-actions{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0;max-width:100%}.aether-main .aether-header{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}.aether-main .aether-main-controls{min-width:0;max-width:100%}.aether-main button span{min-width:0;overflow-wrap:anywhere}
+@media (max-width:700px){.curioid-assistant-panel,.curioid-assistant-panel[data-mode="chat"]{right:8px;bottom:50px;width:min(440px,calc(100% - 16px));height:min(72vh,570px);max-height:calc(100% - 65px)}.curioid-assistant-head-actions button{min-height:30px}.umbra-editor-layout{grid-template-columns:38px minmax(0,1fr)!important}.umbra-editor-layout>.umbra-inspector{grid-column:1/3!important}}
+@media (prefers-reduced-motion:reduce){.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-body,.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-clapper,.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-arms,.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-rim{animation:none!important}}
+
+/* CURIOID v1.293 targeted compact controls and recovery visuals. */
+.curioid-os-management-dock{min-width:0!important;margin-left:3px!important}
+.curioid-os-management-toggle{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important;max-width:25px!important;max-height:25px!important;flex:0 0 25px!important;padding:3px!important;border-radius:4px!important}
+.curioid-os-management-toggle svg{width:15px!important;height:15px!important}
+.dead-interface .curioid-os-management-toggle,.retro-desktop .curioid-os-management-toggle{width:25px!important;height:25px!important;min-width:25px!important;min-height:25px!important;border-radius:0!important;padding:2px!important}
+.aura-management-hum{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:7px!important;width:100%!important}
+.aura-management-hum>[data-aura-action=ambient]{width:100%!important;min-height:32px!important;justify-content:space-between!important}
+.aura-hum-control{display:grid;grid-template-columns:auto minmax(70px,1fr) 35px;align-items:center;gap:8px;width:100%;padding:7px 9px;border:1px solid rgba(165,174,181,.18);border-radius:6px;color:#c7d0d3;font:9px ui-monospace,monospace}
+.aura-hum-control input{min-width:0;width:100%;accent-color:#94a8a2}
+.aura-hum-control output{text-align:right;font-variant-numeric:tabular-nums}
+.cos-shell-bootstrap-recovery{position:absolute;inset:12px;z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;max-width:680px;margin:auto;padding:clamp(18px,4vw,34px);border:1px solid #a87b46;background:linear-gradient(145deg,#1c252b,#11171c);color:#eef0e8;box-shadow:0 18px 60px #0009;font:14px/1.5 system-ui,sans-serif}
+.cos-shell-bootstrap-recovery>b{color:#ffd28c;font:800 13px ui-monospace,monospace;letter-spacing:.08em}
+.cos-shell-bootstrap-recovery p{margin:0;overflow-wrap:anywhere}
+.cos-shell-bootstrap-recovery small{color:#b7c0c2}
+.cos-shell-bootstrap-recovery button{padding:9px 13px;border:1px solid #81918b;border-radius:4px;background:#303c3a;color:#fff;cursor:pointer}
+@keyframes curioidBellaBellPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(255,213,117,0))}50%{filter:drop-shadow(0 0 7px rgba(255,213,117,.45))}}
+.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-body{animation:curioidBellaBodySway 3.6s ease-in-out infinite,curioidBellaBellPulse 5s ease-in-out infinite}
+.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-clapper{animation:curioidBellaClapper 1.25s ease-in-out infinite}
+.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-arms{animation:curioidBellaArms 2.45s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-body,.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-clapper,.retro-desktop .retro-bella-panel.bella-avatar-mode .bella-avatar-arms{animation:none!important}}
+
+/* Doors98 fake reboot temporarily hides the ordinary desktop information strip. */
+.retro-desktop.retro-restarting .retro-info-toggle,.retro-desktop.retro-restarting .retro-desktop-information{display:none!important}
+
+/* CURIOID runtime suspension: pause decorative motion in inactive project mounts. */
+.curioid-runtime-suspended,
+.curioid-runtime-suspended * {
+  animation-play-state: paused !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+
+/* CURIOID v1.295 — responsive text and content-boundary safeguards. */
+:where(.project-tool,.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis,.curioid-assistant-panel)
+  :where(p,h1,h2,h3,h4,h5,h6,label,legend,summary,figcaption,li,dt,dd,small,strong,span,a,button,output) {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+:where(.project-tool,.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis,.curioid-assistant-panel)
+  :where(input,select,textarea) {
+  min-width: 0;
+  max-width: 100%;
+}
+:where(.project-tool,.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis)
+  :where(.tool-intro,.tool-layout,.tool-controls,.tool-main,.tool-panel-head,.tool-readout,.tool-control,.tool-button-row,.sequencer-top,.dream-scene-caption,.game-hud,.aether-header,.aether-toolbar,.aether-header-actions,.aether-project-actions,.aether-node-actions) {
+  min-width: 0;
+  max-width: 100%;
+}
+:where(.project-tool,.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis)
+  :where(.tool-layout,.tool-intro,.tool-panel-head,.tool-readout,.sequencer-top,.dream-scene-caption,.game-hud,.aether-header,.aether-toolbar,.aether-header-actions,.aether-project-actions,.aether-node-actions) > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.project-tool .tool-intro { flex-wrap: wrap; }
+.project-tool .tool-status { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+:where(.project-tool,.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis)
+  :where(img,video,iframe) { max-width: 100%; }
+
+/* v1.295: narrow OS taskbars remain fully usable without pushing the page sideways. */
+@media (max-width: 760px) {
+  .food-os-taskbar, .eno-taskbar, .umbra-taskbar, .aura-taskbar,
+  .aether-statusbar, .retro-taskbar {
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin;
+  }
+}

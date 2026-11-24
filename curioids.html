@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow" />
   <meta name="description" content="Curioids: a local full-body creature auto-battler and CURIOID website exploration game." />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/V8EtGGNHBq3i3PGNvWdeWaOOljm1fnIedA+BjRkbaw='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-  <meta name="curioids-build" content="v1.290" />
+  <meta name="curioids-build" content="v1.296" />
   <title>Curioids — The Oddity League</title>
   <style>
     :root {
@@ -711,6 +711,29 @@
     @media(prefers-reduced-motion:reduce){.shop-card,.slot,.arena-phase-card,.round-outcome{transition:none!important}.shop-card:hover,.slot.occupied:hover{transform:none!important}}
 
   </style>
+
+<style id="curioids-v1295-layout-guard">
+  /* v1.295: allow long creature/tool text to wrap without shrinking the board. */
+  .container, .panel, .hud, .hud-group, .tabs, .row, .shop-command-row,
+  .shop-command-copy, .shop-command-actions, .shop-shelf, .shop-shelf-grid,
+  .shop-card, .shop-card-main, .shop-card-title-row, .collection-grid,
+  .collection-card, .research-grid, .research-card, .survey-panel, .arena-dashboard,
+  .arena-metrics, .round-outcome, .round-outcome-stats { min-width: 0; max-width: 100%; }
+  .container :where(h1,h2,h3,h4,h5,h6,p,label,legend,small,strong,span,a,li,dt,dd,figcaption,output) {
+    overflow-wrap: anywhere;
+  }
+  .container :where(button,input,select,textarea) { min-width: 0; max-width: 100%; }
+  .shop-command-copy { min-width: 0; }
+  .shop-card-title-row { flex-wrap: wrap; }
+  .shop-card-title-row .unit-name { min-width: 0; max-width: 100%; }
+  .shop-tier-label { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .hud-group, .tabs, .row { max-width: 100%; }
+  @media (max-width: 560px) {
+    .hud { align-items: flex-start; }
+    .hud-group, .tabs { min-width: 0; }
+    .panel { min-width: 0; }
+  }
+</style>
 </head>
 <body>
   <header class="hud">

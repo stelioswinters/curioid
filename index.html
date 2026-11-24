@@ -13,7 +13,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-cLIpxMpIBpVffq0rFQG/XXbgQuhkZdSp+cdYSdiq334='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-q8UyIqqWopmDiiAP+SWizQjQDbm+eeLMSy2Cazrp5ac='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.com/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
@@ -170,22 +170,6 @@
     .sidebar-note { padding:11px 12px; background:linear-gradient(145deg,#1b1b22,#17171d); }
     .sidebar-note-title { color:#c0b4ee; letter-spacing:.16em; }
     .sidebar-note p { font-size:10px; line-height:1.55; }
-    .universe-content-compact { padding:13px 15px 15px; }
-    .universe-content-compact p { max-width:800px; margin:0; color:#aaa8b3; font-size:10px; line-height:1.6; }
-    .universe-content-compact .universe-lead { max-width:850px; margin:0 0 11px; color:#c4c1cb; font-size:11px; line-height:1.65; }
-    .universe-world-quicklist { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin:0; padding:0; list-style:none; }
-    .universe-world-quickitem { display:grid; align-content:start; gap:4px; min-width:0; min-height:58px; padding:9px 10px; border:1px solid #30313a; border-radius:8px; background:rgba(12,12,16,.26); }
-    .universe-world-quickitem b { color:#e7e5ed; font-size:9px; font-weight:760; }
-    .universe-world-quickitem span { color:#92909c; font-size:9px; line-height:1.45; }
-    .universe-basics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,.06); }
-    .universe-basic { display:grid; align-content:start; gap:3px; min-width:0; }
-    .universe-basic b { color:#cdd8b7; font-size:9px; font-weight:750; }
-    .universe-basic span { color:#85838f; font-size:9px; line-height:1.5; }
-    .universe-content-compact .universe-backup-note { margin-top:9px; color:#777681; font-size:9px; line-height:1.5; }
-    .universe-panel summary { min-height:62px; }
-    .universe-summary-copy strong { font-size:12px; }
-    @media(max-width:760px){.universe-world-quicklist{grid-template-columns:repeat(2,minmax(0,1fr))}.universe-basics{grid-template-columns:1fr;gap:8px}.universe-basic{grid-template-columns:135px minmax(0,1fr);align-items:start;gap:8px}}
-    @media(max-width:420px){.universe-world-quicklist{grid-template-columns:1fr}.universe-world-quickitem{min-height:0}.universe-basic{grid-template-columns:1fr;gap:2px}}
     @media(max-width:700px){.personal-shortcuts-summary{min-height:54px;padding:9px}.personal-shortcuts-content{max-height:54dvh}.sidebar-tools{gap:5px}.sidebar-tool{min-height:40px;padding:6px}.sidebar-tool b{font-size:9px}.sidebar-tool small{font-size:9px}}
     .sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
     .sidebar-note { margin: 0 2px 14px; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: #19191f; }
@@ -258,47 +242,7 @@
     .hero-copy { max-width: 610px; margin: 0; color: var(--muted); font-size:13px; line-height: 1.7; }
 
     /* Stage 5: the universe is a discovery layer, never another desktop. */
-    .universe-panel { margin: 22px 0 0; border: 1px solid #2d2e37; border-radius: 12px; background: linear-gradient(110deg, rgba(214,255,105,.035), rgba(186,167,255,.025) 55%, rgba(133,230,218,.025)); }
-    .universe-panel > summary { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 10px 14px; list-style: none; cursor: pointer; }
-    .universe-panel > summary::-webkit-details-marker { display: none; }
-    .universe-panel > summary:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; border-radius: 10px; }
-    .universe-mark { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px; border: 1px solid #4a5538; border-radius: 9px; color: var(--acid); background: rgba(214,255,105,.055); font-size:17px; }
-    .universe-summary-copy { display: grid; gap: 3px; min-width: 0; }
-    .universe-summary-copy small, .universe-label { color: #9ca28b; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; }
-    .universe-summary-copy strong { color: #e7e8df; font-size:11px; font-weight: 680; }
-    .universe-summary-meta { margin-left: auto; color: #777b72; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; white-space: nowrap; }
-    .universe-chevron { color: #8f9187; font-size:15px; transition: transform .18s ease; }
-    .universe-panel[open] .universe-chevron { transform: rotate(180deg); }
-    .universe-content { padding: 0 14px 14px; border-top: 1px solid rgba(255,255,255,.055); }
-    .universe-intro { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 1px 13px; }
-    .universe-intro p { max-width: 620px; margin: 0; color: #a5a4ad; font-size:10px; line-height: 1.6; }
-    .universe-activity { flex: 0 0 auto; max-width: 48%; color: #929586; text-align: right; font:9px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .universe-world-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 7px; }
-    .universe-world { display: grid; gap: 5px; min-width: 0; padding: 10px 11px; border: 1px solid #30313a; border-radius: 9px; background: rgba(12,12,16,.32); color: var(--text); text-align: left; cursor: pointer; transition: border-color .16s ease, background .16s ease, transform .16s ease; }
-    .universe-world:hover { border-color: #586247; background: rgba(214,255,105,.045); transform: translateY(-1px); }
-    .universe-world:focus-visible, .universe-recent-item:focus-visible, .room-related-link:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
-    .universe-world-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .universe-world-name { overflow: hidden; color: #e6e5df; font-size:10px; font-weight: 760; text-overflow: ellipsis; white-space: nowrap; }
-    .universe-world-state { color: #b3c88a; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; white-space: nowrap; }
-    .universe-world-desc { min-height: 26px; color: #85838f; font-size:9px; line-height: 1.45; }
-    .universe-world-inbox { color: #999b8d; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .universe-shared { display: grid; grid-template-columns: minmax(150px,.7fr) minmax(0,2fr); gap: 14px; margin-top: 11px; padding: 12px; border: 1px solid #2c3034; border-radius: 9px; background: rgba(133,230,218,.025); }
-    .universe-shared-intro b { display: block; margin: 5px 0 3px; color: #e3e5df; font-size:10px; }
-    .universe-shared-intro p { margin: 0; color: #888891; font-size:9px; line-height: 1.5; }
-    .universe-services { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 7px; }
-    .universe-service { min-width: 0; padding-left: 9px; border-left: 1px solid #414a43; }
-    .universe-service b { display: block; margin-bottom: 3px; color: #d8ddd4; font-size:9px; }
-    .universe-service span { display: block; color: #8c8f91; font-size:9px; line-height: 1.5; }
-    .universe-footnote { margin: 10px 1px 0; color: #777681; font-size:9px; line-height: 1.5; }
-    .universe-feature { display: grid; grid-template-columns: 48px minmax(0,1fr) auto; align-items: center; gap: 13px; margin-top: 10px; padding: 12px; border: 1px solid rgba(186,167,255,.22); border-radius: 10px; background: linear-gradient(110deg,rgba(186,167,255,.075),rgba(133,230,218,.035)); }
-    .universe-feature-mark { display: grid; place-items: center; width: 46px; height: 46px; border: 1px solid rgba(186,167,255,.36); border-radius: 9px; color: #d3c4ff; background: rgba(16,15,25,.5); font:18px Georgia,serif; }
-    .universe-feature-copy { min-width: 0; }
-    .universe-feature-copy small { display: block; margin-bottom: 4px; color: #c0b2f1; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing: .13em; }
-    .universe-feature-copy b { display: block; color: #ece8fa; font-size:11px; }
-    .universe-feature-copy p { margin: 4px 0 0; color: #9995a6; font-size:9px; line-height: 1.5; }
-    .universe-feature button { min-height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 11px; border: 1px solid #76689f; border-radius: 7px; background: rgba(186,167,255,.11); color: #e3d9ff; font-size:9px; font-weight: 750; cursor: pointer; }
-    .universe-feature button:hover { border-color: #b7a6eb; background: rgba(186,167,255,.19); }
-    .universe-feature button:focus-visible { outline: 2px solid #baa7ff; outline-offset: 2px; }
+    .room-related-link:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
 
 
     .section-rule { height: 1px; margin: 0 0 22px; border: 0; background: var(--line); }
@@ -309,10 +253,10 @@
     .rooms-label-actions{display:flex;align-items:center;gap:9px;min-width:0;}
     .rooms-label-actions>span:first-child{color:#858390;letter-spacing:.08em;}
     .egg-hunt-toggle{position:relative;display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;padding:5px;border:1px solid #424452;border-radius:8px;background:linear-gradient(145deg,#252631,#181a21);color:#d7d8e2;cursor:pointer;transition:border-color .18s,background .18s,transform .18s;}
-    .egg-hunt-toggle svg{display:block;width:19px;height:19px;fill:rgba(240,202,120,.16);stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
+    .egg-hunt-toggle svg{display:block;width:19px;height:19px;fill:rgba(94,221,133,.18);stroke:#a6f4bd;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
     .topbar .egg-hunt-toggle{width:32px;height:32px;flex:0 0 32px;padding:5px;}
     .egg-hunt-toggle[data-enabled="true"]{border-color:#347d50;color:#a6f4bd;box-shadow:0 0 0 1px rgba(94,221,133,.14),0 0 15px rgba(94,221,133,.10);}
-    .egg-hunt-toggle[data-enabled="false"]{border-color:#85444b;color:#ffb4b9;filter:none;opacity:1;}
+    .egg-hunt-toggle[data-enabled="false"]{border-color:#347d50;color:#a6f4bd;box-shadow:0 0 0 1px rgba(94,221,133,.14),0 0 15px rgba(94,221,133,.10);filter:none;opacity:1;}
     .egg-hunt-toggle:hover{transform:translateY(-1px);}
     .egg-hunt-toggle:focus-visible{outline:2px solid var(--acid);outline-offset:3px;}
     .egg-hunt-status-dot{position:absolute;right:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:#55dc84;box-shadow:0 0 7px rgba(85,220,132,.8);}
@@ -460,21 +404,6 @@
       h1 { font-size:clamp(34px, 10vw, 47px); }
       .hero-bottom { display: block; margin-top: 13px; }
       .hero-copy { font-size:11px; }
-      .universe-panel { margin-top: 16px; }
-      .universe-panel > summary { min-height: 54px; padding: 9px; gap: 9px; }
-      .universe-summary-copy strong { font-size:10px; }
-      .universe-summary-meta { display: none; }
-      .universe-content { padding: 0 9px 10px; }
-      .universe-intro { display: grid; gap: 5px; }
-      .universe-activity { max-width: none; text-align: left; }
-      .universe-world-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .universe-shared { grid-template-columns: 1fr; gap: 10px; padding: 10px; }
-      .universe-services { gap: 6px; }
-      .universe-feature { grid-template-columns: 38px minmax(0,1fr); gap: 9px; padding: 9px; }
-      .universe-feature-mark { width: 36px; height: 36px; font-size:15px; }
-      .universe-feature-copy b { font-size:10px; }
-      .universe-feature button { grid-column: 1 / -1; width: 100%; }
-      .universe-service { padding-left: 7px; }
       .room-heading { flex-wrap: nowrap; }
       .room-ecosystem { align-items: flex-start; }
       .category-heading { align-items: flex-start; }
@@ -751,6 +680,10 @@
   .site-control-storage-note{display:block;margin:0}
   @media(max-width:560px){.site-control-storage{margin-inline:12px}.site-control-storage-actions{align-items:stretch;flex-direction:column}.site-control-storage-actions button{width:100%}}
   .site-control-panel .site-control-head{position:sticky;top:0;z-index:2;background:rgba(25,26,33,.97);backdrop-filter:blur(12px)}
+  .site-control-health{margin:14px 0;padding:13px;border:1px solid #3a4149;border-radius:10px;background:linear-gradient(145deg,#191f25,#15191f)}
+  .site-control-health-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.site-control-health-head h3{margin:0;color:#d6ff69;font:800 10px ui-monospace,monospace;letter-spacing:.12em}.site-control-health-head p{max-width:620px;margin:6px 0 0;color:#9aa5aa;font-size:10px;line-height:1.55}.site-control-health-head>[data-health-state]{flex:0 0 auto;padding:4px 7px;border:1px solid #4d6260;border-radius:4px;color:#b8d2cb;font:8px ui-monospace,monospace;letter-spacing:.08em}.site-control-health-head>[data-state="healthy"]{border-color:#426d50;color:#a8e3ae}.site-control-health-head>[data-state="issues-found"]{border-color:#8d5149;color:#ffc0a9}.site-control-health-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.site-control-health-status{margin:9px 0;color:#b8c1c5;font-size:9px;line-height:1.5}.site-control-health-results{display:grid;gap:5px;margin:0;padding:0;list-style:none}.site-control-health-results li{display:grid;grid-template-columns:minmax(105px,.3fr) minmax(0,1fr);gap:10px;padding:7px 8px;border:1px solid #303a40;border-radius:6px;background:#11171c;font-size:9px}.site-control-health-results li>b{color:#bce4cd}.site-control-health-results li>span{min-width:0;color:#98a5aa;overflow-wrap:anywhere}.site-control-health-results li[data-state="warning"]>b{color:#e6d08f}.site-control-health-results li[data-state="error"]>b{color:#f19c94}
+  @media(max-width:560px){.site-control-health-results li{grid-template-columns:1fr;gap:3px}.site-control-health-head{flex-direction:column}}
+
   .site-control-tool-section,.site-control-personal,.site-control-about{padding:0 18px 15px}
   .site-control-tool-section h3,.site-control-personal>h3,.site-control-preferences>h3{margin:2px 0 9px;color:#b5b3c0;font:700 9px ui-monospace,monospace;letter-spacing:.15em}
   .site-control-tool-section .site-control-actions{padding:0;grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -773,6 +706,43 @@
   }
 </style>
 
+
+<style id="curioid-v1295-layout-guard">
+  /* v1.295: responsive content fitting. No project or interface is hidden. */
+  .app-shell, .main, .page-wrap, .category-stack, .category-section, .room-list,
+  .room-window, .room-body, .room-mount, .site-control-panel, .site-shortcuts-dialog {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .room-heading, .room-card-head, .room-name-wrap { min-width: 0; }
+  .room-name, .room-description {
+    display: block;
+    max-width: 100%;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  .room-description { line-height: 1.45; }
+  .category-heading { min-width: 0; flex-wrap: wrap; }
+  .category-heading-copy { min-width: 0; max-width: 100%; }
+  .category-count { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .personal-shortcut-copy, .personal-shortcut-copy b, .personal-shortcut-copy small {
+    min-width: 0; max-width: 100%; overflow: visible; overflow-wrap: anywhere;
+    text-overflow: clip; white-space: normal;
+  }
+  .app-shell :where(input, select, textarea, button) { max-width: 100%; }
+  .app-shell :where(input, select, textarea) { min-width: 0; }
+  .app-shell :where(img, video, iframe) { max-width: 100%; }
+  .app-shell :where(p, h1, h2, h3, h4, h5, h6, label, legend, summary, figcaption, li, dt, dd) {
+    overflow-wrap: break-word;
+  }
+  @media (max-width: 600px) {
+    .room-name-wrap { flex: 1 1 0; }
+    .room-description { max-width: 100%; }
+    .category-count { margin-left: auto; }
+  }
+</style>
 </head>
 <body>
   <noscript><div class="noscript-notice">CURIOID needs JavaScript enabled to open its interactive projects. No account or remote AI service is required.</div></noscript>
@@ -830,6 +800,7 @@
           <span aria-hidden="true">⚙</span><span><b>Control Panel</b><small>Website tools, settings and saved items</small></span>
         </button>
       </div>
+      <a class="portfolio-link" data-sidebar-creator-link href="https://stelioswinters.com/" target="_blank" rel="noopener noreferrer"><span>Visit the creator's website</span><span aria-hidden="true">↗</span></a>
     </div>
   </aside>
 
@@ -853,34 +824,14 @@
         <div class="hero-bottom">
           <p class="hero-copy">Six creative worlds, useful tools and Sandbox OS. Explore a world or build one of your own.</p>
         </div>
-<details class="universe-panel" id="universePanel" aria-label="About the CURIOID universe">
-          <summary aria-controls="universeGuideContent">
-            <span class="universe-mark" aria-hidden="true">✳</span>
-            <span class="universe-summary-copy"><small>CURIOID / THE UNIVERSE</small><strong>Six worlds. Build a seventh.</strong></span>
-            <span class="universe-summary-meta">PRIVATE BY DEFAULT</span>
-            <span class="universe-chevron" aria-hidden="true">⌄</span>
-          </summary>
-          <div class="universe-content universe-content-compact" id="universeGuideContent">
-            <p class="universe-lead">Six ready-made worlds, plus Sandbox OS for building your own. Use what you need and keep your work in this browser.</p>
-            <ul class="universe-world-quicklist" aria-label="The six CURIOID worlds">
-              <li class="universe-world-quickitem"><b>Doors98</b><span>A retro desktop with apps, games and room-based storage.</span></li>
-              <li class="universe-world-quickitem"><b>NOURISH</b><span>Food, recipes and kitchen planning.</span></li>
-              <li class="universe-world-quickitem"><b>EchoNoise</b><span>Music and sound creation.</span></li>
-              <li class="universe-world-quickitem"><b>UMBRA</b><span>Layered image editing and effects.</span></li>
-              <li class="universe-world-quickitem"><b>Aether</b><span>Notes, files, code and ideas.</span></li>
-              <li class="universe-world-quickitem"><b>AURA</b><span>A structured creative workspace.</span></li>
-              <li class="universe-world-quickitem"><b>Sandbox OS</b><span>Build a personal Basic, Advanced or Hybrid operating system.</span></li>
-            </ul>
-            <p class="universe-backup-note">Saved work stays in this browser. Export backups before clearing site data or changing devices. Connections are optional and require your approval.</p>
-          </div>
-        </details>
+
       </section>
       <hr class="section-rule">
       <div class="rooms-label"><span>Explore the collections</span><span>Open a project window to begin</span></div>
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.290</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.296</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -898,6 +849,13 @@
       <div class="site-control-storage-meter-wrap"><div class="site-control-storage-meter" role="progressbar" aria-label="Estimated browser storage usage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-storage-meter><span data-storage-meter-fill></span></div><small data-storage-breakdown>Checking storage estimate…</small></div>
       <div class="site-control-storage-actions"><p data-storage-protection-status role="status" aria-live="polite">Checking persistent-storage support…</p><button type="button" class="site-control-small-action" data-storage-persist-request>Request storage protection</button></div>
       <small class="site-control-storage-note">The browser decides whether to grant this domain-wide request. Protection is not a backup: export important work regularly and before clearing site data or changing devices.</small>
+    </section>
+    <section class="site-control-health" aria-labelledby="controlPanelHealthTitle">
+      <div class="site-control-health-head"><div><h3 id="controlPanelHealthTitle">CURIOID HEALTH CHECK</h3><p>Run local checks for the app runtime, browser storage, offline shell and operating-system registry. Nothing is uploaded or saved as a diagnostics history.</p></div><span data-health-state>NOT RUN</span></div>
+      <div class="site-control-health-actions"><button type="button" class="site-control-small-action" data-health-run>Run diagnostics</button><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
+      <p class="site-control-health-status" data-health-status role="status" aria-live="polite">Diagnostics run only when requested.</p>
+      <ul class="site-control-health-results" data-health-results aria-label="CURIOID health check results"></ul>
+      <small class="site-control-storage-note">Repair only refreshes the browser's service-worker registration. It does not clear saved projects, OS packages, Browser Vault artifacts or backups.</small>
     </section>
     <section class="site-control-tool-section" aria-labelledby="controlPanelCreateTitle">
       <h3 id="controlPanelCreateTitle">CREATE &amp; BUILD</h3>
@@ -1003,16 +961,19 @@
 
   function makeStatus() {
     let activeResources = 0;
+    let suspendedScopes = 0;
     const owners = [];
     for (const scope of activeScopes.values()) {
       const status = scope.getStatus();
       activeResources += status.activeResources;
-      owners.push({ id: status.id, owner: status.owner, activeResources: status.activeResources, cleanupFailures: status.cleanupFailures });
+      if (status.state === 'suspended') suspendedScopes += 1;
+      owners.push({ id: status.id, owner: status.owner, state: status.state, activeResources: status.activeResources, cleanupFailures: status.cleanupFailures });
     }
     return Object.freeze({
       version: VERSION,
       activeScopes: activeScopes.size,
       activeResources,
+      suspendedScopes,
       totalScopesCreated,
       totalScopesDisposed,
       cleanupFailures: cleanupFailureCount,
@@ -1088,12 +1049,12 @@
       return true;
     }
 
-    function addCleanup(cleanup, kind) {
+    function addCleanup(cleanup, kind, lifecycle = null) {
       if (typeof cleanup !== 'function') throw new TypeError('A runtime cleanup must be a function.');
       const previous = cleanupEntries.get(cleanup);
       if (state === 'active' && previous && previous.active) return () => runEntry(previous);
-      const entry = { cleanup, kind: safeLabel(kind, 'custom'), active: true };
-      if (state !== 'active') {
+      const entry = { cleanup, kind: safeLabel(kind, 'custom'), active: true, suspend: typeof lifecycle?.suspend === 'function' ? lifecycle.suspend : null, resume: typeof lifecycle?.resume === 'function' ? lifecycle.resume : null };
+      if (state === 'disposed' || state === 'disposing') {
         runEntry(entry);
         return () => false;
       }
@@ -1147,22 +1108,25 @@
       if (typeof callback !== 'function') throw new TypeError('Runtime timeout() requires a function callback.');
       const numeric = Number(delay);
       const safeDelay = Math.max(0, Math.min(MAX_TIMER_DELAY, Number.isFinite(numeric) ? numeric : 0));
-      let timer = null;
-      const release = addCleanup(() => {
-        if (timer !== null) { win.clearTimeout(timer); timer = null; }
-      }, 'timeout');
-      try {
-        timer = win.setTimeout(() => {
-          timer = null;
-          release();
-          if (state === 'active') {
-            try { callback(); } catch (error) { report(error, `${owner}/timeout callback`); }
-          }
-        }, safeDelay);
-      } catch (error) {
-        release();
-        throw error;
-      }
+      let timer = null, remaining = safeDelay, startedAt = 0, active = true;
+      const clear = () => {
+        if (timer !== null) { win.clearTimeout(timer); timer = null; remaining = Math.max(0, remaining - Math.max(0, Date.now() - startedAt)); }
+      };
+      let release = () => false;
+      const start = () => {
+        if (!active || timer !== null || state !== 'active') return;
+        startedAt = Date.now();
+        try {
+          timer = win.setTimeout(() => {
+            timer = null; remaining = 0;
+            if (state === 'suspended') return;
+            active = false; release();
+            if (state === 'active') { try { callback(); } catch (error) { report(error, `${owner}/timeout callback`); } }
+          }, remaining);
+        } catch (error) { release(); throw error; }
+      };
+      release = addCleanup(() => { active = false; clear(); }, 'timeout', { suspend: clear, resume: start });
+      start();
       return release;
     }
 
@@ -1170,53 +1134,34 @@
       if (typeof callback !== 'function') throw new TypeError('Runtime interval() requires a function callback.');
       const numeric = Number(delay);
       const safeDelay = Math.max(1, Math.min(MAX_TIMER_DELAY, Number.isFinite(numeric) ? numeric : 1));
-      let active = true;
-      let timer = null;
-      const release = addCleanup(() => {
-        if (!active) return;
-        active = false;
-        if (timer !== null) { win.clearInterval(timer); timer = null; }
-      }, 'interval');
-      try {
-        timer = win.setInterval(() => {
+      let active = true, timer = null;
+      const stop = () => { if (timer !== null) { win.clearInterval(timer); timer = null; } };
+      const start = () => {
+        if (!active || timer !== null || state !== 'active') return;
+        try { timer = win.setInterval(() => {
           if (state !== 'active' || !active) return;
           try { callback(); } catch (error) { report(error, `${owner}/interval callback`); }
-        }, safeDelay);
-      } catch (error) {
-        release();
-        throw error;
-      }
+        }, safeDelay); } catch (error) { release(); throw error; }
+      };
+      const release = addCleanup(() => { if (!active) return; active = false; stop(); }, 'interval', { suspend: stop, resume: start });
+      start();
       return release;
     }
 
     function animationFrame(callback) {
       if (typeof callback !== 'function') throw new TypeError('Runtime animationFrame() requires a function callback.');
-      if (typeof win.requestAnimationFrame !== 'function') {
-        return timeout(() => callback(Date.now()), 16);
-      }
-      let frame = null;
-      let active = true;
-      let release = () => false;
+      if (typeof win.requestAnimationFrame !== 'function') return timeout(() => callback(Date.now()), 16);
+      let frame = null, active = true;
+      const stop = () => { if (frame !== null && typeof win.cancelAnimationFrame === 'function') win.cancelAnimationFrame(frame); frame = null; };
+      const schedule = () => { if (active && state === 'active' && frame === null) frame = win.requestAnimationFrame(tick); };
       const tick = timestamp => {
         frame = null;
         if (!active || state !== 'active') return;
-        try {
-          if (callback(timestamp) !== false && active && state === 'active') frame = win.requestAnimationFrame(tick);
-          else release();
-        } catch (error) {
-          report(error, `${owner}/animation frame callback`);
-          release();
-        }
+        try { if (callback(timestamp) !== false && active && state === 'active') schedule(); else release(); }
+        catch (error) { report(error, `${owner}/animation frame callback`); release(); }
       };
-      release = addCleanup(() => {
-        active = false;
-        if (frame !== null && typeof win.cancelAnimationFrame === 'function') win.cancelAnimationFrame(frame);
-        frame = null;
-      }, 'animation-frame');
-      if (active && state === 'active') {
-        try { frame = win.requestAnimationFrame(tick); }
-        catch (error) { release(); throw error; }
-      }
+      const release = addCleanup(() => { active = false; stop(); }, 'animation-frame', { suspend: stop, resume: schedule });
+      schedule();
       return release;
     }
 
@@ -1257,7 +1202,20 @@
           }
         } catch (error) { report(error, `${owner}/audio-context close`); }
       };
-      try { addCleanup(close, 'audio-context'); }
+      let resumeAfterSuspend = false;
+      const suspend = () => {
+        if (context.state !== 'running' || typeof context.suspend !== 'function') return;
+        resumeAfterSuspend = true;
+        try { const result = context.suspend(); if (result?.catch) result.catch(error => report(error, `${owner}/audio-context suspend`)); }
+        catch (error) { report(error, `${owner}/audio-context suspend`); }
+      };
+      const resume = () => {
+        if (!resumeAfterSuspend || context.state !== 'suspended' || typeof context.resume !== 'function') return;
+        resumeAfterSuspend = false;
+        try { const result = context.resume(); if (result?.catch) result.catch(error => report(error, `${owner}/audio-context resume`)); }
+        catch (error) { report(error, `${owner}/audio-context resume`); }
+      };
+      try { addCleanup(close, 'audio-context', { suspend, resume }); }
       catch (error) { close(); throw error; }
       return context;
     }
@@ -1271,8 +1229,61 @@
       return value;
     }
 
-    function dispose(reason) {
+    function suspend(reason = 'inactive') {
       if (state !== 'active') return false;
+      state = 'suspended';
+      for (const entry of entries) {
+        if (!entry.active || typeof entry.suspend !== 'function') continue;
+        try { entry.suspend(reason); } catch (error) { report(error, `${owner}/${entry.kind} suspend`); }
+      }
+      publishStatus();
+      return true;
+    }
+
+    function resume(reason = 'active') {
+      if (state !== 'suspended') return false;
+      state = 'active';
+      for (const entry of entries) {
+        if (!entry.active || typeof entry.resume !== 'function') continue;
+        try { entry.resume(reason); } catch (error) { report(error, `${owner}/${entry.kind} resume`); }
+      }
+      publishStatus();
+      return true;
+    }
+
+    function bindHost(host) {
+      if (!host || typeof host.addEventListener !== 'function') return () => false;
+      const room = typeof host.closest === 'function' ? host.closest('.room-window') : null;
+      let priorMedia = new Set(), disposed = false;
+      const sync = () => {
+        if (disposed) return;
+        const hiddenRoom = room && room.classList && !room.classList.contains('open');
+        const hidden = doc.visibilityState === 'hidden' || host.isConnected === false || Boolean(host.hidden) || Boolean(hiddenRoom);
+        host.classList?.toggle('curioid-runtime-suspended', hidden);
+        if (hidden) {
+          if (host.querySelectorAll) host.querySelectorAll('audio,video').forEach(media => {
+            if (!media.paused) { priorMedia.add(media); try { media.pause(); } catch (_) {} }
+          });
+          suspend('host-inactive');
+        } else {
+          resume('host-active');
+          for (const media of priorMedia) if (media.isConnected && !media.hidden) { try { const result = media.play(); if (result?.catch) result.catch(() => {}); } catch (_) {} }
+          priorMedia.clear();
+        }
+      };
+      doc.addEventListener('visibilitychange', sync);
+      const observer = typeof win.MutationObserver === 'function' ? new win.MutationObserver(sync) : null;
+      try { observer?.observe(host, { attributes:true, attributeFilter:['hidden','class','style'], subtree:true }); if (room) observer?.observe(room, { attributes:true, attributeFilter:['class','hidden'] }); } catch (_) {}
+      const release = addCleanup(() => {
+        disposed = true; doc.removeEventListener('visibilitychange', sync); observer?.disconnect();
+        host.classList?.remove('curioid-runtime-suspended'); priorMedia.clear();
+      }, 'host-visibility-observer');
+      sync();
+      return release;
+    }
+
+    function dispose(reason) {
+      if (state === 'disposed' || state === 'disposing') return false;
       state = 'disposing';
       try { if (!controller.signal.aborted) controller.abort(reason || 'runtime-disposed'); }
       catch (error) { cleanupFailures += 1; cleanupFailureCount += 1; report(error, `${owner}/abort`); }
@@ -1314,6 +1325,9 @@
       trackWorker,
       trackAudioContext,
       trackAbortController,
+      suspend,
+      resume,
+      bindHost,
       dispose,
       getStatus
     });
@@ -1327,7 +1341,7 @@
     let disposed = 0;
     // Resolve the active scope objects by the public handle retained below.
     for (const scope of [...scopeHandles.values()]) {
-      if (scope && scope.getStatus().state === 'active' && scope.dispose(reason || 'dispose-all')) disposed += 1;
+      if (scope && ['active', 'suspended'].includes(scope.getStatus().state) && scope.dispose(reason || 'dispose-all')) disposed += 1;
     }
     return disposed;
   }
@@ -1647,12 +1661,20 @@
       syncMotionToggle();
 
       const toast = $("#toast");
-      let toastTimer = 0;
-      function showToast(message) {
-        toast.textContent = message;
+      let toastTimer = 0, lastToastMessage = '', lastToastAt = 0;
+      function showToast(message, options = {}) {
+        const text = String(message || '').trim().slice(0, 260);
+        if (!text || !toast) return false;
+        const now = Date.now(), quietMs = Math.max(0, Number(options.quietMs ?? 18000));
+        // Repeated read-only / unavailable / permission notices are useful once,
+        // not every time a visitor presses the same control.
+        if (!options.force && text === lastToastMessage && now - lastToastAt < quietMs) return false;
+        lastToastMessage = text; lastToastAt = now;
+        toast.textContent = text;
         toast.classList.add("show");
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => toast.classList.remove("show"), 2500);
+        return true;
       }
       async function copyProjectLink(roomId) {
         const info = ROOM_INFO[roomId];
@@ -1837,6 +1859,131 @@
           if (storageProtectionStatus) storageProtectionStatus.textContent = 'The request could not be completed. Export important work regularly and check your browser storage settings.';
         }
       });
+      const healthRunButton = $('[data-health-run]', controlCenter);
+      const healthRepairButton = $('[data-health-repair]', controlCenter);
+      const healthStatus = $('[data-health-status]', controlCenter);
+      const healthState = $('[data-health-state]', controlCenter);
+      const healthResults = $('[data-health-results]', controlCenter);
+      const healthTimeout = (promise, ms, label) => new Promise((resolve, reject) => {
+        const timer = window.setTimeout(() => reject(new Error(`${label} timed out`)), ms);
+        Promise.resolve(promise).then(value => { window.clearTimeout(timer); resolve(value); }, error => { window.clearTimeout(timer); reject(error); });
+      });
+      function paintHealthResults(rows, statusText, stateText) {
+        if (healthResults) {
+          healthResults.replaceChildren();
+          for (const row of rows) {
+            const item = document.createElement('li');
+            item.dataset.state = row.ok ? 'ok' : row.warning ? 'warning' : 'error';
+            const label = document.createElement('b'); label.textContent = row.label;
+            const detail = document.createElement('span'); detail.textContent = row.detail;
+            item.append(label, detail); healthResults.appendChild(item);
+          }
+        }
+        if (healthStatus) healthStatus.textContent = statusText;
+        if (healthState) { healthState.textContent = stateText; healthState.dataset.state = stateText.toLowerCase().replace(/[^a-z]+/g, '-'); }
+      }
+      async function probeTemporaryIndexedDB() {
+        if (!window.indexedDB?.open) return { ok:false, warning:true, detail:'IndexedDB is unavailable in this browser.' };
+        const name = `__curioid_health_probe_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+        let database = null;
+        try {
+          const opened = await healthTimeout(new Promise((resolve, reject) => {
+            const request = indexedDB.open(name, 1);
+            request.onupgradeneeded = () => { try { request.result.createObjectStore('probe'); } catch (_) {} };
+            request.onsuccess = () => { database = request.result; resolve(database); };
+            request.onerror = () => reject(request.error || new Error('IndexedDB open failed'));
+            request.onblocked = () => reject(new Error('IndexedDB probe was blocked by another tab'));
+          }), 3500, 'IndexedDB probe');
+          opened.close(); database = null;
+          await healthTimeout(new Promise((resolve, reject) => {
+            const request = indexedDB.deleteDatabase(name);
+            request.onsuccess = resolve; request.onerror = () => reject(request.error || new Error('temporary probe cleanup failed')); request.onblocked = resolve;
+          }), 2500, 'IndexedDB probe cleanup');
+          return { ok:true, detail:'Temporary read/write database probe passed; temporary database removed.' };
+        } catch (error) {
+          try { database?.close(); indexedDB.deleteDatabase(name); } catch (_) {}
+          return { ok:false, warning:true, detail:String(error?.message || error).slice(0,180) };
+        }
+      }
+      async function probeOpfs() {
+        const storage = navigator.storage;
+        if (typeof storage?.getDirectory !== 'function') return { ok:false, warning:true, detail:'Origin Private File System is unavailable; apps must use their supported fallback.' };
+        let directory = null, name = `.__curioid-health-probe-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+        try {
+          directory = await healthTimeout(storage.getDirectory(), 3500, 'OPFS access');
+          const handle = await healthTimeout(directory.getFileHandle(name, { create:true }), 2500, 'OPFS temporary file');
+          const writable = await handle.createWritable(); await writable.write('CURIOID local health probe'); await writable.close();
+          await directory.removeEntry(name);
+          return { ok:true, detail:'Temporary OPFS write/read capability probe passed; probe file removed.' };
+        } catch (error) {
+          try { if (directory) await directory.removeEntry(name); } catch (_) {}
+          return { ok:false, warning:true, detail:String(error?.message || error).slice(0,180) };
+        }
+      }
+      async function runCurioidHealthCheck() {
+        if (healthRunButton) { healthRunButton.disabled = true; healthRunButton.textContent = 'Checking…'; }
+        if (healthRepairButton) healthRepairButton.disabled = true;
+        paintHealthResults([], 'Running read-only local diagnostics. Temporary storage probes clean up after themselves…', 'CHECKING');
+        const rows = [];
+        const add = (label, result) => rows.push({ label, ...result });
+        const projects = window.CurioidProjects;
+        const osBootReady=['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'].every(id=>projects?.ids?.includes(id));
+        add('OS boot contracts', {ok:osBootReady,warning:!projects?.ids?.length,detail:osBootReady?'Six OS modules registered.':'Runtime or OS modules unavailable.'});
+        const runtime = window.CurioidRuntimeSupervisor?.getStatus?.();
+        add('Application lifecycle', runtime ? (runtime.cleanupFailures ? { ok:false, detail:`${runtime.activeScopes} active scopes; ${runtime.cleanupFailures} cleanup issue(s) recorded this session.` } : { ok:true, detail:`${runtime.activeScopes} active scope(s), ${runtime.activeResources} tracked resource(s), no cleanup errors recorded.` }) : { ok:false, warning:true, detail:'Runtime Supervisor is not available yet.' });
+        const assetSRI=[...document.scripts].some(n=>n.src.includes('projects.js')&&n.integrity.startsWith('sha384-'))&&[...document.querySelectorAll('link[rel=stylesheet]')].some(n=>n.href.includes('projects.css')&&n.integrity.startsWith('sha384-'));
+        const registration=await(navigator.serviceWorker?.getRegistration?.().catch(()=>null)||Promise.resolve(null));
+        const cacheNames=await(window.caches?.keys?.().catch(()=>[])||Promise.resolve([]));
+        const hasCache=cacheNames.some(name=>name.startsWith('curioid-shell:')||name.startsWith('curioid-shell-v'));
+        add('Assets / offline',{ok:!!(assetSRI&&registration?.active&&hasCache),warning:!(assetSRI&&registration?.active&&hasCache),detail:`SRI ${assetSRI?'ok':'missing'}; SW ${registration?.active?'active':'inactive'}; cache ${hasCache?'yes':'no'}.`});
+        const estimate = await (navigator.storage?.estimate?.().catch(() => null) || Promise.resolve(null));
+        const usage = Number.isFinite(estimate?.usage) ? formatStorageSize(estimate.usage) : 'unavailable';
+        const quota = Number.isFinite(estimate?.quota) ? formatStorageSize(estimate.quota) : 'unavailable';
+        add('Browser storage', estimate ? { ok:true, detail:`Origin-wide estimate: ${usage} used of ${quota}. This is not per-app accounting.` } : { ok:false, warning:true, detail:'Browser storage estimate is unavailable.' });
+        const [idb, opfs] = await Promise.all([probeTemporaryIndexedDB(), probeOpfs()]);
+        add('IndexedDB', idb); add('OPFS', opfs);
+        if (typeof projects?.inspectLocalStorage === 'function') {
+          try {
+            const inventory = await healthTimeout(projects.inspectLocalStorage({ maxRecords:8000, budgetMs:4500 }), 7000, 'per-tool storage inventory');
+            if (!inventory?.available) {
+              add('Per-tool storage inventory', { ok:false, warning:true, detail:inventory?.reason || 'Per-tool database inventory is unavailable in this browser.' });
+              add('Storage estimate note', { ok:true, detail:'Per-tool estimates require a normal HTTPS site origin and browser support. The origin-wide Storage API estimate remains the fallback.' });
+            }
+            else {
+              const databases = Array.isArray(inventory.databases) ? inventory.databases : [];
+              add('Per-tool storage inventory', { ok:true, detail:`${databases.length} known CURIOID database(s), ${inventory.scannedRecords||0} sampled record(s), approximately ${formatStorageSize(inventory.approxBytes||0)}. ${inventory.truncated?'Partial scan.':'Scan complete.'} Backup coverage ${inventory.coverageComplete?'complete':'needs review'}.` });
+              for (const database of databases) {
+                const detail = database.error ? database.error : `${database.records} record(s) across ${database.stores} store(s), approximately ${formatStorageSize(database.approxBytes||0)}${database.partial?' (partial scan)':''}.`;
+                add(`Storage · ${database.label}`, database.error ? { ok:false, warning:true, detail } : { ok:true, detail });
+              }
+              if (inventory.opfs) add(inventory.opfs.label, inventory.opfs.error ? { ok:false, warning:true, detail:inventory.opfs.error } : { ok:true, detail:`${inventory.opfs.files} file(s), ${formatStorageSize(inventory.opfs.bytes)}${inventory.opfs.partial?' (partial scan)':''}.` });
+              add('Storage estimate note', { ok:true, detail:inventory.note || 'Per-database byte estimates are approximate and do not replace the browser’s origin-wide quota report.' });
+            }
+          } catch (error) { add('Per-tool storage inventory', { ok:false, warning:true, detail:String(error?.message||error).slice(0,180) }); }
+        } else add('Per-tool storage inventory', { ok:false, warning:true, detail:'Open a CURIOID project once to load the project runtime, then run diagnostics again for per-tool inventory.' });
+        try{const backups=await healthTimeout(projects?.inspectBackupArtifacts?.()||Promise.resolve({}),12000,'backup');add('Backup recoverability',backups?.verified>0&&!backups.warning?{ok:true,detail:backups.detail}:{ok:false,warning:true,detail:backups?.detail||'No verified backup.'});}
+        catch(error){add('Backup recoverability',{ok:false,warning:true,detail:String(error?.message||error).slice(0,100)});}
+        const roomCount = document.querySelectorAll('.room-window[data-room]').length;
+        add('Project catalogue', roomCount ? { ok:true, detail:`${roomCount} project room(s) are present in the website catalogue.` } : { ok:false, detail:'No project rooms were found in the page.' });
+        const failed = rows.filter(row => !row.ok && !row.warning).length;
+        const warnings = rows.filter(row => row.warning).length;
+        paintHealthResults(rows, `${rows.filter(row=>row.ok).length}/${rows.length} checks passed · ${warnings} browser capability warning(s) · ${failed} issue(s). Results are local to this panel.`, failed ? 'ISSUES FOUND' : warnings ? 'CHECKED WITH WARNINGS' : 'HEALTHY');
+        if (healthRunButton) { healthRunButton.disabled = false; healthRunButton.textContent = 'Run again'; }
+        if (healthRepairButton) healthRepairButton.disabled = !registration;
+        return rows;
+      }
+      healthRunButton?.addEventListener('click', () => { runCurioidHealthCheck().catch(error => paintHealthResults([], `Diagnostics could not finish: ${String(error?.message||error).slice(0,180)}`, 'INCOMPLETE')); });
+      healthRepairButton?.addEventListener('click', async () => {
+        const registration = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
+        if (!registration) { paintHealthResults([], 'No service-worker registration exists to refresh. Open CURIOID over HTTPS, then run diagnostics again.', 'UNAVAILABLE'); return; }
+        healthRepairButton.disabled = true; healthRepairButton.textContent = 'Refreshing…';
+        try {
+          await healthTimeout(registration.update(), 10000, 'Service-worker update check');
+          paintHealthResults([{ label:'Service-worker registration', ok:true, detail:`Update check completed. Active: ${Boolean(registration.active)}; waiting: ${Boolean(registration.waiting)}. No saved data or caches were deleted.` }], 'Only the service-worker registration was refreshed. Any new version still follows the normal update-ready prompt.', 'CHECKED');
+        } catch (error) {
+          paintHealthResults([{ label:'Service-worker registration', ok:false, warning:true, detail:String(error?.message||error).slice(0,180) }], 'The browser could not refresh the service-worker registration. Your saved data was not changed.', 'UNAVAILABLE');
+        } finally { healthRepairButton.disabled = false; healthRepairButton.textContent = 'Refresh service-worker registration'; }
+      });
       function openSiteControlCenter() {
         if (!controlCenter) return;
         refreshControlCenter();
@@ -2018,7 +2165,7 @@
       let siteRecents = readSiteIds(SITE_RECENTS_KEY, 12);
       function storeSiteIds(key, values) {
         const state=SITE_ID_STORAGE.get(key);
-        if(!state||state.readOnly){showToast(`This shortcut list is read-only because its original data could not be verified. ${state?.reason||'Reload when browser storage is available.'} No data was overwritten.`);return false;}
+        if(!state||state.readOnly){if(state&&!state.noticeShown){showToast(`This shortcut list is read-only because its original data could not be verified. ${state.reason||'Reload when browser storage is available.'} No data was overwritten.`,{quietMs:300000});state.noticeShown=true;}return false;}
         if(!Array.isArray(values)||values.length>(key===SITE_FAVORITES_KEY?100:12)||values.some(id=>typeof id!=='string'||!Object.prototype.hasOwnProperty.call(ROOM_INFO,id))){showToast('CURIOID refused an invalid shortcut update. Existing data was left unchanged.');return false;}
         const serialized=JSON.stringify([...new Set(values)]);
         let previous;
@@ -2365,7 +2512,7 @@
           if (previous) previous.remove();
           projectCssPromise = loadAssetWithFallback({
             type: "link",
-            file: "projects.css", hash: "f68dd1764f43dee459a6c934cc3583da9e548d1d64389cf612ab30aa59685c90", integrity: "sha384-B0vPm5OROQ79lic1niRIksJTUQcnOLJ1RbgUt0Dasf2AkICc36iI2dD02Wm5rvaJ",
+            file: "projects.css", hash: "95e43bd92c5eb8c14c287b6e7f904941a8b14ef97173baa33a0e62c3a8130954", integrity: "sha384-EMDYEZf8desJGQnCWZBa4KL+Jm8bL7XSJmzsitpDvkM9NJgA0PklQd9AuVm26XkN",
             expected: "Project styles",
             markReady: element => { element.dataset.loaded = "true"; }
           }).then(() => {
@@ -2394,7 +2541,7 @@
           if (window.CurioidProjects) return Promise.resolve();
           return loadAssetWithFallback({
             type: "script",
-            file: "projects.js", hash: "9857864fc7f4d7c1605852242f6a4cb8c5288f4b77fd2ec4d110933aac1238c5", integrity: "sha384-y9gg4E+tnhluIIrzWM7I9SZgnYJgeWZB9ApT1JPOZ+3a7p51tcYulUIYdzzLHJbn",
+            file: "projects.js", hash: "70f748fc5bcc2632447c4cee05ea5f01a06add041d72c20ac754347dde064a77", integrity: "sha384-h7RYAVb7zkMdTHeIqhpy45X7sxErvJGlxnxrYnBnq78lyg4Z4ULH5iJnG6ddmthc",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -3269,6 +3416,45 @@
             navigator.serviceWorker.register(new URL("service-worker.js", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
+            }).then(registration => {
+              let updateAccepted = false;
+              let updateBanner = null;
+              const messageHandler = event => {
+                if (event.data?.type !== "CURIOID_UPDATE_BLOCKED" || !updateBanner) return;
+                const button = updateBanner.querySelector("[data-curioid-update-apply]");
+                const detail = updateBanner.querySelector("small");
+                if (button) { button.disabled = false; button.textContent = "Try again"; }
+                if (detail) detail.textContent = event.data.openTabs === null ? "The update could not be activated safely. Close other CURIOID tabs and retry." : `Close your other ${Math.max(1,event.data.openTabs-1)} CURIOID tab(s), then try again.`;
+              };
+              const showUpdate = () => {
+                if (!registration.waiting || !navigator.serviceWorker.controller || updateBanner) return;
+                const banner = document.createElement("aside");
+                banner.dataset.curioidUpdatePrompt = "true";
+                banner.setAttribute("role", "status");
+                const copy = document.createElement("span");
+                const heading = document.createElement("b"); heading.textContent = "CURIOID update ready";
+                const detail = document.createElement("small"); detail.textContent = "Save your work before refreshing. Other open CURIOID tabs must be closed.";
+                copy.append(heading, detail);
+                const applyButton = document.createElement("button"); applyButton.type = "button"; applyButton.dataset.curioidUpdateApply = "true"; applyButton.textContent = "Update";
+                const dismissButton = document.createElement("button"); dismissButton.type = "button"; dismissButton.dataset.curioidUpdateDismiss = "true"; dismissButton.setAttribute("aria-label", "Dismiss update notice"); dismissButton.textContent = "×";
+                banner.append(copy, applyButton, dismissButton);
+                const style = document.createElement("style");
+                style.textContent = '[data-curioid-update-prompt]{position:fixed;z-index:2147483000;right:16px;bottom:16px;display:flex;align-items:center;gap:12px;max-width:min(430px,calc(100vw - 32px));padding:12px 14px;border:1px solid #596b6d;border-radius:12px;background:#121a20;color:#eef4f4;box-shadow:0 12px 40px #0008;font:13px/1.4 system-ui,sans-serif}[data-curioid-update-prompt] span{display:grid;gap:3px;min-width:0}[data-curioid-update-prompt] small{color:#aebcbd}[data-curioid-update-prompt] button{border:1px solid #78918d;border-radius:7px;background:#243a37;color:#fff;padding:7px 10px;cursor:pointer}[data-curioid-update-prompt] [data-curioid-update-dismiss]{padding:4px 8px;background:transparent}';
+                document.head.append(style); document.body.append(banner); updateBanner = banner;
+                navigator.serviceWorker.addEventListener("message", messageHandler);
+                banner.querySelector("[data-curioid-update-dismiss]").addEventListener("click", () => { navigator.serviceWorker.removeEventListener("message", messageHandler); banner.remove(); style.remove(); updateBanner = null; });
+                banner.querySelector("[data-curioid-update-apply]").addEventListener("click", () => {
+                  const waiting = registration.waiting; if (!waiting) { banner.remove(); style.remove(); updateBanner = null; return; }
+                  const button = banner.querySelector("[data-curioid-update-apply]"); button.disabled = true; button.textContent = "Checking tabs…"; updateAccepted = true;
+                  waiting.postMessage({ type: "CURIOID_ACTIVATE_UPDATE" });
+                });
+              };
+              navigator.serviceWorker.addEventListener("controllerchange", () => { if (updateAccepted) window.location.reload(); });
+              showUpdate();
+              registration.addEventListener("updatefound", () => {
+                const installing = registration.installing;
+                installing?.addEventListener("statechange", () => { if (installing.state === "installed") showUpdate(); });
+              });
             }).catch(error => console.info("CURIOID offline shell is unavailable in this browser context.", error));
           };
           if (document.readyState === "complete") registerCurioidOfflineShell();

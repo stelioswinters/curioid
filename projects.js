@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.24 / CURIOID v1.290 */
+/* Build: 2026.11.24 / CURIOID v1.296 */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
@@ -9,7 +9,7 @@
   // Bella is a gentle bell-creature; Pip is her smaller, more chaotic little brother.
   const CURIOID_BELLA_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Bella, a golden service bell with a red bow"><defs><linearGradient id="miniBellGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bc"/><stop offset=".48" stop-color="#efc15d"/><stop offset="1" stop-color="#b77b31"/></linearGradient><linearGradient id="miniBowRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8b9d"/><stop offset="1" stop-color="#c91f4d"/></linearGradient></defs><path d="M29 21C25 9 40 8 37 21" fill="none" stroke="#98642a" stroke-width="3.2" stroke-linecap="round"/><path d="M32 20C22 10 12 13 13 21C14 29 23 30 31 25C27 32 30 35 33 32C36 29 34 23 32 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><path d="M33 20C43 10 53 13 52 21C51 29 42 30 34 25C38 32 35 35 32 32C29 29 31 23 33 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><circle cx="32.5" cy="23.5" r="3.2" fill="#e83e62" stroke="#9f2342" stroke-width="1"/><path d="M19 34C20 27 25 24 32 24C39 24 44 27 45 34C46 42 47 45 52 49C55 51 52 54 47 55C38 58 26 58 17 55C12 54 9 51 12 49C17 45 18 42 19 34Z" fill="url(#miniBellGold)" stroke="#986629" stroke-width="1.8"/><path d="M12 49Q32 55 52 49L51 54Q32 60 13 54Z" fill="#d7a24a" stroke="#986629" stroke-width="1.3"/><ellipse cx="25" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="39" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse class="bella-avatar-pupil" cx="25.7" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><ellipse class="bella-avatar-pupil" cx="38.3" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><circle cx="26.2" cy="39.5" r=".85" fill="#fff"/><circle cx="38.8" cy="39.5" r=".85" fill="#fff"/><path d="M28 47Q32 50 36 47" fill="none" stroke="#8f4b57" stroke-width="1.5" stroke-linecap="round"/><path d="M16 31Q14 40 12 45" fill="none" stroke="#fff5d8" stroke-width="2" stroke-linecap="round" opacity=".8"/><circle cx="32" cy="58" r="2.5" fill="#d8aa55" stroke="#986629" stroke-width="1"/></svg>`;
   const CURIOID_BELLA_ICON_DATA_URL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CURIOID_BELLA_ICON_SVG)}`;
-  const CURIOID_BELLA_CREATURE_SVG = `<svg class="bella-avatar-creature-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 185" role="img" aria-label="Bella, a smiling golden face with a red bow"><defs><radialGradient id="miniBellGold" cx="34%" cy="24%" r="78%"><stop stop-color="#fff8d8"/><stop offset=".48" stop-color="#f0c765"/><stop offset="1" stop-color="#b77b31"/></radialGradient></defs><path d="M100 40C67 40 42 63 39 96c-4 39 17 70 61 70s65-31 61-70c-3-33-28-56-61-56Z" fill="url(#miniBellGold)" stroke="#986629" stroke-width="4"/><path d="M55 76c7-16 22-25 36-27" fill="none" stroke="#fff8dc" stroke-width="6" stroke-linecap="round" opacity=".72"/><path class="bella-avatar-bow" d="M96 31C73 9 52 15 55 31c3 18 22 23 42 8-8 18-2 26 6 21 9-6 4-21-7-29Z" fill="#ee6687" stroke="#9f2342" stroke-width="2.2"/><path class="bella-avatar-bow" d="M103 31c23-22 44-16 41 0-3 18-22 23-42 8 8 18 2 26-6 21-9-6-4-21 7-29Z" fill="#ee6687" stroke="#9f2342" stroke-width="2.2"/><circle cx="100" cy="34" r="6" fill="#e83e62" stroke="#9f2342" stroke-width="1.5"/><ellipse class="bella-avatar-eye" cx="77" cy="103" rx="10" ry="13" fill="#fff"/><ellipse class="bella-avatar-eye" cx="123" cy="103" rx="10" ry="13" fill="#fff"/><ellipse class="bella-avatar-pupil" cx="79" cy="105" rx="5" ry="7" fill="#217c82"/><ellipse class="bella-avatar-pupil" cx="121" cy="105" rx="5" ry="7" fill="#217c82"/><circle cx="77" cy="100" r="2.5" fill="#fff"/><circle cx="119" cy="100" r="2.5" fill="#fff"/><ellipse cx="60" cy="126" rx="8" ry="4.5" fill="#f18d91" opacity=".48"/><ellipse cx="140" cy="126" rx="8" ry="4.5" fill="#f18d91" opacity=".48"/><path d="M87 135Q100 146 113 135" fill="none" stroke="#8f4b57" stroke-width="3" stroke-linecap="round"/><path class="bella-avatar-spark" d="M169 79l4 10 10 4-10 4-4 10-4-10-10-4 10-4Z" fill="#fff1ac"/><path d="M28 113l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z" fill="#fff4cc" opacity=".9"/></svg>`;
+  const CURIOID_BELLA_CREATURE_SVG = `<svg class="bella-avatar-creature-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 210" role="img" aria-label="Bella, a cheerful golden bell with a pink bow"><defs><linearGradient id="miniBellGold" x1=".1" y1="0" x2=".85" y2="1"><stop stop-color="#fff8d8"/><stop offset=".42" stop-color="#f0c765"/><stop offset="1" stop-color="#b77b31"/></linearGradient><radialGradient id="bellShine" cx="30%" cy="22%" r="70%"><stop stop-color="#fffdf0" stop-opacity=".95"/><stop offset="1" stop-color="#fffdf0" stop-opacity="0"/></radialGradient></defs><path class="bella-avatar-loop" d="M88 25c0-17 24-17 24 0" fill="none" stroke="#a87931" stroke-width="7" stroke-linecap="round"/><path class="bella-avatar-body" d="M100 37c-30 0-47 22-49 59-1 25-10 44-22 57-4 5-1 12 6 12h130c7 0 10-7 6-12-12-13-21-32-22-57-2-37-19-59-49-59Z" fill="url(#miniBellGold)" stroke="#986629" stroke-width="4"/><path d="M64 74c8-19 20-27 35-29" fill="none" stroke="#fff8dc" stroke-width="7" stroke-linecap="round" opacity=".7"/><path class="bella-avatar-rim" d="M34 153c28 9 104 9 132 0" fill="none" stroke="#8f5c2c" stroke-width="7" stroke-linecap="round"/><ellipse cx="100" cy="162" rx="56" ry="8" fill="#f4d67c" stroke="#986629" stroke-width="2.5"/><g class="bella-avatar-bow"><path d="M95 42C67 13 47 20 53 38c5 18 24 22 44 8-8 17-2 24 7 18 9-7 4-21-9-28Z" fill="#ee6687" stroke="#9f2342" stroke-width="2.2"/><path d="M105 42c28-29 48-22 42-4-5 18-24 22-44 8 8 17 2 24-7 18-9-7-4-21 9-28Z" fill="#ee6687" stroke="#9f2342" stroke-width="2.2"/><circle cx="100" cy="43" r="6" fill="#e83e62" stroke="#9f2342" stroke-width="1.5"/></g><ellipse class="bella-avatar-eye" cx="78" cy="105" rx="9" ry="12" fill="#fff"/><ellipse class="bella-avatar-eye" cx="122" cy="105" rx="9" ry="12" fill="#fff"/><ellipse class="bella-avatar-pupil" cx="80" cy="107" rx="4.5" ry="6" fill="#217c82"/><ellipse class="bella-avatar-pupil" cx="120" cy="107" rx="4.5" ry="6" fill="#217c82"/><circle cx="78" cy="101" r="2.3" fill="#fff"/><circle cx="118" cy="101" r="2.3" fill="#fff"/><ellipse cx="61" cy="126" rx="8" ry="4.5" fill="#f18d91" opacity=".48"/><ellipse cx="139" cy="126" rx="8" ry="4.5" fill="#f18d91" opacity=".48"/><path d="M88 137Q100 148 112 137" fill="none" stroke="#8f4b57" stroke-width="3" stroke-linecap="round"/><g class="bella-avatar-arms" fill="none" stroke="#986629" stroke-width="5" stroke-linecap="round"><path d="M53 112 35 123l-5-12"/><path d="M147 112 165 123l5-12"/></g><g class="bella-avatar-clapper"><path d="M100 166v8" stroke="#8f5c2c" stroke-width="4" stroke-linecap="round"/><ellipse cx="100" cy="179" rx="9" ry="7" fill="#b77b31" stroke="#80552b" stroke-width="2"/></g><path class="bella-avatar-spark" d="M169 69l4 10 10 4-10 4-4 10-4-10-10-4 10-4Z" fill="#fff1ac"/><path d="M27 103l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z" fill="#fff4cc" opacity=".9"/></svg>`;
   const curioidCreateBellaIcon = (className) => {
     const image = document.createElement('img');
     image.className = className;
@@ -60,12 +60,27 @@
       stop(false);
       const token = generation;
       pending = pieces.slice();
+      const voiceProfile = options.voice && typeof options.voice === 'object' ? options.voice : {};
+      const explicitVoice = options.speechVoice || (typeof voiceProfile.voiceURI === 'string' ? voiceProfile : null);
       const settings = {
-        voice: options.voice || null,
-        lang: String(options.lang || options.voice?.lang || 'en-US').slice(0, 32),
-        rate: Math.min(2, Math.max(.5, Number(options.rate) || 1)),
-        pitch: Math.min(2, Math.max(.5, Number(options.pitch) || 1)),
-        volume: Math.min(1, Math.max(0, Number.isFinite(Number(options.volume)) ? Number(options.volume) : 1))
+        // Persona voice objects contain tuning (lang/rate/pitch/volume), not a
+        // browser SpeechSynthesisVoice. Never assign a profile to utterance.voice.
+        voice: explicitVoice && typeof explicitVoice.voiceURI === 'string' ? explicitVoice : null,
+        lang: String(options.lang || voiceProfile.lang || 'en-US').slice(0, 32),
+        rate: Math.min(2, Math.max(.5, Number(options.rate ?? voiceProfile.rate) || 1)),
+        pitch: Math.min(2, Math.max(.5, Number(options.pitch ?? voiceProfile.pitch) || 1)),
+        volume: Math.min(1, Math.max(0, Number.isFinite(Number(options.volume ?? voiceProfile.volume)) ? Number(options.volume ?? voiceProfile.volume) : 1))
+      };
+      const resolveVoice = () => {
+        if (settings.voice) return settings.voice;
+        try {
+          const voices = typeof speech.getVoices === 'function' ? speech.getVoices() : [];
+          const language = settings.lang.toLowerCase();
+          return voices.find(voice => voice && String(voice.lang || '').toLowerCase() === language && voice.localService !== false)
+            || voices.find(voice => voice && String(voice.lang || '').toLowerCase().startsWith(language.split('-')[0]) && voice.localService !== false)
+            || voices.find(voice => voice && String(voice.lang || '').toLowerCase().startsWith(language.split('-')[0]))
+            || null;
+        } catch (_) { return null; }
       };
       const next = () => {
         if (disposed || token !== generation) return;
@@ -76,7 +91,8 @@
         utterance.rate = settings.rate;
         utterance.pitch = settings.pitch;
         utterance.volume = settings.volume;
-        if (settings.voice) utterance.voice = settings.voice;
+        const deviceVoice = resolveVoice();
+        if (deviceVoice) utterance.voice = deviceVoice;
         utterance.onstart = () => { if (token === generation) report('speaking'); };
         utterance.onend = () => { if (token === generation) { clearTimeout(watchdog); watchdog = 0; active = null; setTimeout(next, 48); } };
         utterance.onerror = event => {
@@ -861,7 +877,7 @@
     aeon:{thanks:'Glad to help. Keep the useful connections and discard the rest.',bored:'Start with one question and connect three related notes. See where the structure leads.',unknown:'I cannot verify that from the local context yet. Add a source or a note and I can help organise it.'},
     aura:{thanks:'Acknowledgement received. The matter is now considered concluded.',bored:'A period of recreational activity may be requested. Please select an approved application.',unknown:'The request cannot be actioned because the required information was not supplied in the prescribed format.'}
   });
-  function curioidAssistantReply(message, personaId='bella', experienceId='') {
+  function curioidAssistantReply(message, personaId='bella', experienceId='', mode='desktop') {
     const persona=CURIOID_ASSISTANT_PERSONAS[personaId]||CURIOID_ASSISTANT_PERSONAS.bella;
     const engine=window.CurioidBellaDialogueEngine;
     let classified={intent:'unknown'};
@@ -896,7 +912,21 @@
       case 'personal-update': case 'interest-share': case 'preference-share': text=persona.tone==='bureaucratic'?'Your preference has been recorded. No further action is required at this time.':'That sounds interesting. What part of it are you enjoying most?';break;
       default: text=CURIOID_ASSISTANT_REPLIES[persona.id].unknown;
     }
-    return Object.freeze({text:String(text).slice(0,900),intent:classified.intent,world:world?.id||null,persona:persona.id});
+    if (mode === 'chat') {
+      const followUps = {
+        'local-how-to': 'Tell me which screen you are looking at and what you want to achieve; I can break the next steps down and point out anything that could affect saved work.',
+        'world-recommendation': 'You can start with a small experiment in that world first. There is no need to commit to a large project before you know whether the workflow feels right.',
+        'world-overview': 'The worlds are intentionally different rather than one uniform app suite. You can move between them when a project needs a different kind of tool.',
+        'bored': 'A tiny experiment is enough: open one tool, make one small thing, and see whether it leads somewhere interesting.',
+        'opinion-request': 'I can compare the trade-offs, question assumptions and explore alternatives with you. We can take one part at a time.',
+        'assistant-preference': 'I can explain the reasoning behind a suggestion and adjust it to the task, rather than rushing straight to a button or command.',
+        'chat-invitation': 'We can stay with the subject for a while, explore what matters and leave the conversation open-ended.',
+        'unknown': 'Give me a little more context about what you are trying to do, what you have already tried, and what result you expected. I will be clear when I do not know something.'
+      };
+      const expansion = followUps[classified.intent] || 'I can talk through the context and possible next steps in more detail. We can keep it practical and work through one question at a time.';
+      text = `${text} ${expansion}`;
+    }
+    return Object.freeze({text:String(text).slice(0,1400),intent:classified.intent,world:world?.id||null,persona:persona.id,mode:mode==='chat'?'chat':'desktop'});
   }
   function bindCurioidAssistantHub(host, options={}) {
     if(!host)return()=>{};
@@ -925,8 +955,11 @@
     const avatar=document.createElement('div');avatar.className='curioid-assistant-avatar';avatar.setAttribute('aria-hidden','true');
     const titles=document.createElement('div');const name=document.createElement('b'),tagline=document.createElement('small');titles.append(name,tagline);identity.append(avatar,titles);
     const headActions=document.createElement('div');headActions.className='curioid-assistant-head-actions';
+    const desktopModeButton=document.createElement('button');desktopModeButton.type='button';desktopModeButton.textContent='DESKTOP';desktopModeButton.dataset.assistantMode='desktop';desktopModeButton.setAttribute('aria-pressed','true');
+    const chatModeButton=document.createElement('button');chatModeButton.type='button';chatModeButton.textContent='CHAT MORE';chatModeButton.dataset.assistantMode='chat';chatModeButton.setAttribute('aria-pressed','false');
+    const autoVoiceButton=document.createElement('button');autoVoiceButton.type='button';autoVoiceButton.dataset.assistantAutoVoice='';
     const voiceButton=document.createElement('button');voiceButton.type='button';voiceButton.textContent='SPEAK';voiceButton.title='Read the latest assistant reply aloud';voiceButton.dataset.assistantVoice='';
-    const closeButton=document.createElement('button');closeButton.type='button';closeButton.textContent='×';closeButton.setAttribute('aria-label','Close assistant');headActions.append(voiceButton,closeButton);head.append(identity,headActions);
+    const closeButton=document.createElement('button');closeButton.type='button';closeButton.textContent='×';closeButton.setAttribute('aria-label','Close assistant');headActions.append(desktopModeButton,chatModeButton,autoVoiceButton,voiceButton,closeButton);head.append(identity,headActions);
     const personaPicker=document.createElement('label');personaPicker.className='curioid-assistant-persona-picker';personaPicker.textContent='ASSISTANT PERSONA';
     const personaSelect=document.createElement('select');personaSelect.setAttribute('aria-label','Choose assistant persona');
     for(const item of Object.values(CURIOID_ASSISTANT_PERSONAS)){const option=document.createElement('option');option.value=item.id;option.textContent=`${item.name} · ${item.tagline}`;personaSelect.append(option);}
@@ -938,25 +971,33 @@
     const send=document.createElement('button');send.type='submit';send.textContent='SEND';form.append(input,send);
     const foot=document.createElement('p');foot.className='curioid-assistant-foot';foot.textContent='SHARED LOCAL ENGINE · NO CLOUD MODEL · NO REMOTE REQUESTS';
     panel.append(head,personaPicker,log,form,foot);host.append(panel);
-    let disposed=false,lastReply='',speech=createCurioidSpeechQueue((state)=>{if(state==='error')foot.textContent='VOICE UNAVAILABLE · TEXT CHAT STILL WORKS';else if(state==='unsupported')foot.textContent='NO BROWSER VOICE · TEXT CHAT STILL WORKS';});
+    let disposed=false,lastReply='',assistantMode='desktop',autoVoice=true;
+    try{assistantMode=localStorage.getItem(`curioid-assistant-mode-v1:${experienceId}`)==='chat'?'chat':'desktop';autoVoice=localStorage.getItem(`curioid-assistant-voice-v1:${experienceId}`)!=='off';}catch(_){}
+    const syncAssistantMode=()=>{panel.dataset.mode=assistantMode;desktopModeButton.setAttribute('aria-pressed',String(assistantMode==='desktop'));chatModeButton.setAttribute('aria-pressed',String(assistantMode==='chat'));};
+    const syncAutoVoice=()=>{autoVoiceButton.textContent=autoVoice?'VOICE ON':'VOICE OFF';autoVoiceButton.setAttribute('aria-pressed',String(autoVoice));autoVoiceButton.title=autoVoice?'Assistant replies are spoken automatically':'Automatic assistant speech is muted';};
+    let speech=createCurioidSpeechQueue((state)=>{if(state==='error')foot.textContent='VOICE UNAVAILABLE · TEXT CHAT STILL WORKS';else if(state==='unsupported')foot.textContent='NO BROWSER VOICE · TEXT CHAT STILL WORKS';});
     const renderPersona=()=>{
       const p=CURIOID_ASSISTANT_PERSONAS[selectedPersona]||CURIOID_ASSISTANT_PERSONAS.bella;panel.dataset.persona=p.id;panel.style.setProperty('--assistant-accent',p.accent);trigger.style.setProperty('--assistant-accent',p.accent);if(triggerLabel)triggerLabel.textContent=options.allowPersonaSelect?'ASSISTANT':p.short;name.textContent=p.name;tagline.textContent=p.tagline;avatar.replaceChildren();
       if(p.id==='bella'||p.id==='pip'){const image=document.createElement('img');image.alt='';image.setAttribute('aria-hidden','true');image.decoding='async';image.src=`data:image/svg+xml;charset=utf-8,${encodeURIComponent(p.id==='bella'?CURIOID_BELLA_CREATURE_SVG:CURIOID_PIP_CREATURE_SVG)}`;avatar.append(image);}
       else{const glyph=document.createElement('b');glyph.textContent=({nourish:'◒',umbra:'◈',aeon:'✧',aura:'A//'}[p.id]||'✦');avatar.append(glyph);}
       trigger.title=`Open ${p.name}`;trigger.setAttribute('aria-label',`Open ${p.name} assistant`);personaSelect.value=p.id;
     };
+    syncAssistantMode();syncAutoVoice();
     const addMessage=(role,text)=>{const node=document.createElement('div');node.className=`curioid-assistant-message ${role==='user'?'from-user':'from-assistant'}`;node.textContent=String(text||'').slice(0,900);log.append(node);while(log.children.length>40)log.firstElementChild.remove();log.scrollTop=log.scrollHeight;};
     const open=()=>{if(disposed)return;panel.hidden=false;trigger.setAttribute('aria-expanded','true');input.focus({preventScroll:true});if(!log.dataset.greeted){const p=CURIOID_ASSISTANT_PERSONAS[selectedPersona];addMessage('assistant',p.greeting);log.dataset.greeted='1';lastReply=p.greeting;}};
     const close=()=>{panel.hidden=true;trigger.setAttribute('aria-expanded','false');speech.stop();};
     const onTrigger=()=>{if(panel.hidden)open();else close();};
     const onClose=()=>close();
-    const onVoice=()=>{if(lastReply)speech.speak(lastReply,CURIOID_ASSISTANT_PERSONAS[selectedPersona].voice);};
+    const speakLatest=()=>{if(lastReply)speech.speak(lastReply,CURIOID_ASSISTANT_PERSONAS[selectedPersona].voice);};
+    const onVoice=()=>speakLatest();
+    const onAutoVoice=()=>{autoVoice=!autoVoice;try{localStorage.setItem(`curioid-assistant-voice-v1:${experienceId}`,autoVoice?'on':'off');}catch(_){}syncAutoVoice();if(!autoVoice)speech.stop();};
+    const onAssistantMode=event=>{const mode=event.currentTarget.dataset.assistantMode==='chat'?'chat':'desktop';assistantMode=mode;try{localStorage.setItem(`curioid-assistant-mode-v1:${experienceId}`,mode);}catch(_){}syncAssistantMode();};
     const onPersona=()=>{selectedPersona=CURIOID_ASSISTANT_PERSONAS[personaSelect.value]?personaSelect.value:'bella';if(options.allowPersonaSelect){try{localStorage.setItem('curioid-sandbox-assistant-persona-v1',selectedPersona);}catch(_){}}speech.stop();renderPersona();addMessage('assistant',CURIOID_ASSISTANT_PERSONAS[selectedPersona].greeting);lastReply=CURIOID_ASSISTANT_PERSONAS[selectedPersona].greeting;};
-    const onSubmit=event=>{event.preventDefault();const message=input.value.trim();if(!message||disposed)return;input.value='';addMessage('user',message);const reply=curioidAssistantReply(message,selectedPersona,experienceId);lastReply=reply.text;addMessage('assistant',reply.text);avatar.classList.add('is-speaking');clearTimeout(avatar.__curioidSpeakTimer);avatar.__curioidSpeakTimer=setTimeout(()=>avatar.classList.remove('is-speaking'),1100);if(reply.world&&reply.world!==experienceId){foot.textContent=`SUGGESTED WORLD · ${reply.world.toUpperCase()} · USE THE SITE LAUNCHER TO SWITCH`; }else foot.textContent='SHARED LOCAL ENGINE · NO CLOUD MODEL · NO REMOTE REQUESTS';};
+    const onSubmit=event=>{event.preventDefault();const message=input.value.trim();if(!message||disposed)return;input.value='';addMessage('user',message);const reply=curioidAssistantReply(message,selectedPersona,experienceId,assistantMode);lastReply=reply.text;addMessage('assistant',reply.text);if(autoVoice)speech.speak(reply.text,CURIOID_ASSISTANT_PERSONAS[selectedPersona].voice);avatar.classList.add('is-speaking');clearTimeout(avatar.__curioidSpeakTimer);avatar.__curioidSpeakTimer=setTimeout(()=>avatar.classList.remove('is-speaking'),1100);if(reply.world&&reply.world!==experienceId){foot.textContent=`SUGGESTED WORLD · ${reply.world.toUpperCase()} · USE THE SITE LAUNCHER TO SWITCH`; }else foot.textContent='SHARED LOCAL ENGINE · NO CLOUD MODEL · NO REMOTE REQUESTS';};
     const onKey=event=>{if(event.key==='Escape'&&!panel.hidden){event.stopPropagation();close();trigger.focus({preventScroll:true});}};
-    trigger.addEventListener('click',onTrigger);closeButton.addEventListener('click',onClose);voiceButton.addEventListener('click',onVoice);personaSelect.addEventListener('change',onPersona);form.addEventListener('submit',onSubmit);host.addEventListener('keydown',onKey);
+    trigger.addEventListener('click',onTrigger);closeButton.addEventListener('click',onClose);voiceButton.addEventListener('click',onVoice);autoVoiceButton.addEventListener('click',onAutoVoice);desktopModeButton.addEventListener('click',onAssistantMode);chatModeButton.addEventListener('click',onAssistantMode);personaSelect.addEventListener('change',onPersona);form.addEventListener('submit',onSubmit);host.addEventListener('keydown',onKey);
     renderPersona();
-    const cleanup=()=>{if(disposed)return;disposed=true;close();speech.dispose();trigger.removeEventListener('click',onTrigger);closeButton.removeEventListener('click',onClose);voiceButton.removeEventListener('click',onVoice);personaSelect.removeEventListener('change',onPersona);form.removeEventListener('submit',onSubmit);host.removeEventListener('keydown',onKey);if(panel.isConnected)panel.remove();if(!options.triggerButton&&trigger.isConnected)trigger.remove();if(host.__curioidAssistantOpen===open)delete host.__curioidAssistantOpen;};
+    const cleanup=()=>{if(disposed)return;disposed=true;close();speech.dispose();trigger.removeEventListener('click',onTrigger);closeButton.removeEventListener('click',onClose);voiceButton.removeEventListener('click',onVoice);autoVoiceButton.removeEventListener('click',onAutoVoice);desktopModeButton.removeEventListener('click',onAssistantMode);chatModeButton.removeEventListener('click',onAssistantMode);personaSelect.removeEventListener('change',onPersona);form.removeEventListener('submit',onSubmit);host.removeEventListener('keydown',onKey);if(panel.isConnected)panel.remove();if(!options.triggerButton&&trigger.isConnected)trigger.remove();if(host.__curioidAssistantOpen===open)delete host.__curioidAssistantOpen;};
     host.__curioidAssistantOpen=open;
     return cleanup;
   }
@@ -1132,8 +1173,6 @@
     }
     if(experienceId==='aether-os'){
       primaryTarget=shell.querySelector('.aether-main');const titlebar=document.createElement('header');titlebar.className='curioid-primary-window-titlebar';const title=document.createElement('b');title.textContent='AETHER / MAIN WORKSPACE';const group=document.createElement('div');for(const [action,label,caption] of [['minimize','_','Minimize Aether workspace'],['maximize','□','Maximize Aether workspace'],['close','×','Close Aether workspace']]){const button=document.createElement('button');button.type='button';button.dataset.curioidPrimaryAction=action;button.setAttribute('aria-label',caption);button.title=caption;button.textContent=label;group.append(button);}titlebar.append(title,group);primaryTarget?.prepend(titlebar);primaryTask=document.createElement('button');primaryTask.type='button';primaryTask.className='curioid-primary-task-button';primaryTask.textContent='AETHER';primaryTask.dataset.curioidPrimaryRestore='';taskbar.prepend(primaryTask);primaryNote=document.createElement('div');primaryNote.className='curioid-primary-desktop-note';primaryNote.textContent='Aether workspace is tucked away. Select AETHER on the taskbar to restore it.';primaryNote.hidden=true;shell.append(primaryNote);
-    }else if(experienceId==='aura-synthesis'){
-      primaryTarget=shell.querySelector('.aura-desktop');const head=shell.querySelector('.aura-workspace-head');if(head){const controls=document.createElement('div');controls.className='curioid-primary-window-controls';for(const [action,label,caption] of [['minimize','_','Minimize AURA home'],['maximize','□','Maximize AURA home'],['close','×','Close AURA home']]){const button=document.createElement('button');button.type='button';button.dataset.curioidPrimaryAction=action;button.setAttribute('aria-label',caption);button.title=caption;button.textContent=label;controls.append(button);}head.append(controls);}primaryTask=document.createElement('button');primaryTask.type='button';primaryTask.className='curioid-primary-task-button';primaryTask.textContent='AURA HOME';primaryTask.dataset.curioidPrimaryRestore='';taskbar.prepend(primaryTask);primaryNote=document.createElement('div');primaryNote.className='curioid-primary-desktop-note';primaryNote.textContent='The main office has been temporarily closed. Use AURA HOME to reopen it.';primaryNote.hidden=true;shell.querySelector('.aura-desktop')?.append(primaryNote);
     }
     const setPrimary=(action)=>{if(!primaryTarget)return;if(action==='restore'){primaryTarget.classList.remove('curioid-primary-minimized');primaryTarget.classList.remove('curioid-primary-maximized');primaryNote&&(primaryNote.hidden=true);primaryTask?.setAttribute('aria-pressed','true');return;}if(action==='maximize'){primaryTarget.classList.toggle('curioid-primary-maximized');return;}primaryTarget.classList.add('curioid-primary-minimized');primaryTarget.classList.remove('curioid-primary-maximized');if(primaryNote)primaryNote.hidden=false;primaryTask?.setAttribute('aria-pressed','false');};
     const onPrimaryClick=event=>{const action=event.target.closest('[data-curioid-primary-action]')?.dataset.curioidPrimaryAction;if(action){setPrimary(action);return;}if(event.target.closest('[data-curioid-primary-restore]'))setPrimary('restore');};
@@ -7629,8 +7668,9 @@ const ui=Object.freeze({
   setSelected:(id,value)=>emit('ui-command',{operation:'selected',id:String(id),value:Boolean(value)}),
   on:(type,handler)=>listen('ui:'+String(type),handler)
 });
+let readyAnnounced=false;const announceReady=()=>{if(readyAnnounced)return false;readyAnnounced=true;emit('ready');return true;};
 const api=Object.freeze({
-  request, on:listen, ui,
+  request, on:listen, ui, ready:announceReady,
   storage:Object.freeze({get:key=>request('storage.get',{key}),set:(key,value)=>request('storage.set',{key,value}),remove:key=>request('storage.remove',{key}),list:()=>request('storage.list'),readMany:keys=>request('storage.readMany',{keys}),setMany:entries=>request('storage.setMany',{entries}),getVersioned:async key=>{const rows=await request('storage.readMany',{keys:[key]});const row=rows?.[0];if(!row)throw new Error('The storage service returned no versioned record.');return{key:row.key,value:row.deleted?null:row.value,revision:row.revision,exists:row.revision>0&&!row.deleted,deleted:Boolean(row.deleted)};},setIfRevision:async(key,value,expectedRevision)=>{const rows=await request('storage.setMany',{entries:[{key,value,expectedRevision}]});if(!rows?.[0])throw new Error('The storage service returned no committed revision.');return rows[0];},removeIfRevision:async(key,expectedRevision)=>{const rows=await request('storage.setMany',{entries:[{key,deleted:true,expectedRevision}]});if(!rows?.[0])throw new Error('The storage service returned no deletion revision.');return rows[0];}}),
   clipboard:Object.freeze({writeText:text=>request('clipboard.write',{text}),readText:()=>request('clipboard.read'),clear:()=>request('clipboard.clear')}),
   artifacts:Object.freeze({list:options=>request('artifacts.list',options||{}),create:definition=>request('artifacts.create',definition||{})}),
@@ -7657,28 +7697,27 @@ const block=name=>{try{Object.defineProperty(self,name,{value:undefined,writable
 ['fetch','XMLHttpRequest','WebSocket','EventSource','WebTransport','RTCPeerConnection','webkitRTCPeerConnection','RTCDataChannel','Worker','SharedWorker','BroadcastChannel','MessageChannel','MessagePort','importScripts','postMessage','indexedDB','caches','cookieStore'].forEach(block);
 ${CURIOID_OS_WORKER_TIMER_GUARD}
 setInterval(()=>emit('heartbeat'),1000);
-emit('ready');
 })();`;
   function curioidOsSdkSource(token,assets=[],workerJs=''){
     const inlineSafeJson=value=>JSON.stringify(value).replace(/[<>&\u2028\u2029]/g,char=>({'<':'\\u003c','>':'\\u003e','&':'\\u0026','\u2028':'\\u2028','\u2029':'\\u2029'}[char]));
     const safeToken=inlineSafeJson(token),safeAssets=inlineSafeJson((assets||[]).map(item=>({name:item.name,mime:item.mime,size:item.size,dataUrl:item.dataUrl}))),safeWorkerJs=inlineSafeJson(String(workerJs||''));
     return `(function(){'use strict';const token=${safeToken},assetTable=${safeAssets},workerSource=${safeWorkerJs},workerBootstrap=${JSON.stringify(CURIOID_OS_WORKER_BOOTSTRAP)},NativeWorker=window.Worker,pending=new Map(),handlers={capability:null,export:null,import:null,messages:new Map()},eventHandlers=new Set(),typedEventHandlers=new Map(),typedEventSubscriptions=new Map();let seq=0;const send=(method,payload={})=>{if(pending.size>=64)return Promise.reject(new Error('Too many CURIOID host requests are pending. Wait for an operation to finish.'));return new Promise((resolve,reject)=>{const id='req_'+(++seq),timer=setTimeout(()=>{const job=pending.get(id);if(job){pending.delete(id);job.reject(new Error('CURIOID host request timed out.'));}},15000);pending.set(id,{resolve,reject,timer});try{parent.postMessage({__curioidOS:1,token,type:'request',id,method,payload},'*');}catch(error){clearTimeout(timer);pending.delete(id);reject(error);}});};window.addEventListener('message',async event=>{if(event.source!==parent||!event.data||event.data.__curioidOS!==1||event.data.token!==token)return;const msg=event.data;if(msg.type==='watchdog-ping'){try{parent.postMessage({__curioidOS:1,token,type:'watchdog-pong',sequence:msg.sequence},'*');}catch(_){}return;}if(msg.type==='shell-open-app'){const appId=String(msg.appId||'');if(/^[a-z0-9][a-z0-9-]{0,59}$/.test(appId)){const button=document.getElementById('tool-'+appId);if(button&&button.getAttribute('data-tool-open')===appId)button.click();}return;}if(msg.type==='response'){const job=pending.get(msg.id);if(job){pending.delete(msg.id);clearTimeout(job.timer);msg.ok?job.resolve(msg.value):job.reject(new Error(msg.error||'Host request failed.'));}return;}if(msg.type==='kernel-event'){for(const handler of [...eventHandlers]){try{handler(msg.event);}catch(error){console.error('CURIOID event handler failed',error);}}return;}if(msg.type==='connect-event'){const key=msg.event?.ownerExperienceId+'::'+msg.event?.type;for(const handler of [...(typedEventHandlers.get(key)||[])]){try{handler(msg.event);}catch(error){console.error('CURIOID Connect event handler failed',error);}}return;}if(msg.type==='connect-event-revoked'){const key=msg.event?.ownerExperienceId+'::'+msg.event?.type;typedEventSubscriptions.delete(key);for(const handler of [...(typedEventHandlers.get(key)||[])]){try{handler({...msg.event,revoked:true});}catch(error){console.error('CURIOID Connect event handler failed',error);}}return;}if(msg.type==='invoke'){try{let result;if(msg.method==='capability')result=handlers.capability?await handlers.capability(msg.payload):{error:'No onCapability handler is registered.'};else if(msg.method==='connect.message'){const fn=handlers.messages.get(msg.payload?.type);result=fn?await fn({payload:msg.payload?.payload,fromExperienceId:msg.payload?.meta?.fromExperienceId,type:msg.payload?.type}):{error:'No handler is registered for this Connect message.'};}else if(msg.method==='adapter.export')result=handlers.export?await handlers.export():[];else if(msg.method==='adapter.import')result=handlers.import?await handlers.import(msg.payload):{error:'No onImport handler is registered.'};else throw new Error('Unsupported host invocation.');parent.postMessage({__curioidOS:1,token,type:'invoke-result',id:msg.id,ok:true,value:result},'*');}catch(error){parent.postMessage({__curioidOS:1,token,type:'invoke-result',id:msg.id,ok:false,error:String(error&&error.message||error)},'*');}}});let workerInstance=null,workerObjectUrl='',workerWatchdog=null,workerLastBeat=0,workerHostActive=0,workerGeneration=0,workerUiWindow=performance.now(),workerUiCount=0,workerUiBytes=0,workerUiListeners=[],workerInvokeSequence=0;const workerInvokePending=new Map();const workerAllowedHostMethods=new Set(['storage.get','storage.set','storage.remove','storage.list','storage.readMany','storage.setMany','clipboard.write','clipboard.read','clipboard.clear','artifacts.list','artifacts.create','capabilities.list','capabilities.call','permissions.list','permissions.grant','permissions.revoke','services.catalogue','services.list','services.get','services.put','services.remove','services.search','services.export','services.import','host.notify','host.save-artifact','host.close']);let workerHostWindow=performance.now(),workerHostCount=0,workerHostBytes=0,workerHostResponseBytes=0;
-const workerStatus=message=>{try{parent.postMessage({__curioidOS:1,token,type:'worker-status',message:String(message||'').slice(0,220)},'*');}catch(_){}};
+const workerStatus=message=>{try{parent.postMessage({__curioidOS:1,token,type:'worker-status',message:String(message||'').slice(0,220)},'*');}catch(_){}};const workerBootFailure=message=>{const detail=String(message||'The isolated Worker failed during startup.').slice(0,420);workerStatus(detail);try{parent.postMessage({__curioidOS:1,token,type:'boot-error',message:detail},'*');}catch(_){}};
 const workerVisibilityHandler=()=>{if(document.visibilityState!=='hidden'&&workerInstance)workerLastBeat=Date.now();};
 const stopWorker=()=>{workerGeneration++;workerHostActive=0;if(workerWatchdog){clearInterval(workerWatchdog);workerWatchdog=null;}document.removeEventListener('visibilitychange',workerVisibilityHandler);for(const item of workerUiListeners.splice(0))try{document.removeEventListener(item.type,item.handler,true);}catch(_){}for(const job of workerInvokePending.values()){clearTimeout(job.timer);job.reject(new Error('Worker stopped before the operation completed.'));}workerInvokePending.clear();if(workerInstance){try{workerInstance.terminate();}catch(_){}workerInstance=null;}if(workerObjectUrl){try{URL.revokeObjectURL(workerObjectUrl);}catch(_){}workerObjectUrl='';}};
 const invokeWorker=(method,payload={})=>{if(!workerInstance)return Promise.reject(new Error('The isolated Worker is not running.'));const id=++workerInvokeSequence;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{const job=workerInvokePending.get(id);if(job){workerInvokePending.delete(id);job.reject(new Error('The Worker adapter did not respond.'));}},12000);workerInvokePending.set(id,{resolve,reject,timer});try{workerInstance.postMessage({__curioidWorkerBridge:1,type:'invoke',id,method,payload});}catch(error){clearTimeout(timer);workerInvokePending.delete(id);reject(error);}});};
 const startWorker=()=>{
   if(!workerSource)return;
-  if(typeof NativeWorker!=='function'){workerStatus('Worker execution is unavailable in this browser. This world was not started.');return;}
+  if(typeof NativeWorker!=='function'){workerBootFailure('Worker execution is unavailable in this browser. This world was not started.');return;}
   try{
-    const blob=new Blob([workerBootstrap,'\\n',workerSource],{type:'text/javascript'});workerObjectUrl=URL.createObjectURL(blob);const sessionGeneration=++workerGeneration;const sessionWorker=new NativeWorker(workerObjectUrl);workerInstance=sessionWorker;workerLastBeat=Date.now();
+    const blob=new Blob([workerBootstrap,'\\n',workerSource,'\\nCurioidOS.ready();'],{type:'text/javascript'});workerObjectUrl=URL.createObjectURL(blob);const sessionGeneration=++workerGeneration;const sessionWorker=new NativeWorker(workerObjectUrl);workerInstance=sessionWorker;workerLastBeat=Date.now();
     sessionWorker.addEventListener('message',async event=>{
       if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;
       const data=event.data;if(!data||data.__curioidWorkerBridge!==1)return;
       if(data.type==='heartbeat'){workerLastBeat=Date.now();return;}
       if(data.type==='timer-budget-exceeded'){workerStatus(String(data.message||'Worker timer budget exceeded.').slice(0,220));stopWorker();return;}
       if(data.type==='invoke-result'){const job=workerInvokePending.get(data.id);if(job){workerInvokePending.delete(data.id);clearTimeout(job.timer);data.ok?job.resolve(data.value):job.reject(new Error(String(data.error||'Worker adapter failed.').slice(0,500)));}return;}
-      if(data.type==='ready'){workerLastBeat=Date.now();workerStatus('Isolated Worker running off the UI thread.');return;}
+      if(data.type==='ready'){workerLastBeat=Date.now();workerStatus('Isolated Worker running off the UI thread.');try{parent.postMessage({__curioidOS:1,token,type:'ready'},'*');}catch(_){}return;}
       if(data.type==='host-request'){
         const now=performance.now();if(now-workerHostWindow>=60000){workerHostWindow=now;workerHostCount=0;workerHostBytes=0;workerHostResponseBytes=0;}
         const rejectHostRequest=message=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;try{sessionWorker.postMessage({__curioidWorkerBridge:1,type:'host-response',id:data.id,ok:false,error:String(message||'Worker host request refused.').slice(0,500)});}catch(_){}};
@@ -7701,15 +7740,15 @@ const startWorker=()=>{
         return;
       }
     });
-    sessionWorker.addEventListener('error',event=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;workerStatus('Worker stopped after a script error: '+String(event.message||'unknown error').slice(0,140));stopWorker();});
+    sessionWorker.addEventListener('error',event=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;workerBootFailure('Worker stopped after a script error: '+String(event.message||'unknown error').slice(0,300));stopWorker();});sessionWorker.addEventListener('messageerror',()=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;workerBootFailure('Worker sent a message that could not be decoded.');stopWorker();});
     const forwardUiEvent=event=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;if(event.type==='submit')event.preventDefault();const target=event.target?.closest?.('[data-os-id]');if(!target)return;const id=String(target.getAttribute('data-os-id')||'');if(!/^[A-Za-z][A-Za-z0-9_:-]{0,79}$/.test(id))return;if(event.type==='change'&&target instanceof HTMLInputElement&&target.type==='file'){const file=target.files?.[0];if(!file)return;if(file.size>2*1024*1024){workerStatus('Selected data backup exceeds the 2 MB import limit.');target.value='';return;}const targetWorker=sessionWorker;file.text().then(value=>{if(workerGeneration===sessionGeneration&&workerInstance===targetWorker)targetWorker.postMessage({__curioidWorkerBridge:1,type:'ui-event',eventType:'file',id,value,filename:String(file.name||'').slice(0,160)});}).catch(error=>workerStatus('Could not read the selected file: '+String(error?.message||error).slice(0,120)));return;}let value=null;try{if('value'in target)value=String(target.value).slice(0,12000);}catch(_){}try{sessionWorker.postMessage({__curioidWorkerBridge:1,type:'ui-event',eventType:event.type,id,value,checked:Boolean(target.checked),action:String(target.getAttribute('data-os-action')||'').slice(0,80)});}catch(_){}};
     ['click','input','change','submit'].forEach(type=>{document.addEventListener(type,forwardUiEvent,true);workerUiListeners.push({type,handler:forwardUiEvent});});
     window.addEventListener('pagehide',stopWorker,{once:true});
     document.addEventListener('visibilitychange',workerVisibilityHandler);
     workerWatchdog=setInterval(()=>{if(!workerInstance)return;if(document.visibilityState==='hidden'){workerLastBeat=Date.now();return;}if(Date.now()-workerLastBeat>15000){workerStatus('Worker has not responded for 15 seconds and was terminated. The desktop remains open; check the Worker code and restart it when ready.');stopWorker();}},1000);
-  }catch(error){workerStatus('Could not start isolated Worker: '+String(error?.message||error).slice(0,160));stopWorker();}
+  }catch(error){workerBootFailure('Could not start isolated Worker: '+String(error?.message||error).slice(0,300));stopWorker();}
 };
-window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID OS',sdkVersion:${JSON.stringify(CURIOID_OS_EXTENSION_SDK_VERSION)},workerLimits:Object.freeze({activeTimers:128,activeIntervals:32,reservedHeartbeatIntervals:1,timerCallbacksPerMinute:20000,minimumIntervalMs:8,hostRequestsPerMinute:180,maxConcurrentHostRequests:16,hostRequestBytesPerMinute:24*1024*1024,hostResponseBytesPerMinute:48*1024*1024,maxHostRequestBytesPerCall:8*1024*1024,maxHostResponseBytesPerCall:8*1024*1024,uiUpdatesPerSecond:30,uiTextBytesPerSecond:128*1024,workerSourceCharacters:260000,hostRequestTimeoutMs:15000,workerInvokeTimeoutMs:12000,watchdogTimeoutMs:15000})}),storage:Object.freeze({get:key=>send('storage.get',{key}),set:(key,value)=>send('storage.set',{key,value}),remove:key=>send('storage.remove',{key}),list:()=>send('storage.list'),readMany:keys=>send('storage.readMany',{keys}),setMany:entries=>send('storage.setMany',{entries}),getVersioned:async key=>{const rows=await send('storage.readMany',{keys:[key]});const row=rows?.[0];if(!row)throw new Error('The storage service returned no versioned record.');return{key:row.key,value:row.deleted?null:row.value,revision:row.revision,exists:row.revision>0&&!row.deleted,deleted:Boolean(row.deleted)};},setIfRevision:async(key,value,expectedRevision)=>{const rows=await send('storage.setMany',{entries:[{key,value,expectedRevision}]});if(!rows?.[0])throw new Error('The storage service returned no committed revision.');return rows[0];},removeIfRevision:async(key,expectedRevision)=>{const rows=await send('storage.setMany',{entries:[{key,deleted:true,expectedRevision}]});if(!rows?.[0])throw new Error('The storage service returned no deletion revision.');return rows[0];}}),clipboard:Object.freeze({writeText:text=>send('clipboard.write',{text}),readText:()=>send('clipboard.read'),clear:()=>send('clipboard.clear')}),artifacts:Object.freeze({list:options=>send('artifacts.list',options||{}),create:definition=>send('artifacts.create',definition||{})}),capabilities:Object.freeze({list:()=>send('capabilities.list'),call:(id,input)=>send('capabilities.call',{id,input})}),permissions:Object.freeze({list:()=>send('permissions.list'),grant:(capabilityId,requesterExperienceId)=>send('permissions.grant',{capabilityId,requesterExperienceId}),revoke:(capabilityId,requesterExperienceId)=>send('permissions.revoke',{capabilityId,requesterExperienceId})}),connect:Object.freeze({info:()=>send('connect.info'),manifest:()=>send('connect.manifest'),discover:options=>send('connect.discover',{options:options||{}}),validateManifest:manifest=>send('connect.validate-manifest',{manifest}),registerEvent:definition=>send('connect.register-event',{definition}),registerArtifactType:definition=>send('connect.register-artifact-type',{definition}),publishEvent:(type,detail)=>send('connect.publish-event',{type,detail:detail||{}}),onEvent:(ownerExperienceId,type,handler)=>{if(typeof handler!=='function')throw new TypeError('Connect event handler must be a function.');const key=String(ownerExperienceId)+'::'+String(type);if(!typedEventHandlers.has(key))typedEventHandlers.set(key,new Set());typedEventHandlers.get(key).add(handler);let subscription=typedEventSubscriptions.get(key);if(!subscription){subscription=send('connect.subscribe-event',{ownerExperienceId:String(ownerExperienceId),type:String(type)}).then(()=>true).catch(error=>{typedEventHandlers.delete(key);typedEventSubscriptions.delete(key);throw error;});typedEventSubscriptions.set(key,subscription);}return subscription.then(()=>{let active=true;return()=>{if(!active)return;active=false;typedEventHandlers.get(key)?.delete(handler);if(!typedEventHandlers.get(key)?.size){typedEventHandlers.delete(key);typedEventSubscriptions.delete(key);send('connect.unsubscribe-event',{ownerExperienceId:String(ownerExperienceId),type:String(type)}).catch(()=>{});}};});},onMessage:(type,handler,options={})=>{if(typeof handler!=='function')throw new TypeError('Connect message handler must be a function.');const id=String(type);if(handlers.messages.has(id))throw new Error('A message handler is already registered for '+id+'.');handlers.messages.set(id,handler);return send('connect.register-message',{type:id,options}).catch(error=>{handlers.messages.delete(id);throw error;}).then(()=>{let active=true;return()=>{if(!active)return;active=false;handlers.messages.delete(id);send('connect.unregister-message',{type:id}).catch(()=>{});};});},sendMessage:(to,type,payload)=>send('connect.send-message',{to,type,payload:payload||{}}),grantMessage:(type,requesterExperienceId)=>send('connect.grant-message',{type,requesterExperienceId}),revokeMessage:(type,requesterExperienceId)=>send('connect.revoke-message',{type,requesterExperienceId}),grantEvent:(type,requesterExperienceId)=>send('connect.grant-event',{type,requesterExperienceId}),revokeEvent:(type,requesterExperienceId)=>send('connect.revoke-event',{type,requesterExperienceId})}),services:Object.freeze({catalogue:()=>send('services.catalogue'),list:(serviceId,options)=>send('services.list',{serviceId,options:options||{}}),get:(serviceId,id)=>send('services.get',{serviceId,id}),put:(serviceId,record)=>send('services.put',{serviceId,record}),remove:(serviceId,id)=>send('services.remove',{serviceId,id}),search:(query,options)=>send('services.search',{query,options:options||{}}),exportBackup:()=>send('services.export'),importBackup:(bundle,options)=>send('services.import',{bundle,options:options||{}})}),assets:Object.freeze({list:()=>assetTable.map(({name,mime,size})=>({name,mime,size})),get:name=>{const found=assetTable.find(item=>item.name===String(name));if(!found)throw new Error('Local asset not found: '+name);return found.dataUrl;}}),events:Object.freeze({on:handler=>{if(typeof handler!=='function')throw new TypeError('Event handler must be a function.');eventHandlers.add(handler);return()=>eventHandlers.delete(handler);}}),host:Object.freeze({notify:message=>send('host.notify',{message}),saveArtifact:(name,data,type)=>send('host.save-artifact',{name,data,type}),close:()=>send('host.close')}),worker:Object.freeze({enabled:!!workerSource,stop:stopWorker}),onCapability:fn=>{handlers.capability=typeof fn==='function'?fn:null;},onExport:fn=>{handlers.export=typeof fn==='function'?fn:null;},onImport:fn=>{handlers.import=typeof fn==='function'?fn:null;}});if(workerSource)startWorker();parent.postMessage({__curioidOS:1,token,type:'ready'},'*');})();`;
+window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID OS',sdkVersion:${JSON.stringify(CURIOID_OS_EXTENSION_SDK_VERSION)},workerLimits:Object.freeze({activeTimers:128,activeIntervals:32,reservedHeartbeatIntervals:1,timerCallbacksPerMinute:20000,minimumIntervalMs:8,hostRequestsPerMinute:180,maxConcurrentHostRequests:16,hostRequestBytesPerMinute:24*1024*1024,hostResponseBytesPerMinute:48*1024*1024,maxHostRequestBytesPerCall:8*1024*1024,maxHostResponseBytesPerCall:8*1024*1024,uiUpdatesPerSecond:30,uiTextBytesPerSecond:128*1024,workerSourceCharacters:260000,hostRequestTimeoutMs:15000,workerInvokeTimeoutMs:12000,watchdogTimeoutMs:15000})}),storage:Object.freeze({get:key=>send('storage.get',{key}),set:(key,value)=>send('storage.set',{key,value}),remove:key=>send('storage.remove',{key}),list:()=>send('storage.list'),readMany:keys=>send('storage.readMany',{keys}),setMany:entries=>send('storage.setMany',{entries}),getVersioned:async key=>{const rows=await send('storage.readMany',{keys:[key]});const row=rows?.[0];if(!row)throw new Error('The storage service returned no versioned record.');return{key:row.key,value:row.deleted?null:row.value,revision:row.revision,exists:row.revision>0&&!row.deleted,deleted:Boolean(row.deleted)};},setIfRevision:async(key,value,expectedRevision)=>{const rows=await send('storage.setMany',{entries:[{key,value,expectedRevision}]});if(!rows?.[0])throw new Error('The storage service returned no committed revision.');return rows[0];},removeIfRevision:async(key,expectedRevision)=>{const rows=await send('storage.setMany',{entries:[{key,deleted:true,expectedRevision}]});if(!rows?.[0])throw new Error('The storage service returned no deletion revision.');return rows[0];}}),clipboard:Object.freeze({writeText:text=>send('clipboard.write',{text}),readText:()=>send('clipboard.read'),clear:()=>send('clipboard.clear')}),artifacts:Object.freeze({list:options=>send('artifacts.list',options||{}),create:definition=>send('artifacts.create',definition||{})}),capabilities:Object.freeze({list:()=>send('capabilities.list'),call:(id,input)=>send('capabilities.call',{id,input})}),permissions:Object.freeze({list:()=>send('permissions.list'),grant:(capabilityId,requesterExperienceId)=>send('permissions.grant',{capabilityId,requesterExperienceId}),revoke:(capabilityId,requesterExperienceId)=>send('permissions.revoke',{capabilityId,requesterExperienceId})}),connect:Object.freeze({info:()=>send('connect.info'),manifest:()=>send('connect.manifest'),discover:options=>send('connect.discover',{options:options||{}}),validateManifest:manifest=>send('connect.validate-manifest',{manifest}),registerEvent:definition=>send('connect.register-event',{definition}),registerArtifactType:definition=>send('connect.register-artifact-type',{definition}),publishEvent:(type,detail)=>send('connect.publish-event',{type,detail:detail||{}}),onEvent:(ownerExperienceId,type,handler)=>{if(typeof handler!=='function')throw new TypeError('Connect event handler must be a function.');const key=String(ownerExperienceId)+'::'+String(type);if(!typedEventHandlers.has(key))typedEventHandlers.set(key,new Set());typedEventHandlers.get(key).add(handler);let subscription=typedEventSubscriptions.get(key);if(!subscription){subscription=send('connect.subscribe-event',{ownerExperienceId:String(ownerExperienceId),type:String(type)}).then(()=>true).catch(error=>{typedEventHandlers.delete(key);typedEventSubscriptions.delete(key);throw error;});typedEventSubscriptions.set(key,subscription);}return subscription.then(()=>{let active=true;return()=>{if(!active)return;active=false;typedEventHandlers.get(key)?.delete(handler);if(!typedEventHandlers.get(key)?.size){typedEventHandlers.delete(key);typedEventSubscriptions.delete(key);send('connect.unsubscribe-event',{ownerExperienceId:String(ownerExperienceId),type:String(type)}).catch(()=>{});}};});},onMessage:(type,handler,options={})=>{if(typeof handler!=='function')throw new TypeError('Connect message handler must be a function.');const id=String(type);if(handlers.messages.has(id))throw new Error('A message handler is already registered for '+id+'.');handlers.messages.set(id,handler);return send('connect.register-message',{type:id,options}).catch(error=>{handlers.messages.delete(id);throw error;}).then(()=>{let active=true;return()=>{if(!active)return;active=false;handlers.messages.delete(id);send('connect.unregister-message',{type:id}).catch(()=>{});};});},sendMessage:(to,type,payload)=>send('connect.send-message',{to,type,payload:payload||{}}),grantMessage:(type,requesterExperienceId)=>send('connect.grant-message',{type,requesterExperienceId}),revokeMessage:(type,requesterExperienceId)=>send('connect.revoke-message',{type,requesterExperienceId}),grantEvent:(type,requesterExperienceId)=>send('connect.grant-event',{type,requesterExperienceId}),revokeEvent:(type,requesterExperienceId)=>send('connect.revoke-event',{type,requesterExperienceId})}),services:Object.freeze({catalogue:()=>send('services.catalogue'),list:(serviceId,options)=>send('services.list',{serviceId,options:options||{}}),get:(serviceId,id)=>send('services.get',{serviceId,id}),put:(serviceId,record)=>send('services.put',{serviceId,record}),remove:(serviceId,id)=>send('services.remove',{serviceId,id}),search:(query,options)=>send('services.search',{query,options:options||{}}),exportBackup:()=>send('services.export'),importBackup:(bundle,options)=>send('services.import',{bundle,options:options||{}})}),assets:Object.freeze({list:()=>assetTable.map(({name,mime,size})=>({name,mime,size})),get:name=>{const found=assetTable.find(item=>item.name===String(name));if(!found)throw new Error('Local asset not found: '+name);return found.dataUrl;}}),events:Object.freeze({on:handler=>{if(typeof handler!=='function')throw new TypeError('Event handler must be a function.');eventHandlers.add(handler);return()=>eventHandlers.delete(handler);}}),host:Object.freeze({notify:message=>send('host.notify',{message}),saveArtifact:(name,data,type)=>send('host.save-artifact',{name,data,type}),close:()=>send('host.close')}),worker:Object.freeze({enabled:!!workerSource,stop:stopWorker}),onCapability:fn=>{handlers.capability=typeof fn==='function'?fn:null;},onExport:fn=>{handlers.export=typeof fn==='function'?fn:null;},onImport:fn=>{handlers.import=typeof fn==='function'?fn:null;}});if(workerSource)startWorker();})();`;
   }
   function curioidOsBoundedPayloadBytes(root, limit = 2 * 1024 * 1024, label = 'Host request') {
     const stack=[{value:root,depth:0}],seen=new WeakSet();let bytes=0,nodes=0;
@@ -7807,11 +7846,37 @@ window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID O
     shellSearchPanel.append(shellSearchHead,shellSearchResults);shellSearchDock.append(shellSearchToggle,shellSearchPanel);
     if(shellStartButton?.parentElement===shellTaskbar)shellStartButton.after(shellSearchDock);else shellTaskbar?.prepend(shellSearchDock);
     const iframe=overlay.querySelector('iframe'),pending=new Map(),frameRegistry=new Map();let sequence=0,disposed=false,readyResolve;const ready=new Promise(resolve=>readyResolve=resolve);
-    const requestGate={windowStartedAt:Date.now(),count:0,active:0};const runtime={id,experienceId:runtimeId,overlay,iframe,record,pending,token,requestGate,frames:frameRegistry,lastRequestSequence:0,pingSequence:0,lastPongAt:Date.now(),heartbeatTimer:null,startupGuardTimer:null,watchdogWarningTimer:null,visibilityHandler:null,unresponsive:false,shellPendingAppId:null,clipboardReadApproved:false,clipboardWriteApproved:false,connectRegistrations:{artifactTypes:new Map(),eventTypes:new Map(),messageTypes:new Map()},unregister:[],ready:false,readyTimer:null,loadTimer:null,cancelInit:null,dispose:()=>{disposed=true;},close:()=>closeCurioidOsRuntimeSafely()};const primaryFrame={id:'primary',iframe,token,pending,primary:true,ready:false,lastRequestSequence:0,pingSequence:0,lastPongAt:Date.now(),requestGate,messageGate:{windowStartedAt:Date.now(),windowCount:0,burstStartedAt:Date.now(),burstCount:0}};frameRegistry.set(iframe.contentWindow,primaryFrame);runtime.primaryFrame=primaryFrame;curioidOsRuntime=runtime;
+    const requestGate={windowStartedAt:Date.now(),count:0,active:0};const runtime={id,experienceId:runtimeId,overlay,iframe,record,pending,token,requestGate,frames:frameRegistry,lastRequestSequence:0,pingSequence:0,lastPongAt:Date.now(),heartbeatTimer:null,startupGuardTimer:null,startupRecoveryTimer:null,watchdogWarningTimer:null,visibilityHandler:null,unresponsive:false,shellPendingAppId:null,clipboardReadApproved:false,clipboardWriteApproved:false,connectRegistrations:{artifactTypes:new Map(),eventTypes:new Map(),messageTypes:new Map()},unregister:[],ready:false,readyTimer:null,loadTimer:null,cancelInit:null,dispose:()=>{disposed=true;},close:()=>closeCurioidOsRuntimeSafely()};const primaryFrame={id:'primary',iframe,token,pending,primary:true,ready:false,lastRequestSequence:0,pingSequence:0,lastPongAt:Date.now(),requestGate,messageGate:{windowStartedAt:Date.now(),windowCount:0,burstStartedAt:Date.now(),burstCount:0}};frameRegistry.set(iframe.contentWindow,primaryFrame);runtime.primaryFrame=primaryFrame;curioidOsRuntime=runtime;
     const bootPanel=overlay.querySelector('[data-cos-boot-panel]'),bootTitle=overlay.querySelector('[data-cos-boot-title]'),bootDetail=overlay.querySelector('[data-cos-boot-detail]'),bootPercent=overlay.querySelector('[data-cos-boot-percent]'),bootTrack=overlay.querySelector('[data-cos-boot-track]'),bootFill=overlay.querySelector('[data-cos-boot-fill]');
     runtime.bootPercent=8;runtime.shellStateReady=false;runtime.hostRegistrationReady=false;runtime.bootComplete=false;runtime.bootDismissTimer=null;
     const setBootProgress=(value,title,detail)=>{const requested=Math.max(0,Math.min(100,Math.round(Number(value)||0)));if(requested<runtime.bootPercent)return;const percent=requested;runtime.bootPercent=percent;if(bootTitle)bootTitle.textContent=String(title||'Starting your desktop').slice(0,90);if(bootDetail)bootDetail.textContent=String(detail||'Preparing local services…').slice(0,180);if(bootPercent)bootPercent.textContent=percent+'%';if(bootTrack){bootTrack.setAttribute('aria-valuenow',String(percent));bootTrack.setAttribute('aria-valuetext',String(title||'Starting')+' · '+percent+'%');}if(bootFill)bootFill.style.width=percent+'%';};
     const finishBootProgress=()=>{if(runtime.bootComplete||!runtime.ready||!runtime.shellStateReady||!runtime.hostRegistrationReady)return;runtime.bootComplete=true;setBootProgress(100,'Ready to use',runtime.shellDesktopReadOnly?'Desktop ready. Existing documents are protected in read-only recovery mode.':'Your desktop, apps and local services are ready.');const status=overlay.querySelector('[data-os-runtime-status]');if(status)status.textContent=runtime.shellDesktopReadOnly?'Ready · 100% · Recovery mode':'Ready · 100%';bootPanel?.classList.add('is-ready');runtime.bootDismissTimer=setTimeout(()=>bootPanel?.classList.add('is-complete'),2400);};
+    const shellHandleBootstrapFailure=(reason)=>{
+      if(disposed||curioidOsRuntime!==runtime||runtime.bootComplete)return;
+      runtime.bootFailure=String(reason||'The OS did not complete its startup handshake.').slice(0,420);
+      runtime.ready=true;runtime.unresponsive=true;runtime.shellDesktopReadOnly=true;
+      runtime.shellStateReady=true;runtime.hostRegistrationReady=true;
+      clearTimeout(runtime.startupRecoveryTimer);runtime.startupRecoveryTimer=null;
+      clearTimeout(runtime.readyTimer);clearTimeout(runtime.startupGuardTimer);
+      const frameBody=overlay.querySelector('.cos-desktop-window-body');
+      const failedFrame=frameBody?.querySelector('iframe');if(failedFrame)failedFrame.hidden=true;
+      let recoveryPanel=frameBody?.querySelector('.cos-shell-bootstrap-recovery');
+      if(frameBody&&!recoveryPanel){
+        recoveryPanel=document.createElement('section');recoveryPanel.className='cos-shell-bootstrap-recovery';recoveryPanel.setAttribute('role','alert');
+        const title=document.createElement('b');title.textContent='THIS SANDBOX OS DID NOT FINISH STARTING';
+        const detail=document.createElement('p');detail.dataset.cosBootstrapError='';
+        const note=document.createElement('small');note.textContent='Your saved package and desktop data were not deleted. The desktop is protected while startup is incomplete.';
+        const close=document.createElement('button');close.type='button';close.dataset.cosBootstrapClose='';close.textContent='Close Sandbox OS';
+        recoveryPanel.append(title,detail,note,close);
+        frameBody.append(recoveryPanel);
+        recoveryPanel.querySelector('[data-cos-bootstrap-close]')?.addEventListener('click',()=>{void closeCurioidOsRuntimeSafely();},{once:true});
+      }
+      const detail=recoveryPanel?.querySelector('[data-cos-bootstrap-error]');if(detail)detail.textContent=runtime.bootFailure;
+      setBootProgress(100,'Opened in protected recovery mode','The OS script did not complete its ready handshake. Existing user data was left untouched.');
+      const status=overlay.querySelector('[data-os-runtime-status]');if(status)status.textContent='Recovery mode · Startup needs attention';
+      bootPanel?.classList.add('is-ready','is-complete');runtime.bootComplete=true;readyResolve(true);
+      shellSetStatus('Sandbox OS startup stopped before the ready handshake. The saved package remains available for repair or export.');
+    };
     setBootProgress(8,'Preparing your desktop','Creating your local desktop and taskbar.');
     curioidOsRuntime=runtime;
     function post(message,target=primaryFrame){if(disposed)throw new Error('This local OS is closed.');const frame=target&&target.iframe?target:primaryFrame;frame.iframe.contentWindow.postMessage({__curioidOS:1,token:frame.token,...message},'*');}
@@ -8002,7 +8067,7 @@ window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID O
     };
     const shellLoadState=async()=>{
       try{
-        const snapshot=await shellReadPersistedSnapshot(),loaded=snapshot.value,exists=snapshot.exists;
+        const snapshot=await shellReadPersistedSnapshot();if(runtime.shellLoadTimedOut||disposed||curioidOsRuntime!==runtime)return;const loaded=snapshot.value,exists=snapshot.exists;
         if(snapshot.present)runtime.shellRecoveryRawData=snapshot.tombstone?{tombstone:true,key:shellDesktopKey}:loaded;
         if(snapshot.tombstone)throw new Error('The saved desktop has a deletion marker. Existing data was not recreated automatically. Export the recovery copy and restore a valid Browser Vault backup before editing this desktop.');
         if(snapshot.present&&!exists&&!snapshot.tombstone)throw new Error('The desktop storage row exists but contains no valid saved value. Its original record was left untouched. Export the recovery copy before restoring a compatible backup.');
@@ -8202,7 +8267,7 @@ window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID O
       if(button.matches('[data-cos-window-task]')){const target=shellWindowRecords.get(button.dataset.cosWindowTask);if(target)shellToggleSecondaryWindow(target);return;}
       if(button.matches('[data-cos-shell-task-app]')){const alreadyVisible=!shellWindow.hidden&&!shellWindow.classList.contains('is-minimized')&&shellActiveWindowId==='primary';if(alreadyVisible){shellWindow.hidden=true;shellWindow.classList.add('is-minimized');button.setAttribute('aria-pressed','false');shellFocusMostRecentWindow();shellScheduleWindowSessionSave();}else shellFocusWindow(shellPrimaryRecord);return;}
       if(button.matches('[data-cos-window-secondary-action]')){const target=[...shellWindowRecords.values()].find(item=>!item.primary&&item.element.contains(button));if(!target)return;const action=button.dataset.cosWindowSecondaryAction;if(action==='minimize'){target.element.hidden=true;target.element.classList.add('is-minimized');target.taskButton?.setAttribute('aria-pressed','false');if(shellActiveWindowId===target.id)shellFocusMostRecentWindow();shellScheduleWindowSessionSave();}else if(action==='maximize'){const wasBounds=shellCaptureSecondaryBounds(target)||target.bounds,maximized=target.element.classList.toggle('is-maximized');const control=button;control.setAttribute('aria-label',maximized?'Restore window':'Maximize');control.title=maximized?'Restore window':'Maximize';if(maximized)target.bounds=wasBounds;else{const b=target.bounds;target.element.style.left=b.left+'%';target.element.style.top=b.top+'%';target.element.style.width=b.width+'%';target.element.style.height=b.height+'%';target.element.style.transform='none';}shellFocusWindow(target);shellScheduleWindowSessionSave();}else if(action==='close')shellCloseAppWindow(target);return;}
-      if(button.matches('[data-cos-window-minimize],[data-shell-window-hide]')){shellWindow.classList.add('is-minimized');shellWindow.hidden=true;const taskButton=shellPrimaryRecord.taskButton;taskButton?.setAttribute('aria-pressed','false');taskButton?.focus({preventScroll:true});shellFocusMostRecentWindow();shellScheduleWindowSessionSave();return;}
+      if(button.matches('[data-cos-window-minimize],[data-cos-window-hide]')){shellWindow.classList.add('is-minimized');shellWindow.hidden=true;const taskButton=shellPrimaryRecord.taskButton;taskButton?.setAttribute('aria-pressed','false');taskButton?.focus({preventScroll:true});shellFocusMostRecentWindow();shellScheduleWindowSessionSave();return;}
       if(button.matches('[data-cos-window-maximize]')){const maximized=shellWindow.classList.toggle('is-maximized');button.setAttribute('aria-pressed',String(maximized));button.setAttribute('aria-label',maximized?'Restore window':'Maximize');shellScheduleWindowSessionSave();return;}
       if(button.matches('[data-shell-new-note]')){shellOpenApp('new-note');return;}
       if(button.matches('[data-shell-new-file]')){shellOpenApp('new-file');return;}
@@ -8250,12 +8315,15 @@ window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID O
     const shellResizeHandle=overlay.querySelector('[data-cos-window-resize]');
     if(shellResizeHandle){shellResizeHandle.addEventListener('pointerdown',/** @param {CurioidDOMEvent} event */ event=>{if(shellWindow.classList.contains('is-maximized'))return;event.preventDefault();event.stopPropagation();shellMaterializeWindowBounds();const stageRect=shellStage.getBoundingClientRect();shellDrag={resize:true,startX:event.clientX,startY:event.clientY,width:shellWindow.offsetWidth,height:shellWindow.offsetHeight,left:parseFloat(shellWindow.style.left)||0,top:parseFloat(shellWindow.style.top)||0,stageWidth:stageRect.width,stageHeight:stageRect.height};try{shellResizeHandle.setPointerCapture(event.pointerId);}catch(_){}});shellResizeHandle.addEventListener('pointermove',/** @param {CurioidDOMEvent} event */ event=>{if(!shellDrag?.resize)return;const stageRect=shellStage.getBoundingClientRect(),minWidth=Math.min(280,Math.max(160,stageRect.width-12)),minHeight=Math.min(240,Math.max(140,stageRect.height-12)),maxWidth=Math.max(minWidth,stageRect.width-shellDrag.left-6),maxHeight=Math.max(minHeight,stageRect.height-shellDrag.top-6),width=Math.max(minWidth,Math.min(maxWidth,shellDrag.width+event.clientX-shellDrag.startX)),height=Math.max(minHeight,Math.min(maxHeight,shellDrag.height+event.clientY-shellDrag.startY));shellWindow.style.width=width+'px';shellWindow.style.height=height+'px';});const finishResize=()=>{if(shellDrag?.resize){shellDrag=null;void shellPersistWindowBounds();}};const cancelResize=()=>{if(shellDrag?.resize){shellDrag=null;shellApplyWindowBounds();}};shellResizeHandle.addEventListener('pointerup',finishResize);shellResizeHandle.addEventListener('pointercancel',cancelResize);shellResizeHandle.addEventListener('keydown',/** @param {CurioidDOMEvent} event */ event=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(event.key))return;event.preventDefault();event.stopPropagation();shellMaterializeWindowBounds();const stageRect=shellStage.getBoundingClientRect(),step=event.shiftKey?48:16,minWidth=Math.min(280,Math.max(160,stageRect.width-12)),minHeight=Math.min(240,Math.max(140,stageRect.height-12)),maxWidth=Math.max(minWidth,stageRect.width-(parseFloat(shellWindow.style.left)||0)-6),maxHeight=Math.max(minHeight,stageRect.height-(parseFloat(shellWindow.style.top)||0)-6),width=Math.max(minWidth,Math.min(maxWidth,shellWindow.offsetWidth+(event.key==='ArrowRight'?step:event.key==='ArrowLeft'?-step:0))),height=Math.max(minHeight,Math.min(maxHeight,shellWindow.offsetHeight+(event.key==='ArrowDown'?step:event.key==='ArrowUp'?-step:0)));shellWindow.style.width=width+'px';shellWindow.style.height=height+'px';void shellPersistWindowBounds();});}
     const shellMarkDocDirty=()=>{shellSetDocDirty(true);if(shellDocStatus)shellDocStatus.textContent='Unsaved changes · click Save to keep them.';};shellDocName.addEventListener('input',shellMarkDocDirty);shellDocBody.addEventListener('input',shellMarkDocDirty);
-    shellUpdateTaskApp(shellApps[0].name,shellApps[0].icon);const shellClock=overlay.querySelector('[data-cos-shell-clock]'),shellUpdateClock=()=>{if(shellClock){const now=new Date();shellClock.textContent=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});shellClock.title=now.toLocaleDateString([], {weekday:'long',year:'numeric',month:'long',day:'numeric'});shellClock.setAttribute('aria-label',now.toLocaleString());}};shellUpdateClock();runtime.shellClockTimer=setInterval(shellUpdateClock,30000);runtime.shellCleanup=()=>{if(runtime.shellClockTimer){clearInterval(runtime.shellClockTimer);runtime.shellClockTimer=null;}clearTimeout(shellToastTimer);clearTimeout(shellWindowSessionSaveTimer);for(const item of shellWindowRecords.values())if(!item.primary&&item.startTimer)clearTimeout(item.startTimer);shellSearchDispose();shellWindowBoundsObserver?.disconnect();runtime.shellArcadeCleanup?.();runtime.shellArcadeCleanup=null;if(runtime.shellBeforeUnloadAttached){window.removeEventListener('beforeunload',runtime.shellBeforeUnloadHandler);runtime.shellBeforeUnloadAttached=false;}};runtime.shellLoadPromise=shellLoadState().then(()=>{runtime.shellStateReady=true;setBootProgress(24,'Restoring your desktop',runtime.shellDesktopReadOnly?'Saved files need recovery; existing data was left untouched.':'Local notes, files and desktop layout are ready.');shellTryRestoreWindowSession();finishBootProgress();}).catch(error=>{runtime.shellStateReady=true;shellEnterRecovery('Desktop files could not be restored: '+error.message);setBootProgress(24,'Desktop recovery mode','The desktop will open, but saved files are protected until recovery.');finishBootProgress();});
+    shellUpdateTaskApp(shellApps[0].name,shellApps[0].icon);const shellClock=overlay.querySelector('[data-cos-shell-clock]'),shellUpdateClock=()=>{if(shellClock){const now=new Date();shellClock.textContent=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});shellClock.title=now.toLocaleDateString([], {weekday:'long',year:'numeric',month:'long',day:'numeric'});shellClock.setAttribute('aria-label',now.toLocaleString());}};shellUpdateClock();runtime.shellClockTimer=setInterval(shellUpdateClock,30000);runtime.shellCleanup=()=>{if(runtime.shellClockTimer){clearInterval(runtime.shellClockTimer);runtime.shellClockTimer=null;}clearTimeout(shellToastTimer);clearTimeout(shellWindowSessionSaveTimer);for(const item of shellWindowRecords.values())if(!item.primary&&item.startTimer)clearTimeout(item.startTimer);shellSearchDispose();shellWindowBoundsObserver?.disconnect();runtime.shellArcadeCleanup?.();runtime.shellArcadeCleanup=null;if(runtime.shellBeforeUnloadAttached){window.removeEventListener('beforeunload',runtime.shellBeforeUnloadHandler);runtime.shellBeforeUnloadAttached=false;}};runtime.shellLoadTimedOut=false;runtime.shellLoadDeadlineTimer=0;
+    const shellLoadDeadline=new Promise((_,reject)=>{runtime.shellLoadDeadlineTimer=setTimeout(()=>{runtime.shellLoadTimedOut=true;reject(new Error('Local desktop storage did not respond within 12 seconds. The original data has not been changed. The desktop is opening in protected read-only recovery mode.'))},12000);});
+    runtime.shellLoadPromise=Promise.race([shellLoadState(),shellLoadDeadline]).then(()=>{if(runtime.shellLoadTimedOut||disposed||curioidOsRuntime!==runtime)return;runtime.shellStateReady=true;setBootProgress(24,'Restoring your desktop',runtime.shellDesktopReadOnly?'Saved files need recovery; existing data was left untouched.':'Local notes, files and desktop layout are ready.');shellTryRestoreWindowSession();finishBootProgress();}).catch(error=>{if(disposed||curioidOsRuntime!==runtime)return;runtime.shellDesktopReadOnly=true;runtime.shellStateReady=true;shellEnterRecovery('Desktop storage could not be safely loaded: '+error.message);setBootProgress(24,'Protected recovery mode','The desktop opened without writing to saved data. Reopen after storage is available.');finishBootProgress();}).finally(()=>{if(runtime.shellLoadDeadlineTimer){clearTimeout(runtime.shellLoadDeadlineTimer);runtime.shellLoadDeadlineTimer=0;}});
     const isCurrentRuntimeFrame=frame=>!disposed&&curioidOsRuntime===runtime&&[...frameRegistry.values()].includes(frame);
     const onMessage=async event=>{if(event.origin!=='null')return;const frame=[...frameRegistry.values()].find(item=>item.iframe.contentWindow===event.source);if(!frame||!isCurrentRuntimeFrame(frame)||!event.data||event.data.__curioidOS!==1||event.data.token!==frame.token)return;if(!curioidOsAcceptIncomingFrameMessage(frame)){if(!frame.messageRateLimited){frame.messageRateLimited=true;const state=frame.windowEl?.querySelector('[data-cos-window-runtime]');if(state)state.textContent='Message rate limited · wait before retrying';else if(frame.primary)shellStatus.textContent='Sandbox OS message rate limited. Wait briefly before retrying.';}return;}frame.messageRateLimited=false;const msg=event.data;
       if(msg.type==='worker-status'){if(frame.windowEl){const state=frame.windowEl.querySelector('[data-cos-window-runtime]');if(state)state.textContent=String(msg.message||'Worker status updated.').slice(0,140);}else shellStatus.textContent=String(msg.message||'Worker status updated.').slice(0,220);return;}
       if(msg.type==='watchdog-pong'&&msg.sequence===frame.pingSequence){frame.lastPongAt=Date.now();if(frame.primary){runtime.lastPongAt=frame.lastPongAt;if(runtime.unresponsive){runtime.unresponsive=false;shellSetStatus(`${pkg.manifest.name} is responsive again.`);shellToastMessage('The local world responded again.');}}return;}
-      if(msg.type==='ready'){if(frame.ready)return;frame.ready=true;frame.lastPongAt=Date.now();frame.readyResolve?.(true);if(!frame.primary){try{post({type:'shell-open-app',appId:frame.appId},frame);const state=frame.windowEl?.querySelector('[data-cos-window-runtime]');if(state)state.textContent='Running';frame.windowEl?.removeAttribute('data-cos-window-starting');}catch(error){const state=frame.windowEl?.querySelector('[data-cos-window-runtime]');if(state)state.textContent='Could not open app: '+String(error?.message||error).slice(0,100);}return;}runtime.ready=true;runtime.unresponsive=false;runtime.lastPongAt=Date.now();readyResolve(true);setBootProgress(92,'Starting your desktop apps','The OS has signalled ready. Finishing local desktop setup.');finishBootProgress();shellSetStatus(`${pkg.manifest.name} is running locally. This world is not part of the public catalogue.`);if(runtime.shellPendingAppId){const pendingAppId=runtime.shellPendingAppId;runtime.shellPendingAppId=null;try{post({type:'shell-open-app',appId:pendingAppId},primaryFrame);}catch(error){runtime.shellPendingAppId=pendingAppId;shellToastMessage('The selected app could not be opened yet: '+error.message);}}shellTryRestoreWindowSession();if(!runtime.heartbeatTimer)runtime.heartbeatTimer=setInterval(()=>{if(disposed||curioidOsRuntime!==runtime)return;if(document.visibilityState==='hidden'){for(const entry of frameRegistry.values())entry.lastPongAt=Date.now();return;}for(const entry of frameRegistry.values()){if(Date.now()-entry.lastPongAt>25000&&!entry.unresponsive){entry.unresponsive=true;if(entry.primary){runtime.unresponsive=true;shellSetStatus('This world is not responding. It will stay open so you can recover your work. Try Restart or Close Sandbox OS.');}else{const state=entry.windowEl?.querySelector('[data-cos-window-runtime]');if(state)state.textContent='Not responding · window remains open';}shellToastMessage('An app window has not responded for 25 seconds. It remains open.');}entry.pingSequence++;try{post({type:'watchdog-ping',sequence:entry.pingSequence},entry);}catch(error){entry.unresponsive=true;}}},3000);return;}
+      if(msg.type==='boot-error'&&frame.primary){shellHandleBootstrapFailure(msg.message||'The sandbox OS script reported a startup error.');return;}
+      if(msg.type==='ready'){if(frame.ready)return;frame.ready=true;frame.lastPongAt=Date.now();if(frame.primary){clearTimeout(runtime.startupRecoveryTimer);runtime.startupRecoveryTimer=null;}frame.readyResolve?.(true);if(!frame.primary){try{post({type:'shell-open-app',appId:frame.appId},frame);const state=frame.windowEl?.querySelector('[data-cos-window-runtime]');if(state)state.textContent='Running';frame.windowEl?.removeAttribute('data-cos-window-starting');}catch(error){const state=frame.windowEl?.querySelector('[data-cos-window-runtime]');if(state)state.textContent='Could not open app: '+String(error?.message||error).slice(0,100);}return;}runtime.ready=true;runtime.unresponsive=false;runtime.lastPongAt=Date.now();readyResolve(true);setBootProgress(92,'Starting your desktop apps','The OS has signalled ready. Finishing local desktop setup.');finishBootProgress();shellSetStatus(`${pkg.manifest.name} is running locally. This world is not part of the public catalogue.`);if(runtime.shellPendingAppId){const pendingAppId=runtime.shellPendingAppId;runtime.shellPendingAppId=null;try{post({type:'shell-open-app',appId:pendingAppId},primaryFrame);}catch(error){runtime.shellPendingAppId=pendingAppId;shellToastMessage('The selected app could not be opened yet: '+error.message);}}shellTryRestoreWindowSession();if(!runtime.heartbeatTimer)runtime.heartbeatTimer=setInterval(()=>{if(disposed||curioidOsRuntime!==runtime)return;if(document.visibilityState==='hidden'){for(const entry of frameRegistry.values())entry.lastPongAt=Date.now();return;}for(const entry of frameRegistry.values()){if(Date.now()-entry.lastPongAt>25000&&!entry.unresponsive){entry.unresponsive=true;if(entry.primary){runtime.unresponsive=true;shellSetStatus('This world is not responding. It will stay open so you can recover your work. Try Restart or Close Sandbox OS.');}else{const state=entry.windowEl?.querySelector('[data-cos-window-runtime]');if(state)state.textContent='Not responding · window remains open';}shellToastMessage('An app window has not responded for 25 seconds. It remains open.');}entry.pingSequence++;try{post({type:'watchdog-ping',sequence:entry.pingSequence},entry);}catch(error){entry.unresponsive=true;}}},3000);return;}
       if(msg.type==='request'){
         const requestId=typeof msg.id==='string'&&/^req_[1-9]\d{0,15}$/.test(msg.id)?msg.id:null;
         if(!requestId)return;
@@ -8279,9 +8347,9 @@ window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID O
     setBootProgress(48,'Preparing the isolated environment','Applying the offline policy and checking your OS package.');
     const html=sanitizedPackageHtml,css=sanitizedPackageCss,userJs=String(pkg.source.js||'');
     const osRuntimeApiGuard=`(()=>{'use strict';const block=(target,key)=>{try{Object.defineProperty(target,key,{value:undefined,configurable:false,writable:false});}catch(_){try{target[key]=undefined;}catch(__){}}};['fetch','XMLHttpRequest','WebSocket','EventSource','WebTransport','RTCPeerConnection','webkitRTCPeerConnection','RTCDataChannel','RTCIceCandidate','RTCSessionDescription','RTCCertificate','RTCEncodedAudioFrame','RTCEncodedVideoFrame','Worker','SharedWorker','BroadcastChannel','open','showOpenFilePicker','showSaveFilePicker','showDirectoryPicker'].forEach(key=>block(window,key));['serviceWorker','sendBeacon'].forEach(key=>block(navigator,key));try{const proto=Object.getPrototypeOf(navigator);['sendBeacon'].forEach(key=>block(proto,key));}catch(_){}})();`;
-    const makeOsSrcdoc=async frameToken=>{const frameSdk=curioidOsSdkSource(frameToken,pkg.assets||[],pkg.source.workerJs||''),scriptSource=`${frameSdk}\n${osRuntimeApiGuard}\n${pkg.source.workerJs?'':userJs}\n`.replace(/\r\n?/g,'\n'),frameScript=`(()=>{const node=document.querySelector('meta[name=\"curioid-script-source\"]');if(!node||!node.content)throw new Error('Custom OS script payload is missing.');const binary=atob(node.content),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes),url=URL.createObjectURL(new Blob([source],{type:'text/javascript'})),script=document.createElement('script');script.src=url;script.onload=()=>URL.revokeObjectURL(url);script.onerror=()=>{URL.revokeObjectURL(url);console.error('Custom OS script failed to load.');};document.head.appendChild(script);})();`;if(!globalThis.crypto?.subtle||typeof TextEncoder!=='function'||typeof TextDecoder!=='function'||typeof btoa!=='function')throw new Error('Secure script-payload encoding or CSP hashing is unavailable. This custom OS cannot start safely.');const scriptBytes=new TextEncoder().encode(scriptSource);let binary='';for(let offset=0;offset<scriptBytes.length;offset+=0x8000)binary+=String.fromCharCode(...scriptBytes.subarray(offset,offset+0x8000));const scriptSourceBase64=btoa(binary),digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(frameScript)),hash=btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join('')),frameCsp=`default-src 'none'; script-src 'sha256-${hash}' blob:; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data: blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; worker-src blob:; form-action 'none'; base-uri 'none'`;return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${esc(frameCsp)}"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(pkg.manifest.name)}</title><meta name="curioid-script-source" content="${scriptSourceBase64}"><style>${css}</style></head><body>${html}<script>${frameScript}</script></body></html>`;};iframe.srcdoc=await makeOsSrcdoc(token);
+    const makeOsSrcdoc=async frameToken=>{const frameSdk=curioidOsSdkSource(frameToken,pkg.assets||[],pkg.source.workerJs||''),scriptSource=`${frameSdk}\n${osRuntimeApiGuard}\n${pkg.source.workerJs?'':userJs}\n${pkg.source.workerJs?'':`parent.postMessage({__curioidOS:1,token:${JSON.stringify(frameToken)},type:'ready'},'*');`}\n`.replace(/\r\n?/g,'\n'),frameScript=`(()=>{const token=${JSON.stringify(frameToken)};const report=(message)=>{try{parent.postMessage({__curioidOS:1,token,type:'boot-error',message:String(message||'Sandbox OS startup failed.').slice(0,420)},'*');}catch(_){}};addEventListener('error',event=>report(event.message||'Unhandled script error'));addEventListener('unhandledrejection',event=>report(event.reason?.message||event.reason||'Unhandled startup promise rejection'));try{const node=document.querySelector('meta[name=\"curioid-script-source\"]');if(!node||!node.content)throw new Error('Custom OS script payload is missing.');const binary=atob(node.content),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const source=new TextDecoder('utf-8',{fatal:true}).decode(bytes),url=URL.createObjectURL(new Blob([source],{type:'text/javascript'})),script=document.createElement('script');script.src=url;script.onload=()=>URL.revokeObjectURL(url);script.onerror=()=>{URL.revokeObjectURL(url);report('Custom OS script failed to load.');};document.head.appendChild(script);}catch(error){report(error?.message||error);}})();`;if(!globalThis.crypto?.subtle||typeof TextEncoder!=='function'||typeof TextDecoder!=='function'||typeof btoa!=='function')throw new Error('Secure script-payload encoding or CSP hashing is unavailable. This custom OS cannot start safely.');const scriptBytes=new TextEncoder().encode(scriptSource);let binary='';for(let offset=0;offset<scriptBytes.length;offset+=0x8000)binary+=String.fromCharCode(...scriptBytes.subarray(offset,offset+0x8000));const scriptSourceBase64=btoa(binary),digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(frameScript)),hash=btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join('')),frameCsp=`default-src 'none'; script-src 'sha256-${hash}' blob:; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data: blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; worker-src blob:; form-action 'none'; base-uri 'none'`;return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="${esc(frameCsp)}"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(pkg.manifest.name)}</title><meta name="curioid-script-source" content="${scriptSourceBase64}"><style>${css}</style></head><body>${html}<script>${frameScript}</script></body></html>`;};iframe.srcdoc=await makeOsSrcdoc(token);
     overlay.querySelector('[data-os-runtime-close]').addEventListener('click',()=>{void closeCurioidOsRuntimeSafely();});
-    runtime.readyTimer=setTimeout(()=>{if(!runtime.ready&&!disposed&&overlay.isConnected){shellSetStatus('Still starting… the local world has not signalled ready yet. It will remain open while you wait.');setBootProgress(runtime.bootPercent,'Still starting','The OS is taking longer than usual. Your desktop remains open.');}},8000);runtime.startupGuardTimer=setTimeout(()=>{if(!runtime.ready&&!disposed&&curioidOsRuntime===runtime){shellSetStatus('Startup is taking longer than expected. Nothing was closed. Check the package or choose Restart / Close Sandbox OS.');setBootProgress(runtime.bootPercent,'Startup is taking longer than expected','Nothing was closed. Check the package or choose Restart / Close Sandbox OS.');shellToastMessage('The sandbox did not finish starting. It remains open.');}},30000);ready.then(()=>{if(runtime.readyTimer){clearTimeout(runtime.readyTimer);runtime.readyTimer=null;}if(runtime.startupGuardTimer){clearTimeout(runtime.startupGuardTimer);runtime.startupGuardTimer=null;}});
+    runtime.readyTimer=setTimeout(()=>{if(!runtime.ready&&!disposed&&overlay.isConnected){shellSetStatus('Still starting… the local world has not signalled ready yet. It will remain open while you wait.');setBootProgress(runtime.bootPercent,'Still starting','The OS is taking longer than usual. Your desktop remains open.');}},8000);runtime.startupGuardTimer=setTimeout(()=>{if(!runtime.ready&&!disposed&&curioidOsRuntime===runtime){shellSetStatus('Startup is taking longer than expected. Nothing was closed. Check the package or choose Restart / Close Sandbox OS.');setBootProgress(runtime.bootPercent,'Startup is taking longer than expected','Nothing was closed. Check the package or choose Restart / Close Sandbox OS.');shellToastMessage('The sandbox did not finish starting. It remains open.');}},30000);runtime.startupRecoveryTimer=setTimeout(()=>shellHandleBootstrapFailure('The sandbox OS script did not send its ready signal within 20 seconds. This usually means an initialization error or a never-resolving startup task.'),20000);ready.then(()=>{if(runtime.readyTimer){clearTimeout(runtime.readyTimer);runtime.readyTimer=null;}if(runtime.startupGuardTimer){clearTimeout(runtime.startupGuardTimer);runtime.startupGuardTimer=null;}if(runtime.startupRecoveryTimer){clearTimeout(runtime.startupRecoveryTimer);runtime.startupRecoveryTimer=null;}});
     await new Promise(resolve=>{let settled=false;const finish=()=>{if(settled)return;settled=true;if(runtime.loadTimer){clearTimeout(runtime.loadTimer);runtime.loadTimer=null;}iframe.removeEventListener('load',finish);runtime.cancelInit=null;setBootProgress(64,'Loading your OS interface','The local desktop frame is mounted. Starting apps and services.');resolve();};runtime.cancelInit=finish;iframe.addEventListener('load',finish,{once:true});runtime.loadTimer=setTimeout(finish,1000);});
     if(disposed||curioidOsRuntime!==runtime)throw new Error('This local OS was closed before startup finished.');
     try{
@@ -8292,7 +8360,7 @@ window.CurioidOS=Object.freeze({info:Object.freeze({name:'User-created CURIOID O
     CurioidKernel.publishEvent('useros:launched',{id,experienceId:runtimeId,name:pkg.manifest.name},{sourceExperienceId:runtimeId});
     return runtime;
   }
-  function closeCurioidOsRuntime(force=false,options={}){const runtime=curioidOsRuntime;if(!runtime)return true;if(!force&&!options.skipBeforeClose&&typeof runtime.shellBeforeClose==='function'&&!runtime.shellBeforeClose())return false;if(!options.skipWindowFlush)try{const flush=runtime.shellPersistBeforeClose?.();if(flush&&typeof flush.catch==='function')flush.catch(error=>{try{console.warn('Sandbox window session could not be saved during close:',error?.message||error);}catch(_){}});}catch(error){try{console.warn('Sandbox window session could not be saved during close:',error?.message||error);}catch(_){}}curioidOsRuntime=null;runtime.dispose?.();if(runtime.readyTimer){clearTimeout(runtime.readyTimer);runtime.readyTimer=null;}if(runtime.heartbeatTimer){clearInterval(runtime.heartbeatTimer);runtime.heartbeatTimer=null;}if(runtime.startupGuardTimer){clearTimeout(runtime.startupGuardTimer);runtime.startupGuardTimer=null;}if(runtime.watchdogWarningTimer){clearTimeout(runtime.watchdogWarningTimer);runtime.watchdogWarningTimer=null;}if(runtime.bootDismissTimer){clearTimeout(runtime.bootDismissTimer);runtime.bootDismissTimer=null;}runtime.removeVisibility?.();runtime.shellCleanup?.();if(runtime.loadTimer){clearTimeout(runtime.loadTimer);runtime.loadTimer=null;}runtime.cancelInit?.();runtime.removeMessage?.();runtime.removeKernelEvents?.();for(const off of runtime.connectEventUnsubscribers?.values?.()||[])try{off();}catch(_){}runtime.connectEventUnsubscribers?.clear?.();for(const frame of runtime.frames?.values?.()||[]){for(const job of frame.pending?.values?.()||[]){clearTimeout(job.timeout);job.reject(new Error('Local OS closed.'));}frame.pending?.clear?.();}runtime.pending.clear();runtime.frames?.clear?.();runtime.unregister.reverse().forEach(off=>{try{off();}catch(_){}});CurioidKernel.unregisterExperience(runtime.experienceId);runtime.overlay.remove();CurioidKernel.publishEvent('useros:closed',{id:runtime.id},{sourceExperienceId:'curioid-kernel'});return true;}
+  function closeCurioidOsRuntime(force=false,options={}){const runtime=curioidOsRuntime;if(!runtime)return true;if(!force&&!options.skipBeforeClose&&typeof runtime.shellBeforeClose==='function'&&!runtime.shellBeforeClose())return false;if(!options.skipWindowFlush)try{const flush=runtime.shellPersistBeforeClose?.();if(flush&&typeof flush.catch==='function')flush.catch(error=>{try{console.warn('Sandbox window session could not be saved during close:',error?.message||error);}catch(_){}});}catch(error){try{console.warn('Sandbox window session could not be saved during close:',error?.message||error);}catch(_){}}curioidOsRuntime=null;runtime.dispose?.();if(runtime.readyTimer){clearTimeout(runtime.readyTimer);runtime.readyTimer=null;}if(runtime.heartbeatTimer){clearInterval(runtime.heartbeatTimer);runtime.heartbeatTimer=null;}if(runtime.startupGuardTimer){clearTimeout(runtime.startupGuardTimer);runtime.startupGuardTimer=null;}if(runtime.startupRecoveryTimer){clearTimeout(runtime.startupRecoveryTimer);runtime.startupRecoveryTimer=null;}if(runtime.watchdogWarningTimer){clearTimeout(runtime.watchdogWarningTimer);runtime.watchdogWarningTimer=null;}if(runtime.bootDismissTimer){clearTimeout(runtime.bootDismissTimer);runtime.bootDismissTimer=null;}if(runtime.shellLoadDeadlineTimer){clearTimeout(runtime.shellLoadDeadlineTimer);runtime.shellLoadDeadlineTimer=0;}runtime.removeVisibility?.();runtime.shellCleanup?.();if(runtime.loadTimer){clearTimeout(runtime.loadTimer);runtime.loadTimer=null;}runtime.cancelInit?.();runtime.removeMessage?.();runtime.removeKernelEvents?.();for(const off of runtime.connectEventUnsubscribers?.values?.()||[])try{off();}catch(_){}runtime.connectEventUnsubscribers?.clear?.();for(const frame of runtime.frames?.values?.()||[]){for(const job of frame.pending?.values?.()||[]){clearTimeout(job.timeout);job.reject(new Error('Local OS closed.'));}frame.pending?.clear?.();}runtime.pending.clear();runtime.frames?.clear?.();runtime.unregister.reverse().forEach(off=>{try{off();}catch(_){}});CurioidKernel.unregisterExperience(runtime.experienceId);runtime.overlay.remove();CurioidKernel.publishEvent('useros:closed',{id:runtime.id},{sourceExperienceId:'curioid-kernel'});return true;}
   async function closeCurioidOsRuntimeSafely(force=false){
     const runtime=curioidOsRuntime;if(!runtime)return true;
     if(!force&&typeof runtime.shellBeforeClose==='function'&&!runtime.shellBeforeClose())return false;
@@ -9024,7 +9092,10 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   // Backups stay local and include CURIOID localStorage, OS databases and
   // shared Exchange and Kernel databases. External folder permissions are excluded.
   const OS_PROJECT_IDS = new Set(['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis']);
-  const OS_BACKUP_DATABASES = new Set(['Doors98_C_Memory','curioid-umbra-studio-v1','aether-os-local-v1','curioid-exchange-v1','curioid-kernel-v1','curioid-user-worlds-v1','curioid-os-studio-drafts-v1','curioid-browser-vault-v1']);
+  const OS_BACKUP_DATABASES = new Set(['Doors98_C_Memory','curioid-umbra-studio-v1','aether-os-local-v1','curioid-exchange-v1','curioid-kernel-v1','curioid-user-worlds-v1','curioid-os-studio-drafts-v1','curioid-browser-vault-v1','curioid-user-desktops-v1']);
+  // Downloads stores a browser-bound FileSystemDirectoryHandle, not portable file data.
+  // Its saved permission is deliberately excluded; the user reconnects it on the new profile.
+  const OS_BACKUP_EXCLUDED_DATABASES = new Set(['curioid-downloads-connection-v1']);
   // These older, deliberately world-owned keys do not use the curioid- prefix.
   // Keep them explicit so full backup/restore includes AURA and Sandbox desktop state.
   const OS_BACKUP_EXTRA_LOCALSTORAGE_KEYS = new Set([
@@ -9044,27 +9115,117 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     'curioid-kernel-v1': new Set(['artifacts','artifact-index','permissions','local-records']),
     'curioid-user-worlds-v1': new Set(['packages','kv']),
     'curioid-os-studio-drafts-v1': new Set(['drafts']),
-    'curioid-browser-vault-v1': new Set(['artifacts','quotas'])
+    'curioid-browser-vault-v1': new Set(['artifacts','quotas']),
+    'curioid-user-desktops-v1': new Set(['files'])
   };
   const OS_BACKUP_FORMAT = 'curioid-local-system-backup';
-  const OS_BACKUP_VERSION = 1;
+  // v2 stores binary values in bounded SHA-256-verified chunks. Version-1
+  // backups remain readable by the legacy base64 decoder below.
+  const OS_BACKUP_VERSION = 2;
 
   const OS_BACKUP_MAX_VALUE_DEPTH=128,OS_BACKUP_MAX_VALUE_NODES=1000000,OS_BACKUP_MAX_ENCODED_CHARS=180*1024*1024;
   const OS_BACKUP_TYPE_MARKER='__curioidBackupType';
+  const OS_BACKUP_BINARY_CHUNK_BYTES=192*1024;
+  const OS_BACKUP_SERIALIZE_PART_CHARS=1024*1024;
   const OS_BACKUP_BASE64_PATTERN=/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
   const OS_BACKUP_TYPED_ARRAY_BYTES=Object.freeze({Int8Array:1,Uint8Array:1,Uint8ClampedArray:1,Int16Array:2,Uint16Array:2,Int32Array:4,Uint32Array:4,Float32Array:4,Float64Array:8,BigInt64Array:8,BigUint64Array:8});
+  function osBackupThrowIfAborted(signal){if(signal?.aborted){const error=new Error('The backup operation was cancelled. No live data was changed.');error.name='AbortError';throw error;}}
   function osBase64FromBuffer(buffer){const bytes=new Uint8Array(buffer);let binary='';for(let offset=0;offset<bytes.length;offset+=0x8000)binary+=String.fromCharCode(...bytes.subarray(offset,Math.min(offset+0x8000,bytes.length)));return btoa(binary);}
   function osBufferFromBase64(value){if(typeof value!=='string'||value.length%4||!OS_BACKUP_BASE64_PATTERN.test(value))throw new Error('The backup contains invalid binary data.');const binary=atob(value),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return bytes.buffer;}
+  async function osBackupSha256Hex(buffer){
+    if(!globalThis.crypto?.subtle?.digest)throw new Error('This browser does not provide secure SHA-256 verification. Open CURIOID in a supported HTTPS browser before exporting or restoring a full backup.');
+    const digest=await crypto.subtle.digest('SHA-256',buffer);
+    return [...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('');
+  }
+  async function osPackBinarySource(source,state={}){
+    const byteLength=source instanceof Blob?source.size:source?.byteLength;
+    if(!Number.isSafeInteger(byteLength)||byteLength<0||byteLength>OS_BACKUP_MAX_ENCODED_CHARS)throw new Error('A saved binary value exceeds the safe backup size limit.');
+    const chunks=[];
+    for(let offset=0;offset<byteLength;offset+=OS_BACKUP_BINARY_CHUNK_BYTES){
+      osBackupThrowIfAborted(state.signal);
+      const end=Math.min(byteLength,offset+OS_BACKUP_BINARY_CHUNK_BYTES);
+      let buffer;
+      if(source instanceof Blob)buffer=await source.slice(offset,end).arrayBuffer();
+      else if(source instanceof ArrayBuffer)buffer=source.slice(offset,end);
+      else if(ArrayBuffer.isView(source))buffer=new Uint8Array(source.buffer,source.byteOffset+offset,end-offset).slice().buffer;
+      else throw new Error('Unsupported binary value in local storage.');
+      const digest=await osBackupSha256Hex(buffer);
+      chunks.push({bytes:end-offset,sha256:digest,data:osBase64FromBuffer(buffer)});
+      state.onProgress?.({phase:'binary',completed:Math.min(end,byteLength),total:byteLength});
+    }
+    return{chunked:true,byteLength,chunks};
+  }
+  function osValidateBackupChunkSet(chunks,byteLength,state={encodedChars:0}){
+    if(!Array.isArray(chunks)||!Number.isSafeInteger(byteLength)||byteLength<0||byteLength>OS_BACKUP_MAX_ENCODED_CHARS)throw new Error('Backup binary chunk manifest is invalid.');
+    const expectedCount=Math.ceil(byteLength/OS_BACKUP_BINARY_CHUNK_BYTES);
+    if(chunks.length!==expectedCount)throw new Error('Backup binary chunk count does not match the declared size.');
+    let total=0;
+    for(let index=0;index<chunks.length;index++){
+      const chunk=chunks[index],expectedBytes=Math.min(OS_BACKUP_BINARY_CHUNK_BYTES,byteLength-total);
+      if(!chunk||Object.keys(chunk).length!==3||!Number.isSafeInteger(chunk.bytes)||chunk.bytes!==expectedBytes||typeof chunk.sha256!=='string'||! /^[a-f0-9]{64}$/.test(chunk.sha256)||typeof chunk.data!=='string'||chunk.data.length%4||!OS_BACKUP_BASE64_PATTERN.test(chunk.data))throw new Error('Backup contains an invalid binary chunk.');
+      const encodedLength=Math.ceil(chunk.bytes/3)*4;
+      if(chunk.data.length!==encodedLength)throw new Error('Backup binary chunk encoding does not match its declared size.');
+      state.encodedChars=(state.encodedChars||0)+chunk.data.length;
+      if(state.encodedChars>OS_BACKUP_MAX_ENCODED_CHARS)throw new Error('Backup binary data exceeds the safe restore limit.');
+      total+=chunk.bytes;
+    }
+    if(total!==byteLength)throw new Error('Backup binary chunks do not match the declared byte length.');
+    return total;
+  }
+  function osBufferFromBackupChunks(chunks,byteLength){
+    const joined=new Uint8Array(byteLength);let offset=0;
+    for(const chunk of chunks){const part=new Uint8Array(osBufferFromBase64(chunk.data));joined.set(part,offset);offset+=part.byteLength;}
+    if(offset!==byteLength)throw new Error('Backup binary data is incomplete.');
+    return joined.buffer;
+  }
+  function osBackupChunksForFile(file){
+    if(file?.chunked===true)return file.chunks;
+    if(typeof file?.data!=='string')throw new Error('The backup contains invalid attachment data.');
+    const encodedChunkChars=(OS_BACKUP_BINARY_CHUNK_BYTES/3)*4,rows=[];
+    for(let offset=0;offset<file.data.length;offset+=encodedChunkChars){
+      const data=file.data.slice(offset,offset+encodedChunkChars),buffer=osBufferFromBase64(data);
+      rows.push({bytes:buffer.byteLength,data});
+    }
+    if(!rows.length&&file.size===0)return rows;
+    return rows;
+  }
+  async function osVerifyBackupChunkSet(chunks,byteLength,label,options={}){
+    osValidateBackupChunkSet(chunks,byteLength,{encodedChars:0});let offset=0;
+    for(const chunk of chunks){
+      osBackupThrowIfAborted(options.signal);
+      const buffer=osBufferFromBase64(chunk.data);
+      if(buffer.byteLength!==chunk.bytes)throw new Error(`${label} contains a binary chunk with an incorrect decoded size.`);
+      const actual=await osBackupSha256Hex(buffer);
+      if(actual!==chunk.sha256)throw new Error(`${label} failed SHA-256 verification at byte ${offset}.`);
+      offset+=chunk.bytes;
+      options.onProgress?.({phase:'verify',completed:offset,total:byteLength,label});
+    }
+    if(offset!==byteLength)throw new Error(`${label} is incomplete.`);
+    return true;
+  }
+  async function osVerifyBlobAgainstBackupChunks(blob,chunks,options={}){
+    const total=chunks.reduce((sum,item)=>sum+item.bytes,0);
+    if(blob.size!==total)throw new Error('A staged attachment does not match the backup size.');
+    let offset=0;
+    for(const chunk of chunks){
+      osBackupThrowIfAborted(options.signal);
+      const buffer=await blob.slice(offset,offset+chunk.bytes).arrayBuffer();
+      if(buffer.byteLength!==chunk.bytes||await osBackupSha256Hex(buffer)!==chunk.sha256)throw new Error(`A staged attachment failed SHA-256 verification at byte ${offset}.`);
+      offset+=chunk.bytes;
+    }
+    return true;
+  }
   async function osPackBackupValue(value,seen=new WeakSet(),state={nodes:0},depth=0){
+    osBackupThrowIfAborted(state.signal);
     if(depth>OS_BACKUP_MAX_VALUE_DEPTH)throw new Error('A saved value is nested too deeply to export.');
     if(++state.nodes>OS_BACKUP_MAX_VALUE_NODES)throw new Error('This saved database contains too many values for one backup.');
     const kind=typeof value;if(value===null||kind==='string'||kind==='boolean'||kind==='number')return value;
     if(value===undefined)return{[OS_BACKUP_TYPE_MARKER]:'Undefined'};
     if(typeof value==='bigint')return{[OS_BACKUP_TYPE_MARKER]:'BigInt',value:String(value)};
     if(typeof value==='function'||typeof value==='symbol')throw new Error('A saved value cannot be exported safely.');
-    if(typeof Blob!=='undefined'&&value instanceof Blob)return{[OS_BACKUP_TYPE_MARKER]:'Blob',mime:value.type||'',data:osBase64FromBuffer(await value.arrayBuffer())};
-    if(value instanceof ArrayBuffer)return{[OS_BACKUP_TYPE_MARKER]:'ArrayBuffer',data:osBase64FromBuffer(value)};
-    if(ArrayBuffer.isView(value))return{[OS_BACKUP_TYPE_MARKER]:'TypedArray',name:value.constructor?.name||'Uint8Array',data:osBase64FromBuffer(value.buffer.slice(value.byteOffset,value.byteOffset+value.byteLength))};
+    if(typeof Blob!=='undefined'&&value instanceof Blob)return{[OS_BACKUP_TYPE_MARKER]:'Blob',mime:value.type||'',...await osPackBinarySource(value,state)};
+    if(value instanceof ArrayBuffer)return{[OS_BACKUP_TYPE_MARKER]:'ArrayBuffer',...await osPackBinarySource(value,state)};
+    if(ArrayBuffer.isView(value))return{[OS_BACKUP_TYPE_MARKER]:'TypedArray',name:value.constructor?.name||'Uint8Array',...await osPackBinarySource(value,state)};
     if(value instanceof Date)return{[OS_BACKUP_TYPE_MARKER]:'Date',value:value.toISOString()};
     if(seen.has(value))throw new Error('A saved value contains circular data.');
     seen.add(value);
@@ -9089,14 +9250,23 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const type=Object.prototype.hasOwnProperty.call(value,OS_BACKUP_TYPE_MARKER)?value[OS_BACKUP_TYPE_MARKER]:null,keys=Object.keys(value);
     const exact=(...names)=>keys.length===names.length&&names.every(name=>Object.prototype.hasOwnProperty.call(value,name));
     const binary=data=>{if(typeof data!=='string'||data.length%4||!OS_BACKUP_BASE64_PATTERN.test(data))throw new Error('Backup binary data is malformed.');state.encodedChars+=data.length;if(state.encodedChars>OS_BACKUP_MAX_ENCODED_CHARS)throw new Error('Backup binary data exceeds the safe restore limit.');return data.length/4*3-(data.endsWith('==')?2:data.endsWith('=')?1:0);};
+    const chunked=(chunks,byteLength)=>osValidateBackupChunkSet(chunks,byteLength,state);
     switch(type){
       case 'Undefined':if(!exact(OS_BACKUP_TYPE_MARKER))throw new Error('Malformed undefined value.');return true;
       case 'BigInt':if(!exact(OS_BACKUP_TYPE_MARKER,'value')||typeof value.value!=='string'||value.value.length>4096||!/^-?(?:0|[1-9]\d*)$/.test(value.value))throw new Error('Invalid BigInt value.');return true;
-      case 'Blob':if(!exact(OS_BACKUP_TYPE_MARKER,'mime','data')||typeof value.mime!=='string'||value.mime.length>255)throw new Error('Invalid Blob value.');binary(value.data);return true;
-      case 'ArrayBuffer':if(!exact(OS_BACKUP_TYPE_MARKER,'data'))throw new Error('Invalid ArrayBuffer value.');binary(value.data);return true;
+      case 'Blob':
+        if(typeof value.mime!=='string'||value.mime.length>255)throw new Error('Invalid Blob value.');
+        if(value.chunked===true){if(!exact(OS_BACKUP_TYPE_MARKER,'mime','chunked','byteLength','chunks'))throw new Error('Malformed chunked Blob value.');chunked(value.chunks,value.byteLength);return true;}
+        if(!exact(OS_BACKUP_TYPE_MARKER,'mime','data'))throw new Error('Invalid Blob value.');binary(value.data);return true;
+      case 'ArrayBuffer':
+        if(value.chunked===true){if(!exact(OS_BACKUP_TYPE_MARKER,'chunked','byteLength','chunks'))throw new Error('Malformed chunked ArrayBuffer value.');chunked(value.chunks,value.byteLength);return true;}
+        if(!exact(OS_BACKUP_TYPE_MARKER,'data'))throw new Error('Invalid ArrayBuffer value.');binary(value.data);return true;
       case 'TypedArray':{
-        if(!exact(OS_BACKUP_TYPE_MARKER,'name','data')||typeof value.name!=='string'||(value.name!=='DataView'&&!Object.prototype.hasOwnProperty.call(OS_BACKUP_TYPED_ARRAY_BYTES,value.name))||typeof globalThis[value.name]!=='function')throw new Error('Unsupported typed-array constructor.');
-        if(binary(value.data)%(OS_BACKUP_TYPED_ARRAY_BYTES[value.name]||1))throw new Error('Misaligned typed-array data.');return true;
+        if(typeof value.name!=='string'||(value.name!=='DataView'&&!Object.prototype.hasOwnProperty.call(OS_BACKUP_TYPED_ARRAY_BYTES,value.name))||typeof globalThis[value.name]!=='function')throw new Error('Unsupported typed-array constructor.');
+        let bytes;
+        if(value.chunked===true){if(!exact(OS_BACKUP_TYPE_MARKER,'name','chunked','byteLength','chunks'))throw new Error('Malformed chunked typed-array value.');bytes=chunked(value.chunks,value.byteLength);}
+        else{if(!exact(OS_BACKUP_TYPE_MARKER,'name','data'))throw new Error('Invalid typed-array value.');bytes=binary(value.data);}
+        if(bytes%(OS_BACKUP_TYPED_ARRAY_BYTES[value.name]||1))throw new Error('Misaligned typed-array data.');return true;
       }
       case 'Date':{const date=new Date(value.value);if(!exact(OS_BACKUP_TYPE_MARKER,'value')||typeof value.value!=='string'||!Number.isFinite(date.getTime())||date.toISOString()!==value.value)throw new Error('Invalid Date value.');return true;}
       case 'Map':if(!exact(OS_BACKUP_TYPE_MARKER,'entries')||!Array.isArray(value.entries))throw new Error('Invalid Map value.');for(const pair of value.entries){if(!Array.isArray(pair)||pair.length!==2)throw new Error('Malformed Map entry.');visit(pair[0]);visit(pair[1]);}return true;
@@ -9111,11 +9281,12 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const unpack=item=>osUnpackBackupValue(item,state,depth+1);
     if(Array.isArray(value))return value.map(unpack);
     const type=Object.prototype.hasOwnProperty.call(value,OS_BACKUP_TYPE_MARKER)?value[OS_BACKUP_TYPE_MARKER]:null;
+    const binary=()=>value.chunked===true?osBufferFromBackupChunks(value.chunks,value.byteLength):osBufferFromBase64(value.data);
     if(type==='Undefined')return undefined;
     if(type==='BigInt')return BigInt(value.value);
-    if(type==='Blob')return new Blob([osBufferFromBase64(value.data)],{type:value.mime||''});
-    if(type==='ArrayBuffer')return osBufferFromBase64(value.data);
-    if(type==='TypedArray'){const buffer=osBufferFromBase64(value.data);if(value.name==='DataView')return new DataView(buffer);const Constructor=globalThis[value.name];if(typeof Constructor!=='function'||!Object.prototype.hasOwnProperty.call(OS_BACKUP_TYPED_ARRAY_BYTES,value.name))throw new Error('Unsupported typed-array constructor.');return new Constructor(buffer);}
+    if(type==='Blob')return new Blob([binary()],{type:value.mime||''});
+    if(type==='ArrayBuffer')return binary();
+    if(type==='TypedArray'){const buffer=binary();if(value.name==='DataView')return new DataView(buffer);const Constructor=globalThis[value.name];if(typeof Constructor!=='function'||!Object.prototype.hasOwnProperty.call(OS_BACKUP_TYPED_ARRAY_BYTES,value.name))throw new Error('Unsupported typed-array constructor.');return new Constructor(buffer);}
     if(type==='Date'){const date=new Date(value.value);if(!Number.isFinite(date.getTime()))throw new Error('Invalid Date value.');return date;}
     if(type==='Map'){if(!Array.isArray(value.entries))throw new Error('Invalid Map value.');return new Map(value.entries.map(pair=>{if(!Array.isArray(pair)||pair.length!==2)throw new Error('Malformed Map entry.');return[unpack(pair[0]),unpack(pair[1])];}));}
     if(type==='Set'){if(!Array.isArray(value.values))throw new Error('Invalid Set value.');return new Set(value.values.map(unpack));}
@@ -9124,6 +9295,76 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       if(!Array.isArray(value.entries))throw new Error('Invalid escaped object.');const keys=new Set();for(const pair of value.entries){if(!Array.isArray(pair)||pair.length!==2||typeof pair[0]!=='string'||keys.has(pair[0]))throw new Error('Invalid escaped object key.');keys.add(pair[0]);Object.defineProperty(out,pair[0],{value:unpack(pair[1]),enumerable:true,configurable:true,writable:true});}return out;
     }
     for(const [key,item] of Object.entries(value))Object.defineProperty(out,key,{value:unpack(item),enumerable:true,configurable:true,writable:true});return out;
+  }
+  async function osVerifyBackupChunkDigests(backup,options={}){
+    let checked=0,nodes=0;const seen=new WeakSet();
+    const visit=async value=>{
+      osBackupThrowIfAborted(options.signal);
+      if(!value||typeof value!=='object'||seen.has(value))return;
+      if(++nodes>OS_BACKUP_MAX_VALUE_NODES)throw new Error('Backup contains too many values to verify safely.');
+      seen.add(value);
+      const type=value[OS_BACKUP_TYPE_MARKER];
+      if(['Blob','ArrayBuffer','TypedArray'].includes(type)&&value.chunked===true){
+        await osVerifyBackupChunkSet(value.chunks,value.byteLength,`${type} value`,options);checked+=value.byteLength;return;
+      }
+      if(value.chunked===true&&Array.isArray(value.chunks)&&typeof value.name==='string'&&Number.isSafeInteger(value.size)){
+        await osVerifyBackupChunkSet(value.chunks,value.size,`Aether attachment ${value.name}`,options);checked+=value.size;return;
+      }
+      if(Array.isArray(value)){for(const item of value)await visit(item);return;}
+      for(const item of Object.values(value))await visit(item);
+    };
+    await visit(backup);
+    options.onProgress?.({phase:'verify-complete',completed:checked,total:checked});
+    return{verifiedBytes:checked};
+  }
+  function* osBackupJsonPieces(value){
+    if(value===null||typeof value!=='object'){const encoded=JSON.stringify(value);yield encoded===undefined?'null':encoded;return;}
+    if(Array.isArray(value)){
+      yield '[';for(let index=0;index<value.length;index++){if(index)yield ',';yield* osBackupJsonPieces(value[index]);}yield ']';return;
+    }
+    yield '{';let first=true;
+    for(const key of Object.keys(value)){
+      const item=value[key];if(item===undefined||typeof item==='function'||typeof item==='symbol')continue;
+      if(!first)yield ',';first=false;yield JSON.stringify(key);yield ':';yield* osBackupJsonPieces(item);
+    }
+    yield '}';
+  }
+  async function osBackupJsonToBlob(value,options={}){
+    const parts=[];let pending='',characters=0,lastReport=0;
+    for(const piece of osBackupJsonPieces(value)){
+      osBackupThrowIfAborted(options.signal);
+      pending+=piece;characters+=piece.length;
+      while(pending.length>=OS_BACKUP_SERIALIZE_PART_CHARS){parts.push(pending.slice(0,OS_BACKUP_SERIALIZE_PART_CHARS));pending=pending.slice(OS_BACKUP_SERIALIZE_PART_CHARS);}
+      if(characters-lastReport>=5*OS_BACKUP_SERIALIZE_PART_CHARS){lastReport=characters;options.onProgress?.({phase:'serialize',completed:characters,total:0});}
+    }
+    if(pending)parts.push(pending);
+    const blob=new Blob(parts,{type:'application/json'});
+    options.onProgress?.({phase:'serialize-complete',completed:blob.size,total:blob.size});
+    return blob;
+  }
+  async function osReadBackupFileText(file,options={}){
+    if(!file||typeof file.stream!=='function')return await file.text();
+    const reader=file.stream().getReader(),decoder=new TextDecoder(),parts=[];let loaded=0;
+    try{
+      while(true){
+        osBackupThrowIfAborted(options.signal);
+        const {done,value}=await reader.read();if(done)break;
+        loaded+=value.byteLength;parts.push(decoder.decode(value,{stream:true}));
+        options.onProgress?.({phase:'read',completed:loaded,total:file.size});
+      }
+      parts.push(decoder.decode());osBackupThrowIfAborted(options.signal);return parts.join('');
+    }catch(error){try{await reader.cancel();}catch(_){}throw error;}
+    finally{try{reader.releaseLock();}catch(_){}}
+  }
+  async function osBlobChunkDigests(blob,options={}){
+    const digests=[];
+    for(let offset=0;offset<blob.size;offset+=OS_BACKUP_SERIALIZE_PART_CHARS){
+      osBackupThrowIfAborted(options.signal);
+      const buffer=await blob.slice(offset,Math.min(blob.size,offset+OS_BACKUP_SERIALIZE_PART_CHARS)).arrayBuffer();
+      digests.push(await osBackupSha256Hex(buffer));
+      options.onProgress?.({phase:'verify-save',completed:Math.min(blob.size,offset+buffer.byteLength),total:blob.size});
+    }
+    return digests;
   }
     function osOpenBackupDatabase(name, version, schema = []) {
     return new Promise((resolve, reject) => {
@@ -9156,7 +9397,8 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       request.onblocked = () => fail(new Error(`${name} is open in another tab. Close the older CURIOID tab and try again.`));
     });
   }
-  async function osSnapshotDatabase(name) {
+  async function osSnapshotDatabase(name, options = {}) {
+    osBackupThrowIfAborted(options.signal);
     const captureStartedAt = new Date().toISOString();
     const db = await osOpenBackupDatabase(name);
     try {
@@ -9206,7 +9448,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       // Blob/typed-value encoding can be asynchronous, so it happens only
       // after the consistent read transaction has completely finished.
       const stores = [];
-      const packState = { nodes: 0 };
+      const packState = { nodes: 0, signal: options.signal, onProgress: options.onProgress };
       for (const snapshot of rawStores) {
         const schema = {
           name: snapshot.name, keyPath: snapshot.keyPath, autoIncrement: snapshot.autoIncrement,
@@ -9215,7 +9457,9 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
         if (!schema.excluded) {
           if (snapshot.keys.length !== snapshot.values.length) throw new Error(`Database snapshot for ${name}/${snapshot.name} returned mismatched keys and values.`);
           for (let index = 0; index < snapshot.values.length; index++) {
+            osBackupThrowIfAborted(options.signal);
             schema.records.push({ key: await osPackBackupValue(snapshot.keys[index], new WeakSet(), packState), value: await osPackBackupValue(snapshot.values[index], new WeakSet(), packState) });
+            options.onProgress?.({ phase: 'database', database: name, completed: index + 1, total: snapshot.values.length });
           }
         }
         stores.push(schema);
@@ -9244,7 +9488,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     return expected;
   }
 
-  async function osSnapshotAetherOpfsAssets() {
+  async function osSnapshotAetherOpfsAssets(options={}) {
     if (!navigator.storage?.getDirectory) return { status: 'unsupported', directory: OS_AETHER_OPFS_DIRECTORY, files: [] };
     let root;
     try { root = await navigator.storage.getDirectory(); }
@@ -9259,15 +9503,18 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     let totalBytes = 0;
     try {
       for await (const [name, handle] of directory.entries()) {
+        osBackupThrowIfAborted(options.signal);
         if (handle.kind !== 'file' || !OS_AETHER_OPFS_FILE_NAME.test(name)) continue;
         if (files.length >= OS_AETHER_OPFS_MAX_FILES) throw new Error(`Aether has more than ${OS_AETHER_OPFS_MAX_FILES} OPFS attachments. Export its workspaces separately before making a complete system backup.`);
         const file = await handle.getFile();
         if (file.size > OS_AETHER_OPFS_MAX_FILE) throw new Error(`Aether attachment ${name} exceeds the 64 MB per-file backup limit. Use Aether's native .aether exporter for this project.`);
         totalBytes += file.size;
         if (totalBytes > OS_AETHER_OPFS_MAX_TOTAL) throw new Error('Aether OPFS attachments exceed the 120 MB system-backup allowance. Use Aether native project exports for large workspaces.');
-        files.push({ name, size: file.size, mime: String(file.type || '').slice(0, 120), data: osBase64FromBuffer(await file.arrayBuffer()) });
+        const packed=await osPackBinarySource(file,options);
+        files.push({ name, size: file.size, mime: String(file.type || '').slice(0, 120), ...packed });
       }
     } catch (error) {
+      if(error?.name==='AbortError')throw error;
       return { status: 'unavailable', directory: OS_AETHER_OPFS_DIRECTORY, files: [], reason: String(error?.message || error).slice(0, 240) };
     }
     files.sort((a, b) => a.name.localeCompare(b.name));
@@ -9287,13 +9534,18 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const names = new Set();
     let total = 0;
     for (const file of snapshot.files) {
-      if (!file || typeof file.name !== 'string' || !OS_AETHER_OPFS_FILE_NAME.test(file.name) || names.has(file.name) || typeof file.data !== 'string' || file.data.length > Math.ceil(OS_AETHER_OPFS_MAX_FILE / 3) * 4 + 8 || typeof file.mime !== 'string' || file.mime.length > 120 || !Number.isSafeInteger(file.size) || file.size < 0 || file.size > OS_AETHER_OPFS_MAX_FILE) throw new Error('The backup contains an invalid or oversized Aether attachment.');
+      if (!file || typeof file.name !== 'string' || !OS_AETHER_OPFS_FILE_NAME.test(file.name) || names.has(file.name) || typeof file.mime !== 'string' || file.mime.length > 120 || !Number.isSafeInteger(file.size) || file.size < 0 || file.size > OS_AETHER_OPFS_MAX_FILE) throw new Error('The backup contains an invalid or oversized Aether attachment.');
       names.add(file.name);
       total += file.size;
       if (total > OS_AETHER_OPFS_MAX_TOTAL) throw new Error('The backup exceeds the Aether attachment size limit.');
-      let bytes;
-      try { bytes = osBufferFromBase64(file.data); } catch (_) { throw new Error(`Aether attachment ${file.name} contains invalid encoded data.`); }
-      if (bytes.byteLength !== file.size) throw new Error(`Aether attachment ${file.name} failed its size check.`);
+      if(file.chunked===true){
+        if(Object.keys(file).length!==6||file.byteLength!==file.size)throw new Error(`Aether attachment ${file.name} has an invalid chunk manifest.`);
+        osValidateBackupChunkSet(file.chunks,file.byteLength,{encodedChars:0});
+      }else{
+        if(typeof file.data!=='string'||file.data.length>Math.ceil(OS_AETHER_OPFS_MAX_FILE/3)*4+8)throw new Error('The backup contains an invalid or oversized Aether attachment.');
+        let bytes;try{bytes=osBufferFromBase64(file.data);}catch(_){throw new Error(`Aether attachment ${file.name} contains invalid encoded data.`);}
+        if(bytes.byteLength!==file.size)throw new Error(`Aether attachment ${file.name} failed its size check.`);
+      }
     }
     const expectedAssets = osAetherOpfsExpectedAssets(databaseSnapshots);
     if (snapshot.status === 'complete') {
@@ -9308,40 +9560,64 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     return snapshot;
   }
 
-  async function osRestoreAetherOpfsAssets(snapshot) {
-    if (!snapshot || snapshot.status !== 'complete') return;
-    if (!navigator.storage?.getDirectory) {
-      if (snapshot.files.length) throw new Error('This browser cannot restore Aether OPFS attachments. Open CURIOID on a browser with Origin Private File System support.');
-      return;
-    }
-    const root = await navigator.storage.getDirectory();
-    const stageName = `curioid-aether-restore-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-    const stage = await root.getDirectoryHandle(stageName, { create: true });
-    try {
-      for (const item of snapshot.files) {
-        const handle = await stage.getFileHandle(item.name, { create: true });
-        const writer = await handle.createWritable();
-        try { await writer.write(new Blob([osBufferFromBase64(item.data)], { type: item.mime || '' })); await writer.close(); }
-        catch (error) { try { await writer.abort(); } catch (_) {} throw error; }
-        const staged = await handle.getFile();
-        if (staged.size !== item.size) throw new Error(`Staging Aether attachment ${item.name} failed verification.`);
+  async function osStageAetherOpfsAssets(snapshot,options={}){
+    if(!snapshot||snapshot.status!=='complete')return null;
+    if(!navigator.storage?.getDirectory){if(snapshot.files.length)throw new Error('This browser cannot restore Aether OPFS attachments. Open CURIOID on a browser with Origin Private File System support.');return null;}
+    const root=await navigator.storage.getDirectory();
+    const stageName=`curioid-aether-restore-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+    const stage=await root.getDirectoryHandle(stageName,{create:true});
+    try{
+      for(let index=0;index<snapshot.files.length;index++){
+        osBackupThrowIfAborted(options.signal);
+        const item=snapshot.files[index],handle=await stage.getFileHandle(item.name,{create:true}),writer=await handle.createWritable();
+        let offset=0;
+        try{
+          const chunks=osBackupChunksForFile(item);
+          for(const chunk of chunks){
+            osBackupThrowIfAborted(options.signal);
+            const bytes=osBufferFromBase64(chunk.data);
+            if(bytes.byteLength!==chunk.bytes)throw new Error(`Staging Aether attachment ${item.name} found an invalid chunk size.`);
+            await writer.write(new Uint8Array(bytes));offset+=bytes.byteLength;
+            options.onProgress?.({phase:'stage-opfs',completed:offset,total:item.size,label:item.name});
+          }
+          await writer.close();
+        }catch(error){try{await writer.abort();}catch(_){}throw error;}
+        const staged=await handle.getFile();
+        if(staged.size!==item.size)throw new Error(`Staging Aether attachment ${item.name} failed its size verification.`);
+        if(item.chunked===true)await osVerifyBlobAgainstBackupChunks(staged,item.chunks,options);
       }
-      const target = await root.getDirectoryHandle(OS_AETHER_OPFS_DIRECTORY, { create: true });
-      const existingNames = [];
-      for await (const [name, handle] of target.entries()) if (handle.kind === 'file' && OS_AETHER_OPFS_FILE_NAME.test(name)) existingNames.push(name);
-      for (const name of existingNames) await target.removeEntry(name);
-      for (const item of snapshot.files) {
-        const staged = await stage.getFileHandle(item.name);
-        const source = await staged.getFile();
-        const destination = await target.getFileHandle(item.name, { create: true });
-        const writer = await destination.createWritable();
-        try { await writer.write(source); await writer.close(); }
-        catch (error) { try { await writer.abort(); } catch (_) {} throw error; }
-        if ((await destination.getFile()).size !== item.size) throw new Error(`Restored Aether attachment ${item.name} failed verification.`);
-      }
-    } finally {
-      try { await root.removeEntry(stageName, { recursive: true }); } catch (_) {}
+      return{root,stage,stageName,snapshot};
+    }catch(error){try{await root.removeEntry(stageName,{recursive:true});}catch(_){}throw error;}
+  }
+  async function osCommitAetherOpfsStage(staged,options={}){
+    if(!staged)return;
+    const {root,stage,snapshot}=staged,target=await root.getDirectoryHandle(OS_AETHER_OPFS_DIRECTORY,{create:true});
+    const existingNames=[];
+    for await(const [name,handle] of target.entries())if(handle.kind==='file'&&OS_AETHER_OPFS_FILE_NAME.test(name))existingNames.push(name);
+    for(const name of existingNames){osBackupThrowIfAborted(options.signal);await target.removeEntry(name);}
+    for(const item of snapshot.files){
+      osBackupThrowIfAborted(options.signal);
+      const stagedHandle=await stage.getFileHandle(item.name),source=await stagedHandle.getFile();
+      const destination=await target.getFileHandle(item.name,{create:true}),writer=await destination.createWritable();
+      let offset=0;
+      try{
+        while(offset<source.size){
+          osBackupThrowIfAborted(options.signal);
+          const end=Math.min(source.size,offset+OS_BACKUP_BINARY_CHUNK_BYTES),buffer=await source.slice(offset,end).arrayBuffer();
+          await writer.write(new Uint8Array(buffer));offset=end;
+        }
+        await writer.close();
+      }catch(error){try{await writer.abort();}catch(_){}throw error;}
+      const restored=await destination.getFile();
+      if(restored.size!==item.size)throw new Error(`Restored Aether attachment ${item.name} failed its size verification.`);
+      if(item.chunked===true)await osVerifyBlobAgainstBackupChunks(restored,item.chunks,options);
     }
+  }
+  async function osDiscardAetherOpfsStage(staged){if(staged?.root&&staged?.stageName){try{await staged.root.removeEntry(staged.stageName,{recursive:true});}catch(_){}}}
+  async function osRestoreAetherOpfsAssets(snapshot,options={}){
+    const staged=await osStageAetherOpfsAssets(snapshot,options);
+    try{await osCommitAetherOpfsStage(staged,options);}
+    finally{await osDiscardAetherOpfsStage(staged);}
   }
 
   function osReadBackupLocalStorageSnapshot() {
@@ -9413,12 +9689,13 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       aetherOpfs: safetySnapshot.aetherOpfs || null
     };
   }
-  async function osCollectSystemBackup() {
+  async function osCollectSystemBackup(options={}) {
+    osBackupThrowIfAborted(options.signal);
     const captureStartedAt = new Date().toISOString();
     const localStorageCapturedAt = new Date().toISOString();
     const localStorageData = osReadBackupLocalStorageSnapshot();
     let indexedDbStatus = 'unavailable', indexedDbDiscoveredCount = 0, indexedDbFailedNames = [];
-    const backup = { format: OS_BACKUP_FORMAT, version: OS_BACKUP_VERSION, exportedAt: captureStartedAt, snapshotConsistency: 'consistent-per-indexeddb-database; not-atomic-across-browser-profile', source: 'CURIOID', localStorage: localStorageData, databases: [], aetherOpfs: null, notes: ['Data stays in this browser. When supported, the backup includes CURIOID Exchange files and messages, Kernel artifacts and explicit capability grants, saved personal Sandbox OS packages, durable Sandbox Studio drafts, Browser Vault artifacts, Aether OPFS attachments, and supported Doors98, NOURISH, Echonoise, UMBRA and AURA data. It also includes AURA preferences and Sandbox desktop appearance/window-session settings. The PC Downloads folder and its files stay on the computer and are never copied into this backup. CURIOID’s saved folder handle and permission are not portable; reconnect Downloads in another browser profile.', 'Each IndexedDB database is captured in one consistent read-only transaction, but localStorage, different databases and OPFS do not share one browser-wide atomic snapshot. For best consistency, close active CURIOID editors and other CURIOID tabs before exporting.'] };
+    const backup = { format: OS_BACKUP_FORMAT, version: OS_BACKUP_VERSION, exportedAt: captureStartedAt, snapshotConsistency: 'consistent-per-indexeddb-database; not-atomic-across-browser-profile', source: 'CURIOID', localStorage: localStorageData, databases: [], aetherOpfs: null, notes: ['Data stays in this browser. When supported, the backup includes CURIOID Exchange files and messages, Kernel artifacts and explicit capability grants, saved personal Sandbox OS packages, durable Sandbox Studio drafts, Browser Vault artifacts, Aether OPFS attachments, and supported Doors98, NOURISH, Echonoise, UMBRA and AURA data. It also includes AURA preferences and Sandbox desktop appearance/window-session settings. The PC Downloads folder and its files stay on the computer and are never copied into this backup. The separately saved Downloads directory handle and permission are non-portable and excluded; reconnect Downloads in another browser profile. User-added virtual desktop files are included as local data.', 'Each IndexedDB database is captured in one consistent read-only transaction, but localStorage, different databases and OPFS do not share one browser-wide atomic snapshot. For best consistency, close active CURIOID editors and other CURIOID tabs before exporting.'] };
     if (window.indexedDB && typeof indexedDB.databases === 'function') {
       try {
         const existing = await indexedDB.databases();
@@ -9426,7 +9703,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
         indexedDbDiscoveredCount = existing.filter(database => database?.name && OS_BACKUP_DATABASES.has(database.name)).length;
         for (const database of existing) {
           if (!database.name || !OS_BACKUP_DATABASES.has(database.name)) continue;
-          try { backup.databases.push(await osSnapshotDatabase(database.name)); }
+          try { backup.databases.push(await osSnapshotDatabase(database.name,options)); }
           catch (error) {
             indexedDbStatus = 'partial';
             indexedDbFailedNames.push(database.name);
@@ -9438,7 +9715,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
         backup.notes.push(`The browser denied access to IndexedDB (${error.message || 'access unavailable'}). supported project database records were not included; use each OS native project exporter.`);
       }
     } else backup.notes.push('This browser cannot enumerate IndexedDB databases. Use each OS native export function for its stored projects.');
-    backup.aetherOpfs = await osSnapshotAetherOpfsAssets();
+    backup.aetherOpfs = await osSnapshotAetherOpfsAssets(options);
     if (backup.aetherOpfs.status === 'complete') {
       try { osValidateAetherOpfsSnapshot(backup.aetherOpfs, backup.databases); }
       catch (error) {
@@ -9459,13 +9736,14 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     };
     return backup;
   }
-  async function osSaveVerifiedSystemSafetyBackupSnapshot(snapshot) {
+  async function osSaveVerifiedSystemSafetyBackupSnapshot(snapshot,options={}) {
+    osBackupThrowIfAborted(options.signal);
     if(!snapshot||snapshot.format!==OS_BACKUP_FORMAT||snapshot.version!==OS_BACKUP_VERSION||!snapshot.localStorage||!Array.isArray(snapshot.databases))throw new Error('The current CURIOID data snapshot is not a supported full-system backup.');
     const criticalNotes=(Array.isArray(snapshot.notes)?snapshot.notes:[]).filter(note=>/could not be added to this browser backup|denied access to IndexedDB|cannot enumerate IndexedDB databases|localStorage changed while the system backup/i.test(String(note)));
     if(criticalNotes.length)throw new Error(`The current system backup is incomplete (${criticalNotes.slice(0,3).join(' ')}) Restore was stopped before changing any data.`);
     const expectedAetherAssets=osAetherOpfsExpectedAssets(snapshot.databases);
     if(expectedAetherAssets.size&&snapshot.aetherOpfs?.status!=='complete')throw new Error('The current Aether attachments could not all be included in the automatic restore backup. Restore was stopped; use Aether’s native project exporter and check attachment storage first.');
-    const serialized=JSON.stringify(snapshot),blob=new Blob([serialized],{type:'application/json'}),byteLength=blob.size;
+    const blob=await osBackupJsonToBlob(snapshot,options),byteLength=blob.size;
     if(byteLength>64*1024*1024)throw new Error('The current full-system backup exceeds the 64 MB automatic restore-safety limit. Restore was stopped before changing data. Export a separate CURIOID backup and reduce large artifacts first.');
     const stamp=new Date().toISOString().replace(/[:.]/g,'-');
     const name=`curioid-before-system-restore-${stamp}.curioidbackup`;
@@ -9475,8 +9753,8 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       if(!saved||saved.sessionOnly)throw new Error('The safety backup was stored only for this browser session. A durable Browser Vault copy is required.');
       const stored=await curioidVault.get(saved.id);
       if(!stored?.blob||Number(stored.size)!==byteLength)throw new Error('The automatic system backup could not be read back at its original size.');
-      const storedText=await stored.blob.text();
-      if(storedText!==serialized)throw new Error('The automatic system backup failed exact read-back verification.');
+      const [originalDigests,storedDigests]=await Promise.all([osBlobChunkDigests(blob,options),osBlobChunkDigests(stored.blob,options)]);
+      if(originalDigests.length!==storedDigests.length||originalDigests.some((digest,index)=>digest!==storedDigests[index]))throw new Error('The automatic system backup failed exact chunk-level read-back verification.');
       return stored;
     }catch(error){
       if(saved?.id)try{await curioidVault.remove(saved.id);}catch(_){}
@@ -9542,6 +9820,23 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       }
     }
   }
+  async function osValidateCompleteSystemBackupData(backup,options={}){
+    if(!backup||backup.format!==OS_BACKUP_FORMAT||![1,OS_BACKUP_VERSION].includes(backup.version)||!backup.localStorage||typeof backup.localStorage!=='object'||Array.isArray(backup.localStorage)||!Array.isArray(backup.databases))throw new Error('The system backup has an invalid top-level structure.');
+    osValidateBackupSnapshotManifest(backup);
+    for(const [key,value] of Object.entries(backup.localStorage))if(!osIsBackupLocalStorageKey(key)||typeof value!=='string')throw new Error('The system backup contains an unsupported localStorage entry.');
+    if(new Set(backup.databases.map(database=>database?.name)).size!==backup.databases.length||backup.databases.some(database=>!database||!OS_BACKUP_DATABASES.has(database.name)))throw new Error('The system backup contains an unsupported or duplicate database.');
+    const packedValueBudget={nodes:0,encodedChars:0};
+    for(const database of backup.databases)osValidateBackupSnapshot(database,packedValueBudget);
+    const opfs=osValidateAetherOpfsSnapshot(backup.aetherOpfs,backup.databases);
+    if(backup.version===1){
+      const hasChunked=value=>!!value&&typeof value==='object'&&(value.chunked===true||(Array.isArray(value)?value.some(hasChunked):Object.values(value).some(hasChunked)));
+      if(backup.databases.some(database=>database.stores.some(store=>store.records.some(record=>hasChunked(record.key)||hasChunked(record.value)))))throw new Error('Version-1 backups cannot contain version-2 chunk metadata.');
+      if((opfs?.files||[]).some(file=>file.chunked===true))throw new Error('Version-1 backups cannot contain version-2 attachment chunks.');
+    }
+    await osVerifyBackupChunkDigests(backup,options);
+    return{settings:Object.keys(backup.localStorage).length,databases:backup.databases.length,attachments:opfs?.files?.length||0,opfs};
+  }
+
   async function osValidateBackupDatabases(snapshots, options = {}) {
     if (!snapshots.length) return [];
     const capturePrevious = options.capturePrevious !== false;
@@ -9549,6 +9844,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const names = await indexedDB.databases();
     const previous = [];
     for (const snapshot of snapshots) {
+      osBackupThrowIfAborted(options.signal);
       osValidateBackupSnapshot(snapshot);
       const meta = names.find(item => item.name === snapshot.name);
       if (!meta) { if (capturePrevious) previous.push({ name: snapshot.name, snapshot: null }); continue; }
@@ -10234,7 +10530,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     managementToggle.setAttribute('aria-haspopup', 'true');
     managementToggle.setAttribute('aria-expanded', 'false');
     managementToggle.title = `${id} Management · Connections, transfers and system tools`;
-    managementToggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.4 12s3.3-6.1 9.6-6.1 9.6 6.1 9.6 6.1-3.3 6.1-9.6 6.1S2.4 12 2.4 12Z"/><circle cx="12" cy="12" r="2.7"/><path d="M4.7 6.9 3.5 5.7M19.3 6.9l1.2-1.2M4.7 17.1l-1.2 1.2M19.3 17.1l1.2 1.2"/></svg><span>MANAGEMENT</span>';
+    managementToggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.4 12s3.3-6.1 9.6-6.1 9.6 6.1 9.6 6.1-3.3 6.1-9.6 6.1S2.4 12 2.4 12Z"/><circle cx="12" cy="12" r="2.7"/></svg>';
     const managementMenu = document.createElement('section');
     managementMenu.className = 'curioid-os-management-menu';
     managementMenu.hidden = true;
@@ -10343,7 +10639,13 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       managementAdd(networkInfo, 'Echonoise internal service status', 'Read-only local connection status');
     }
     const auraAmbientButton = id === 'aura-synthesis' ? $('[data-aura-action="ambient"]', taskbar) : null;
-    if (auraAmbientButton) managementAdd(auraAmbientButton, 'AURA studio ambience', 'Toggle the low studio hum');
+    const auraHumControl = id === 'aura-synthesis' ? $('[data-aura-hum-control-wrap]', taskbar) : null;
+    if (auraAmbientButton || auraHumControl) {
+      const auraAudioGroup = document.createElement('div'); auraAudioGroup.className = 'curioid-os-management-audio aura-management-hum';
+      if (auraAmbientButton) auraAudioGroup.append(auraAmbientButton);
+      if (auraHumControl) auraAudioGroup.append(auraHumControl);
+      managementAdd(auraAudioGroup, 'AURA studio ambience', 'Toggle and adjust the low studio hum');
+    }
     const downloadsTaskButton = id === 'dead-interface' ? $('[data-retro-downloads-button]', taskbar) : null;
     if (downloadsTaskButton) managementAdd(downloadsTaskButton, 'Open Downloads connection', 'Connect or manage the host Downloads folder');
     const foodSettingsButton = id === 'food-alchemy' ? $('.food-os-tray [data-food-open-settings]', shell) : null;
@@ -10539,19 +10841,22 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
         <section><h3>Keyboard shortcuts</h3><dl><div><dt>F1 or Ctrl / ⌘ + /</dt><dd>Open this guide</dd></div><div><dt>Ctrl / ⌘ + Alt + Shift + B</dt><dd>Export a full CURIOID backup</dd></div><div><dt>Ctrl / ⌘ + Alt + Shift + I</dt><dd>Restore from a backup</dd></div><div><dt>Escape</dt><dd>Close this panel or the active menu</dd></div></dl></section>
         <section><h3>Storage & privacy</h3><p>Projects, virtual OS storage, CURIOID Exchange and Kernel data are stored inside this CURIOID installation. There are no accounts or cloud uploads. The only host-folder access is the Downloads folder you explicitly select and approve. CURIOID cannot browse other folders. Clearing this site’s data can erase saved work, so keep Browser Vault backups.</p><p class="os-system-storage" data-os-storage-report role="status">Checking browser storage…</p><div class="os-system-center-actions"><button type="button" data-os-check-storage>Check storage</button><span class="os-system-storage">CURIOID manages its own virtual spaces. No host storage protection is requested.</span></div><h3 class="os-system-subheading">Browser Vault</h3><p>Generated outputs, backups and exports stay inside this browser profile by default. You can explicitly copy selected files to the connected Downloads folder from Downloads Room; no other device folders are available.</p><div class="os-system-center-actions"><button type="button" data-os-open-vault>Open Browser Vault</button><span class="os-system-storage">BROWSER STORAGE · DOWNLOADS ONLY BY APPROVAL</span></div></section>
       </div>
-      <section class="os-system-backup"><div><h3>Backup & recovery</h3><p>Export includes CURIOID browser preferences, Exchange files and messages, Kernel artifacts and capability permissions, local data/settings for Doors98, NOURISH, Echonoise, UMBRA, Aether and AURA, Sandbox desktop appearance and open-window layout, saved personal Sandbox OS packages, private vaults, builder drafts and Browser Vault artifacts when supported. Aether OPFS attachment bytes are included when the browser supports them. The PC Downloads folder itself is not copied or changed. Its saved CURIOID folder handle and permission must be reconnected in another browser profile. Keep important .aether and .umbra project exports too. A full-system backup is downloaded only when localStorage is stable, all supported IndexedDB databases were captured, and every referenced Aether attachment is present. If export is blocked, close other CURIOID tabs and active editors, then retry or use each OS’s native project exporter.</p></div><div class="os-system-center-actions"><button type="button" class="is-primary" data-os-export-backup>↓ Save complete backup to Browser Vault</button><label class="os-system-import">Restore backup<input id="${importId}" type="file" accept=".curioidbackup,.json,application/json" data-os-import-backup></label></div></section>
-      <p class="os-system-center-status" data-os-backup-status role="status" aria-live="polite">Backups are local JSON files. Restoring replaces saved CURIOID keys and included database records.</p>`;
+      <section class="os-system-backup"><div><h3>Backup & recovery</h3><p>Export includes CURIOID browser preferences, Exchange files and messages, Kernel artifacts and capability permissions, local data/settings for Doors98, NOURISH, Echonoise, UMBRA, Aether and AURA, Sandbox desktop appearance and open-window layout, saved personal Sandbox OS packages, private vaults, builder drafts and Browser Vault artifacts when supported. Aether OPFS attachment bytes are included when the browser supports them. The PC Downloads folder itself is not copied or changed. Its saved CURIOID folder handle and permission must be reconnected in another browser profile. Keep important .aether and .umbra project exports too. A full-system backup is downloaded only when localStorage is stable, all supported IndexedDB databases were captured, and every referenced Aether attachment is present. If export is blocked, close other CURIOID tabs and active editors, then retry or use each OS’s native project exporter.</p></div><div class="os-system-center-actions"><button type="button" class="is-primary" data-os-export-backup>↓ Save complete backup to Browser Vault</button><label class="os-system-import">Restore backup<input id="${importId}" type="file" accept=".curioidbackup,.json,application/json" data-os-import-backup></label><button type="button" data-os-cancel-backup hidden>Cancel</button></div><progress class="os-system-backup-progress" data-os-backup-progress max="1" value="0" hidden aria-label="Backup or restore progress"></progress></section>
+      <p class="os-system-center-status" data-os-backup-status role="status" aria-live="polite">Backups are local JSON files. Restoring replaces saved CURIOID keys and included database records. Version 2 backups verify binary chunks before restore; version 1 backups remain supported.</p>`;
     shell.append(dialog);
     let destroyed = false;
     let doorsShutdownObserver = null;
     if (id === 'dead-interface' && typeof MutationObserver === 'function') {
       doorsShutdownObserver = new MutationObserver(() => {
         syncDockToggle();
-        if (shell.classList.contains('retro-shutdown') && dialog.open) dialog.close();
+        if(shell.classList.contains('retro-shutdown')&&dialog.open){
+          if(backupOperationController){if(!backupCancelButton?.disabled)backupOperationController.abort();}
+          else dialog.close();
+        }
       });
       doorsShutdownObserver.observe(shell, { attributes: true, attributeFilter: ['class'] });
     }
-    const closeDialog = () => { if (dialog.open) dialog.close(); if (!(id === 'dead-interface' && shell.classList.contains('retro-shutdown'))) trigger.focus({ preventScroll: true }); };
+    const closeDialog = () => { if(backupOperationController){if(!backupCancelButton?.disabled){backupOperationController.abort();status.textContent='Cancellation requested. The current safe step will stop before live data is changed.';}return;} if (dialog.open) dialog.close(); if (!(id === 'dead-interface' && shell.classList.contains('retro-shutdown'))) trigger.focus({ preventScroll: true }); };
     const openDialog = () => {
       if (destroyed || dialog.open) return;
       if (typeof dialog.showModal === 'function') dialog.showModal();
@@ -10876,124 +11181,145 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       } catch (_) { if (folderStatus) folderStatus.textContent = 'Downloads status unavailable. Browser Vault remains local.'; }
       report.textContent = 'CURIOID keeps project data in private browser storage spaces. Downloads access is optional, limited to the folder you explicitly connect, and governed by browser permission. Generated outputs stay in Browser Vault until you choose to copy them.';
     }
-    function osValidateCompleteSystemBackup(backup) {
-      if (!backup || backup.format !== OS_BACKUP_FORMAT || backup.version !== OS_BACKUP_VERSION || !backup.localStorage || typeof backup.localStorage !== 'object' || Array.isArray(backup.localStorage) || !Array.isArray(backup.databases)) throw new Error('The system backup has an invalid top-level structure.');
-      osValidateBackupSnapshotManifest(backup);
-      for (const [key, value] of Object.entries(backup.localStorage)) {
-        if (!osIsBackupLocalStorageKey(key) || typeof value !== 'string') throw new Error('The system backup contains an unsupported localStorage entry.');
-      }
-      if (new Set(backup.databases.map(database => database?.name)).size !== backup.databases.length || backup.databases.some(database => !database || !OS_BACKUP_DATABASES.has(database.name))) throw new Error('The system backup contains an unsupported or duplicate database.');
-      const packedValueBudget = { nodes: 0, encodedChars: 0 };
-      for (const database of backup.databases) osValidateBackupSnapshot(database, packedValueBudget);
-      const opfs = osValidateAetherOpfsSnapshot(backup.aetherOpfs, backup.databases);
-      return { settings: Object.keys(backup.localStorage).length, databases: backup.databases.length, attachments: opfs?.files?.length || 0, opfs };
+    const osValidateCompleteSystemBackup=(backup,options={})=>osValidateCompleteSystemBackupData(backup,options);
+    let backupOperationController=null;
+    const backupCancelButton=$('[data-os-cancel-backup]',dialog);
+    const backupProgress=$('[data-os-backup-progress]',dialog);
+    const backupExportButton=$('[data-os-export-backup]',dialog);
+    const backupImportInput=$('[data-os-import-backup]',dialog);
+    function setBackupProgress(message,progress=null){
+      if(status)status.textContent=message;
+      if(backupProgress){backupProgress.hidden=progress===null;if(progress!==null){backupProgress.max=1;backupProgress.value=Math.max(0,Math.min(1,progress));}}
     }
+    function beginBackupOperation(label){
+      if(backupOperationController)throw new Error('A backup or restore operation is already running.');
+      const controller=new AbortController();backupOperationController=controller;
+      if(backupCancelButton){backupCancelButton.hidden=false;backupCancelButton.disabled=false;backupCancelButton.textContent='Cancel';}
+      if(backupExportButton)backupExportButton.disabled=true;
+      if(backupImportInput)backupImportInput.disabled=true;
+      setBackupProgress(label,0);return controller;
+    }
+    function finishBackupOperation(controller){
+      if(backupOperationController!==controller)return;
+      backupOperationController=null;
+      if(backupCancelButton){backupCancelButton.hidden=true;backupCancelButton.disabled=false;backupCancelButton.textContent='Cancel';}
+      if(backupExportButton)backupExportButton.disabled=false;
+      if(backupImportInput)backupImportInput.disabled=false;
+      if(backupProgress)backupProgress.hidden=true;
+    }
+    const backupProgressMessage=(progress,verb)=>{
+      if(progress?.total>0){const ratio=progress.completed/progress.total;setBackupProgress(`${verb} · ${Math.floor(Math.min(1,ratio)*100)}%${progress.label?` · ${progress.label}`:''}`,ratio);}
+      else setBackupProgress(`${verb}${progress?.label?` · ${progress.label}`:''}`,null);
+    };
     async function exportBackup() {
-      if (destroyed) return;
-      status.textContent = 'Collecting and validating local settings, project databases and attachments…';
+      if(destroyed)return;
+      let controller;
+      try{controller=beginBackupOperation('Collecting and validating local settings, project databases and attachments…');}
+      catch(error){status.textContent=error.message;return;}
+      const options={signal:controller.signal,onProgress:progress=>{
+        const phase=progress?.phase;
+        const labels={binary:'Encoding binary data',database:'Capturing database records', 'stage-opfs':'Staging attachment',verify:'Verifying backup chunks',serialize:'Building portable backup'};
+        backupProgressMessage(progress,labels[phase]||'Preparing backup');
+      }};
       try {
-        const backup = await osCollectSystemBackup();
-        if (destroyed) return;
-        // Do not create a downloadable file that the restore path itself would
-        // reject. Incomplete IndexedDB enumeration or changing localStorage is
-        // a recovery warning, not a successful full-system backup.
-        const summary = osValidateCompleteSystemBackup(backup);
-        const content = JSON.stringify(backup);
-        const blob = new Blob([content], { type: 'application/json' });
-        if (blob.size > 180 * 1024 * 1024) throw new Error('This backup is larger than 180 MB. Use the native project exporters to make smaller individual backups.');
-        await downloadBlob(blob, `curioid-backup-${new Date().toISOString().slice(0,10)}.curioidbackup`);
-        status.textContent = `Verified full-system backup created · ${(blob.size / 1048576).toFixed(2)} MB · ${summary.settings} saved settings · ${summary.databases} browser databases · ${summary.attachments} Aether attachments.${backup.notes.length ? ` ${backup.notes.join(' ')}` : ''}`;
-        if (api.toast) api.toast('Verified complete CURIOID backup exported.');
-      } catch (error) { status.textContent = `${error.message || 'The backup could not be created.'} No full-system backup was downloaded. Close other CURIOID tabs and editors, retry, or use each OS’s native project exporter.`; }
+        const backup=await osCollectSystemBackup(options);
+        if(destroyed)return;
+        setBackupProgress('Validating backup contents and SHA-256 digests…',null);
+        const summary=await osValidateCompleteSystemBackup(backup,options);
+        osBackupThrowIfAborted(controller.signal);
+        const blob=await osBackupJsonToBlob(backup,options);
+        if(blob.size>180*1024*1024)throw new Error('This backup is larger than 180 MB. Use the native project exporters to make smaller individual backups.');
+        osBackupThrowIfAborted(controller.signal);
+        await downloadBlob(blob,`curioid-backup-${new Date().toISOString().slice(0,10)}.curioidbackup`);
+        status.textContent=`Verified full-system backup created · ${(blob.size/1048576).toFixed(2)} MB · ${summary.settings} saved settings · ${summary.databases} browser databases · ${summary.attachments} Aether attachments. Binary data uses SHA-256-verified chunks.${backup.notes.length?` ${backup.notes.join(' ')}`:''}`;
+        if(api.toast)api.toast('Verified complete CURIOID backup exported.');
+      }catch(error){
+        status.textContent=error?.name==='AbortError'?'Backup cancelled. No live data was changed.':`${error.message||'The backup could not be created.'} No full-system backup was downloaded. Close other CURIOID tabs and editors, retry, or use each OS’s native project exporter.`;
+      }finally{finishBackupOperation(controller);}
     }
     async function importBackup(file) {
-      if (!file) return;
-      if (file.size > 180 * 1024 * 1024) { status.textContent = 'That backup is larger than 180 MB.'; return; }
-      status.textContent = 'Checking backup file…';
-      try {
-        const backup = JSON.parse(await file.text());
-        if (destroyed) return;
-        const backupSummary = osValidateCompleteSystemBackup(backup);
-        const incomingAetherOpfs = backupSummary.opfs;
-        if (incomingAetherOpfs?.status === 'complete' && incomingAetherOpfs.files.length && !navigator.storage?.getDirectory) throw new Error('This browser cannot restore the Aether attachments in this backup. Open CURIOID on a browser with Origin Private File System support.');
-        // Validate incoming schemas before confirmation. The rollback baseline
-        // is refreshed from the verified safety snapshot immediately before
-        // mutation, so edits made during the confirmation/safety-copy window
-        // are not rolled back to an older preflight state.
-        await osValidateBackupDatabases(backup.databases, { capturePrevious: false });
-        const preflightRollbackAetherOpfs = incomingAetherOpfs?.status === 'complete' ? await osSnapshotAetherOpfsAssets() : null;
-        const willTouchAetherOpfs = incomingAetherOpfs?.status === 'complete' && Boolean(navigator.storage?.getDirectory);
+      if(!file)return;
+      if(file.size>180*1024*1024){status.textContent='That backup is larger than 180 MB.';return;}
+      let controller;
+      try{controller=beginBackupOperation('Reading backup file…');}
+      catch(error){status.textContent=error.message;return;}
+      const options={signal:controller.signal,onProgress:progress=>{
+        const phase=progress?.phase;
+        const labels={read:'Reading backup file',verify:'Verifying SHA-256 chunks', 'stage-opfs':'Staging Aether attachment',binary:'Encoding current recovery copy',database:'Capturing current database',serialize:'Preparing recovery copy'};
+        backupProgressMessage(progress,labels[phase]||'Validating backup');
+      }};
+      let stagedAetherRestore=null;
+      try{
+        const raw=await osReadBackupFileText(file,options);
+        osBackupThrowIfAborted(controller.signal);
+        const backup=JSON.parse(raw);
+        if(destroyed)return;
+        const backupSummary=await osValidateCompleteSystemBackup(backup,options);
+        const incomingAetherOpfs=backupSummary.opfs;
+        if(incomingAetherOpfs?.status==='complete'&&incomingAetherOpfs.files.length&&!navigator.storage?.getDirectory)throw new Error('This browser cannot restore the Aether attachments in this backup. Open CURIOID on a browser with Origin Private File System support.');
+        await osValidateBackupDatabases(backup.databases,{capturePrevious:false,signal:controller.signal});
+        const preflightRollbackAetherOpfs=incomingAetherOpfs?.status==='complete'?await osSnapshotAetherOpfsAssets(options):null;
+        const willTouchAetherOpfs=incomingAetherOpfs?.status==='complete'&&Boolean(navigator.storage?.getDirectory);
         const attachmentCount=Array.isArray(incomingAetherOpfs?.files)?incomingAetherOpfs.files.length:0;
         const attachmentSummary=attachmentCount?`${attachmentCount} Aether attachment${attachmentCount===1?'':'s'}`:'Aether attachment data, when present in the backup';
-        if (willTouchAetherOpfs && preflightRollbackAetherOpfs?.status !== 'complete') throw new Error(`The current Aether attachment folder could not be backed up safely (${preflightRollbackAetherOpfs?.reason || 'storage unavailable'}). Restore was stopped before changing any data.`);
-        const accepted = window.confirm(`Restore this CURIOID backup? Existing CURIOID settings, Exchange items, Kernel artifacts and permissions, AURA preferences, Sandbox desktop/window settings, personal Sandbox OS packages and drafts, Browser Vault artifacts, matching OS database records, and ${attachmentSummary} will be replaced. Other websites and non-CURIOID browser data will not be touched. The PC Downloads folder and its files will not be copied or changed. Its CURIOID connection must be re-established in another browser profile. Continue?`);
-        if (!accepted) { status.textContent = 'Restore cancelled. Nothing was changed.'; return; }
-        status.textContent='Creating and verifying a durable backup of the current CURIOID system before restore…';
-        const preRestoreSnapshot=await osCollectSystemBackup();
-        const preRestoreSafety=await osSaveVerifiedSystemSafetyBackupSnapshot(preRestoreSnapshot);
+        if(willTouchAetherOpfs&&preflightRollbackAetherOpfs?.status!=='complete')throw new Error(`The current Aether attachment folder could not be backed up safely (${preflightRollbackAetherOpfs?.reason||'storage unavailable'}). Restore was stopped before changing any data.`);
+        const accepted=window.confirm(`Restore this CURIOID backup? Existing CURIOID settings, Exchange items, Kernel artifacts and permissions, AURA preferences, Sandbox desktop/window settings, personal Sandbox OS packages and drafts, Browser Vault artifacts, matching OS database records, and ${attachmentSummary} will be replaced. Other websites and non-CURIOID browser data will not be touched. The PC Downloads folder and its files will not be copied or changed. Its CURIOID connection must be re-established in another browser profile. Continue?`);
+        if(!accepted){status.textContent='Restore cancelled. Nothing was changed.';return;}
+        osBackupThrowIfAborted(controller.signal);
+        if(willTouchAetherOpfs){
+          setBackupProgress('Staging and verifying all incoming Aether attachments before touching saved data…',null);
+          stagedAetherRestore=await osStageAetherOpfsAssets(incomingAetherOpfs,options);
+        }
+        setBackupProgress('Creating and verifying a durable backup of the current CURIOID system before restore…',null);
+        const preRestoreSnapshot=await osCollectSystemBackup(options);
+        const preRestoreSafety=await osSaveVerifiedSystemSafetyBackupSnapshot(preRestoreSnapshot,options);
         if(file.size+Math.ceil(preRestoreSafety.size*4/3)>240*1024*1024)throw new Error('The restored database snapshot plus the preserved safety copy would exceed the 240 MB in-memory restore budget. Restore was stopped before changing any data. Export/reduce large artifacts and try again.');
         const rollbackPlan=osBuildRestoreRollbackPlan(preRestoreSnapshot,backup.databases);
-        const previous=rollbackPlan.previous;
-        const currentKeys=rollbackPlan.currentKeys;
-        const rollbackDatabases=rollbackPlan.databases;
+        const previous=rollbackPlan.previous,currentKeys=rollbackPlan.currentKeys,rollbackDatabases=rollbackPlan.databases;
         const rollbackAetherOpfs=willTouchAetherOpfs?rollbackPlan.aetherOpfs:null;
         if(willTouchAetherOpfs&&rollbackAetherOpfs?.status!=='complete')throw new Error(`The pre-restore safety snapshot does not contain a complete Aether rollback copy (${rollbackAetherOpfs?.reason||'attachment snapshot unavailable'}). Restore was stopped before changing any data.`);
         await osPreserveSystemSafetyBackupInRestoreSnapshot(backup,preRestoreSafety);
-        // Saving the durable safety artifact changes Browser Vault after the
-        // system snapshot was taken. Refresh that one database so rollback
-        // preserves the newly-created, verified recovery artifact too.
         const rollbackVault=rollbackDatabases.find(item=>item.name===CURIOID_VAULT_DB);
-        if(rollbackVault)rollbackVault.snapshot=await osSnapshotDatabase(CURIOID_VAULT_DB);
-        else rollbackDatabases.push({name:CURIOID_VAULT_DB,snapshot:await osSnapshotDatabase(CURIOID_VAULT_DB)});
-        let aetherOpfsTouched = false;
-        try {
-          for (const database of backup.databases) await osRestoreBackupDatabase(database);
-          if (incomingAetherOpfs?.status === 'complete' && navigator.storage?.getDirectory) {
-            aetherOpfsTouched = true;
-            await osRestoreAetherOpfsAssets(incomingAetherOpfs);
-          }
-          currentKeys.forEach(key => localStorage.removeItem(key));
-          for (const [key, value] of Object.entries(backup.localStorage)) localStorage.setItem(key, value);
-          for (const [key, value] of Object.entries(backup.localStorage)) {
-            if (localStorage.getItem(key) !== value) throw new Error(`Restored browser storage key “${key}” could not be verified.`);
-          }
-          for (const key of currentKeys) {
-            if (!Object.prototype.hasOwnProperty.call(backup.localStorage, key) && localStorage.getItem(key) !== null) throw new Error(`Old browser storage key “${key}” remained after restore.`);
-          }
-        } catch (error) {
-          const rollbackErrors = [];
-          if (aetherOpfsTouched && rollbackAetherOpfs?.status === 'complete') {
-            try { await osRestoreAetherOpfsAssets(rollbackAetherOpfs); }
-            catch (rollbackError) { rollbackErrors.push(`Aether OPFS attachments: ${rollbackError.message || 'rollback failed'}`); }
-          }
-          const touchedKeys = new Set([...currentKeys, ...incomingKeys]);
-          for (const key of touchedKeys) {
-            try { localStorage.removeItem(key); }
-            catch (rollbackError) { rollbackErrors.push(`remove ${key}: ${rollbackError.message || 'failed'}`); }
-          }
-          for (const [key, value] of Object.entries(previous)) {
-            try {
-              localStorage.setItem(key, value);
-              if (localStorage.getItem(key) !== value) throw new Error('verification mismatch');
-            } catch (rollbackError) { rollbackErrors.push(`restore ${key}: ${rollbackError.message || 'failed'}`); }
-          }
-          for (const item of [...rollbackDatabases].reverse()) {
-            try { if (item.snapshot) await osRestoreBackupDatabase(item.snapshot); else await osDeleteBackupDatabase(item.name); }
-            catch (rollbackError) { rollbackErrors.push(`${item.name}: ${rollbackError.message}`); }
-          }
-          if (rollbackErrors.length) throw new Error(`${error.message || 'Restore failed.'} Recovery was attempted but some rollback actions could not be verified: ${rollbackErrors.join('; ')}. Do not close this page until you export a fresh CURIOID backup and inspect the affected data.`);
+        if(rollbackVault)rollbackVault.snapshot=await osSnapshotDatabase(CURIOID_VAULT_DB,options);
+        else rollbackDatabases.push({name:CURIOID_VAULT_DB,snapshot:await osSnapshotDatabase(CURIOID_VAULT_DB,options)});
+        osBackupThrowIfAborted(controller.signal);
+        // Once the first live store is touched the cancel action is disabled;
+        // an unexpected failure runs the verified rollback plan instead.
+        if(backupCancelButton){backupCancelButton.disabled=true;backupCancelButton.textContent='Applying safely…';}
+        setBackupProgress('Applying the fully validated snapshot. Cancellation is disabled during the protected commit phase…',null);
+        let aetherOpfsTouched=false;
+        try{
+          for(const database of backup.databases){await osRestoreBackupDatabase(database);}
+          if(stagedAetherRestore){aetherOpfsTouched=true;await osCommitAetherOpfsStage(stagedAetherRestore);}
+          currentKeys.forEach(key=>localStorage.removeItem(key));
+          for(const [key,value] of Object.entries(backup.localStorage))localStorage.setItem(key,value);
+          for(const [key,value] of Object.entries(backup.localStorage))if(localStorage.getItem(key)!==value)throw new Error(`Restored browser storage key “${key}” could not be verified.`);
+          for(const key of currentKeys)if(!Object.prototype.hasOwnProperty.call(backup.localStorage,key)&&localStorage.getItem(key)!==null)throw new Error(`Old browser storage key “${key}” remained after restore.`);
+        }catch(error){
+          const rollbackErrors=[];
+          if(aetherOpfsTouched&&rollbackAetherOpfs?.status==='complete')try{await osRestoreAetherOpfsAssets(rollbackAetherOpfs);}catch(rollbackError){rollbackErrors.push(`Aether OPFS attachments: ${rollbackError.message||'rollback failed'}`);}
+          const touchedKeys=new Set([...currentKeys,...Object.keys(backup.localStorage)]);
+          for(const key of touchedKeys)try{localStorage.removeItem(key);}catch(rollbackError){rollbackErrors.push(`remove ${key}: ${rollbackError.message||'failed'}`);}
+          for(const [key,value] of Object.entries(previous))try{localStorage.setItem(key,value);if(localStorage.getItem(key)!==value)throw new Error('verification mismatch');}catch(rollbackError){rollbackErrors.push(`restore ${key}: ${rollbackError.message||'failed'}`);}
+          for(const item of [...rollbackDatabases].reverse())try{if(item.snapshot)await osRestoreBackupDatabase(item.snapshot);else await osDeleteBackupDatabase(item.name);}catch(rollbackError){rollbackErrors.push(`${item.name}: ${rollbackError.message}`);}
+          if(rollbackErrors.length)throw new Error(`${error.message||'Restore failed.'} Recovery was attempted but some rollback actions could not be verified: ${rollbackErrors.join('; ')}. Do not close this page until you export a fresh CURIOID backup and inspect the affected data.`);
           throw error;
         }
-        status.textContent = 'Backup restored. Reloading CURIOID so every OS can read its restored data…';
-        if (api.toast) api.toast('Backup restored. Reloading CURIOID…');
-        setTimeout(() => { if (!destroyed) window.location.reload(); }, 700);
-      } catch (error) { status.textContent = error.message || 'Could not restore this backup.'; }
+        status.textContent='Backup restored successfully. Reloading CURIOID so every OS can read its restored data…';
+        if(api.toast)api.toast('Backup restored. Reloading CURIOID…');
+        setTimeout(()=>{if(!destroyed)window.location.reload();},700);
+      }catch(error){
+        status.textContent=error?.name==='AbortError'?'Restore cancelled before the protected commit. No saved data was changed.':error.message||'Could not restore this backup.';
+      }finally{
+        await osDiscardAetherOpfsStage(stagedAetherRestore);
+        finishBackupOperation(controller);
+      }
     }
     const onTrigger = () => openDialog();
     const onClick = event => {
       const target = event.target.closest('button');
       if (!target) return;
-      if (target.matches('[data-os-center-close]')) { closeDialog(); return; }
+      if (target.matches('[data-os-center-close]')) { if(backupOperationController){if(!backupCancelButton?.disabled){backupOperationController.abort();status.textContent='Cancellation requested. The current safe read/staging step will stop before live data is changed.';}return;} closeDialog(); return; }
       if (target.matches('[data-os-universal-app-refresh]')) { refreshUniversalApps(); return; }
       if (target.matches('[data-os-universal-app-browse]')) { closeDialog(); window.CurioidAppLibrary?.open?.(); return; }
       if (target.matches('[data-os-universal-app-launch]')) {
@@ -11011,6 +11337,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       if (target.matches('[data-os-run-diagnostics]')) { runFullDiagnostics(); return; }
       if (target.matches('[data-os-save-diagnostics]')) { saveFullDiagnostics(); return; }
       if (target.matches('[data-os-export-backup]')) { exportBackup(); return; }
+      if (target.matches('[data-os-cancel-backup]')) { if(backupOperationController&&!backupCancelButton.disabled){backupOperationController.abort();status.textContent='Cancellation requested. Waiting for the current safe step to stop…';}return; }
       if (target.matches('[data-workshop-refresh]')) { refreshWorkshopArtifacts(); return; }
       if (target.matches('[data-workshop-convert]')) { convertWorkshopText(); return; }
       if (target.matches('[data-workshop-clear]')) {
@@ -11051,7 +11378,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       if (event.key === 'F1' || ((event.ctrlKey || event.metaKey) && event.key === '/')) { event.preventDefault(); openDialog(); }
       else if (!editing && (event.ctrlKey || event.metaKey) && event.altKey && event.shiftKey && event.key.toLowerCase() === 'b') { event.preventDefault(); exportBackup(); }
       else if (!editing && (event.ctrlKey || event.metaKey) && event.altKey && event.shiftKey && event.key.toLowerCase() === 'i') { event.preventDefault(); $('[data-os-import-backup]', dialog)?.click(); }
-      else if (event.key === 'Escape' && dialog.open) dialog.close();
+      else if (event.key === 'Escape' && dialog.open) { if(backupOperationController){event.preventDefault();if(!backupCancelButton?.disabled){backupOperationController.abort();status.textContent='Cancellation requested. Waiting for the current safe step to stop…';}}else dialog.close(); }
     };
     trigger.addEventListener('click', onTrigger);
     dialog.addEventListener('click', onClick);
@@ -11064,6 +11391,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     dialog.addEventListener('close', focusRestore);
     registerMountCleanup(() => {
       if (destroyed) return;
+      if(backupOperationController&&!backupCancelButton?.disabled)backupOperationController.abort();
       destroyed = true;
       trigger.removeEventListener('click', onTrigger);
       dialog.removeEventListener('click', onClick);
@@ -11092,7 +11420,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       dockToggleButton?.remove();
       dialog.remove(); bar.remove();
     });
-    return () => { if (!destroyed) { destroyed = true; trigger.removeEventListener('click', onTrigger); dialog.removeEventListener('click', onClick); dialog.removeEventListener('change', onWorkshopChange); universalAppSearch?.removeEventListener('input', onUniversalAppSearch); $('[data-os-import-backup]', dialog)?.removeEventListener('change', onImport); $('[data-workshop-file]', dialog)?.removeEventListener('change', onWorkshopFile); root.removeEventListener('keydown', onKey); root.removeEventListener('keydown', onManagementKey); document.removeEventListener('pointerdown', onManagementOutside, true); managementToggle.removeEventListener('click', onManagementToggle); managementActions.removeEventListener('click', onManagementAction); setManagementOpen(false); managementDock.remove(); dialog.removeEventListener('close', focusRestore); doorsShutdownObserver?.disconnect(); nativeDockToggle?.removeEventListener('click', dockNativeListener); trayOverflowButton?.removeEventListener('click', onOverflowToggle); trayOverflowMenu?.removeEventListener('click', onOverflowAction); document.removeEventListener('pointerdown', onOverflowOutside, true); root.removeEventListener('keydown', onOverflowKey); setOverflowOpen(false); setSearchOpen(false); searchToggle.removeEventListener('click',onSearchToggle); searchInput.removeEventListener('input',onSearchInput); bellaButton.removeEventListener('click',onBellaSearch); searchDock.removeEventListener('click',onSearchDockClick); searchDock.removeEventListener('keydown',onSearchKey); document.removeEventListener('pointerdown',onSearchOutside,true); searchDock.remove(); dockToggleButton?.remove(); dialog.remove(); bar.remove(); } };
+    return () => { if (!destroyed) { if(backupOperationController&&!backupCancelButton?.disabled)backupOperationController.abort(); destroyed = true; trigger.removeEventListener('click', onTrigger); dialog.removeEventListener('click', onClick); dialog.removeEventListener('change', onWorkshopChange); universalAppSearch?.removeEventListener('input', onUniversalAppSearch); $('[data-os-import-backup]', dialog)?.removeEventListener('change', onImport); $('[data-workshop-file]', dialog)?.removeEventListener('change', onWorkshopFile); root.removeEventListener('keydown', onKey); root.removeEventListener('keydown', onManagementKey); document.removeEventListener('pointerdown', onManagementOutside, true); managementToggle.removeEventListener('click', onManagementToggle); managementActions.removeEventListener('click', onManagementAction); setManagementOpen(false); managementDock.remove(); dialog.removeEventListener('close', focusRestore); doorsShutdownObserver?.disconnect(); nativeDockToggle?.removeEventListener('click', dockNativeListener); trayOverflowButton?.removeEventListener('click', onOverflowToggle); trayOverflowMenu?.removeEventListener('click', onOverflowAction); document.removeEventListener('pointerdown', onOverflowOutside, true); root.removeEventListener('keydown', onOverflowKey); setOverflowOpen(false); setSearchOpen(false); searchToggle.removeEventListener('click',onSearchToggle); searchInput.removeEventListener('input',onSearchInput); bellaButton.removeEventListener('click',onBellaSearch); searchDock.removeEventListener('click',onSearchDockClick); searchDock.removeEventListener('keydown',onSearchKey); document.removeEventListener('pointerdown',onSearchOutside,true); searchDock.remove(); dockToggleButton?.remove(); dialog.remove(); bar.remove(); } };
   }
 
   // CURIOID Exchange: one local-first communication and handoff space shared by all OS modules.
@@ -13787,7 +14115,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
             <span class="retro-bella-avatar" aria-hidden="true"><img class="retro-bella-avatar-image" src="${CURIOID_BELLA_ICON_DATA_URL}" alt="" aria-hidden="true"><i></i></span>
             <span class="retro-bella-identity"><strong>Bella</strong><small>MINITENDER / FRONT DESK</small></span>
             <label class="retro-bella-persona">Personality<select data-bella-personality aria-label="Bella personality"><option value="concierge">Warm concierge</option><option value="playful">Playful</option><option value="precise">Precise</option><option value="cozy">Cozy</option><option value="mysterious">Mysterious</option><option value="curious">Curious</option><option value="nerdy">Nerdy</option><option value="witty">Witty</option><option value="encouraging">Encouraging</option></select></label>
-            <button type="button" class="retro-bella-mode-toggle" data-bella-mode-toggle aria-pressed="false" title="Switch to Bella avatar mode">Avatar mode</button>
+            <button type="button" class="retro-bella-mode-toggle" data-bella-mode-toggle aria-pressed="false" title="Switch between desktop companion and Chat More">CHAT MORE</button><button type="button" class="retro-bella-voice-toggle" data-bella-voice-toggle aria-pressed="true" title="Mute or enable Bella voice">VOICE ON</button>
             <button type="button" data-bella-close aria-label="Close Bella">×</button>
           </header>
           <div class="retro-bella-avatar-stage" data-bella-avatar-stage>
@@ -16504,11 +16832,24 @@ FORM 00 · COPY 1 OF 1 · FILED WITHOUT A DATE
         const source=$('[data-json-source]',appContent),result=$('[data-json-tree]',appContent),status=$('[data-json-status]',appContent);let parsed=null;const run=mode=>{try{parsed=JSON.parse(source.value);source.value=mode==='minify'?JSON.stringify(parsed):JSON.stringify(parsed,null,2);result.textContent=`VALID JSON / ${Array.isArray(parsed)?'ARRAY':parsed===null?'NULL':typeof parsed==='object'?'OBJECT':typeof parsed} / ${source.value.length} CHARACTERS`;status.textContent='VALID / LOCAL PARSER';}catch(error){result.textContent=`INVALID JSON\n${error.message}`;status.textContent='PARSE ERROR';parsed=null;}};$('[data-json-format]',appContent).addEventListener('click',()=>run('format'));$('[data-json-minify]',appContent).addEventListener('click',()=>run('minify'));$('[data-json-validate]',appContent).addEventListener('click',()=>run('validate'));$('[data-json-save]',appContent).addEventListener('click',async()=>{const button=$('[data-json-save]',appContent);if(button.disabled)return;button.disabled=true;try{const f=await saveTextToDriveVerified('DATA.JSON',source.value,'workshop',null,'application/json');status.textContent=`SAVED ${f.name} TO C:`;}catch(error){status.textContent=`JSON NOT SAVED: ${String(error?.message||error).slice(0,180)}`;}finally{button.disabled=false;}});$('[data-json-export]',appContent).addEventListener('click',()=>downloadBlob(new Blob([source.value],{type:'application/json'}),'data.json'));source.addEventListener('input',()=>{status.textContent='UNVALIDATED CHANGES';});
       }
       if(app==='csv-analyzer'){
-        const source=$('[data-csv-analysis-source]',appContent),metrics=$('[data-csv-analysis-metrics]',appContent),preview=$('[data-csv-analysis-preview]',appContent),status=$('[data-csv-analysis-status]',appContent);let summary=null;
+        const source=$('[data-csv-analysis-source]',appContent),metrics=$('[data-csv-analysis-metrics]',appContent),preview=$('[data-csv-analysis-preview]',appContent),status=$('[data-csv-analysis-status]',appContent);let summary=null,analysisWorker=null,analysisWorkerUrl=null,analysisTimer=null,analysisGeneration=0,analysisResolve=null;
         const MAX_INPUT=2*1024*1024,MAX_ROWS=100000,MAX_COLUMNS=200,MAX_CELLS=250000,MAX_CELL_CHARS=100000;
-        const parse=text=>{const rows=[];let row=[],cell='',quoted=false,cells=0;const pushCell=()=>{if(cell.length>MAX_CELL_CHARS)throw new Error('A CSV cell exceeds the 100,000 character limit.');if(row.length>=MAX_COLUMNS)throw new Error('CSV Analyzer supports at most 200 columns.');row.push(cell.replace(/\r$/,''));cell='';if(++cells>MAX_CELLS)throw new Error('CSV input exceeds the 250,000 cell analysis limit.');};const pushRow=()=>{pushCell();rows.push(row);row=[];if(rows.length>MAX_ROWS)throw new Error('CSV Analyzer supports at most 100,000 rows per analysis.');};for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){cell+='"';i++;}else if(c==='"')quoted=false;else cell+=c;}else if(c==='"')quoted=true;else if(c===',')pushCell();else if(c==='\n')pushRow();else cell+=c;if(cell.length>MAX_CELL_CHARS)throw new Error('A CSV cell exceeds the 100,000 character limit.');}if(quoted)throw new Error('A quoted field is not closed.');if(cell!==''||row.length)pushRow();return rows;};
-        const analyze=()=>{try{if(source.value.length>MAX_INPUT)throw new Error('Input is larger than 2 MB.');const rows=parse(source.value);if(!rows.length)throw new Error('No data found.');const headers=rows[0].map((x,i)=>x.trim()||`Column ${i+1}`),data=rows.slice(1).filter(r=>r.some(x=>x!==''));let numeric=[];for(let i=0;i<headers.length;i++){let count=0,min=Infinity,max=-Infinity,sum=0;for(const row of data){const raw=String(row[i]??'').trim();if(!raw)continue;const value=Number(raw);if(!Number.isFinite(value))continue;count++;if(value<min)min=value;if(value>max)max=value;sum+=value;}if(count>0&&count>=Math.max(2,data.length*.7))numeric.push({name:headers[i],count,min,max,mean:sum/count});}summary={headers,rows:data.length,columns:headers.length,numeric};metrics.innerHTML=`<article><small>ROWS</small><b>${summary.rows}</b></article><article><small>COLUMNS</small><b>${summary.columns}</b></article><article><small>NUMERIC COLUMNS</small><b>${summary.numeric.length}</b></article>`;preview.innerHTML=`<table><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${data.slice(0,30).map(r=>`<tr>${headers.map((_,i)=>`<td>${esc(r[i]||'')}</td>`).join('')}</tr>`).join('')}</tbody></table>`;status.textContent=`ANALYZED / ${data.length} DATA ROWS`; }catch(error){summary=null;metrics.textContent='';preview.textContent=error.message;status.textContent='ANALYSIS ERROR';}};
-        $('[data-csv-analysis-run]',appContent).addEventListener('click',analyze);$('[data-csv-analysis-file]',appContent).addEventListener('change',/** @param {CurioidDOMEvent} e */ async e=>{const f=e.target.files?.[0];e.target.value='';if(!f)return;if(f.size>MAX_INPUT){status.textContent='FILE TOO LARGE / MAXIMUM 2 MB';return;}try{source.value=await f.text();analyze();}catch(error){status.textContent=error.message||'CSV file could not be read.';}});$('[data-csv-analysis-export]',appContent).addEventListener('click',()=>{if(!summary){analyze();if(!summary)return;}downloadBlob(new Blob([JSON.stringify(summary,null,2)],{type:'application/json'}),'csv-analysis.json');});analyze();
+        const csvWorkerSource=`self.onmessage=e=>{const text=String(e.data?.text||''),MAX_ROWS=100000,MAX_COLUMNS=200,MAX_CELLS=250000,MAX_CELL_CHARS=100000;try{if(text.length>2097152)throw new Error('Input is larger than 2 MB.');const rows=[];let row=[],cell='',quoted=false,cells=0;const pushCell=()=>{if(cell.length>MAX_CELL_CHARS)throw new Error('A CSV cell exceeds the 100,000 character limit.');if(row.length>=MAX_COLUMNS)throw new Error('CSV Analyzer supports at most 200 columns.');row.push(cell.replace(/\\r$/,''));cell='';if(++cells>MAX_CELLS)throw new Error('CSV input exceeds the 250,000 cell analysis limit.');};const pushRow=()=>{pushCell();rows.push(row);row=[];if(rows.length>MAX_ROWS)throw new Error('CSV Analyzer supports at most 100,000 rows per analysis.');};for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){cell+='"';i++;}else if(c==='"')quoted=false;else cell+=c;}else if(c==='"')quoted=true;else if(c===',')pushCell();else if(c==='\\n')pushRow();else cell+=c;if(cell.length>MAX_CELL_CHARS)throw new Error('A CSV cell exceeds the 100,000 character limit.');if((i&65535)===0&&i)self.postMessage({kind:'progress',ratio:i/text.length});}if(quoted)throw new Error('A quoted field is not closed.');if(cell!==''||row.length)pushRow();if(!rows.length)throw new Error('No data found.');const headers=rows[0].map((x,i)=>x.trim()||'Column '+(i+1)),data=rows.slice(1).filter(r=>r.some(x=>x!==''));const numeric=[];for(let i=0;i<headers.length;i++){let count=0,min=Infinity,max=-Infinity,sum=0;for(const r of data){const raw=String(r[i]??'').trim();if(!raw)continue;const value=Number(raw);if(!Number.isFinite(value))continue;count++;if(value<min)min=value;if(value>max)max=value;sum+=value;}if(count>0&&count>=Math.max(2,data.length*.7))numeric.push({name:headers[i],count,min,max,mean:sum/count});}self.postMessage({kind:'result',summary:{headers,rows:data.length,columns:headers.length,numeric},previewRows:data.slice(0,30)});}catch(error){self.postMessage({kind:'error',message:String(error?.message||error).slice(0,240)});}};`;
+        const stopWorker=()=>{if(analysisTimer){clearTimeout(analysisTimer);analysisTimer=null;}if(analysisWorker){analysisWorker.terminate();analysisWorker=null;}if(analysisWorkerUrl){URL.revokeObjectURL(analysisWorkerUrl);analysisWorkerUrl=null;}const resolve=analysisResolve;analysisResolve=null;resolve?.({cancelled:true});};
+        const parseLocal=text=>{const rows=[];let row=[],cell='',quoted=false,cells=0;const pushCell=()=>{if(cell.length>MAX_CELL_CHARS)throw new Error('A CSV cell exceeds the 100,000 character limit.');if(row.length>=MAX_COLUMNS)throw new Error('CSV Analyzer supports at most 200 columns.');row.push(cell.replace(/\r$/,''));cell='';if(++cells>MAX_CELLS)throw new Error('CSV input exceeds the 250,000 cell analysis limit.');};const pushRow=()=>{pushCell();rows.push(row);row=[];if(rows.length>MAX_ROWS)throw new Error('CSV Analyzer supports at most 100,000 rows per analysis.');};for(let i=0;i<text.length;i++){const c=text[i];if(quoted){if(c==='"'&&text[i+1]==='"'){cell+='"';i++;}else if(c==='"')quoted=false;else cell+=c;}else if(c==='"')quoted=true;else if(c===',')pushCell();else if(c==='\n')pushRow();else cell+=c;if(cell.length>MAX_CELL_CHARS)throw new Error('A CSV cell exceeds the 100,000 character limit.');}if(quoted)throw new Error('A quoted field is not closed.');if(cell!==''||row.length)pushRow();return rows;};
+        const summarize=rows=>{if(!rows.length)throw new Error('No data found.');const headers=rows[0].map((x,i)=>x.trim()||`Column ${i+1}`),data=rows.slice(1).filter(r=>r.some(x=>x!=='')),numeric=[];for(let i=0;i<headers.length;i++){let count=0,min=Infinity,max=-Infinity,sum=0;for(const row of data){const raw=String(row[i]??'').trim();if(!raw)continue;const value=Number(raw);if(!Number.isFinite(value))continue;count++;if(value<min)min=value;if(value>max)max=value;sum+=value;}if(count>0&&count>=Math.max(2,data.length*.7))numeric.push({name:headers[i],count,min,max,mean:sum/count});}return{summary:{headers,rows:data.length,columns:headers.length,numeric},previewRows:data.slice(0,30)};};
+        const render=result=>{summary=result.summary;const metricNodes=[];for(const [label,value] of [['ROWS',summary.rows],['COLUMNS',summary.columns],['NUMERIC COLUMNS',summary.numeric.length]]){const card=document.createElement('article'),small=document.createElement('small'),bold=document.createElement('b');small.textContent=label;bold.textContent=String(value);card.append(small,bold);metricNodes.push(card);}metrics.replaceChildren(...metricNodes);const table=document.createElement('table'),thead=document.createElement('thead'),headRow=document.createElement('tr'),tbody=document.createElement('tbody');for(const name of summary.headers){const th=document.createElement('th');th.textContent=name;headRow.append(th);}thead.append(headRow);for(const row of result.previewRows){const tr=document.createElement('tr');for(let i=0;i<summary.columns;i++){const td=document.createElement('td');td.textContent=String(row[i]??'');tr.append(td);}tbody.append(tr);}table.append(thead,tbody);preview.replaceChildren(table);status.textContent=`ANALYZED / ${summary.rows} DATA ROWS${result.previewRows.length<summary.rows?' / FIRST 30 PREVIEWED':''}`;};
+        const runAnalysis=async()=>{const generation=++analysisGeneration;stopWorker();summary=null;metrics.replaceChildren();preview.textContent='';const text=source.value;if(text.length>MAX_INPUT){status.textContent='ANALYSIS ERROR / Input is larger than 2 MB.';preview.textContent=status.textContent;return false;}if(!text.trim()){status.textContent='ADD CSV DATA TO ANALYZE.';return false;}status.textContent='ANALYZING…';
+          if(typeof Worker==='function'&&typeof Blob==='function'&&typeof URL?.createObjectURL==='function'){
+            const workerResult=await new Promise(resolve=>{try{analysisWorkerUrl=URL.createObjectURL(new Blob([csvWorkerSource],{type:'text/javascript'}));analysisWorker=new Worker(analysisWorkerUrl);}catch(_){stopWorker();resolve({fallback:true});return;}let done=false;const finish=result=>{if(done)return;done=true;analysisResolve=null;if(analysisTimer){clearTimeout(analysisTimer);analysisTimer=null;}if(analysisWorker){analysisWorker.terminate();analysisWorker=null;}if(analysisWorkerUrl){URL.revokeObjectURL(analysisWorkerUrl);analysisWorkerUrl=null;}resolve(result);};analysisResolve=()=>finish({cancelled:true});analysisTimer=setTimeout(()=>finish({error:'Background analysis timed out. Try a smaller file or use the local fallback.'}),25000);analysisWorker.onmessage=e=>{if(generation!==analysisGeneration)return;const data=e.data||{};if(data.kind==='progress'){status.textContent=`ANALYZING IN BACKGROUND / ${Math.min(99,Math.round((Number(data.ratio)||0)*100))}%`;return;}if(data.kind==='result'&&data.summary&&Array.isArray(data.previewRows))finish({result:data});else if(data.kind==='error')finish({error:data.message||'CSV analysis failed.'});else finish({error:'The analysis worker returned an invalid result.'});};analysisWorker.onerror=e=>{e.preventDefault?.();finish({fallback:true});};analysisWorker.onmessageerror=()=>finish({fallback:true});analysisWorker.postMessage({text});});
+            if(generation!==analysisGeneration||workerResult?.cancelled)return false;if(workerResult?.result){render(workerResult.result);return true;}if(workerResult?.error){status.textContent=`ANALYSIS ERROR / ${workerResult.error}`;preview.textContent=status.textContent;return false;}
+          }
+          try{const result=summarize(parseLocal(text));if(generation!==analysisGeneration)return false;render(result);return true;}catch(error){if(generation!==analysisGeneration)return false;summary=null;status.textContent=`ANALYSIS ERROR / ${String(error?.message||error).slice(0,240)}`;preview.textContent=status.textContent;return false;}
+        };
+        source.addEventListener('input',()=>{analysisGeneration++;stopWorker();summary=null;status.textContent='CSV CHANGED / RUN ANALYSIS AGAIN.';});
+        $('[data-csv-analysis-run]',appContent).addEventListener('click',runAnalysis);$('[data-csv-analysis-file]',appContent).addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>MAX_INPUT){status.textContent='FILE TOO LARGE / MAXIMUM 2 MB';return;}try{source.value=await file.text();await runAnalysis();}catch(error){status.textContent=error.message||'CSV file could not be read.';}});
+        $('[data-csv-analysis-export]',appContent).addEventListener('click',async()=>{if(!summary){const ok=await runAnalysis();if(!ok||!summary)return;}downloadBlob(new Blob([JSON.stringify(summary,null,2)],{type:'application/json'}),'csv-analysis.json');});
+        const previousCleanup=entry.cleanup;entry.cleanup=()=>{analysisGeneration++;stopWorker();previousCleanup?.();};runAnalysis();
       }
       if(app==='quick-capture'){
         const form=$('[data-capture-form]',appContent),list=$('[data-capture-list]',appContent),status=$('[data-capture-status]',appContent);function draw(){const items=virtualFiles.filter(f=>f.room==='reception'&&f.name.startsWith('CAPTURE-')).slice(0,20);list.innerHTML=items.map(f=>`<article><b>${esc(f.name)}</b><small>${esc((f.content||'').slice(0,180))}</small></article>`).join('')||'<p>No captures stored yet.</p>'; }form.addEventListener('submit',async e=>{e.preventDefault();const submit=form.querySelector('[type=submit]');if(submit?.disabled)return;const type=form.elements.type.value,title=form.elements.title.value.trim(),body=form.elements.body.value;const name=`CAPTURE-${new Date().toISOString().slice(0,10)}-${Date.now().toString(36)}.txt`;if(submit)submit.disabled=true;try{const f=await saveTextToDriveVerified(name,`TYPE: ${type}\nTITLE: ${title}\nDATE: ${new Date().toISOString()}\n\n${body}`,'reception',null,'text/plain');form.reset();status.textContent=`SAVED AS ${f.name}`;draw();}catch(error){status.textContent=`CAPTURE NOT SAVED: ${String(error?.message||error).slice(0,180)}`;}finally{if(submit)submit.disabled=false;}});draw();
@@ -16992,10 +17333,10 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
       // BELLA / the hotel-style local concierge. She operates the actual desktop
       // through the same application, room and storage functions as the user.
       // No network requests, remote model, or hidden file access are used.
-      const bellaToggle=$('[data-bella-toggle]',root),bellaPanel=$('[data-bella-panel]',root),bellaLog=$('[data-bella-log]',root),bellaForm=$('[data-bella-form]',root),bellaInput=$('[data-bella-input]',root),bellaPersonaSelect=$('[data-bella-personality]',root),bellaModeToggle=$('[data-bella-mode-toggle]',root),bellaCharacter=$('[data-bella-character]',root);
-      const bellaEnabledKey='curioid-doors98-bella-enabled-v1',bellaChatKey='curioid-doors98-bella-chat-v1',bellaPersonaKey='curioid-doors98-bella-personality-v1',bellaModeKey='curioid-doors98-bella-mode-v2',bellaMemoryKey='curioid-doors98-bella-memory-v1',bellaLearningKey='curioid-doors98-bella-learning-v1';
+      const bellaToggle=$('[data-bella-toggle]',root),bellaPanel=$('[data-bella-panel]',root),bellaLog=$('[data-bella-log]',root),bellaForm=$('[data-bella-form]',root),bellaInput=$('[data-bella-input]',root),bellaPersonaSelect=$('[data-bella-personality]',root),bellaModeToggle=$('[data-bella-mode-toggle]',root),bellaVoiceToggle=$('[data-bella-voice-toggle]',root),bellaCharacter=$('[data-bella-character]',root);
+      const bellaEnabledKey='curioid-doors98-bella-enabled-v1',bellaChatKey='curioid-doors98-bella-chat-v1',bellaPersonaKey='curioid-doors98-bella-personality-v1',bellaModeKey='curioid-doors98-bella-mode-v2',bellaVoiceKey='curioid-doors98-bella-voice-v1',bellaMemoryKey='curioid-doors98-bella-memory-v1',bellaLearningKey='curioid-doors98-bella-learning-v1';
       const bellaPersonas={concierge:{name:'Warm concierge',prefix:'Certainly, lovely.',suffix:' I’m right here at the desk.',rate:.96,pitch:1.08},playful:{name:'Playful',prefix:'Ooh, excellent choice!',suffix:' Tiny bell, enormous plans.',rate:1.04,pitch:1.16},precise:{name:'Precise',prefix:'Understood.',suffix:' Here is the clean version.',rate:.98,pitch:1.02},cozy:{name:'Cozy',prefix:'Of course, dear.',suffix:' No rush. We can do this one little step at a time.',rate:.91,pitch:1.08},mysterious:{name:'Mysterious',prefix:'The building has heard you.',suffix:' The doors appear willing to cooperate.',rate:.91,pitch:.98},curious:{name:'Curious',prefix:'Oh, now that is interesting.',suffix:' Shall we investigate the next door?',rate:1,pitch:1.12},nerdy:{name:'Nerdy',prefix:'Ah! A delightful systems problem.',suffix:' I have mentally labelled three diagrams already.',rate:1.02,pitch:1.08},witty:{name:'Witty',prefix:'Naturally. I was just about to suggest that.',suffix:' I shall add it to the hotel’s very unofficial handbook.',rate:1.03,pitch:1.05},encouraging:{name:'Encouraging',prefix:'You have got this.',suffix:' One small step, and then the next.',rate:.96,pitch:1.12}};
-      let bellaPersona=safeGet(bellaPersonaKey,'concierge');if(!bellaPersonas[bellaPersona])bellaPersona='concierge';let bellaMode=safeGet('curioid-doors98-bella-mode-v3','avatar')==='classic'?'classic':'avatar';let bellaHistory=[],bellaMemory=[],bellaLearning={};let bellaIdleTimer=0,bellaActionTimer=0,bellaMoodTimer=0,bellaSpeakingTimer=0,bellaLastInteraction=Date.now(),bellaLastIdleMessage=0,bellaCompanionOn=safeGet(bellaEnabledKey,'on')!=='off';
+      let bellaVoiceEnabled=safeGet(bellaVoiceKey,'on')!=='off';const bellaSpeech=createCurioidSpeechQueue((state)=>{if(state==='error'||state==='unsupported'){if(bellaVoiceToggle){bellaVoiceToggle.textContent='VOICE OFF';bellaVoiceToggle.title='Browser speech is unavailable; text chat still works';}}});let bellaPersona=safeGet(bellaPersonaKey,'concierge');if(!bellaPersonas[bellaPersona])bellaPersona='concierge';let bellaMode=safeGet('curioid-doors98-bella-mode-v3','avatar')==='classic'?'classic':'avatar';let bellaHistory=[],bellaMemory=[],bellaLearning={};let bellaIdleTimer=0,bellaActionTimer=0,bellaMoodTimer=0,bellaSpeakingTimer=0,bellaLastInteraction=Date.now(),bellaLastIdleMessage=0,bellaCompanionOn=safeGet(bellaEnabledKey,'on')!=='off';
       try{const saved=JSON.parse(safeGet(bellaChatKey,'[]'));if(Array.isArray(saved))bellaHistory=saved.filter(x=>x&&['user','bella'].includes(x.role)&&typeof x.text==='string').slice(-32);}catch(_){}
       try{const saved=JSON.parse(safeGet(bellaMemoryKey,'[]'));if(Array.isArray(saved))bellaMemory=saved.filter(x=>typeof x==='string').map(x=>x.trim().slice(0,240)).filter(Boolean).slice(0,16);}catch(_){}
       try{const saved=JSON.parse(safeGet(bellaLearningKey,'{}'));if(saved&&typeof saved==='object')bellaLearning=saved;}catch(_){}
@@ -17070,11 +17411,11 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
         if(Math.random()<.07){const options=voice.close.filter(item=>item!==bellaLastToneAddon);const addon=options[Math.floor(Math.random()*Math.max(1,options.length))]||voice.close[0];bellaLastToneAddon=addon;output=`${output} ${addon}`;}
         return output;
       }
-      function bellaReply(text){bellaAdd('bella',bellaTone(text));}
+      function bellaReply(text){const reply=bellaTone(text);bellaAdd('bella',reply);if(bellaVoiceEnabled&&bellaCompanionOn&&!bellaPanel?.hidden){const voice=bellaPersonas[bellaPersona]||bellaPersonas.concierge;bellaSpeech.speak(reply,{lang:'en-US',rate:voice.rate,pitch:voice.pitch,volume:.78});}}
       function bellaSyncToggle(opening){bellaToggle?.setAttribute('aria-expanded',String(opening));bellaToggle?.setAttribute('aria-pressed',String(opening));bellaToggle?.setAttribute('aria-label',opening?'Dismiss Bella assistant':'Call Bella assistant');bellaToggle?.classList.toggle('bella-active',opening);bellaToggle?.classList.toggle('bella-ringing',opening);}
       let bellaVisualAnimations=[],bellaGestureAnimation=null,bellaVisualTimers=[];
       function bellaStopVisuals(){
-        bellaVisualTimers.forEach(timer=>clearTimeout(timer));bellaVisualTimers=[];
+        bellaVisualTimers.forEach(timer=>clearTimeout(timer));bellaVisualTimers=[];clearTimeout(bellaActionTimer);
         bellaVisualAnimations.forEach(a=>{try{a.cancel();}catch(_){}});bellaVisualAnimations=[];
         if(bellaGestureAnimation){try{bellaGestureAnimation.cancel();}catch(_){}bellaGestureAnimation=null;}
         bellaCharacter?.classList.remove('bella-motion-active','bella-eye-glance-left','bella-eye-glance-right');
@@ -17102,12 +17443,20 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
           const glance=()=>bellaLaterVisual(()=>{const dx=(Math.random()-.5)*2.4,dy=(Math.random()-.5)*1.6;pupils.forEach(p=>bellaTrackAnimation(p.animate([{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px)`},{transform:'translate(0,0)'}],{duration:760+Math.random()*420,easing:'ease-in-out'})));glance();},2800+Math.random()*4300);
           glance();
         }
+        const gestureLoop=()=>bellaLaterVisual(()=>{
+          if(!bellaInput?.matches(':focus')){
+            const actions=['curious','wave','wiggle','peek','stretch','nod','sway','ring','wink'];
+            bellaAnimate(pick(actions),pick([680,820,980,1180]));
+          }
+          gestureLoop();
+        },3600+Math.random()*2800);
+        gestureLoop();
       }
       const bellaVisibilityHandler=()=>{if(document.hidden){bellaStopVisuals();clearTimeout(bellaIdleTimer);}else{bellaStartVisuals();bellaScheduleIdle();}};
       const bellaMotionUnsubscribe=window.CurioidMotion?.subscribe(enabled=>{if(enabled){bellaStartVisuals();bellaScheduleIdle();}else{bellaStopVisuals();clearTimeout(bellaIdleTimer);bellaCharacter?.classList.remove('bella-happy','bella-wave','bella-curious','bella-wiggle','bella-peek','bella-dozy','bella-listening','bella-glance-left','bella-glance-right','bella-stretch','bella-nod','bella-sway','bella-ring','bella-wink','bella-speaking');clearTimeout(bellaSpeakingTimer);}})||(()=>{});
-      function bellaSetMode(mode){bellaMode=mode==='classic'?'classic':'avatar';bellaPanel?.classList.toggle('bella-avatar-mode',bellaMode==='avatar');bellaCharacter?.classList.toggle('bella-motion-active',bellaMode==='avatar');if(bellaMode!=='avatar')bellaPanel?.classList.remove('bella-expanded');bellaPanel?.setAttribute('data-mode',bellaMode);if(bellaModeToggle){bellaModeToggle.textContent=bellaMode==='avatar'?'Companion mode':'Avatar mode';bellaModeToggle.setAttribute('aria-pressed',String(bellaMode==='avatar'));bellaModeToggle.title=bellaMode==='avatar'?'Switch to desktop companion mode':'Switch to animated Bella avatar mode';}safeSet(bellaModeKey,bellaMode);safeSet('curioid-doors98-bella-mode-v3',bellaMode);if(bellaMode==='avatar'&&bellaCompanionOn&&bellaPanel){bellaPanel.hidden=false;bellaSyncToggle(true);}if(bellaMode==='avatar')bellaStartVisuals();else bellaStopVisuals();bellaScheduleIdle();}
+      function bellaSetMode(mode){bellaMode=mode==='classic'?'classic':'avatar';bellaPanel?.classList.toggle('bella-avatar-mode',bellaMode==='avatar');bellaCharacter?.classList.toggle('bella-motion-active',bellaMode==='avatar');bellaPanel?.setAttribute('data-mode',bellaMode);if(bellaModeToggle){bellaModeToggle.textContent=bellaMode==='avatar'?'CHAT MORE':'DESKTOP';bellaModeToggle.setAttribute('aria-pressed',String(bellaMode==='avatar'));bellaModeToggle.title=bellaMode==='avatar'?'Switch to desktop companion mode':'Switch to Chat More conversation mode';}safeSet(bellaModeKey,bellaMode);safeSet('curioid-doors98-bella-mode-v3',bellaMode);if(bellaMode==='avatar'&&bellaCompanionOn&&bellaPanel){bellaPanel.hidden=false;bellaSyncToggle(true);}if(bellaMode==='avatar')bellaStartVisuals();else bellaStopVisuals();bellaScheduleIdle();}
       function bellaEnsureWelcome(){if(!bellaHistory.some(item=>item.role==='bella'))bellaReply('Hi! I’m Bella. I’ll keep you company right here. Ask me to open a program, make a key, tidy the desktop, or just say hello.');}
-      function bellaOpenPanel(force){if(!bellaPanel)return;const opening=typeof force==='boolean'?force:!!bellaPanel.hidden;bellaCompanionOn=opening;safeSet(bellaEnabledKey,opening?'on':'off');bellaPanel.hidden=!opening;bellaSyncToggle(opening);if(opening){bellaPanel.classList.add('bella-expanded');bellaApplySavedPosition();playSystemSound('bell');bellaEnsureWelcome();bellaLastInteraction=Date.now();bellaLastIdleMessage=Date.now();bellaInput?.focus();if(bellaLog)bellaLog.scrollTop=bellaLog.scrollHeight;bellaStartVisuals();bellaAnimate('wave',1100);bellaScheduleIdle();}else{bellaStopVisuals();clearTimeout(bellaIdleTimer);bellaToggle?.focus();}}
+      function bellaOpenPanel(force){if(!bellaPanel)return;const opening=typeof force==='boolean'?force:!!bellaPanel.hidden;bellaCompanionOn=opening;safeSet(bellaEnabledKey,opening?'on':'off');bellaPanel.hidden=!opening;bellaSyncToggle(opening);if(opening){bellaPanel.classList.add('bella-expanded');bellaApplySavedPosition();playSystemSound('bell');bellaEnsureWelcome();bellaLastInteraction=Date.now();bellaLastIdleMessage=Date.now();bellaInput?.focus({preventScroll:true});if(bellaLog)bellaLog.scrollTop=bellaLog.scrollHeight;bellaStartVisuals();bellaAnimate('wave',1100);bellaScheduleIdle();}else{bellaStopVisuals();clearTimeout(bellaIdleTimer);bellaToggle?.focus();}}
       const bellaAppAliases={'file explorer':'file-manager','explorer':'file-manager','files':'file-manager','my computer':'computer','drive':'computer','c drive':'computer','documents':'document-editor','word processor':'document-editor','word':'document-editor','text editor':'document-editor','editor':'document-editor','music':'audio-player','player':'audio-player','photos':'image-viewer','gallery':'image-viewer','browser':'web-room','internet':'web-room','web':'web-room','settings':'settings','personalize':'settings','preferences':'settings','calculator':'calculator','mail':'mail','email':'mail','calendar':'calendar','trash':'trash','recycle bin':'trash','recycle':'trash','deleted files':'trash','tasks':'task-board','todo':'task-board','todo list':'task-board','backup':'backup-center','backups':'backup-center','terminal':'terminal','indos':'terminal','indos shell':'terminal','shell':'terminal','command line':'terminal','command prompt':'terminal','cmd':'terminal','powershell':'terminal','dos':'terminal','code editor':'language-studio','coding':'language-studio','programming':'language-studio','paint':'paint','notes':'notes','sticky note':'sticky-notes','clock':'clock','timer':'timer-desk','focus timer':'focus-room','password manager':'password-studio','passwords':'password-studio','downloads':'downloads-room','download folder':'downloads-room','room directory':'room-index','rooms':'room-index','program list':'program-manager','apps':'program-manager','task manager':'task-manager','system monitor':'system-monitor','disk manager':'disk-manager','key ring':'file-manager','key return':'trash','help':'help','manual':'help','inbox':'mail','contacts':'address','address book':'address','voice recorder':'voice-recorder','pdf':'pdf-viewer','pdf viewer':'pdf-viewer','video':'video-viewer','spreadsheet':'csv-workshop','csv':'csv-workshop','json':'json-workbench','image editor':'image-lab','compress':'gzip-press','encrypt':'cipher-room','scientific calculator':'scientific-calculator','camera':'camera-booth','take a photo':'camera-booth','webcam':'camera-booth','screen recorder':'screen-recorder','record screen':'screen-recorder','dictation':'dictation-desk','speech to text':'dictation-desk','journal':'daily-journal','diary':'daily-journal','reading list':'reading-list','batch rename':'batch-renamer','rename files':'batch-renamer','media library':'media-library','photos and videos':'media-library','shopping list':'shopping-list','colour studio':'colour-studio','color studio':'colour-studio','system dashboard':'system-dashboard','pomodoro':'pomodoro-desk','pomodoro timer':'pomodoro-desk','focus session':'pomodoro-desk','flashcards':'flashcard-studio','study cards':'flashcard-studio','resume':'resume-studio','cv':'resume-studio','meeting notes':'meeting-minutes','minutes':'meeting-minutes','trip':'trip-planner','travel plan':'trip-planner','recipes':'recipe-notebook','recipe book':'recipe-notebook','mind map':'mind-map','brainstorm':'mind-map','citation':'citation-maker','references':'citation-maker','ascii art':'ascii-studio','typing test':'typing-practice','typing speed':'typing-practice','clip web page':'web-clipper','web clipper':'web-clipper','work log':'work-log','timesheet':'work-log'};
       function bellaResolveApp(query){const q=bellaNormalize(query);for(const [alias,id] of Object.entries(bellaAppAliases)){if(q===alias||q.includes(alias))return id;}const ranked=Object.entries(appNames).map(([id,label])=>({id,label,key:bellaNormalize(`${label} ${id.replace(/-/g,' ')}`)})).sort((a,b)=>b.key.length-a.key.length);return ranked.find(x=>q===x.key||q.includes(x.key)||x.key.includes(q)&&q.length>4)?.id||null;}
       function bellaResolveRoom(query){const q=bellaNormalize(query);return allRoomIds().map(id=>({id,name:getRoomName(id),key:bellaNormalize(`${getRoomName(id)} ${id.replace(/-/g,' ')}`)})).sort((a,b)=>b.key.length-a.key.length).find(x=>q===x.key||q.includes(x.key)||x.key.includes(q)&&q.length>4)?.id||null;}
@@ -17428,15 +17777,17 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
             bellaShowSpeech(pick(['Psst… I am around if you need a hand. No hurry.','I have been quietly practising my bell-ringing. How am I doing?','A small status report: I am here, the desk is tidy, and the doors are still curious.','Need a creative spark? I can help find the right world or tool.']));
           }
           bellaScheduleIdle();
-        },7200+Math.random()*6800);
+        },9600+Math.random()*6800);
       }
       bellaPersonaSelect.value=bellaPersona;
       bellaRenderHistory();
       bellaSetMode(bellaMode);
+      if(bellaVoiceToggle){bellaVoiceToggle.textContent=bellaVoiceEnabled?'VOICE ON':'VOICE OFF';bellaVoiceToggle.setAttribute('aria-pressed',String(bellaVoiceEnabled));}
       bellaToggle?.addEventListener('click',()=>bellaOpenPanel());
       $('[data-bella-close]',bellaPanel)?.addEventListener('click',()=>bellaOpenPanel(false));
       bellaPersonaSelect?.addEventListener('change',()=>{bellaPersona=bellaPersonas[bellaPersonaSelect.value]?bellaPersonaSelect.value:'concierge';safeSet(bellaPersonaKey,bellaPersona);bellaReply(`Personality set to ${bellaPersonas[bellaPersona].name}.`);});
       bellaModeToggle?.addEventListener('click',()=>{bellaSetMode(bellaMode==='avatar'?'classic':'avatar');playSystemSound('click');});
+      bellaVoiceToggle?.addEventListener('click',()=>{bellaVoiceEnabled=!bellaVoiceEnabled;safeSet(bellaVoiceKey,bellaVoiceEnabled?'on':'off');bellaVoiceToggle.textContent=bellaVoiceEnabled?'VOICE ON':'VOICE OFF';bellaVoiceToggle.setAttribute('aria-pressed',String(bellaVoiceEnabled));bellaVoiceToggle.title=bellaVoiceEnabled?'Mute Bella voice':'Enable Bella voice';if(!bellaVoiceEnabled)bellaSpeech.stop();playSystemSound('click');});
       $('[data-bella-desk-mode]',bellaPanel)?.addEventListener('click',()=>{bellaSetMode('classic');playSystemSound('click');bellaInput?.focus();});
       bellaForm?.addEventListener('submit',e=>{e.preventDefault();const value=bellaInput.value.trim();if(!value)return;bellaLastInteraction=Date.now();bellaAnimate('listening',850);bellaInput.value='';bellaProcess(value).catch(error=>bellaReply(`I hit a little service-desk snag: ${error?.message||'unknown error'}. Your files are safe.`));});
       const bellaSearchBridge = Object.freeze({ ask(question) {
@@ -17445,9 +17796,9 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
         bellaOpenPanel(true); bellaInput.value=message; bellaForm.requestSubmit(); return true;
       }});
       window.CurioidBellaAssist=bellaSearchBridge;
-      registerMountCleanup(()=>{if(window.CurioidBellaAssist===bellaSearchBridge)delete window.CurioidBellaAssist;});
-      bellaInput?.addEventListener('focus',()=>{bellaLastInteraction=Date.now();bellaPanel?.classList.add('bella-expanded');bellaCharacter?.classList.add('bella-listening');});
-      bellaInput?.addEventListener('blur',/** @param {CurioidDOMEvent} e */ e=>{bellaCharacter?.classList.remove('bella-listening');const next=e.relatedTarget;if(next&&bellaPanel?.contains(next))return;bellaPanel?.classList.remove('bella-expanded');});
+      registerMountCleanup(()=>{bellaSpeech.stop();bellaSpeech.dispose();if(window.CurioidBellaAssist===bellaSearchBridge)delete window.CurioidBellaAssist;});
+      bellaInput?.addEventListener('focus',()=>{bellaLastInteraction=Date.now();bellaCharacter?.classList.add('bella-listening');});
+      bellaInput?.addEventListener('blur',()=>{bellaCharacter?.classList.remove('bella-listening');});
       bellaInput?.addEventListener('keydown',/** @param {CurioidDOMEvent} e */ e=>{if(e.key==='Escape'){bellaOpenPanel(false);bellaToggle?.focus();}});
       const bellaPoke=()=>{if(Date.now()<bellaJustDraggedUntil)return;bellaLastInteraction=Date.now();bellaAnimate('wave',1200);bellaShowSpeech(pick(['A little hello, just for you!','I polished my bell. It is very important work.','I was practicing my friendly face. How did I do?','Need a hand? I have two metaphorical ones.']));playSystemSound('click');};
       bellaCharacter?.addEventListener('click',bellaPoke);
@@ -19910,10 +20261,10 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     function phonemeWeight(phone){
       const p=normalizePhone(phone),articulation=clamp(Number(state.vocalArticulation)||72,25,100)/72;
       if(arpabetVowels.has(p))return /[012]$/.test(String(phone))&&/1$/.test(String(phone))?1.12:.96;
-      if(phoneClass.fricatives.has(p))return .22*articulation;
-      if(phoneClass.stops.has(p))return .105*articulation;
-      if(phoneClass.sonorants.has(p))return .27*articulation;
-      return .14*articulation;
+      if(phoneClass.fricatives.has(p))return (state.vocalMode==='singer'?.36:.22)*articulation;
+      if(phoneClass.stops.has(p))return (state.vocalMode==='singer'?.19:.105)*articulation;
+      if(phoneClass.sonorants.has(p))return (state.vocalMode==='singer'?.32:.27)*articulation;
+      return (state.vocalMode==='singer'?.22:.14)*articulation;
     }
     function allocatePhonemeDurations(phones,totalDuration){
       const list=(phones||[]).map(phonemeWeight),count=list.length;if(!count)return[];
@@ -20159,23 +20510,27 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     function buildMelody(syllables){
       const scale=enoScales[state.scale]||enoScales.minor,root=60+state.key,mod=(value,size)=>((value%size)+size)%size;
       const vowelHome={IY:5,AY:4,AW:3,EY:4,EH:3,AE:3,IH:2,AA:2,AH:1,ER:2,AO:1,OW:1,OY:3,UH:1,UW:0};
-      const contour=[0,1,2,1,0,-1,-2,-1],notes=[];let elapsed=0,previous=2,phraseStart=0,phrasePosition=0;
+      const contour=[0,1,2,1,0,-1,-2,-1],singerContour=[0,4,-3,5,-4,3,-5,2],phonemeSinger=state.vocalMode==='singer',notes=[];let elapsed=0,previous=2,phraseStart=0,phrasePosition=0;
       const phraseEnd=i=>{const mark=String(syllables[i]?.punctuation||'');return /[.!?…]/.test(mark)||i===syllables.length-1;};
       const hashText=value=>{let h=2166136261;for(const c of String(value||'')){h^=c.codePointAt(0);h=Math.imul(h,16777619);}return h>>>0;};
       for(let i=0;i<syllables.length;i++){
         const syllable=syllables[i],phones=(Array.isArray(syllable.phones)?syllable.phones:[]).map(p=>String(p||'').toUpperCase()),vowel=String(syllable.vowel||phones.find(p=>arpabetVowels.has(normalizePhone(p)))||'AH').toUpperCase().replace(/[012]$/,''),stress=clamp(Number(syllable.stress)||0,0,2);
-        const phraseLength=Math.max(1,(syllables.slice(phraseStart).findIndex((_,j)=>phraseEnd(phraseStart+j))+1)||1),within=phrasePosition,shape=contour[Math.min(contour.length-1,Math.round(within/Math.max(1,phraseLength-1)*(contour.length-1)))];
+        const phraseLength=Math.max(1,(syllables.slice(phraseStart).findIndex((_,j)=>phraseEnd(phraseStart+j))+1)||1),within=phrasePosition,shape=(phonemeSinger?singerContour:contour)[Math.min(contour.length-1,Math.round(within/Math.max(1,phraseLength-1)*(contour.length-1)))];
         const vowelTarget=vowelHome[vowel]??2,stressAnchor=stress===1?(vowelTarget+1)%scale.length:stress===2?(vowelTarget+1)%scale.length:vowelTarget;
         const hash=hashText(`${syllable.text||''}|${phones.join('.')}`),unstressedColor=stress===0?(hash%3)-1:0;
-        let target=mod(stressAnchor+shape+unstressedColor,scale.length);
+        const firstConsonant=phones.find(phone=>!arpabetVowels.has(normalizePhone(phone)))||'',lastConsonant=[...phones].reverse().find(phone=>!arpabetVowels.has(normalizePhone(phone)))||'';
+        const onsetShape=/^(?:P|B|T|D|K|G|CH|JH)$/.test(firstConsonant)?2:/^(?:S|Z|SH|ZH|F|V|TH|DH|HH)$/.test(firstConsonant)?-2:0;
+        const codaShape=/^(?:M|N|NG|L|R)$/.test(lastConsonant)?1:/^(?:P|T|K|F|S|SH)$/.test(lastConsonant)?-1:0;
+        const vowelMotion=phonemeSinger?Math.round(((vowelHome[vowel]??2)-2)*.55):0;const stressLift=phonemeSinger?(stress===1?1:stress===2?2:0):0;const syllableMotion=phonemeSinger?((i%2===0)?1:-1):0;const phoneMotion=phonemeSinger?(onsetShape*1.4+codaShape*1.35+vowelMotion+stressLift+syllableMotion+((hash>>>5)%3)-1):0;
+        let target=mod(Math.round(stressAnchor+shape+unstressedColor+phoneMotion),scale.length);
         const ending=phraseEnd(i),punctuation=String(syllable.punctuation||'');
         if(ending&&/[.!?…]/.test(punctuation))target=0;
         const distance=target-previous,wrapped=distance>scale.length/2?distance-scale.length:distance< -scale.length/2?distance+scale.length:distance;
-        const maxStep=stress===1?3:2,degree=mod(previous+clamp(wrapped,-maxStep,maxStep),scale.length);previous=degree;
+        const maxStep=phonemeSinger?5:(stress===1?3:2),degree=mod(previous+Math.round(clamp(wrapped,-maxStep,maxStep)),scale.length);previous=degree;
         const longVowel=new Set(['AA','AO','AW','AY','ER','EY','IY','OW','OY','UW']).has(vowel),consonants=phones.filter(p=>!arpabetVowels.has(normalizePhone(p))).length;
-        const baseBeats=stress===1?.82:stress===2?.66:.49,duration=clamp(baseBeats*(longVowel?1.16:.94)*(1+Math.min(.12,consonants*.018)),.34,1.02);
+        const baseBeats=phonemeSinger?(stress===1?.96:stress===2?.78:.62):(stress===1?.82:stress===2?.66:.49),duration=clamp(baseBeats*(longVowel?1.16:.94)*(1+Math.min(.18,consonants*(phonemeSinger?.035:.018))),.34,phonemeSinger?1.22:1.02);
         const pause=/[.!?…]/.test(punctuation)?.42:/[,;:]/.test(punctuation)?.2:0;
-        notes.push({...syllable,midi:clamp(root+scale[degree],48,84),duration,start:elapsed,vowel,phoneticSignature:phones.join('.'),melodyDegree:degree,phrasePosition,cadence:ending});
+        notes.push({...syllable,midi:clamp(root+scale[degree],48,84),duration,start:elapsed,vowel,phoneticSignature:phones.join('.'),melodyDegree:degree,phrasePosition,cadence:ending,vocalMode:phonemeSinger?'singer':'echo'});
         elapsed+=duration+pause;phrasePosition++;
         if(ending){previous=2;phrasePosition=0;phraseStart=i+1;}
       }
@@ -22194,7 +22549,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       <aside class="aura-daemon" data-aura-daemon aria-label="CritiqueDaemon personal administrative reviewer"><div class="aura-daemon-eye"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 5 95 31v38L50 95 5 69V31Z" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 50Q50 15 85 50 50 85 15 50Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="50" cy="50" r="12" fill="currentColor"/><circle cx="54" cy="46" r="3" fill="#17191b"/></svg><i></i></div><small>CRITIQUE DAEMON</small><b data-aura-daemon-heading>Your place was retained.</b><p data-aura-daemon-copy>The desk remained prepared during your absence. It has been returned to the same position, although the chair is now facing the other way.</p><span>PERSONAL REVIEW · ROUTINE</span><button type="button" data-aura-open="critiquedaemon">VIEW YOUR RECORD ↗</button><div class="aura-daemon-mini"><span>OBEDIENCE <b data-aura-mini-obedience>58%</b></span><span>AFFECTION <b data-aura-mini-affection>12</b></span></div></aside>
       </div>
     <div class="aura-window-layer" data-aura-window-layer></div>
-    <footer class="aura-taskbar"><div class="aura-start-details"><button type="button" class="aura-start-button" data-aura-start aria-label="Open AURA application launcher" aria-expanded="false" aria-controls="aura-start-menu"><b>A//</b><span>START</span></button><div id="aura-start-menu" class="aura-start-menu" data-aura-start-menu hidden><div class="aura-start-heading"><span>A//</span><div><b>STANDARD APPLICATIONS</b><small>THE USUAL ARRANGEMENT</small></div></div><div class="aura-start-grid">${auraApps.map(([id,name,icon,sub])=>`<button type="button" data-aura-open="${id}"><span>${icon}</span><b>${name}</b><small>${sub}</small></button>`).join('')}</div><div class="aura-start-foot"><span>PERSONAL FILE / ACTIVE</span><span>NO CHANGE REQUESTED</span></div></div></div><div class="aura-task-tabs" data-aura-task-tabs></div><div class="aura-tray"><span class="aura-tray-score"><i></i> RECORD CURRENT</span><button type="button" data-aura-action="ambient" aria-pressed="false" title="Enable the low studio hum">HUM <b data-aura-hum-state>OFF</b></button><span data-aura-clock></span><button type="button" class="aura-fullscreen-button" data-aura-fullscreen title="Enter fullscreen" aria-label="Enter fullscreen">⛶</button></div></footer>
+    <footer class="aura-taskbar"><div class="aura-start-details"><button type="button" class="aura-start-button" data-aura-start aria-label="Open AURA application launcher" aria-expanded="false" aria-controls="aura-start-menu"><b>A//</b><span>START</span></button><div id="aura-start-menu" class="aura-start-menu" data-aura-start-menu hidden><div class="aura-start-heading"><span>A//</span><div><b>STANDARD APPLICATIONS</b><small>THE USUAL ARRANGEMENT</small></div></div><div class="aura-start-grid">${auraApps.map(([id,name,icon,sub])=>`<button type="button" data-aura-open="${id}"><span>${icon}</span><b>${name}</b><small>${sub}</small></button>`).join('')}</div><div class="aura-start-foot"><span>PERSONAL FILE / ACTIVE</span><span>NO CHANGE REQUESTED</span></div></div></div><div class="aura-task-tabs" data-aura-task-tabs></div><div class="aura-tray"><span class="aura-tray-score"><i></i> RECORD CURRENT</span><button type="button" data-aura-action="ambient" aria-pressed="false" title="Enable the low studio hum">HUM <b data-aura-hum-state>OFF</b></button><label class="aura-hum-control" data-aura-hum-control-wrap title="Adjust studio hum level"><span>LEVEL</span><input type="range" data-aura-hum-volume min="0" max="100" step="1" value="58" aria-label="AURA studio hum level"><output data-aura-hum-volume-out>58%</output></label><span data-aura-clock></span><button type="button" class="aura-fullscreen-button" data-aura-fullscreen title="Enter fullscreen" aria-label="Enter fullscreen">⛶</button></div></footer>
     <div class="aura-notice" data-aura-notice role="status" aria-live="polite"></div>
   </section>`;
 
@@ -22441,7 +22796,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       const changes=fields.filter(key=>value(entry.draft,key)!==value(releaseDraft,key));
       host.innerHTML=changes.length?`<b>CHANGES SINCE ${esc(entry.label||'SAVED VERSION')}</b><ul>${changes.map(key=>`<li><span>${esc(labels[key])}</span><small>Saved: ${esc(value(entry.draft,key).slice(0,160)||'(empty)')}</small><small>Current: ${esc(value(releaseDraft,key).slice(0,160)||'(empty)')}</small></li>`).join('')}</ul>`:'<b>NO DIFFERENCES</b><p>The current dossier matches this saved version.</p>';
     }
-    let ambientContext = null, ambientOsc = null, ambientGain = null;
+    let ambientContext = null, ambientOsc = null, ambientGain = null, ambientPartials = [];
     let dawContext = null, dawOsc = null, dawGain = null, dawLfo = null, dawLfoDepth = null;
     const trackState = Array(128).fill(true);
     const paletteKey = 'aura-synthesis-palettes-v1';
@@ -23021,7 +23376,45 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     function minimizeAuraWindow(win){if(!win)return;win.hidden=true;win.classList.add('aura-minimized');win.classList.remove('is-active');if(activeAuraWindow===win.dataset.auraWindow){const next=[...activeWindows.values()].filter(item=>item!==win&&!item.hidden&&!item.classList.contains('aura-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];activeAuraWindow=next?.dataset.auraWindow||'';if(next){next.classList.add('is-active');next.style.zIndex=String(++zIndex);}}updateAuraTaskTabs();}
     function openApp(id){if(!auraApps.some(a=>a[0]===id))return;let win=activeWindows.get(id);if(!win)win=buildWindow(id);focusAuraWindow(win);setStartMenuOpen(false);}const previousAuraOpenApp=window.CurioidAuraOpenApp;const auraOpenAppBridge=id=>{if(!root.isConnected||!auraApps.some(app=>app[0]===id))return false;openApp(id);return true;};window.CurioidAuraOpenApp=auraOpenAppBridge;
     function removeWindow(id){const win=activeWindows.get(id);if(!win)return;if(id==='critiquedaemon'){minimizeAuraWindow(win);return;}if(id==='aetherdaw')stopDaw();if(id==='recreation-office')clearArcadeTimers();const wasActive=activeAuraWindow===id;win.remove();activeWindows.delete(id);q(`[data-aura-task="${id}"]`)?.remove();if(wasActive){activeAuraWindow='';const next=[...activeWindows.values()].filter(item=>!item.hidden&&!item.classList.contains('aura-minimized')).sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];if(next)focusAuraWindow(next);}updateAuraTaskTabs();}
-    function toggleAmbient(){if(ambientOsc){ambientOsc.stop();ambientOsc.disconnect();ambientGain?.disconnect();ambientOsc=null;ambientGain=null;qa('[data-aura-action="ambient"]').forEach(b=>b.setAttribute('aria-pressed','false'));q('[data-aura-hum-state]').textContent='OFF';const control=q('[data-aura-control-hum]');if(control)control.textContent='OFF';say('Studio atmosphere disabled. Silence has been formally approved.');return;}try{const AC=window.AudioContext||/** @type {Window & {webkitAudioContext?: typeof AudioContext}} */ (window).webkitAudioContext;if(!AC)throw new Error('Web Audio is unavailable.');ambientContext=ambientContext||new AC();if(ambientContext.state==='suspended')ambientContext.resume();ambientOsc=ambientContext.createOscillator();ambientGain=ambientContext.createGain();ambientOsc.type='sine';ambientOsc.frequency.value=220;ambientGain.gain.setValueAtTime(.0001,ambientContext.currentTime);ambientGain.gain.setTargetAtTime(.022,ambientContext.currentTime,.08);ambientOsc.connect(ambientGain);ambientGain.connect(ambientContext.destination);ambientOsc.start();qa('[data-aura-action="ambient"]').forEach(b=>b.setAttribute('aria-pressed','true'));q('[data-aura-hum-state]').textContent='ON';const control=q('[data-aura-control-hum]');if(control)control.textContent='ON';say('The low studio hum is active at 220 Hz. Adjust your system volume to taste.');}catch(e){say(e.message||'Audio could not be initialized.');}}
+    async function toggleAmbient(){
+      if(ambientOsc){
+        [ambientOsc,...ambientPartials].forEach(node=>{try{node.stop();}catch(_){}try{node.disconnect();}catch(_){}});
+        ambientGain?.disconnect();ambientOsc=null;ambientPartials=[];ambientGain=null;
+        qa('[data-aura-action="ambient"]').forEach(b=>b.setAttribute('aria-pressed','false'));
+        const state=q('[data-aura-hum-state]');if(state)state.textContent='OFF';
+        const control=q('[data-aura-control-hum]');if(control)control.textContent='OFF';
+        say('Studio atmosphere disabled.');return;
+      }
+      try{
+        const AC=window.AudioContext||/** @type {Window & {webkitAudioContext?: typeof AudioContext}} */ (window).webkitAudioContext;
+        if(!AC)throw new Error('Web Audio is unavailable.');
+        ambientContext=ambientContext||new AC();
+        if(ambientContext.state==='suspended')await ambientContext.resume();
+        if(ambientContext.state!=='running')throw new Error('Audio output is not running. Click HUM again after interacting with the page.');
+        const level=clamp(Number(q('[data-aura-hum-volume]')?.value??58),0,100)/100;
+        ambientGain=ambientContext.createGain();
+        ambientGain.gain.setValueAtTime(.0001,ambientContext.currentTime);
+        ambientGain.gain.setTargetAtTime(.075*level,ambientContext.currentTime,.12);
+        ambientGain.connect(ambientContext.destination);
+        // Mid-low fundamentals survive more small speakers than sub-bass-only tones.
+        // No frequency can be guaranteed audible on every device or for every listener.
+        const tones=[{hz:146.83,level:.52},{hz:196,level:.30},{hz:233.08,level:.18},{hz:293.66,level:.08}];
+        tones.forEach((tone,index)=>{
+          const oscillator=ambientContext.createOscillator(),gain=ambientContext.createGain();
+          oscillator.type='sine';oscillator.frequency.value=tone.hz;gain.gain.value=tone.level;
+          oscillator.connect(gain);gain.connect(ambientGain);oscillator.start();
+          if(index===0)ambientOsc=oscillator;else ambientPartials.push(oscillator);
+        });
+        qa('[data-aura-action="ambient"]').forEach(b=>b.setAttribute('aria-pressed','true'));
+        const state=q('[data-aura-hum-state]');if(state)state.textContent='ON';
+        const control=q('[data-aura-control-hum]');if(control)control.textContent='ON';
+        say('The low studio hum is active. Use Management to adjust its level; audibility still depends on your speakers and hearing.');
+      }catch(e){
+        [ambientOsc,...ambientPartials].filter(Boolean).forEach(node=>{try{node.stop();node.disconnect();}catch(_){}});
+        ambientOsc=null;ambientPartials=[];ambientGain?.disconnect();ambientGain=null;say(e.message||'Audio could not be initialized.');
+      }
+    }
+
     function stopDaw(){try{dawOsc?.stop();}catch(_){}try{dawLfo?.stop();}catch(_){}[dawOsc,dawLfo,dawGain,dawLfoDepth].forEach(n=>{try{n?.disconnect();}catch(_){}});dawOsc=dawLfo=dawGain=dawLfoDepth=null;const state=q('[data-aura-daw-state]');if(state)state.textContent='OUTPUT STANDBY';}
     function updateDawGain(){if(!dawGain||!dawContext)return;const active=trackState.filter(Boolean).length,reverb=Number(q('[data-aura-reverb]')?.value||0)/100;const volume=Math.max(0,active/128)*(.018+reverb*.075);dawGain.gain.setTargetAtTime(volume,dawContext.currentTime,.06);const out=q('[data-aura-track-count]');if(out)out.textContent=`${active} / 128`;const rev=q('[data-aura-reverb-out]');if(rev)rev.textContent=`${Math.round(reverb*100)}%`;}
     async function startDaw(){try{const AC=window.AudioContext||/** @type {Window & {webkitAudioContext?: typeof AudioContext}} */ (window).webkitAudioContext;if(!AC)throw new Error('Web Audio is unavailable.');dawContext=dawContext||new AC();if(dawContext.state==='suspended')await dawContext.resume();stopDaw();dawOsc=dawContext.createOscillator();dawGain=dawContext.createGain();dawLfo=dawContext.createOscillator();dawLfoDepth=dawContext.createGain();dawOsc.type='sine';dawOsc.frequency.value=261.6256;dawGain.gain.value=.025;dawLfo.frequency.value=1.2;dawLfoDepth.gain.value=.012;dawOsc.connect(dawGain);dawLfo.connect(dawLfoDepth);dawLfoDepth.connect(dawGain.gain);dawGain.connect(dawContext.destination);dawOsc.start();dawLfo.start();updateDawGain();q('[data-aura-daw-state]').textContent='C4 / 72 BPM / OUTPUT ACTIVE';say('AetherDAW output is now stable at C4.');}catch(e){say(e.message||'Audio could not be initialized.');}}
@@ -23099,7 +23492,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     function onClick(e){const target=e.target instanceof Element?e.target:e.target?.parentElement;if(!target)return;if(handleArcadeClick(target))return;const recoveryDownload=target.closest('[data-aura-recovery-download]');if(recoveryDownload){const key=recoveryDownload.dataset.auraRecoveryDownload,record=auraCorruptStores.get(key);if(record&&record.raw!==null){downloadBlob(new Blob([record.raw],{type:'application/json'}),`aura-${key.replace(/[^a-z0-9-]/gi,'-')}-recovery.json`).then(saved=>{if(!saved){say(`The recovery copy for ${record.label} could not be saved to Browser Vault. Reset remains locked.`);return;}if(auraCorruptStores.get(key)!==record)return;record.downloaded=true;renderAURARecoveryPanel();say(`Original ${record.label} data is saved in Browser Vault. You can now choose whether to reset it.`);}).catch(()=>say(`The recovery copy for ${record.label} could not be saved. Reset remains locked.`));}return;}const recoveryReset=target.closest('[data-aura-recovery-reset]');if(recoveryReset){resetCorruptAuraStore(recoveryReset.dataset.auraRecoveryReset);return;}const importDownload=target.closest('[data-release-import-download]');if(importDownload){const index=Number(importDownload.dataset.releaseImportDownload),item=releaseImportPackage?.files?.[index];if(!item)return;if(item.integrity==='not checked in this browser'&& !window.confirm(`No hash verification was possible for ${item.name}. Save the file anyway?`))return;downloadBlob(new Blob([item.bytes],{type:item.mimeType||'application/octet-stream'}),String(item.name||item.path.split('/').pop()).replace(/[\\/\u0000-\u001f]/g,'_'));say(`Saved ${item.name}. Its package path was ${item.path}.`);return;}const removeReleaseAsset=target.closest('[data-release-asset-remove]');if(removeReleaseAsset){const index=Number(removeReleaseAsset.dataset.releaseAssetRemove);if(Number.isInteger(index)&&index>=0&&index<releaseAssets.length){const candidate=releaseAssets.filter((_,i)=>i!==index);if(!persistReleaseAssets(candidate)){say('The asset reference was not removed because browser storage did not confirm the change.');return;}releaseAssets=candidate;const host=removeReleaseAsset.closest('[data-aura-window]');renderReleaseAssets(host);saveReleaseDraft(host,true);say('The asset reference was removed. The original file was not changed.');}return;}const compareRelease=target.closest('[data-release-compare]');if(compareRelease){compareReleaseVersion(Number(compareRelease.dataset.releaseCompare),compareRelease.closest('[data-aura-window]'));return;}const restoreRelease=target.closest('[data-release-restore]');if(restoreRelease){const index=Number(restoreRelease.dataset.releaseRestore),entry=releaseHistory[index];if(Number.isInteger(index)&&entry?.draft){const previousDraft=releaseDraft,previousAssets=releaseAssets,nextDraft={...releaseDefaults,...entry.draft,checks:{...releaseDefaults.checks,...(entry.draft.checks||{})}},restoredAssets=sanitizeReleaseAssets(Array.isArray(entry.draft.assetInventory)?entry.draft.assetInventory:[]);delete nextDraft.assetInventory;if(!safeWrite(releaseDraftKey,JSON.stringify(nextDraft))){say('The snapshot was not restored because the dossier could not be saved. Your current dossier and asset inventory remain active.');return;}if(!persistReleaseAssets(restoredAssets)){const rolledBack=safeWrite(releaseDraftKey,JSON.stringify(previousDraft));if(!rolledBack)say('The asset inventory could not be restored, and the dossier rollback could not be verified. Stop editing and export both recovery records before retrying.');else say('The snapshot was not restored because the asset inventory could not be saved. The previous dossier was restored.');releaseDraft=previousDraft;releaseAssets=previousAssets;return;}releaseDraft=nextDraft;releaseAssets=restoredAssets;const win=restoreRelease.closest('[data-aura-window]');renderReleaseOffice(win);say('The selected release dossier version and its asset inventory were restored and saved.');}return;}const cwRemove=target.closest('[data-cw-milestone-remove]');if(cwRemove){const project=selectedCreatorProject(),index=Number(cwRemove.dataset.cwMilestoneRemove),host=cwRemove.closest('[data-aura-window]');if(project&&Number.isInteger(index)&&index>=0&&index<project.milestones.length){const previous=JSON.parse(JSON.stringify(project));project.milestones.splice(index,1);project.updatedAt=new Date().toISOString();if(!persistCreatorWorkspaces()){Object.assign(project,previous);const status=$('[data-cw-status]',host);if(status)status.textContent='Milestone was not removed because storage could not confirm the change. The previous project was restored.';}renderCreatorWorkbench(host);}return;}const cwRestore=target.closest('[data-cw-restore]');if(cwRestore){restoreCreatorSnapshot(Number(cwRestore.dataset.cwRestore),cwRestore.closest('[data-aura-window]'));return;}const directiveResponse=target.closest('[data-aura-response]');if(directiveResponse){respondToDirective(directiveResponse.dataset.auraResponse);return;}const removeInbox=target.closest('[data-aura-inbox-delete]');if(removeInbox){if(auraCorruptStores.has(universeInboxKey)){say('The original inbox is damaged. Download it before resetting.');return;}const nextInbox=universeInbox.filter(item=>item.id!==removeInbox.dataset.auraInboxDelete);if(!writeUniverseInbox(nextInbox)){say('The inbox could not be saved. The original list remains unchanged.');return;}universeInbox=nextInbox;renderUniverseInbox(removeInbox.closest('[data-aura-window]')||root);say('Shared reference removed from the local inbox.');return;}const removePalette=target.closest('[data-aura-delete-palette]');if(removePalette){if(auraCorruptStores.has(paletteKey)){say('The original palette archive is damaged. Download it before resetting.');return;}const index=Number(removePalette.dataset.auraDeletePalette);if(Number.isInteger(index)&&index>=0&&index<savedPalettes.length&&window.confirm('Delete this saved palette study?')){const nextPalettes=savedPalettes.filter((_,i)=>i!==index);if(!safeWrite(paletteKey,JSON.stringify(nextPalettes))){say('The palette could not be deleted because storage did not confirm the change.');return;}savedPalettes=nextPalettes;renderPaletteArchive(removePalette.closest('[data-aura-window]')||root);say('Palette study deleted.');}return;}const removePersona=target.closest('[data-aura-delete-persona]');if(removePersona){if(auraCorruptStores.has(personaKey)){say('The original Persona Vault is damaged. Download it before resetting.');return;}const index=Number(removePersona.dataset.auraDeletePersona),all=readPersonas();if(Number.isInteger(index)&&index>=0&&index<all.length&&window.confirm('Delete this saved persona from the vault?')){const nextPersonas=all.filter((_,i)=>i!==index);if(!safeWrite(personaKey,JSON.stringify(nextPersonas))){say('The persona could not be deleted because storage did not confirm the change.');return;}savedPersonas=nextPersonas;renderPersonaArchive(removePersona.closest('[data-aura-window]')||root);say('Persona removed from the vault.');}return;}const track=target.closest('[data-aura-track]');if(track){const index=Number(track.dataset.auraTrack);trackState[index]=!trackState[index];track.setAttribute('aria-pressed',String(trackState[index]));updateDawGain();return;}const open=target.closest('[data-aura-open]');if(open){openApp(open.dataset.auraOpen);return;}const task=target.closest('[data-aura-task]');if(task){const id=task.dataset.auraTask,win=activeWindows.get(id);if(win){const minimized=win.hidden||win.classList.contains('aura-minimized'),active=activeAuraWindow===id&&!minimized;if(minimized)focusAuraWindow(win);else if(active)minimizeAuraWindow(win);else focusAuraWindow(win);}return;}const closeMenu=target.closest('[data-aura-menu-close]');if(closeMenu){setStartMenuOpen(false);return;}const winButton=target.closest('[data-aura-window-action]');if(winButton){const win=winButton.closest('[data-aura-window]'),id=win?.dataset.auraWindow,act=winButton.dataset.auraWindowAction;if(!win)return;if(act==='minimize'){minimizeAuraWindow(win);}else if(act==='maximize'){win.classList.toggle('aura-window-max');winButton.textContent=win.classList.contains('aura-window-max')?'❐':'□';}else if(act==='close')removeWindow(id);return;}const nameSuggestion=target.closest('[data-cw-name-suggestion]');if(nameSuggestion){const host=nameSuggestion.closest('[data-aura-window]'),index=Number(nameSuggestion.dataset.cwNameSuggestion),variant=host?._cwNameVariants?.[index],field=host&&$('[data-cw-field="title"]',host);if(variant&&field){field.value=variant.value;saveCreatorProject(host,false);const status=$('[data-cw-status]',host);if(status)status.textContent=`Applied title suggestion: ${variant.value}. Save or revise it as needed.`;}return;}const action=target.closest('[data-aura-action]')?.dataset.auraAction;if(!action)return;const win=target.closest('[data-aura-window]')||root;
       if(action==='creator-create'){createCreatorProject(win,$('[data-cw-template]',win)?.value||'web-app');return;}if(action==='creator-name-analyze'){analyzeCreatorName(win);return;}if(action==='creator-import'){$('[data-cw-import-file]',win)?.click();return;}if(action==='creator-save'){saveCreatorProject(win,false);return;}if(action==='creator-snapshot'){if(saveCreatorProject(win,false)){const project=selectedCreatorProject(),previous=project.snapshots;project.snapshots=[...previous,{id:creatorId(),label:`${project.version||'Unversioned'} · ${project.title}`,createdAt:new Date().toISOString(),data:creatorProjectData(project)}].slice(-6);if(!persistCreatorWorkspaces()){project.snapshots=previous;const status=$('[data-cw-status]',win);if(status)status.textContent='The checkpoint was not saved because browser storage could not confirm it. Your current project remains open.';renderCreatorWorkbench(win);return;}renderCreatorWorkbench(win);const status=$('[data-cw-status]',win);if(status)status.textContent='Checkpoint saved. You can restore it from Project Checkpoints.';}return;}if(action==='creator-export'){exportCreatorProject(win);return;}if(action==='creator-send-release'){sendCreatorProjectToRelease(win);return;}if(action==='creator-add-milestone'){const project=selectedCreatorProject(),field=$('[data-cw-new-milestone]',win),title=creatorText(field?.value||'',180).trim();if(!project||!title)return;if(project.milestones.length>=40){const status=$('[data-cw-status]',win);if(status)status.textContent='Milestone limit reached (40). Remove an older step before adding another.';return;}const previous=JSON.parse(JSON.stringify(project));project.milestones.push({id:creatorId(),title,done:false});project.updatedAt=new Date().toISOString();if(!persistCreatorWorkspaces()){Object.assign(project,previous);const status=$('[data-cw-status]',win);if(status)status.textContent='Milestone was not added because storage could not confirm the change.';renderCreatorWorkbench(win);return;}if(field)field.value='';renderCreatorWorkbench(win);return;}if(action==='creator-delete'){const project=selectedCreatorProject();if(!project||!window.confirm(`Delete the project workspace “${project.title}”? This removes its local planning record and snapshots, not any source files.`))return;const previous=creatorWorkspaces,previousSelected=creatorSelectedId;creatorWorkspaces=creatorWorkspaces.filter(item=>item.id!==project.id);creatorSelectedId=creatorWorkspaces[0]?.id||null;if(!persistCreatorWorkspaces()){creatorWorkspaces=previous;creatorSelectedId=previousSelected;const status=$('[data-cw-status]',win);if(status)status.textContent='The project was not deleted because storage could not confirm the change. Its previous record and snapshots remain active.';}renderCreatorWorkbench(win);return;}
       if(action==='ambient'){toggleAmbient();return;}if(action==='palette-generate'){paletteIndex=(paletteIndex+1)%paletteNames.length;const host=$('[data-aura-swatches]',win);const labels=['SCREAMING VOID','AVANT-GARDE BLOOD','DRYWALL WHITE'];const colors=['#808080','#F5F5DC','#FFFFFF'];host.innerHTML=colors.map((c,i)=>`<button style="--swatch:${c}"><i></i><b>${labels[(i+paletteIndex)%3]}</b><code>${c}</code></button>`).join('');const name=q('[data-aura-palette-name]');if(name)name.textContent=`PALETTE / ${paletteNames[paletteIndex].toUpperCase()} / CERTIFIED NEUTRAL`;bumpDeliverables();say('Color variation has been mathematically approved.');return;}if(action==='palette-copy'){const cssText=':root {\n  --aura-neutral-01: #808080;\n  --aura-neutral-02: #F5F5DC;\n  --aura-neutral-03: #FFFFFF;\n}';copy(cssText);return;}if(action==='palette-save'){if(auraCorruptStores.has(paletteKey)){say('The original palette archive is damaged. Download it before resetting.');return;}const nextPalettes=[...savedPalettes,{name:paletteNames[paletteIndex],colors:['#808080','#F5F5DC','#FFFFFF'],savedAt:new Date().toISOString()}].slice(-20);if(!safeWrite(paletteKey,JSON.stringify(nextPalettes))){say('The palette could not be saved. Your existing archive remains unchanged.');return;}savedPalettes=nextPalettes;renderPaletteArchive(win);say('Palette study archived. It will remain identical.');return;}if(action==='syntax-example'){const src=$('[data-aura-source]',win);if(src)src.value='The moon wept silver';compileSyntax(win);return;}if(action==='syntax-word-audit'){analyzeSyntaxWords(win);return;}if(action==='syntax-compile'){compileSyntax(win);return;}if(action==='syntax-copy'){copy($('[data-aura-syntax-output]',win)?.textContent||'');return;}if(action==='syntax-report'){download('aura-language-normalization.txt',`AURA//SYNTHESIS LANGUAGE REPORT\n\n${$('[data-aura-syntax-output]',win)?.textContent||''}\n\n14/14 administrative checks completed.`,'text/plain');return;}if(action==='cube-reframe'){cubeAngles={x:Math.random()*1.2-.6,y:Math.random()*Math.PI*2};drawCube($('[data-aura-cube]',win));playChime();const n=$('[data-aura-cube-note]',win);if(n)n.textContent='BOLD STRUCTURAL REIMAGINING · DIMENSIONS REMAIN 1 × 1 × 1 M';bumpDeliverables();say('The same cube has been structurally reimagined.');return;}if(action==='cube-export'){const canvas=$('[data-aura-cube]',win);canvas?.toBlob(blob=>{if(blob){downloadBlob(blob,'aura-approved-cube.png');say('Approved geometry exported.');}});return;}if(action==='daw-play'){startDaw();return;}if(action==='daw-stop'){stopDaw();say('Acoustic output terminated without changing the note.');return;}if(action==='persona-generate'){const p=makePersona();paintPersona(win,p);win._auraCurrentPersona=p;bumpDeliverables();say('A new personnel identity has been assigned. Previous records remain valid.');return;}if(action==='persona-save'){if(auraCorruptStores.has(personaKey)){say('The original Persona Vault is damaged. Download it before resetting.');return;}const p=win._auraCurrentPersona||defaultPersona(),all=readPersonas();if(!all.some(x=>x.name===p.name&&x.dept===p.dept)){const nextPersonas=[...all,p].slice(-40);if(!safeWrite(personaKey,JSON.stringify(nextPersonas))){say('The personnel record could not be saved. Existing records remain unchanged.');return;}savedPersonas=nextPersonas;}renderPersonaArchive(win);say('The personnel record has been entered into the registry.');return;}if(action==='persona-export'){download('aura-personavault.json',JSON.stringify(readPersonas(),null,2));return;}if(action==='aura-export'){download('aura-enterprise-creative-audit.json',JSON.stringify(createReport(),null,2));say('The official creative audit has been exported.');return;}if(action==='aura-reset'){if(auraCorruptStores.has(auraLedgerKey)){say('Download the damaged AURA record from the recovery panel before resetting it.');return;}if(!window.confirm('Restore the AURA narrative counters to their initial standing? Saved palettes, personas, inbox references and release dossiers will remain unchanged.'))return;const resetLedger=freshAuraLedger();if(!persistAuraLedger(resetLedger)){say('AURA could not be reset because browser storage did not confirm the change. Your current record remains intact.');return;}say('Initial standing has been restored. The previous record remains in the export archive only if you saved one.');return;}if(action==='release-template-apply'){applyReleaseTemplate(win);return;}if(action==='release-preflight'){saveReleaseDraft(win,false);const report=buildReleasePreflight();renderReleasePreflight(win,report);const status=$('[data-release-status]',win);if(status)status.textContent=`Preflight complete: ${report.blockers.length} blocking issue(s), ${report.warnings.length} warning(s). This is not publishing approval.`;say(`Release preflight complete with ${report.blockers.length} blocking issue(s) and ${report.warnings.length} warning(s).`);return;}if(action==='release-assets-add'){$('[data-release-asset-input]',win)?.click();return;}if(action==='release-package'){$('[data-release-package-input]',win)?.click();return;}if(action==='release-package-import'){$('[data-release-package-import-input]',win)?.click();return;}if(action==='release-import-clear'){cancelReleasePackageImport();renderReleasePackageImport(win);say('Package preview cleared. No device files were changed.');return;}if(action==='release-assets-clear'){if(!releaseAssets.length)return;if(!window.confirm('Clear the local asset inventory? The original files will not be affected.'))return;if(!persistReleaseAssets([])){say('The asset inventory could not be cleared because browser storage did not confirm the change.');return;}releaseAssets=[];renderReleaseAssets(win);saveReleaseDraft(win,true);say('Asset inventory cleared. Original files were not changed.');return;}if(action==='release-assets-export'){download('curioid-asset-inventory.json',JSON.stringify(buildAssetManifest(),null,2),'application/json');say('Metadata-only asset manifest exported. No file contents were included.');return;}if(action==='release-save'){const saved=saveReleaseDraft(win,true);say(saved?'Release dossier and version snapshot saved locally. No publication was initiated.':'Release dossier or version snapshot could not be saved. Export the current dossier before closing. No publication was initiated.');return;}if(action==='release-export'){saveReleaseDraft(win,true);download('curioid-release-dossier.json',JSON.stringify(buildReleaseDossier(),null,2),'application/json');say('Release dossier exported. The project itself was not uploaded.');return;}if(action==='release-manifest'){saveReleaseDraft(win,true);const manifest=buildReleasePackageManifest();download('curioid-release-manifest.json',JSON.stringify(manifest,null,2),'application/json');const note=$('[data-release-status]',win);if(note)note.textContent=`Manifest exported. ${manifest.review.warnings.length} review note(s). Metadata only; no project files were bundled.`;say(`Release manifest exported with ${manifest.review.warnings.length} review note(s). No project files were bundled.`);return;}if(action==='release-copy'){saveReleaseDraft(win,true);const d=buildReleaseDossier(),summary=`${d.project.title}\nCreator: ${d.project.creator}\nVersion: ${d.project.version}\nCategory: ${d.project.category}\nPlatform: ${d.project.platform}\n\n${d.project.summary}\n\nRelease notes:\n${d.project.releaseNotes}\n\nPreparation checks: ${d.readiness.completed}/4\nInventoried assets: ${releaseAssets.length}`;copy(summary);return;}}
-    function onInput(e){auraBenchmarkInput(e.target);if(e.target.matches('[data-strato-guess]')){e.target.classList.remove('is-invalid');return;}if(e.target.matches('[data-strato-graveyard-filter]')){const state=arcadeStates.get('stratoladder');if(state){state.graveyardFilter=e.target.value;state.graveyardLimit=50;renderStratoGraveyard(e.target.closest('[data-aura-window]'));}return;}if(e.target.matches('[data-quota-guess]'))return;if(e.target.matches('[data-arcade-guess]')){const panel=e.target.closest('[data-arcade-panel]'),counter=panel?.querySelector('[data-arcade-counter]');if(counter)counter.textContent=`${String(e.target.value.length).padStart(2,'0')} / 18 CHARACTERS`;const win=e.target.closest('[data-aura-window]');if(activeArcadeMode==='wordlezilla')renderArcade(win);return;}if(e.target.matches('[data-cw-field]')){const host=e.target.closest('[data-aura-window]');clearTimeout(creatorSaveTimer);creatorSaveTimer=setTimeout(()=>saveCreatorProject(host,false),450);return;}if(e.target.matches('[data-release-field],[data-release-check]')){saveReleaseDraft(e.target.closest('[data-aura-window]'));return;}if(e.target.matches('[data-aura-reverb]')){const out=q('[data-aura-reverb-out]');if(out)out.textContent=`${e.target.value}%`;updateDawGain();}if(e.target.matches('[data-aura-cube-rotate]')){cubeAngles.y=Number(e.target.value)*Math.PI/180;const win=e.target.closest('[data-aura-window]');drawCube($('[data-aura-cube]',win));}if(e.target.matches('[data-aura-track]')){const index=Number(e.target.dataset.auraTrack);trackState[index]=e.target.getAttribute('aria-pressed')!=='true';e.target.setAttribute('aria-pressed',String(trackState[index]));updateDawGain();}}
+    function onInput(e){auraBenchmarkInput(e.target);if(e.target.matches('[data-aura-hum-volume]')){const value=clamp(Number(e.target.value)||0,0,100),out=q('[data-aura-hum-volume-out]');if(out)out.textContent=`${Math.round(value)}%`;if(ambientGain&&ambientContext?.state==='running')ambientGain.gain.setTargetAtTime(.075*(value/100),ambientContext.currentTime,.08);return;}if(e.target.matches('[data-strato-guess]')){e.target.classList.remove('is-invalid');return;}if(e.target.matches('[data-strato-graveyard-filter]')){const state=arcadeStates.get('stratoladder');if(state){state.graveyardFilter=e.target.value;state.graveyardLimit=50;renderStratoGraveyard(e.target.closest('[data-aura-window]'));}return;}if(e.target.matches('[data-quota-guess]'))return;if(e.target.matches('[data-arcade-guess]')){const panel=e.target.closest('[data-arcade-panel]'),counter=panel?.querySelector('[data-arcade-counter]');if(counter)counter.textContent=`${String(e.target.value.length).padStart(2,'0')} / 18 CHARACTERS`;const win=e.target.closest('[data-aura-window]');if(activeArcadeMode==='wordlezilla')renderArcade(win);return;}if(e.target.matches('[data-cw-field]')){const host=e.target.closest('[data-aura-window]');clearTimeout(creatorSaveTimer);creatorSaveTimer=setTimeout(()=>saveCreatorProject(host,false),450);return;}if(e.target.matches('[data-release-field],[data-release-check]')){saveReleaseDraft(e.target.closest('[data-aura-window]'));return;}if(e.target.matches('[data-aura-reverb]')){const out=q('[data-aura-reverb-out]');if(out)out.textContent=`${e.target.value}%`;updateDawGain();}if(e.target.matches('[data-aura-cube-rotate]')){cubeAngles.y=Number(e.target.value)*Math.PI/180;const win=e.target.closest('[data-aura-window]');drawCube($('[data-aura-cube]',win));}if(e.target.matches('[data-aura-track]')){const index=Number(e.target.dataset.auraTrack);trackState[index]=e.target.getAttribute('aria-pressed')!=='true';e.target.setAttribute('aria-pressed',String(trackState[index]));updateDawGain();}}
     function onChange(e){if(auraBenchmarkChange(e.target))return;if(e.target.matches('[data-arcade-difficulty]')){handleArcadeDifficultyChange(e.target);return;}if(e.target.matches('[data-cw-milestone-toggle]')){const project=selectedCreatorProject(),index=Number(e.target.dataset.cwMilestoneToggle),host=e.target.closest('[data-aura-window]');if(project&&Number.isInteger(index)&&project.milestones[index]){const previous=JSON.parse(JSON.stringify(project));project.milestones[index].done=e.target.checked;project.updatedAt=new Date().toISOString();if(!persistCreatorWorkspaces()){Object.assign(project,previous);const status=$('[data-cw-status]',host);if(status)status.textContent='Milestone status was not changed because storage could not confirm the save.';}renderCreatorWorkbench(host);}return;}if(e.target.matches('[data-cw-project-select]')){const host=e.target.closest('[data-aura-window]');saveCreatorProject(host,false);creatorSelectedId=e.target.value||null;renderCreatorWorkbench(host);return;}if(e.target.matches('[data-cw-field]')){saveCreatorProject(e.target.closest('[data-aura-window]'),false);return;}if(e.target.matches('[data-cw-import-file]')){const input=e.target,host=input.closest('[data-aura-window]'),file=input.files?.[0];if(file)importCreatorProject(file,host).catch(error=>{const status=$('[data-cw-status]',host);if(status)status.textContent=`Import rejected: ${error.message||'invalid workspace file'}`;}).finally(()=>{input.value='';});return;}if(e.target.matches('[data-release-field],[data-release-check]'))saveReleaseDraft(e.target.closest('[data-aura-window]'),true);if(e.target.matches('[data-release-asset-input]')){const input=e.target,host=input.closest('[data-aura-window]');addReleaseAssets(input.files||[],host).catch(error=>say(`Asset inventory failed: ${error.message||'could not read selected files'}`)).finally(()=>{input.value='';});}if(e.target.matches('[data-release-package-input]')){const input=e.target,host=input.closest('[data-aura-window]');buildReleaseProjectPackage(input.files||[],host).catch(error=>{const status=$('[data-release-status]',host);if(status)status.textContent=`Package not created: ${error.message||'the selected files could not be packaged'}`;say(`Portable package failed: ${error.message||'unknown error'}`);}).finally(()=>{input.value='';});}if(e.target.matches('[data-release-package-import-input]')){const input=e.target,host=input.closest('[data-aura-window]'),file=input.files?.[0];if(file){const generation=beginReleasePackageImport();releaseImportPackage=null;renderReleasePackageImport(host);const status=$('[data-release-status]',host);if(status)status.textContent='Validating selected package…';validateReleaseProjectPackage(file,()=>isCurrentReleasePackageImport(generation)).then(pack=>{if(!isCurrentReleasePackageImport(generation)||!host?.isConnected)return;releaseImportPackage=pack;renderReleasePackageImport(host);const currentStatus=$('[data-release-status]',host);if(currentStatus)currentStatus.textContent=`Package validated: ${pack.files.length} files · ${(pack.totalBytes/1048576).toFixed(2)} MB · ${pack.verified} hashes verified. Nothing has been extracted yet.`;say(`Package inspected: ${pack.files.length} files. No files have been extracted or executed.`);}).catch(error=>{if(!isCurrentReleasePackageImport(generation)||!host?.isConnected)return;releaseImportPackage=null;renderReleasePackageImport(host);const currentStatus=$('[data-release-status]',host);if(currentStatus)currentStatus.textContent=`Package rejected: ${error.message||'unsupported or unsafe package'}`;say(`Package rejected: ${error.message||'unknown error'}`);}).finally(()=>{if(isCurrentReleasePackageImport(generation)&&host?.isConnected)input.value='';});}}}
     function onPointerDown(e){const drag=e.target.closest('[data-aura-drag]');if(drag&&!e.target.closest('button')){const win=drag.closest('[data-aura-window]');if(!win||win.classList.contains('aura-window-max'))return;const r=win.getBoundingClientRect();cubeDragging=null;win._auraDrag={x:e.clientX-r.left,y:e.clientY-r.top};win.style.zIndex=String(++zIndex);try{drag.setPointerCapture(e.pointerId);}catch(_){}return;}const canvas=e.target.closest('[data-aura-cube]');if(canvas){cubeDragging={x:e.clientX,y:e.clientY};try{canvas.setPointerCapture(e.pointerId);}catch(_){}}}
     function onPointerMove(e){if(cubeDragging){cubeAngles.y+=(e.clientX-cubeDragging.x)*.009;cubeAngles.x+=(e.clientY-cubeDragging.y)*.009;cubeDragging={x:e.clientX,y:e.clientY};const canvas=e.target.closest('[data-aura-cube]')||q('[data-aura-cube]');drawCube(canvas);}const win=qa('[data-aura-window]').find(w=>w._auraDrag);if(win){const rect=root.getBoundingClientRect();win.style.left=`${clamp(e.clientX-rect.left-win._auraDrag.x,0,Math.max(0,rect.width-win.offsetWidth))}px`;win.style.top=`${clamp(e.clientY-rect.top-win._auraDrag.y,0,Math.max(0,rect.height-win.offsetHeight-40))}px`;}}
@@ -23141,7 +23534,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
         const nextInbox=[...universeInbox,{id:`in-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`,from:auraSafeText(meta.sourceExperienceId||'Independent world',80),type:auraSafeText(meta.type,80),title:auraSafeText(meta.title||'Shared reference',120),summary,receivedAt:new Date().toISOString()}].slice(-30);if(!writeUniverseInbox(nextInbox))throw new Error('The AURA inbox could not be saved. Existing records remain unchanged.');universeInbox=nextInbox;const inbox=activeWindows.get('universe');if(inbox)renderUniverseInbox(inbox);say('An external creative reference has arrived in the CURIOID Inbox.');return{message:'Saved a reviewable reference in the local CURIOID Inbox. The source project was not modified.',count:1};
       }
     });
-    return()=>{clearArcadeTimers();unregisterAuraAdapter();disposed=true;if(window.CurioidAuraOpenApp===auraOpenAppBridge){if(previousAuraOpenApp)window.CurioidAuraOpenApp=previousAuraOpenApp;else delete window.CurioidAuraOpenApp;}if(creatorSaveTimer){clearTimeout(creatorSaveTimer);const creatorWin=activeWindows.get('creator-workbench');if(creatorWin)saveCreatorProject(creatorWin,false);}clearTimeout(noticeTimer);clearInterval(scoreTimer);clearInterval(clockTimer);clearInterval(daemonTimer);document.removeEventListener('pointerdown',closeOutside);window.removeEventListener('resize',onStartMenuViewportChange);window.removeEventListener('scroll',onStartMenuViewportChange,true);cancelAnimationFrame(startMenuPositionFrame);startButton?.removeEventListener('click',onStartButtonClick);root.removeEventListener('click',onClick);root.removeEventListener('input',onInput);root.removeEventListener('change',onChange);root.removeEventListener('pointerdown',onPointerDown);root.removeEventListener('pointermove',onPointerMove);root.removeEventListener('pointerup',onPointerUp);root.removeEventListener('pointercancel',onPointerUp);root.removeEventListener('keydown',onKey);auraFullscreen.destroy();stopDaw();try{ambientOsc?.stop();}catch(_){}try{ambientContext?.close();}catch(_){}try{dawContext?.close();}catch(_){};};
+    return()=>{clearArcadeTimers();unregisterAuraAdapter();disposed=true;if(window.CurioidAuraOpenApp===auraOpenAppBridge){if(previousAuraOpenApp)window.CurioidAuraOpenApp=previousAuraOpenApp;else delete window.CurioidAuraOpenApp;}if(creatorSaveTimer){clearTimeout(creatorSaveTimer);const creatorWin=activeWindows.get('creator-workbench');if(creatorWin)saveCreatorProject(creatorWin,false);}clearTimeout(noticeTimer);clearInterval(scoreTimer);clearInterval(clockTimer);clearInterval(daemonTimer);document.removeEventListener('pointerdown',closeOutside);window.removeEventListener('resize',onStartMenuViewportChange);window.removeEventListener('scroll',onStartMenuViewportChange,true);cancelAnimationFrame(startMenuPositionFrame);startButton?.removeEventListener('click',onStartButtonClick);root.removeEventListener('click',onClick);root.removeEventListener('input',onInput);root.removeEventListener('change',onChange);root.removeEventListener('pointerdown',onPointerDown);root.removeEventListener('pointermove',onPointerMove);root.removeEventListener('pointerup',onPointerUp);root.removeEventListener('pointercancel',onPointerUp);root.removeEventListener('keydown',onKey);auraFullscreen.destroy();stopDaw();[ambientOsc,...ambientPartials].filter(Boolean).forEach(node=>{try{node.stop();}catch(_){}try{node.disconnect();}catch(_){}});try{ambientGain?.disconnect();}catch(_){}ambientOsc=null;ambientPartials=[];ambientGain=null;try{ambientContext?.close();}catch(_){}try{dawContext?.close();}catch(_){};};
   }
 
 
@@ -24318,8 +24711,123 @@ const PALETTES = [
   try { ensureExchangeKernelClient(); }
   catch (error) { console.warn('CURIOID Exchange Kernel client could not register:', error); }
 
+  const CURIOID_STORAGE_DATABASES = Object.freeze({
+    'curioid-kernel-v1':'CURIOID Kernel',
+    'curioid-browser-vault-v1':'Browser Vault',
+    'curioid-downloads-connection-v1':'Downloads connection',
+    'curioid-exchange-v1':'CURIOID Exchange',
+    'curioid-user-worlds-v1':'Sandbox OS registry',
+    'curioid-user-desktops-v1':'Desktop shortcuts',
+    'curioid-os-studio-drafts-v1':'OS Builder drafts',
+    'aether-os-local-v1':'Aether workspaces and attachment metadata'
+  });
+  function curioidApproximateStoredValueBytes(value, depth=0, seen=new WeakSet()) {
+    if (value === null || value === undefined) return 4;
+    if (typeof value === 'string') return value.length * 2;
+    if (typeof value === 'number' || typeof value === 'bigint') return 8;
+    if (typeof value === 'boolean') return 4;
+    if (typeof value !== 'object' || depth > 6) return 0;
+    if (typeof Blob !== 'undefined' && value instanceof Blob) return value.size;
+    if (value instanceof ArrayBuffer) return value.byteLength;
+    if (ArrayBuffer.isView(value)) return value.byteLength;
+    if (value instanceof Date) return 8;
+    if (seen.has(value)) return 0;
+    seen.add(value);
+    let size = 16;
+    if (Array.isArray(value)) {
+      for (let i=0;i<Math.min(value.length,160);i++) size += curioidApproximateStoredValueBytes(value[i],depth+1,seen);
+    } else {
+      let keys=[]; try { keys=Object.keys(value).slice(0,160); } catch (_) { return size; }
+      for (const key of keys) size += key.length*2 + curioidApproximateStoredValueBytes(value[key],depth+1,seen);
+    }
+    return Math.min(size,65536);
+  }
+  async function curioidInspectLocalStorage({maxRecords=8000,budgetMs=4500}={}) {
+    if (window.location?.origin === 'null') return { available:false, reason:'This page has an opaque local/test origin. Per-tool database inspection requires the published HTTPS origin; no database was opened or created.' };
+    if (typeof window.indexedDB?.databases !== 'function') return { available:false, reason:'This browser does not expose IndexedDB database enumeration. Per-tool inventory is unavailable; the origin-wide browser estimate remains available.' };
+    const started=performance.now(),output=[];let scanned=0,estimatedBytes=0,truncated=false;
+    let databases=[];
+    try { databases=await window.indexedDB.databases(); }
+    catch (error) { return {available:false,reason:String(error?.message||'IndexedDB database enumeration was denied.').slice(0,180)}; }
+    const known=databases.filter(item=>item?.name&&Object.prototype.hasOwnProperty.call(CURIOID_STORAGE_DATABASES,item.name)).slice(0,20);
+    const openExisting=(name,version)=>new Promise((resolve,reject)=>{
+      if(!Number.isSafeInteger(version)||version<1){reject(new Error('Database version metadata was unavailable.'));return;}
+      let settled=false,request,timer;
+      const finish=(fn,value)=>{if(settled)return;settled=true;clearTimeout(timer);fn(value);};
+      try { request=window.indexedDB.open(name,version); } catch (error) { finish(reject,error); return; }
+      timer=setTimeout(()=>finish(reject,new Error('Database inspection timed out.')),1800);
+      request.onupgradeneeded=()=>{try{request.transaction?.abort();}catch(_){}finish(reject,new Error('Database changed during inspection; no database was created or upgraded.'));};
+      request.onsuccess=()=>{const db=request.result;if(settled){db.close();return;}db.onversionchange=()=>db.close();finish(resolve,db);};
+      request.onerror=()=>finish(reject,request.error||new Error('Database could not be opened read-only.'));
+      request.onblocked=()=>finish(reject,new Error('Another tab is blocking database inspection.'));
+    });
+    for (const info of known) {
+      if (truncated || performance.now()-started>=budgetMs) { truncated=true; break; }
+      let db;
+      try {
+        db=await openExisting(info.name,info.version);
+        const allStoreNames=[...db.objectStoreNames],stores=allStoreNames.slice(0,40),expectedStores=typeof OS_BACKUP_STORE_NAMES!=='undefined'?(OS_BACKUP_STORE_NAMES[info.name]||new Set()):new Set(),excludedDatabase=typeof OS_BACKUP_EXCLUDED_DATABASES!=='undefined'&&OS_BACKUP_EXCLUDED_DATABASES.has(info.name),excludedStores=excludedDatabase?stores.slice():stores.filter(storeName=>info.name==='Doors98_C_Memory'&&storeName==='handles'),entry={name:info.name,label:CURIOID_STORAGE_DATABASES[info.name],version:db.version,stores:stores.length,records:0,approxBytes:0,partial:false,coverageComplete:excludedDatabase||stores.length===allStoreNames.length,uncoveredStores:excludedDatabase?[]:stores.filter(storeName=>!expectedStores.has(storeName)),excludedStores};
+        for (const storeName of stores) {
+          if (truncated || performance.now()-started>=budgetMs || scanned>=maxRecords) { truncated=true; entry.partial=true; break; }
+          await new Promise((resolve,reject)=>{
+            let tx,request;
+            try { tx=db.transaction(storeName,'readonly'); request=tx.objectStore(storeName).openCursor(); }
+            catch (error) { reject(error); return; }
+            request.onsuccess=()=>{
+              const cursor=request.result;
+              if (!cursor) return;
+              scanned++;entry.records++;
+              const bytes=curioidApproximateStoredValueBytes(cursor.value);
+              entry.approxBytes+=bytes;estimatedBytes+=bytes;
+              if(scanned>=maxRecords||performance.now()-started>=budgetMs){truncated=true;entry.partial=true;return;}
+              cursor.continue();
+            };
+            request.onerror=()=>reject(request.error||new Error(`Could not inspect ${storeName}.`));
+            tx.oncomplete=resolve;
+            tx.onerror=()=>reject(tx.error||new Error(`Read-only inspection failed for ${storeName}.`));
+            tx.onabort=()=>reject(tx.error||new Error(`Read-only inspection was aborted for ${storeName}.`));
+          });
+        }
+        output.push(entry);
+      } catch (error) {
+        output.push({name:info.name,label:CURIOID_STORAGE_DATABASES[info.name],error:String(error?.message||error).slice(0,160)});
+      } finally { try { db?.close(); } catch (_) {} }
+    }
+    let opfs=null;
+    if (!truncated && performance.now()-started<budgetMs && typeof navigator.storage?.getDirectory==='function') {
+      try {
+        const root=await navigator.storage.getDirectory();
+        const directory=await root.getDirectoryHandle('aether-assets-v1');
+        let files=0,bytes=0;
+        for await (const [name,handle] of directory.entries()) {
+          if(handle.kind!=='file')continue;
+          const file=await handle.getFile();files++;bytes+=file.size;
+          if(files>=5000||performance.now()-started>=budgetMs){truncated=true;break;}
+        }
+        opfs={label:'Aether OPFS attachments',files,bytes,partial:truncated};
+      } catch (error) { if(error?.name!=='NotFoundError') opfs={label:'Aether OPFS attachments',error:String(error?.message||error).slice(0,160)}; }
+    }
+    return {available:true,databases:output,scannedRecords:scanned,approxBytes:estimatedBytes,opfs,truncated,coverageComplete:!truncated&&output.every(entry=>!entry.error&&entry.coverageComplete!==false),elapsedMs:Math.round(performance.now()-started),note:'Database values are sampled read-only. Backup coverage compares every discovered store in known CURIOID databases against the current restore allowlist; Doors98 folder handles and the non-portable Downloads directory handle database are intentionally excluded. Byte counts are estimates, capped by depth/record size; Blob/OPFS sizes use browser-reported metadata.'};
+  }
+  async function curioidInspectBackupArtifacts(options={}){
+    const items=await curioidVault.list();
+    const backups=items.filter(item=>String(item.name||'').toLowerCase().endsWith('.curioidbackup')).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+    if(!backups.length)return{available:true,count:0,verified:0,warning:true,detail:'No full-system recovery backup is currently registered in Browser Vault.'};
+    const newest=backups[0];
+    if(newest.sessionOnly)return{available:true,count:backups.length,verified:0,warning:true,detail:'The newest system backup is session-only and is not a durable recovery copy.'};
+    const maxBytes=Number.isSafeInteger(options.maxBytes)?Math.max(1024*1024,Math.min(options.maxBytes,64*1024*1024)):24*1024*1024;
+    if(Number(newest.size)>maxBytes)return{available:true,count:backups.length,verified:0,warning:true,detail:`${backups.length} recovery backup(s) found. The newest is ${(newest.size/1048576).toFixed(1)} MB; deep verification was deferred to avoid a large diagnostic memory spike.`};
+    const record=await curioidVault.get(newest.id);
+    if(!record?.blob||record.blob.size!==Number(newest.size))throw new Error('The newest Browser Vault backup could not be read at its registered size.');
+    const parsed=JSON.parse(await osReadBackupFileText(record.blob,options));
+    const summary=await osValidateCompleteSystemBackupData(parsed,options);
+    return{available:true,count:backups.length,verified:1,warning:false,detail:`${backups.length} durable system backup(s) registered. The newest backup passed its full structure, schema and chunk-integrity checks (${(record.blob.size/1048576).toFixed(1)} MB; ${summary.databases} database(s)).`};
+  }
+
   window.CurioidProjects = {
     ids: Object.keys(modules),
+    inspectLocalStorage: curioidInspectLocalStorage,
+    inspectBackupArtifacts: curioidInspectBackupArtifacts,
     mount(id, host, api = {}) {
       const item = modules[id];
       if (!item) {
@@ -24364,6 +24872,8 @@ const PALETTES = [
         // as binder initialization so one malformed view cannot escape mount recovery.
         host.dataset.curioidExperience = id;
         host.innerHTML = item[0]();
+        const hostLifecycleCleanup = runtimeScope?.bindHost?.(host);
+        if (typeof hostLifecycleCleanup === 'function' && !registerOwnedCleanup(hostLifecycleCleanup, 'host-visibility-lifecycle')) resources.push(hostLifecycleCleanup);
         const rootLifetimeCleanup = bindMountRootEventLifetime(host);
         if (!registerOwnedCleanup(rootLifetimeCleanup, 'mount-root-listeners')) resources.push(rootLifetimeCleanup);
         restoreProjectPreferences(host, id);
