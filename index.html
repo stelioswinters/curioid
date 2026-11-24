@@ -13,7 +13,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-awqIDlhzjgqTaX7yyA9a2RHYIIhVjDiGw0UtgmLZg7k='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-8Abeh5wnI1EJazVBrOnwouCJz3qc9+A/OI6qldYPT94='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.github.io/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
@@ -219,6 +219,9 @@
     .page-wrap { max-width: 1380px; margin: 0 auto; }
     .hero { padding: 43px 0 29px; }
     .hero-kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 13px; color: var(--acid); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .17em; text-transform: uppercase; }
+    .hero-kicker .egg-hunt-toggle{margin-left:auto;flex:0 0 31px;letter-spacing:normal;}
+    .hero-kicker>span{min-width:0;}
+
     .hero-kicker::before { content: ""; width: 23px; height: 1px; background: var(--acid); }
     h1 { max-width: 790px; margin: 0; font-size:clamp(35px, 5vw, 59px); line-height: .99; letter-spacing: -.065em; font-weight: 820; }
     .strange-word { position: relative; display: inline-flex; align-items: baseline; color: var(--acid); font-style: normal; letter-spacing: -.075em; transform: skewX(-8deg) rotate(-1.4deg); transform-origin: left center; text-shadow: 2px 0 rgba(214,255,105,.27), -2px 1px rgba(214,255,105,.16), 0 0 22px rgba(214,255,105,.12); white-space: nowrap; }
@@ -459,7 +462,7 @@
       opacity: 0; transform: translateY(8px); pointer-events: none;
       transition: opacity .18s ease, transform .18s ease, background .18s ease;
     }
-    .back-to-top.is-visible { opacity: .62; transform: translateY(0); pointer-events: auto; }
+    .back-to-top.is-visible { opacity: .86; transform: translateY(0); pointer-events: auto; }
     .back-to-top:hover { opacity: .96; background: rgba(42,42,52,.68); color: var(--acid); border-color: rgba(214,255,105,.42); }
     .back-to-top:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; }
     @media (max-width: 600px) {
@@ -762,7 +765,7 @@
 
     <div class="page-wrap">
       <section class="hero" aria-labelledby="heroTitle">
-        <p class="hero-kicker"><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button><span>EXPLORE THE CURIOID UNIVERSE</span></p>
+        <p class="hero-kicker"><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button><span>EXPLORE THE CURIOID UNIVERSE</span><button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button></p>
         <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> <span class="results-word">results.</span></h1>
         <div class="hero-bottom">
           <p class="hero-copy">Six creative worlds, useful tools and Sandbox OS. Explore a world or build one of your own.</p>
@@ -790,11 +793,11 @@
         </details>
       </section>
       <hr class="section-rule">
-      <div class="rooms-label"><span>Explore the collections</span><div class="rooms-label-actions"><span id="projectCount" aria-live="polite">55 Projects</span><button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button></div></div>
+      <div class="rooms-label"><span>Explore the collections</span><div class="rooms-label-actions"><span id="projectCount" aria-live="polite">55 Projects</span></div></div>
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.284</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.286</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -2163,7 +2166,7 @@
           if (previous) previous.remove();
           projectCssPromise = loadAssetWithFallback({
             type: "link",
-            file: "projects.css", hash: "5c8f858e06d23c4d79c8f356b9321882822179a29bde26dda487641893f06776", integrity: "sha384-g3Oy2QZwM+MXZB/E6vlVoE3Kn7sRafdYgR5cJAzKFR/9DBJQjUMitsvH+YS04Enz",
+            file: "projects.css", hash: "d11db2abc5bda9382d413da1f494801d5d1d02b2f9af6f972d4499cd53398483", integrity: "sha384-Tddm7mv/Td7GYyZkHcSfGT9QkGupD6cJO6BXW+5DNgeE6CjIga1fsR0brlVsVVwx",
             expected: "Project styles",
             markReady: element => { element.dataset.loaded = "true"; }
           }).then(() => {
@@ -2192,7 +2195,7 @@
           if (window.CurioidProjects) return Promise.resolve();
           return loadAssetWithFallback({
             type: "script",
-            file: "projects.js", hash: "ecbbecbf4117d7d261c37dd96a9093734a849dd8c183b7cbe59909d008130164", integrity: "sha384-jdI3f+bna+JHqcqpE3B27raaxJ5D56ml0Jpy0YxUBwi2kJVqmmwLOQshcNFZhDII",
+            file: "projects.js", hash: "2309502edfae8a1ea1912587ab00a8b159ce82af0e675992cbb9b81a79a2612a", integrity: "sha384-kzZvsiQAJbV+U218YrDBHFsPHNOi+gvgImUGTKqFBBh/ZHwe8NsFp5+stTuBNltR",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
