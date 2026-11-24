@@ -217,7 +217,7 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
 }
 
 
-/* CURIOID v1.295 — responsive text and content-boundary safeguards. */
+/* CURIOID v1.297 — responsive text and content-boundary safeguards. */
 :where(.project-tool,.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis,.curioid-assistant-panel)
   :where(p,h1,h2,h3,h4,h5,h6,label,legend,summary,figcaption,li,dt,dd,small,strong,span,a,button,output) {
   max-width: 100%;

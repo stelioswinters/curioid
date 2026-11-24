@@ -13,7 +13,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-q8UyIqqWopmDiiAP+SWizQjQDbm+eeLMSy2Cazrp5ac='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZIzvIzLkNsDfvnyoj5wJAsjB7jlv5adVz4V8lTBpSo0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.com/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
@@ -831,7 +831,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.296</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.297</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -1923,18 +1923,18 @@
       async function runCurioidHealthCheck() {
         if (healthRunButton) { healthRunButton.disabled = true; healthRunButton.textContent = 'Checking…'; }
         if (healthRepairButton) healthRepairButton.disabled = true;
-        paintHealthResults([], 'Running read-only local diagnostics. Temporary storage probes clean up after themselves…', 'CHECKING');
+        paintHealthResults([], 'Running read-only diagnostics. Temporary probes clean up.', 'CHECKING');
         const rows = [];
         const add = (label, result) => rows.push({ label, ...result });
-        const projects = window.CurioidProjects;
+        const projects=window.CurioidProjects;
         const osBootReady=['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'].every(id=>projects?.ids?.includes(id));
-        add('OS boot contracts', {ok:osBootReady,warning:!projects?.ids?.length,detail:osBootReady?'Six OS modules registered.':'Runtime or OS modules unavailable.'});
+        add('OS boot contracts',{ok:osBootReady,warning:!projects?.ids?.length,detail:osBootReady?'Six OS modules registered.':'Runtime or OS modules unavailable.'});
         const runtime = window.CurioidRuntimeSupervisor?.getStatus?.();
         add('Application lifecycle', runtime ? (runtime.cleanupFailures ? { ok:false, detail:`${runtime.activeScopes} active scopes; ${runtime.cleanupFailures} cleanup issue(s) recorded this session.` } : { ok:true, detail:`${runtime.activeScopes} active scope(s), ${runtime.activeResources} tracked resource(s), no cleanup errors recorded.` }) : { ok:false, warning:true, detail:'Runtime Supervisor is not available yet.' });
         const assetSRI=[...document.scripts].some(n=>n.src.includes('projects.js')&&n.integrity.startsWith('sha384-'))&&[...document.querySelectorAll('link[rel=stylesheet]')].some(n=>n.href.includes('projects.css')&&n.integrity.startsWith('sha384-'));
         const registration=await(navigator.serviceWorker?.getRegistration?.().catch(()=>null)||Promise.resolve(null));
         const cacheNames=await(window.caches?.keys?.().catch(()=>[])||Promise.resolve([]));
-        const hasCache=cacheNames.some(name=>name.startsWith('curioid-shell:')||name.startsWith('curioid-shell-v'));
+        const hasCache=cacheNames.some(name=>name.includes('curioid-shell'));
         add('Assets / offline',{ok:!!(assetSRI&&registration?.active&&hasCache),warning:!(assetSRI&&registration?.active&&hasCache),detail:`SRI ${assetSRI?'ok':'missing'}; SW ${registration?.active?'active':'inactive'}; cache ${hasCache?'yes':'no'}.`});
         const estimate = await (navigator.storage?.estimate?.().catch(() => null) || Promise.resolve(null));
         const usage = Number.isFinite(estimate?.usage) ? formatStorageSize(estimate.usage) : 'unavailable';
@@ -1972,7 +1972,7 @@
         if (healthRepairButton) healthRepairButton.disabled = !registration;
         return rows;
       }
-      healthRunButton?.addEventListener('click', () => { runCurioidHealthCheck().catch(error => paintHealthResults([], `Diagnostics could not finish: ${String(error?.message||error).slice(0,180)}`, 'INCOMPLETE')); });
+      healthRunButton?.addEventListener('click',async()=>{try{await runCurioidHealthCheck();}catch(error){paintHealthResults([],`Diagnostics could not finish: ${String(error?.message||error).slice(0,180)}`,'INCOMPLETE');}finally{if(healthRunButton)healthRunButton.disabled=false;}});
       healthRepairButton?.addEventListener('click', async () => {
         const registration = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
         if (!registration) { paintHealthResults([], 'No service-worker registration exists to refresh. Open CURIOID over HTTPS, then run diagnostics again.', 'UNAVAILABLE'); return; }
@@ -2512,7 +2512,7 @@
           if (previous) previous.remove();
           projectCssPromise = loadAssetWithFallback({
             type: "link",
-            file: "projects.css", hash: "95e43bd92c5eb8c14c287b6e7f904941a8b14ef97173baa33a0e62c3a8130954", integrity: "sha384-EMDYEZf8desJGQnCWZBa4KL+Jm8bL7XSJmzsitpDvkM9NJgA0PklQd9AuVm26XkN",
+            file: "projects.css", hash: "f1c8a30681035b9b0c68cce1adebb11bd434f6d3a12fb5cd903e4d3e00c1bb6c", integrity: "sha384-hwewMDO46vQvM5TQcPNLp6qZdaRvH8WhSV4tTD48BcOv9xmbC0CzH5Yic7WkD99m",
             expected: "Project styles",
             markReady: element => { element.dataset.loaded = "true"; }
           }).then(() => {
@@ -2541,7 +2541,7 @@
           if (window.CurioidProjects) return Promise.resolve();
           return loadAssetWithFallback({
             type: "script",
-            file: "projects.js", hash: "70f748fc5bcc2632447c4cee05ea5f01a06add041d72c20ac754347dde064a77", integrity: "sha384-h7RYAVb7zkMdTHeIqhpy45X7sxErvJGlxnxrYnBnq78lyg4Z4ULH5iJnG6ddmthc",
+            file: "projects.js", hash: "ce698fee67c8dd03836d3a838a9a5babfa3da4a99f39e8f6d1872d6ff948dbbb", integrity: "sha384-033kStxzQM8v0WEKpfKxAFMYCf6px6HWCZHBfFD3EYBRlbpQFm1oTr3mZimgrQE5",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {

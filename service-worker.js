@@ -1,17 +1,17 @@
-/* CURIOID v1.296 offline shell. Minimal install; larger assets cache on first use. */
+/* CURIOID v1.297 offline shell. Minimal install; larger assets cache on first use. */
 'use strict';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
-const CACHE_NAME = `${CACHE_PREFIX}v1.296`;
+const CACHE_NAME = `${CACHE_PREFIX}v1.297`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 // Generated from the exact production files by scripts/refresh_release_assets.py.
 const EXPECTED_SHA256 = Object.freeze({
   /* CURIOID_ASSET_HASHES_START */
-  'index.html': '1d1a19c5ed18f9b44567706fd8cbec1432acb8f02ea2553791c9eb4a4a72dc36',
-  'projects.css': '95e43bd92c5eb8c14c287b6e7f904941a8b14ef97173baa33a0e62c3a8130954',
-  'projects.js': '70f748fc5bcc2632447c4cee05ea5f01a06add041d72c20ac754347dde064a77',
+  'index.html': '871be2c942206ae5ab9954047f2b04eadf7aea9433e584b293ceba4654bcf43c',
+  'projects.css': 'f1c8a30681035b9b0c68cce1adebb11bd434f6d3a12fb5cd903e4d3e00c1bb6c',
+  'projects.js': 'ce698fee67c8dd03836d3a838a9a5babfa3da4a99f39e8f6d1872d6ff948dbbb',
   'vocal-lexicon.js': '1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a',
-  'curioids.html': 'efa11079d8298c828452765f2c1f8f0cab15af905f378df9536c76751fed50f0',
+  'curioids.html': '494c35baaceed9d8a7a576ab7c9df6e815bf993abf04d7298d12508c580c2984',
   'manifest.webmanifest': '1868963388ab187bace09b717e9172a03fef1f9d203f9c41305d9d4e5272e505',
   'robots.txt': '23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4',
   'sitemap.xml': '6983c2451814d79ea47ff138849bda8faabd386b3379dd089445e72476836a87',
