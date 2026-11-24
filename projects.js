@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.23 / CURIOID v1.274 */
+/* Build: 2026.11.24 / CURIOID v1.290 */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
@@ -1036,9 +1036,9 @@
     const onImport=()=>fileInput.click();const onFiles=async()=>{for(const file of [...(fileInput.files||[])]){try{await persistFile(file);}catch(error){notice(error.message);break;}}fileInput.value='';};
     const onReset=()=>{prefs.pinned=launchables.slice(0,Math.min(5,launchables.length)).map(item=>item.id);savePrefs();renderShelf();};
     const onOpenSettings=()=>{if(settings.showModal)settings.showModal();else settings.setAttribute('open','');};const onCloseSettings=()=>settings.close?.();
-    const settingsButton=document.createElement('button');settingsButton.type='button';settingsButton.className='curioid-desktop-task-button';settingsButton.textContent='▦ DESKTOP';settingsButton.title='Personalise your desktop, pin shortcuts or add local files';settingsButton.setAttribute('aria-haspopup','dialog');taskbar.append(settingsButton);
-    const itemsToggle=document.createElement('button');itemsToggle.type='button';itemsToggle.className='curioid-user-items-toggle';itemsToggle.textContent='▤ ITEMS';itemsToggle.title='Show desktop shortcuts and files';itemsToggle.setAttribute('aria-label','Show desktop shortcuts and files');itemsToggle.setAttribute('aria-expanded','false');taskbar.append(itemsToggle);
-    const onItemsToggle=()=>{const show=shelf.hidden;shelf.hidden=!show;itemsToggle.setAttribute('aria-expanded',String(show));itemsToggle.textContent=show?'▤ HIDE ITEMS':'▤ ITEMS';itemsToggle.title=show?'Hide desktop shortcuts and files':'Show desktop shortcuts and files';itemsToggle.setAttribute('aria-label',show?'Hide desktop shortcuts and files':'Show desktop shortcuts and files');};itemsToggle.addEventListener('click',onItemsToggle);
+    const settingsButton=document.createElement('button');settingsButton.type='button';settingsButton.className='curioid-desktop-task-button';settingsButton.textContent='Desktop preferences';settingsButton.title='Personalise the desktop, pin shortcuts or add local files';settingsButton.setAttribute('aria-haspopup','dialog');const managementActions=host.querySelector('.curioid-os-management-actions');(managementActions||taskbar).append(settingsButton);settingsButton.classList.add('curioid-os-management-action');
+    const itemsToggle=document.createElement('button');itemsToggle.type='button';itemsToggle.className='curioid-user-items-toggle';itemsToggle.textContent='Desktop shortcuts & files';itemsToggle.title='Show desktop shortcuts and files';itemsToggle.setAttribute('aria-label','Show desktop shortcuts and files');itemsToggle.setAttribute('aria-expanded','false');(managementActions||taskbar).append(itemsToggle);itemsToggle.classList.add('curioid-os-management-action');
+    const onItemsToggle=()=>{const show=shelf.hidden;shelf.hidden=!show;itemsToggle.setAttribute('aria-expanded',String(show));itemsToggle.textContent=show?'Hide desktop shortcuts & files':'Desktop shortcuts & files';itemsToggle.title=show?'Hide desktop shortcuts and files':'Show desktop shortcuts and files';itemsToggle.setAttribute('aria-label',show?'Hide desktop shortcuts and files':'Show desktop shortcuts and files');};itemsToggle.addEventListener('click',onItemsToggle);
     const onDragStart=event=>{const item=event.target.closest('[data-shortcut-id],[data-file-id]');if(!item)return;event.dataTransfer?.setData('text/plain',item.dataset.shortcutId||`file:${item.dataset.fileId}`);if(event.dataTransfer)event.dataTransfer.effectAllowed='move';};
     const onDragOver=event=>{if(event.target.closest('[data-shortcut-id],[data-file-id]'))event.preventDefault();};
     const onDrop=event=>{const from=event.dataTransfer?.getData('text/plain')||'',to=event.target.closest('[data-shortcut-id],[data-file-id]');if(!to||!from)return;event.preventDefault();const current=[...shelf.children];const fromEl=current.find(el=>el.dataset.shortcutId===from||el.dataset.fileId===from.replace(/^file:/,''));if(fromEl&&fromEl!==to){shelf.insertBefore(fromEl,to);const ordered=[...shelf.querySelectorAll('[data-shortcut-id]')].map(el=>el.dataset.shortcutId);prefs.pinned=ordered;savePrefs();}};
@@ -1121,6 +1121,8 @@
     const resizeObserver=new MutationObserver(enhanceAllResizableWindows);resizeObserver.observe(shell,{childList:true,subtree:true});
     applyPrefs();requestFiles();
     const assistantCleanup=bindCurioidAssistantHub(shell,{experienceId,personaId:map.persona,taskbar});
+    const managementDock=shell.querySelector('.curioid-os-management-dock');
+    if(managementDock)taskbar.append(managementDock);
     // UMBRA's primary editor and the Aether/AURA central workspaces now expose
     // the same taskbar restore + min/max/close semantics as floating app windows.
     let primaryTarget=null,primaryTask=null,primaryNote=null;
@@ -10223,6 +10225,69 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const trayOverflowButton = trayOverflow ? $('[data-retro-tray-overflow-toggle]', trayOverflow) : null;
     const trayOverflowMenu = trayOverflow ? $('[data-retro-tray-overflow-menu]', trayOverflow) : null;
     const networkTrayButton = tray ? $('[data-retro-network-open]', tray) : null;
+    const managementDock = document.createElement('div');
+    managementDock.className = 'curioid-os-management-dock';
+    const managementToggle = document.createElement('button');
+    managementToggle.type = 'button';
+    managementToggle.className = 'curioid-os-management-toggle';
+    managementToggle.setAttribute('aria-label', `${id} Management`);
+    managementToggle.setAttribute('aria-haspopup', 'true');
+    managementToggle.setAttribute('aria-expanded', 'false');
+    managementToggle.title = `${id} Management · Connections, transfers and system tools`;
+    managementToggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.4 12s3.3-6.1 9.6-6.1 9.6 6.1 9.6 6.1-3.3 6.1-9.6 6.1S2.4 12 2.4 12Z"/><circle cx="12" cy="12" r="2.7"/><path d="M4.7 6.9 3.5 5.7M19.3 6.9l1.2-1.2M4.7 17.1l-1.2 1.2M19.3 17.1l1.2 1.2"/></svg><span>MANAGEMENT</span>';
+    const managementMenu = document.createElement('section');
+    managementMenu.className = 'curioid-os-management-menu';
+    managementMenu.hidden = true;
+    managementMenu.setAttribute('aria-label', `${id} Management actions`);
+    managementMenu.innerHTML = '<header class="curioid-os-management-head"><b>OS MANAGEMENT</b><small>Connections, transfers &amp; system tools</small></header><div class="curioid-os-management-actions"></div><p class="curioid-os-management-foot">This panel manages this OS and its connections. Apps and workspaces stay in their own world.</p>';
+    const managementActions = managementMenu.querySelector('.curioid-os-management-actions');
+    const managementAdd = (element, label, description = '') => {
+      if (!element) return;
+      element.classList.add('curioid-os-management-action');
+      if (label) {
+        element.setAttribute('aria-label', label);
+        if (!element.title) element.title = label;
+      }
+      if (description) element.dataset.managementDescription = description;
+      managementActions.append(element);
+    };
+    // Sound preferences are OS-level settings too. Move the existing live
+    // control into Management so it is not a second floating utility button.
+    const osSoundDock = root.querySelector('[data-curioid-os-sound-dock]');
+    if (osSoundDock) {
+      osSoundDock.classList.add('curioid-os-management-sound');
+      managementActions.append(osSoundDock);
+    }
+    const setManagementOpen = value => {
+      const open = Boolean(value);
+      managementMenu.hidden = !open;
+      managementToggle.setAttribute('aria-expanded', String(open));
+      managementToggle.classList.toggle('is-open', open);
+    };
+    const onManagementToggle = event => {
+      event.preventDefault(); event.stopPropagation();
+      setManagementOpen(managementMenu.hidden);
+    };
+    const onManagementAction = event => {
+      // The shared sound controls are an expandable settings group inside
+      // Management; interacting with its toggle/preview must not dismiss it.
+      if (event.target.closest('.curioid-os-sound-dock,.retro-sound-wrap,.curioid-os-management-audio,.eno-volume-panel')) return;
+      if (event.target.closest('button, a')) setManagementOpen(false);
+    };
+    const onManagementOutside = event => {
+      if (!managementMenu.hidden && !managementDock.contains(event.target)) setManagementOpen(false);
+    };
+    const onManagementKey = event => {
+      if (event.key === 'Escape' && !managementMenu.hidden) {
+        event.preventDefault(); event.stopPropagation(); setManagementOpen(false);
+        managementToggle.focus({ preventScroll: true });
+      }
+    };
+    managementToggle.addEventListener('click', onManagementToggle);
+    managementActions.addEventListener('click', onManagementAction);
+    document.addEventListener('pointerdown', onManagementOutside, true);
+    root.addEventListener('keydown', onManagementKey);
+    managementDock.append(managementToggle, managementMenu);
     const bar = document.createElement('div');
     bar.className = 'os-system-center-bar curioid-taskbar-tools';
     let dockToggleButton = null;
@@ -10247,11 +10312,54 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     }
     const worldName = ({'dead-interface':'Doors98','food-alchemy':'NOURISH OS','echonoise-os':'Echonoise OS','umbra-os':'UMBRA Studio','aether-os':'Aether.OS','aura-synthesis':'AURA//SYNTHESIS'})[id] || 'Operating System';
     const trigger = document.createElement('button');
-    trigger.type = 'button'; trigger.className = 'os-system-center-trigger';
-    trigger.textContent = 'ⓘ'; trigger.title = `${worldName} System Center · Help, diagnostics, storage & backup`;
+    trigger.type = 'button'; trigger.className = 'os-system-center-trigger curioid-os-management-action';
+    trigger.innerHTML = '<span class="curioid-os-management-glyph" aria-hidden="true">ⓘ</span><span class="curioid-os-management-copy"><b>System Center</b><small>Diagnostics, storage, backup and maintenance</small></span>';
+    trigger.title = `${worldName} System Center · Help, diagnostics, storage & backup`;
     trigger.setAttribute('aria-label', `Open ${worldName} System Center for help, diagnostics, storage and backup`);
     trigger.setAttribute('aria-haspopup', 'dialog');
-    bar.append(trigger);
+    managementAdd(trigger, `Open ${worldName} System Center`, 'Diagnostics, storage and backup');
+    if (networkTrayButton) {
+      networkTrayButton.innerHTML = '<span class="curioid-os-management-glyph" aria-hidden="true">◧</span><span class="curioid-os-management-copy"><b>Network connections</b><small>Local network and service status</small></span>';
+      managementAdd(networkTrayButton, 'Open network connections', 'Local network and service status');
+    }
+    // Move system audio and host-folder controls into the same Management
+    // drawer, preserving their original DOM nodes and event handlers.
+    const doorsSoundWrap = id === 'dead-interface' ? $('[data-retro-sound-wrap]', taskbar) : null;
+    if (doorsSoundWrap) managementAdd(doorsSoundWrap, 'Doors98 sound settings', 'System sounds and Bella voice volume');
+    const enoAudioToggle = id === 'echonoise-os' ? $('[data-eno-audio-toggle]', taskbar) : null;
+    const enoVolumePanel = id === 'echonoise-os' ? $('[data-eno-volume-panel]', shell) : null;
+    if (enoAudioToggle && enoVolumePanel) {
+      const enoAudioGroup = document.createElement('div');
+      enoAudioGroup.className = 'curioid-os-management-audio';
+      enoAudioGroup.append(enoAudioToggle, enoVolumePanel);
+      managementAdd(enoAudioGroup, 'Echonoise audio output settings', 'Master volume and mute');
+    }
+    const enoNetworkStatus = id === 'echonoise-os' ? $('.eno-tray-network', shell) : null;
+    if (enoNetworkStatus) {
+      const networkInfo = document.createElement('div');
+      networkInfo.className = 'curioid-os-management-status';
+      networkInfo.append(enoNetworkStatus);
+      const networkLabel = document.createElement('span'); networkLabel.textContent = 'Internal service status'; networkInfo.append(networkLabel);
+      managementAdd(networkInfo, 'Echonoise internal service status', 'Read-only local connection status');
+    }
+    const auraAmbientButton = id === 'aura-synthesis' ? $('[data-aura-action="ambient"]', taskbar) : null;
+    if (auraAmbientButton) managementAdd(auraAmbientButton, 'AURA studio ambience', 'Toggle the low studio hum');
+    const downloadsTaskButton = id === 'dead-interface' ? $('[data-retro-downloads-button]', taskbar) : null;
+    if (downloadsTaskButton) managementAdd(downloadsTaskButton, 'Open Downloads connection', 'Connect or manage the host Downloads folder');
+    const foodSettingsButton = id === 'food-alchemy' ? $('.food-os-tray [data-food-open-settings]', shell) : null;
+    const foodClockSettingsDuplicate = id === 'food-alchemy' ? $('.food-os-clock-panel [data-food-open-settings]', shell) : null;
+    if (foodSettingsButton) {
+      foodSettingsButton.textContent = 'System settings';
+      managementAdd(foodSettingsButton, 'Open NOURISH system settings', 'Configure the NOURISH OS');
+    }
+    foodClockSettingsDuplicate?.remove();
+    const enoSettingsButton = id === 'echonoise-os' ? $('.eno-tray [data-eno-launch="settings"]', shell) : null;
+    const enoClockSettingsDuplicate = id === 'echonoise-os' ? $('.eno-clock-panel [data-eno-launch="settings"]', shell) : null;
+    if (enoSettingsButton) {
+      enoSettingsButton.textContent = 'System settings';
+      managementAdd(enoSettingsButton, 'Open Echonoise system settings', 'Configure the Echonoise OS');
+    }
+    enoClockSettingsDuplicate?.remove();
 
     // Each OS gets its own scoped search. Results are native controls from the
     // mounted world, so opening a result uses that OS's own launch/selection logic.
@@ -10372,15 +10480,16 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const onOverflowKey = event => { if (event.key === 'Escape' && overflowOpen) { setOverflowOpen(false); trayOverflowButton?.focus({ preventScroll: true }); } };
     const onOverflowAction = event => { if (event.target.closest('button,select,input,label') && !event.target.closest('[data-retro-tray-overflow-toggle]')) setOverflowOpen(false); };
     if (id === 'dead-interface' && trayOverflowMenu) {
-      if (networkTrayButton) trayOverflowMenu.append(networkTrayButton);
       trayOverflowMenu.append(bar);
       trayOverflowButton?.addEventListener('click', onOverflowToggle);
       trayOverflowMenu.addEventListener('click', onOverflowAction);
       document.addEventListener('pointerdown', onOverflowOutside, true);
       root.addEventListener('keydown', onOverflowKey);
     } else {
+      bar.hidden = true;
       taskbar.append(bar);
     }
+    taskbar.append(managementDock);
     const importId = `os-backup-import-${id}`;
     const dialog = document.createElement('dialog');
     dialog.className = 'curioid-os-system-center';
@@ -10951,7 +11060,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     $('[data-os-import-backup]', dialog).addEventListener('change', onImport);
     $('[data-workshop-file]', dialog).addEventListener('change', onWorkshopFile);
     root.addEventListener('keydown', onKey);
-    let focusRestore = () => { if (!destroyed && !(id === 'dead-interface' && shell.classList.contains('retro-shutdown'))) trigger.focus({ preventScroll: true }); };
+    let focusRestore = () => { if (!destroyed && !(id === 'dead-interface' && shell.classList.contains('retro-shutdown'))) { setManagementOpen(false); managementToggle.focus({ preventScroll: true }); } };
     dialog.addEventListener('close', focusRestore);
     registerMountCleanup(() => {
       if (destroyed) return;
@@ -10965,6 +11074,12 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       $('[data-os-import-backup]', dialog)?.removeEventListener('change', onImport);
       $('[data-workshop-file]', dialog)?.removeEventListener('change', onWorkshopFile);
       root.removeEventListener('keydown', onKey);
+      root.removeEventListener('keydown', onManagementKey);
+      document.removeEventListener('pointerdown', onManagementOutside, true);
+      managementToggle.removeEventListener('click', onManagementToggle);
+      managementActions.removeEventListener('click', onManagementAction);
+      setManagementOpen(false);
+      managementDock.remove();
       dialog.removeEventListener('close', focusRestore);
       doorsShutdownObserver?.disconnect();
       nativeDockToggle?.removeEventListener('click', dockNativeListener);
@@ -10977,7 +11092,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       dockToggleButton?.remove();
       dialog.remove(); bar.remove();
     });
-    return () => { if (!destroyed) { destroyed = true; trigger.removeEventListener('click', onTrigger); dialog.removeEventListener('click', onClick); dialog.removeEventListener('change', onWorkshopChange); universalAppSearch?.removeEventListener('input', onUniversalAppSearch); $('[data-os-import-backup]', dialog)?.removeEventListener('change', onImport); $('[data-workshop-file]', dialog)?.removeEventListener('change', onWorkshopFile); root.removeEventListener('keydown', onKey); dialog.removeEventListener('close', focusRestore); doorsShutdownObserver?.disconnect(); nativeDockToggle?.removeEventListener('click', dockNativeListener); trayOverflowButton?.removeEventListener('click', onOverflowToggle); trayOverflowMenu?.removeEventListener('click', onOverflowAction); document.removeEventListener('pointerdown', onOverflowOutside, true); root.removeEventListener('keydown', onOverflowKey); setOverflowOpen(false); setSearchOpen(false); searchToggle.removeEventListener('click',onSearchToggle); searchInput.removeEventListener('input',onSearchInput); bellaButton.removeEventListener('click',onBellaSearch); searchDock.removeEventListener('click',onSearchDockClick); searchDock.removeEventListener('keydown',onSearchKey); document.removeEventListener('pointerdown',onSearchOutside,true); searchDock.remove(); dockToggleButton?.remove(); dialog.remove(); bar.remove(); } };
+    return () => { if (!destroyed) { destroyed = true; trigger.removeEventListener('click', onTrigger); dialog.removeEventListener('click', onClick); dialog.removeEventListener('change', onWorkshopChange); universalAppSearch?.removeEventListener('input', onUniversalAppSearch); $('[data-os-import-backup]', dialog)?.removeEventListener('change', onImport); $('[data-workshop-file]', dialog)?.removeEventListener('change', onWorkshopFile); root.removeEventListener('keydown', onKey); root.removeEventListener('keydown', onManagementKey); document.removeEventListener('pointerdown', onManagementOutside, true); managementToggle.removeEventListener('click', onManagementToggle); managementActions.removeEventListener('click', onManagementAction); setManagementOpen(false); managementDock.remove(); dialog.removeEventListener('close', focusRestore); doorsShutdownObserver?.disconnect(); nativeDockToggle?.removeEventListener('click', dockNativeListener); trayOverflowButton?.removeEventListener('click', onOverflowToggle); trayOverflowMenu?.removeEventListener('click', onOverflowAction); document.removeEventListener('pointerdown', onOverflowOutside, true); root.removeEventListener('keydown', onOverflowKey); setOverflowOpen(false); setSearchOpen(false); searchToggle.removeEventListener('click',onSearchToggle); searchInput.removeEventListener('input',onSearchInput); bellaButton.removeEventListener('click',onBellaSearch); searchDock.removeEventListener('click',onSearchDockClick); searchDock.removeEventListener('keydown',onSearchKey); document.removeEventListener('pointerdown',onSearchOutside,true); searchDock.remove(); dockToggleButton?.remove(); dialog.remove(); bar.remove(); } };
   }
 
   // CURIOID Exchange: one local-first communication and handoff space shared by all OS modules.
@@ -11337,11 +11452,12 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const folderForOS = osId => `os:${osId}`;
     const initialFolder = folderForOS(id);
     const trigger = document.createElement('button');
-    trigger.type = 'button'; trigger.className = 'os-exchange-trigger'; trigger.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="5" width="5.2" height="5.2" rx="1.1"/><rect x="16" y="13.8" width="5.2" height="5.2" rx="1.1"/><path d="M8 7.6h8.2l-2-2m2 2-2 2M16 16.4H7.8l2 2m-2-2 2-2"/></svg>';
+    trigger.type = 'button'; trigger.className = 'os-exchange-trigger curioid-os-management-action';
+    trigger.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.8" y="5" width="5.2" height="5.2" rx="1.1"/><rect x="16" y="13.8" width="5.2" height="5.2" rx="1.1"/><path d="M8 7.6h8.2l-2-2m2 2-2 2M16 16.4H7.8l2 2m-2-2 2-2"/></svg><span class="curioid-os-management-copy"><b>CURIOID Exchange</b><small>Shared folders, files, messages and cross-world handoffs</small></span>';
     trigger.title = 'CURIOID Exchange · Shared folders, messages and file handoffs';
     trigger.setAttribute('aria-label', 'Open CURIOID Exchange'); trigger.setAttribute('aria-haspopup', 'dialog');
-    const centerTrigger = bar.querySelector('.os-system-center-trigger');
-    bar.insertBefore(trigger, centerTrigger || null);
+    const managementActions = shell.querySelector('.curioid-os-management-actions');
+    if (managementActions) managementActions.append(trigger); else bar.append(trigger);
     const dialog = document.createElement('dialog');
     dialog.className = 'curioid-exchange-dialog';
     dialog.setAttribute('aria-labelledby', `exchange-title-${id}`);
@@ -12077,7 +12193,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       doorsShutdownObserver?.disconnect();
       try { channel?.close(); } catch (_) {} dialog.remove(); trigger.remove();
     };
-    dialog.addEventListener('close', () => { if (!destroyed && shell.isConnected && !(id === 'dead-interface' && shell.classList.contains('retro-shutdown'))) trigger.focus({ preventScroll: true }); });
+    dialog.addEventListener('close', () => { if (!destroyed && shell.isConnected && !(id === 'dead-interface' && shell.classList.contains('retro-shutdown'))) { const managementToggle=shell.querySelector('.curioid-os-management-toggle'); (managementToggle || trigger).focus({ preventScroll: true }); } });
     // Open directly into this OS's inbox so the selected folder and heading agree.
     setFolder(initialFolder);
     registerMountCleanup(cleanup);

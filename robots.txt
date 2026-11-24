@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://stelioswinters.github.io/curioid/sitemap.xml
+Sitemap: https://stelioswinters.com/curioid/sitemap.xml
