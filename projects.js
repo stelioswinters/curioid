@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.23 / CURIOID v1.271 · RUNTIME RESOURCE RESERVATION / FAILURE-SAFE STORAGE ROLLBACK / CROSS-TAB WEB LOCKS / SCOPE-ISOLATED OFFLINE CACHE / ACCESSIBLE CONTROL POLISH / FIRST-VISIT OPT-IN / CATALOGUE QUALITY-OF-LIFE / RESPONSIVE POLISH / CURIOIDS ADAPTIVE ARENA / CREATURE LIFE / BATTLE REPLAY / LOCAL SFX / SITE DISCOVERY HUNT / 100 FULL-BODY PROCEDURAL SPRITES / CROSS-OS UI AUDIO · HUMAN BENCHMARK BUREAU / LOCAL OFFLINE SHELL / UMBRA DRAWING ARCADE · UMBRA PNG IHDR PRE-DECODE GUARD / IMPORT RACE + BITMAP LIFECYCLE · PRONUNCIATION SCRIPT BROWSER VOICE / SPEECH LIFECYCLE PAUSE / BUNDLE PERFORMANCE BUDGETS / ECHONOISE COUNT ACCURACY · UMBRA ARCADE / EIGHT ORIGINAL DRAWING GAMES · ROADMAP AUTOMATION / FULL ACCEPTANCE MATRIX / INTEGRITY REGEN · BELLA + PIP BELL-CREATURE COMPANIONS / BROWSER TTS QUEUE / FILE-ORIGIN DOORS · TYPE CONTRACT REFINEMENT / DOM EVENT SHAPES / KERNEL MESSAGE ENVELOPES / INDEXED ARTIFACT QUERY TYPES / STORAGE QUEUE PROMISES / STRICT FILE READER GUARD · AURA WORD SERVICE REPAIR / DICTIONARY LOADER FIX / DOORS98 WINDOW STATE / WORD ANALYSIS LIMITS / IDLE INDEX / RETRYABLE DICTIONARY LOADER / STREAMING ARTIFACT INDEX REBUILD / AURA RECREATION DIRECTORATE / STRATOLADDER / QUOTA PANIC / BELLA ANIME CONCIERGE ART / UMBRA TOOL GROUPS / RUNTIME SUPERVISOR / INSTRUCTION POLICY HARDENING / NOURISH KITCHEN GAME / SANDBOX PERSONAL EXTENSIONS / CHECKLIST STARTER TEMPLATES / BELLA COMPANION v1.6.0 */
+/* Build: 2026.11.23 / CURIOID v1.274 */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
@@ -7,9 +7,9 @@
 
   // Companion artwork is original inline SVG: no portrait downloads, CDNs or remote assets.
   // Bella is a gentle bell-creature; Pip is her smaller, more chaotic little brother.
-  const CURIOID_BELLA_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Bella, a golden service bell with a red bow"><defs><linearGradient id="miniBellGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bc"/><stop offset=".48" stop-color="#efc15d"/><stop offset="1" stop-color="#b77b31"/></linearGradient><linearGradient id="miniBowRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8b9d"/><stop offset="1" stop-color="#c91f4d"/></linearGradient></defs><path d="M29 21C25 9 40 8 37 21" fill="none" stroke="#98642a" stroke-width="3.2" stroke-linecap="round"/><path d="M32 20C22 10 12 13 13 21C14 29 23 30 31 25C27 32 30 35 33 32C36 29 34 23 32 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><path d="M33 20C43 10 53 13 52 21C51 29 42 30 34 25C38 32 35 35 32 32C29 29 31 23 33 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><circle cx="32.5" cy="23.5" r="3.2" fill="#e83e62" stroke="#9f2342" stroke-width="1"/><path d="M19 34C20 27 25 24 32 24C39 24 44 27 45 34C46 42 47 45 52 49C55 51 52 54 47 55C38 58 26 58 17 55C12 54 9 51 12 49C17 45 18 42 19 34Z" fill="url(#miniBellGold)" stroke="#986629" stroke-width="1.8"/><path d="M12 49Q32 55 52 49L51 54Q32 60 13 54Z" fill="#d7a24a" stroke="#986629" stroke-width="1.3"/><ellipse cx="25" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="39" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="25.7" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><ellipse cx="38.3" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><circle cx="26.2" cy="39.5" r=".85" fill="#fff"/><circle cx="38.8" cy="39.5" r=".85" fill="#fff"/><path d="M28 47Q32 50 36 47" fill="none" stroke="#8f4b57" stroke-width="1.5" stroke-linecap="round"/><path d="M16 31Q14 40 12 45" fill="none" stroke="#fff5d8" stroke-width="2" stroke-linecap="round" opacity=".8"/><circle cx="32" cy="58" r="2.5" fill="#d8aa55" stroke="#986629" stroke-width="1"/></svg>`;
+  const CURIOID_BELLA_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Bella, a golden service bell with a red bow"><defs><linearGradient id="miniBellGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bc"/><stop offset=".48" stop-color="#efc15d"/><stop offset="1" stop-color="#b77b31"/></linearGradient><linearGradient id="miniBowRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff8b9d"/><stop offset="1" stop-color="#c91f4d"/></linearGradient></defs><path d="M29 21C25 9 40 8 37 21" fill="none" stroke="#98642a" stroke-width="3.2" stroke-linecap="round"/><path d="M32 20C22 10 12 13 13 21C14 29 23 30 31 25C27 32 30 35 33 32C36 29 34 23 32 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><path d="M33 20C43 10 53 13 52 21C51 29 42 30 34 25C38 32 35 35 32 32C29 29 31 23 33 20Z" fill="url(#miniBowRed)" stroke="#9f2342" stroke-width="1.2"/><circle cx="32.5" cy="23.5" r="3.2" fill="#e83e62" stroke="#9f2342" stroke-width="1"/><path d="M19 34C20 27 25 24 32 24C39 24 44 27 45 34C46 42 47 45 52 49C55 51 52 54 47 55C38 58 26 58 17 55C12 54 9 51 12 49C17 45 18 42 19 34Z" fill="url(#miniBellGold)" stroke="#986629" stroke-width="1.8"/><path d="M12 49Q32 55 52 49L51 54Q32 60 13 54Z" fill="#d7a24a" stroke="#986629" stroke-width="1.3"/><ellipse cx="25" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse cx="39" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse class="bella-avatar-pupil" cx="25.7" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><ellipse class="bella-avatar-pupil" cx="38.3" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><circle cx="26.2" cy="39.5" r=".85" fill="#fff"/><circle cx="38.8" cy="39.5" r=".85" fill="#fff"/><path d="M28 47Q32 50 36 47" fill="none" stroke="#8f4b57" stroke-width="1.5" stroke-linecap="round"/><path d="M16 31Q14 40 12 45" fill="none" stroke="#fff5d8" stroke-width="2" stroke-linecap="round" opacity=".8"/><circle cx="32" cy="58" r="2.5" fill="#d8aa55" stroke="#986629" stroke-width="1"/></svg>`;
   const CURIOID_BELLA_ICON_DATA_URL = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CURIOID_BELLA_ICON_SVG)}`;
-  const CURIOID_BELLA_CREATURE_SVG = `<svg class="bella-avatar-creature-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 260" role="img" aria-label="Bella, a cute golden bell creature with a red bow"><defs><linearGradient id="bellaCreatureGold" x1=".12" y1="0" x2=".85" y2="1"><stop stop-color="#fff5c9"/><stop offset=".42" stop-color="#f5ca67"/><stop offset=".82" stop-color="#d9933e"/><stop offset="1" stop-color="#a86732"/></linearGradient><linearGradient id="bellaCreatureBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c1f2e4"/><stop offset="1" stop-color="#55b7ad"/></linearGradient><linearGradient id="bellaCreatureRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff9bb1"/><stop offset=".55" stop-color="#ed466c"/><stop offset="1" stop-color="#b91e4e"/></linearGradient></defs><ellipse cx="120" cy="242" rx="57" ry="9" fill="#213d46" opacity=".14"/><path d="M91 178Q66 187 69 213Q72 225 91 216L105 203M149 178Q174 187 171 213Q168 225 149 216L135 203" fill="none" stroke="#4b8c89" stroke-width="12" stroke-linecap="round"/><path d="M100 173Q120 162 140 173L155 217Q120 238 85 217Z" fill="url(#bellaCreatureBody)" stroke="#438b84" stroke-width="3"/><path d="M107 184Q120 191 133 184" fill="none" stroke="#e8fff4" stroke-width="5" stroke-linecap="round"/><path d="M96 221L89 236Q85 244 99 245L116 244L119 230M144 221L151 236Q155 244 141 245L124 244L121 230" fill="#f0c06b" stroke="#a86f3a" stroke-width="3" stroke-linejoin="round"/><path d="M105 235Q113 231 119 237M121 237Q129 231 137 235" fill="none" stroke="#fff0cc" stroke-width="2.4" stroke-linecap="round"/><path d="M119 47C101 22 139 15 127 49" fill="none" stroke="#9b672e" stroke-width="8" stroke-linecap="round"/><path class="bella-avatar-bow" d="M120 36C91 12 72 22 77 42C81 59 103 62 119 47C108 67 114 76 122 71C133 65 128 47 120 36Z" fill="url(#bellaCreatureRed)" stroke="#9d2449" stroke-width="3"/><path class="bella-avatar-bow" d="M122 36C151 12 170 22 165 42C161 59 139 62 123 47C134 67 128 76 120 71C109 65 114 47 122 36Z" fill="url(#bellaCreatureRed)" stroke="#9d2449" stroke-width="3"/><path d="M119 36Q121 48 122 57" fill="none" stroke="#ffd4df" stroke-width="2" opacity=".8"/><circle cx="120" cy="48" r="8" fill="#e93560" stroke="#9d2449" stroke-width="2"/><path d="M75 95Q81 65 120 65Q159 65 165 95L174 155Q179 179 154 190Q120 207 86 190Q61 179 66 155Z" fill="url(#bellaCreatureGold)" stroke="#9c672f" stroke-width="4"/><path d="M78 155Q120 173 162 155L169 174Q120 202 71 174Z" fill="#d99b48" stroke="#98632f" stroke-width="3"/><path d="M82 100Q87 76 111 76" fill="none" stroke="#fff8dd" stroke-width="7" stroke-linecap="round" opacity=".72"/><ellipse class="bella-avatar-eye" cx="101" cy="125" rx="11" ry="14" fill="#fffdfa" stroke="#79513c" stroke-width="2"/><ellipse class="bella-avatar-eye" cx="139" cy="125" rx="11" ry="14" fill="#fffdfa" stroke="#79513c" stroke-width="2"/><path d="M90 115Q98 106 109 114M130 114Q141 106 150 115" class="bella-avatar-lashes" fill="none" stroke="#634442" stroke-width="3" stroke-linecap="round"/><ellipse class="bella-avatar-pupil" cx="103" cy="128" rx="5.8" ry="8" fill="#236f78"/><ellipse class="bella-avatar-pupil" cx="137" cy="128" rx="5.8" ry="8" fill="#236f78"/><circle class="bella-avatar-glint" cx="101" cy="124" r="2.7" fill="#fff"/><circle class="bella-avatar-glint-small" cx="106" cy="131" r="1.2" fill="#fff"/><circle class="bella-avatar-glint" cx="135" cy="124" r="2.7" fill="#fff"/><circle class="bella-avatar-glint-small" cx="140" cy="131" r="1.2" fill="#fff"/><ellipse class="bella-avatar-blush" cx="81" cy="145" rx="10" ry="5.5" fill="#f18ca8" opacity=".62"/><ellipse class="bella-avatar-blush" cx="159" cy="145" rx="10" ry="5.5" fill="#f18ca8" opacity=".62"/><path class="bella-avatar-smile" d="M111 151Q120 160 129 151" fill="none" stroke="#99525b" stroke-width="3.5" stroke-linecap="round"/><path d="M120 190L120 201" stroke="#a66a36" stroke-width="3" stroke-linecap="round"/><circle cx="120" cy="205" r="7" fill="#f7d98e" stroke="#a66a36" stroke-width="2"/><path class="bella-avatar-spark" d="M186 77L190 88L201 92L190 96L186 107L182 96L171 92L182 88Z" fill="#fff1ac" stroke="#d4a14d" stroke-width="1.5"/><path d="M49 117L53 124L61 127L53 130L49 138L46 130L38 127L46 124Z" fill="#fff4cc" opacity=".9"/></svg>`;
+  const CURIOID_BELLA_CREATURE_SVG = `<svg class="bella-avatar-creature-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 230" role="img" aria-label="Bella, a smiling golden service bell creature with a red bow"><defs><linearGradient id="miniBellGold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3bc"/><stop offset=".48" stop-color="#efc15d"/><stop offset="1" stop-color="#b77b31"/></linearGradient><linearGradient id="bellaBody" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff3d1"/><stop offset="1" stop-color="#dfb86d"/></linearGradient></defs><ellipse cx="100" cy="220" rx="43" ry="7" fill="#253d43" opacity=".14"/><path d="M75 167Q50 174 53 195Q56 206 75 197L88 185M125 167Q150 174 147 195Q144 206 125 197L112 185" fill="none" stroke="#76bdb0" stroke-width="10" stroke-linecap="round"/><path d="M78 164Q100 151 122 164L131 204Q100 218 69 204Z" fill="url(#bellaBody)" stroke="#9d7844" stroke-width="2.5"/><path d="M81 205L76 217Q75 224 90 224L99 222L100 211M119 205L124 217Q125 224 110 224L101 222L100 211" fill="#f0c56e" stroke="#9d7844" stroke-width="2.4"/><g transform="translate(9 0) scale(2.85)"><path d="M29 21C25 9 40 8 37 21" fill="none" stroke="#98642a" stroke-width="3.2" stroke-linecap="round"/><path class="bella-avatar-bow" d="M32 20C22 10 12 13 13 21C14 29 23 30 31 25C27 32 30 35 33 32C36 29 34 23 32 20Z" fill="#ee6687" stroke="#9f2342" stroke-width="1.2"/><path class="bella-avatar-bow" d="M33 20C43 10 53 13 52 21C51 29 42 30 34 25C38 32 35 35 32 32C29 29 31 23 33 20Z" fill="#ee6687" stroke="#9f2342" stroke-width="1.2"/><circle cx="32.5" cy="23.5" r="3.2" fill="#e83e62" stroke="#9f2342" stroke-width="1"/><path class="bella-avatar-handle" d="M19 34C20 27 25 24 32 24C39 24 44 27 45 34C46 42 47 45 52 49C55 51 52 54 47 55C38 58 26 58 17 55C12 54 9 51 12 49C17 45 18 42 19 34Z" fill="url(#miniBellGold)" stroke="#986629" stroke-width="1.8"/><path d="M12 49Q32 55 52 49L51 54Q32 60 13 54Z" fill="#d7a24a" stroke="#986629" stroke-width="1.3"/><ellipse class="bella-avatar-eye" cx="25" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse class="bella-avatar-eye" cx="39" cy="40" rx="3.2" ry="4.2" fill="#fff"/><ellipse class="bella-avatar-pupil" cx="25.7" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><ellipse class="bella-avatar-pupil" cx="38.3" cy="40.7" rx="1.8" ry="2.8" fill="#217c82"/><circle cx="26.2" cy="39.5" r=".85" fill="#fff"/><circle cx="38.8" cy="39.5" r=".85" fill="#fff"/><path d="M28 47Q32 50 36 47" fill="none" stroke="#8f4b57" stroke-width="1.5" stroke-linecap="round"/><circle cx="32" cy="58" r="2.5" fill="#d8aa55" stroke="#986629" stroke-width="1"/></g><path class="bella-avatar-spark" d="M168 85L172 95L182 99L172 103L168 113L164 103L154 99L164 95Z" fill="#fff1ac"/><path d="M35 100L38 107L45 110L38 113L35 120L32 113L25 110L32 107Z" fill="#fff4cc" opacity=".9"/></svg>`;
   const curioidCreateBellaIcon = (className) => {
     const image = document.createElement('img');
     image.className = className;
@@ -4587,7 +4587,9 @@ connect.registerMessageType('create-summary', {
 });</pre><div class="ccc-actions"><button type="button" data-ccc-copy>Copy developer quick start</button><button type="button" data-ccc-spec>Download protocol specification</button></div><p class="ccc-note">This API is a local interoperability contract. It does not provide arbitrary network access or direct access to the user's computer.</p></div></section></div></section>`;
     document.body.appendChild(root);
     const releaseModalFocus = curioidTrapModalFocus(root, root.querySelector('[role="dialog"]'));
-    const closeConsole = (restore = true) => { stopEvents?.(); releaseModalFocus(restore); root.remove(); };
+    const importGenerations = { transfer: 0, package: 0, manifest: 0, library: 0 };
+    const isCurrentImport = (kind, generation) => root.isConnected && importGenerations[kind] === generation;
+    const closeConsole = (restore = true) => { for (const kind of Object.keys(importGenerations)) importGenerations[kind]++; stopEvents?.(); releaseModalFocus(restore); root.remove(); };
     const q = selector => root.querySelector(selector), qa = selector => [...root.querySelectorAll(selector)];
     let eventRows = [], stopEvents = null;
     const escHtml = value => String(value ?? '').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -5177,13 +5179,13 @@ connect.registerMessageType('create-summary', {
     q('[data-ccc-library-category]').addEventListener('change',renderLibrary);q('[data-ccc-library-view]').addEventListener('change',renderLibrary);q('[data-ccc-library-sort]').addEventListener('change',renderLibrary);
     root.addEventListener('change',/** @param {CurioidDOMEvent} event */ async event=>{
       if(event.target.matches('[data-app-compose-field-type]')){const options=event.target.closest('[data-app-compose-field-row]')?.querySelector('.ccc-app-compose-options');if(options)options.hidden=event.target.value!=='select';return;}
-      if(event.target.matches('[data-ccc-app-transfer-import]')){const file=event.target.files?.[0];if(!file)return;const status=q('[data-ccc-transfer-status]'),targetId=q('[data-ccc-transfer-target]').value;try{if(!targetId)throw new Error('Choose an installed destination app first.');if(file.size>2*1024*1024)throw new Error('Transfer file is larger than 2 MB.');const transfer=JSON.parse(await file.text()),preview=window.CurioidAppPackages.previewTransfer(targetId,transfer);if(!preview.compatible)throw new Error(`This transfer needs attention. Missing required fields: ${preview.requiredMissing.join(', ')||'none'}. Invalid choices: ${preview.invalidChoices.join('; ')||'none'}.`);const details=`Source: ${preview.source.name}\nDestination: ${preview.target.name}\nRecords in file: ${preview.recordCount}\nNew records to add: ${preview.importableCount}\nDuplicates to skip: ${preview.duplicateCount}\nMatching fields: ${preview.matchingFields}\nFields not mapped: ${preview.unmappedSourceFields.join(', ')||'none'}\n\nThe destination app will not be overwritten. Continue?`;if(!window.confirm(details)){status.textContent='Import cancelled. No destination data was changed.';return;}const result=await window.CurioidAppPackages.importTransfer(targetId,transfer,{confirmed:true});status.textContent=`Imported ${result.imported} records into ${result.targetId}. Skipped ${result.skipped} duplicates.`;renderLibrary();}catch(error){status.textContent=error.message||'Could not import this data transfer.';}finally{event.target.value='';}return;}
+      if(event.target.matches('[data-ccc-app-transfer-import]')){const input=event.target,file=input.files?.[0];if(!file)return;const generation=++importGenerations.transfer,status=q('[data-ccc-transfer-status]'),targetId=q('[data-ccc-transfer-target]').value;try{if(!targetId)throw new Error('Choose an installed destination app first.');if(!Number.isFinite(file.size)||file.size<0||file.size>2*1024*1024)throw new Error('Transfer file is larger than 2 MB or has an invalid size.');const text=await file.text();if(!isCurrentImport('transfer',generation))return;const transfer=JSON.parse(text),preview=window.CurioidAppPackages.previewTransfer(targetId,transfer);if(!preview.compatible)throw new Error(`This transfer needs attention. Missing required fields: ${preview.requiredMissing.join(', ')||'none'}. Invalid choices: ${preview.invalidChoices.join('; ')||'none'}.`);const details=`Source: ${preview.source.name}\nDestination: ${preview.target.name}\nRecords in file: ${preview.recordCount}\nNew records to add: ${preview.importableCount}\nDuplicates to skip: ${preview.duplicateCount}\nMatching fields: ${preview.matchingFields}\nFields not mapped: ${preview.unmappedSourceFields.join(', ')||'none'}\n\nThe destination app will not be overwritten. Continue?`;if(!window.confirm(details)){if(isCurrentImport('transfer',generation))status.textContent='Import cancelled. No destination data was changed.';return;}if(!isCurrentImport('transfer',generation))return;const result=await window.CurioidAppPackages.importTransfer(targetId,transfer,{confirmed:true});if(!isCurrentImport('transfer',generation))return;status.textContent=`Imported ${result.imported} records into ${result.targetId}. Skipped ${result.skipped} duplicates.`;renderLibrary();}catch(error){if(isCurrentImport('transfer',generation))status.textContent=error.message||'Could not import this data transfer.';}finally{if(isCurrentImport('transfer',generation))input.value='';}return;}
       if(event.target.matches('[data-library-tags]')){updateLibraryEntry(libraryDetailId,{tags:cleanLibraryTags(event.target.value)});renderLibrary();return;}
       if(event.target.matches('[data-library-note]')){updateLibraryEntry(libraryDetailId,{note:String(event.target.value||'').slice(0,LIBRARY_MAX_NOTE)});renderLibrary();return;}
     });
-    q('[data-ccc-app-package-import]').addEventListener('change',/** @param {CurioidDOMEvent} event */ async event=>{const file=event.target.files?.[0];if(!file)return;const status=q('[data-ccc-app-package-status]');try{if(file.size>2*1024*1024)throw new Error('App package is larger than 2 MB.');const raw=JSON.parse(await file.text()),pkg=window.CurioidAppPackages.validate(raw),existing=window.CurioidAppPackages.list().find(item=>item.id===pkg.manifest.id);if(existing&&!window.confirm(`Replace ${existing.manifest.name} v${existing.manifest.version} with v${pkg.manifest.version}? Existing records will be migrated and kept by default.`))return;let replaceData=false;if(existing&&Array.isArray(pkg.data)&&pkg.data.length){replaceData=window.confirm(`This package also contains ${pkg.data.length} records. Replace the app's current private records with these imported records? Choose Cancel to keep your existing records.`);}const result=await window.CurioidAppPackages.install(pkg,{replace:Boolean(existing),replaceData});status.textContent=`${result.replaced?'Updated':'Installed'} ${result.name} v${pkg.manifest.version}. ${result.recordCount} private records available.${result.dataReplaced?' Imported package records were applied.':' Existing records were preserved.'}${result.sharingDisabledForUpdate?' Connect sharing was disabled and must be configured and granted again.':''}`;renderLibrary();}catch(error){status.textContent=error.message||'Could not install this app package.';}finally{event.target.value='';}});
-    q('[data-ccc-library-import]').addEventListener('change',/** @param {CurioidDOMEvent} event */ async event=>{const file=event.target.files?.[0];if(!file)return;const status=q('[data-ccc-library-import-status]');try{if(file.size>256*1024)throw new Error('Manifest is larger than 256 KB.');const manifest=JSON.parse(await file.text());if(!manifest||typeof manifest!=='object'||Array.isArray(manifest)||!/^[-a-z0-9.]{3,80}$/i.test(String(manifest.id||''))||typeof manifest.name!=='string'||typeof manifest.version!=='string')throw new Error('Expected a manifest with a valid id, name and version.');const record={id:String(manifest.id),name:manifest.name.slice(0,100),version:manifest.version.slice(0,40),kind:String(manifest.kind||'app').slice(0,30),creator:String(manifest.creator||'').slice(0,80),description:String(manifest.description||'Imported local manifest metadata.').slice(0,500),requires:{kernel:String(manifest.requires?.kernel||'').slice(0,60),connect:String(manifest.requires?.connect||'').slice(0,60)},tags:cleanLibraryTags(manifest.tags),format:'curioidapp-metadata',importedAt:new Date().toISOString()};const items=readImportedManifests(),existing=items.findIndex(item=>item.id===record.id);if(existing>=0)items[existing]=record;else{if(items.length>=100)throw new Error('Imported Connect metadata is full (100 records). Remove an older reference before adding another.');items.push(record);}writeImportedManifests(items);status.textContent=`Saved Connect metadata for ${record.name}. It is reference information only, not an installed app.`;renderLibrary();}catch(error){status.textContent=error.message||'Could not read this manifest.';}finally{event.target.value='';}});
-    q('[data-ccc-library-backup-import]').addEventListener('change',/** @param {CurioidDOMEvent} event */ async event=>{const file=event.target.files?.[0];if(!file)return;const status=q('[data-ccc-library-backup-status]');try{if(libraryStorageError)throw new Error(`The existing personal library needs recovery before an import can be merged. ${libraryStorageError}`);if(file.size>1024*1024)throw new Error('Library backup is larger than 1 MB.');const backup=JSON.parse(await file.text());if(!backup||backup.format!=='curioid-personal-library'||Number(backup.schemaVersion)!==2||!backup.entries||typeof backup.entries!=='object'||Array.isArray(backup.entries))throw new Error('This is not a supported CURIOID personal library backup.');const result=window.CurioidAppLibrary.importPersonalLibrary(backup);libraryState=loadLibraryState();if(libraryStorageError)throw new Error(libraryStorageError);status.textContent=`Imported or merged ${result.imported} application records. No application code was installed.`;renderLibrary();}catch(error){status.textContent=error.message||'Could not import this library backup.';}finally{event.target.value='';}});
+    q('[data-ccc-app-package-import]').addEventListener('change',/** @param {CurioidDOMEvent} event */ async event=>{const input=event.target,file=input.files?.[0];if(!file)return;const generation=++importGenerations.package,status=q('[data-ccc-app-package-status]');try{if(!Number.isFinite(file.size)||file.size<0||file.size>2*1024*1024)throw new Error('App package is larger than 2 MB or has an invalid size.');const text=await file.text();if(!isCurrentImport('package',generation))return;const raw=JSON.parse(text),pkg=window.CurioidAppPackages.validate(raw),existing=window.CurioidAppPackages.list().find(item=>item.id===pkg.manifest.id);if(existing&&!window.confirm(`Replace ${existing.manifest.name} v${existing.manifest.version} with v${pkg.manifest.version}? Existing records will be migrated and kept by default.`))return;if(!isCurrentImport('package',generation))return;let replaceData=false;if(existing&&Array.isArray(pkg.data)&&pkg.data.length){replaceData=window.confirm(`This package also contains ${pkg.data.length} records. Replace the app's current private records with these imported records? Choose Cancel to keep your existing records.`);}if(!isCurrentImport('package',generation))return;const result=await window.CurioidAppPackages.install(pkg,{replace:Boolean(existing),replaceData});if(!isCurrentImport('package',generation))return;status.textContent=`${result.replaced?'Updated':'Installed'} ${result.name} v${pkg.manifest.version}. ${result.recordCount} private records available.${result.dataReplaced?' Imported package records were applied.':' Existing records were preserved.'}${result.sharingDisabledForUpdate?' Connect sharing was disabled and must be configured and granted again.':''}`;renderLibrary();}catch(error){if(isCurrentImport('package',generation))status.textContent=error.message||'Could not install this app package.';}finally{if(isCurrentImport('package',generation))input.value='';}});
+    q('[data-ccc-library-import]').addEventListener('change',/** @param {CurioidDOMEvent} event */ async event=>{const input=event.target,file=input.files?.[0];if(!file)return;const generation=++importGenerations.manifest,status=q('[data-ccc-library-import-status]');try{if(!Number.isFinite(file.size)||file.size<0||file.size>256*1024)throw new Error('Manifest is larger than 256 KB or has an invalid size.');const text=await file.text();if(!isCurrentImport('manifest',generation))return;const manifest=JSON.parse(text);if(!manifest||typeof manifest!=='object'||Array.isArray(manifest)||!/^[-a-z0-9.]{3,80}$/i.test(String(manifest.id||''))||typeof manifest.name!=='string'||typeof manifest.version!=='string')throw new Error('Expected a manifest with a valid id, name and version.');const record={id:String(manifest.id),name:manifest.name.slice(0,100),version:manifest.version.slice(0,40),kind:String(manifest.kind||'app').slice(0,30),creator:String(manifest.creator||'').slice(0,80),description:String(manifest.description||'Imported local manifest metadata.').slice(0,500),requires:{kernel:String(manifest.requires?.kernel||'').slice(0,60),connect:String(manifest.requires?.connect||'').slice(0,60)},tags:cleanLibraryTags(manifest.tags),format:'curioidapp-metadata',importedAt:new Date().toISOString()};if(!isCurrentImport('manifest',generation))return;const items=readImportedManifests(),existing=items.findIndex(item=>item.id===record.id);if(existing>=0)items[existing]=record;else{if(items.length>=100)throw new Error('Imported Connect metadata is full (100 records). Remove an older reference before adding another.');items.push(record);}writeImportedManifests(items);if(!isCurrentImport('manifest',generation))return;status.textContent=`Saved Connect metadata for ${record.name}. It is reference information only, not an installed app.`;renderLibrary();}catch(error){if(isCurrentImport('manifest',generation))status.textContent=error.message||'Could not read this manifest.';}finally{if(isCurrentImport('manifest',generation))input.value='';}});
+    q('[data-ccc-library-backup-import]').addEventListener('change',/** @param {CurioidDOMEvent} event */ async event=>{const input=event.target,file=input.files?.[0];if(!file)return;const generation=++importGenerations.library,status=q('[data-ccc-library-backup-status]');try{if(libraryStorageError)throw new Error(`The existing personal library needs recovery before an import can be merged. ${libraryStorageError}`);if(!Number.isFinite(file.size)||file.size<0||file.size>1024*1024)throw new Error('Library backup is larger than 1 MB or has an invalid size.');const text=await file.text();if(!isCurrentImport('library',generation))return;const backup=JSON.parse(text);if(!backup||backup.format!=='curioid-personal-library'||Number(backup.schemaVersion)!==2||!backup.entries||typeof backup.entries!=='object'||Array.isArray(backup.entries))throw new Error('This is not a supported CURIOID personal library backup.');if(!isCurrentImport('library',generation))return;const result=window.CurioidAppLibrary.importPersonalLibrary(backup);libraryState=loadLibraryState();if(libraryStorageError)throw new Error(libraryStorageError);if(!isCurrentImport('library',generation))return;status.textContent=`Imported or merged ${result.imported} application records. No application code was installed.`;renderLibrary();}catch(error){if(isCurrentImport('library',generation))status.textContent=error.message||'Could not import this library backup.';}finally{if(isCurrentImport('library',generation))input.value='';}});
     function renderEvents(){
       const host=q('[data-ccc-events]');if(!host)return;
       const rows=Array.isArray(eventRows)?eventRows.slice(0,60):[],fragment=document.createDocumentFragment();
@@ -8970,79 +8972,81 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   const OS_BACKUP_FORMAT = 'curioid-local-system-backup';
   const OS_BACKUP_VERSION = 1;
 
-  function osBase64FromBuffer(buffer) {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let offset = 0; offset < bytes.length; offset += 0x8000) {
-      binary += String.fromCharCode(...bytes.subarray(offset, Math.min(offset + 0x8000, bytes.length)));
-    }
-    return btoa(binary);
-  }
-  function osBufferFromBase64(value) {
-    const binary = atob(value || '');
-    const bytes = new Uint8Array(binary.length);
-    for (let index = 0; index < binary.length; index++) bytes[index] = binary.charCodeAt(index);
-    return bytes.buffer;
-  }
-  async function osPackBackupValue(value, seen = new WeakSet()) {
-    if (value === null || typeof value === 'string' || typeof value === 'boolean' || typeof value === 'number') return value;
-    if (typeof value === 'undefined') return { __curioidBackupType: 'Undefined' };
-    if (typeof value === 'bigint') return { __curioidBackupType: 'BigInt', value: String(value) };
-    if (typeof value === 'function' || typeof value === 'symbol') throw new Error('A saved browser record contains a value that cannot be exported safely.');
-    if (typeof Blob !== 'undefined' && value instanceof Blob) {
-      return { __curioidBackupType: 'Blob', mime: value.type || '', data: osBase64FromBuffer(await value.arrayBuffer()) };
-    }
-    if (value instanceof ArrayBuffer) return { __curioidBackupType: 'ArrayBuffer', data: osBase64FromBuffer(value) };
-    if (ArrayBuffer.isView(value)) {
-      return { __curioidBackupType: 'TypedArray', name: value.constructor?.name || 'Uint8Array', data: osBase64FromBuffer(value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength)) };
-    }
-    if (value instanceof Date) return { __curioidBackupType: 'Date', value: value.toISOString() };
-    if (seen.has(value)) throw new Error('A saved browser record contains circular data and cannot be exported safely.');
+  const OS_BACKUP_MAX_VALUE_DEPTH=128,OS_BACKUP_MAX_VALUE_NODES=1000000,OS_BACKUP_MAX_ENCODED_CHARS=180*1024*1024;
+  const OS_BACKUP_TYPE_MARKER='__curioidBackupType';
+  const OS_BACKUP_BASE64_PATTERN=/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+  const OS_BACKUP_TYPED_ARRAY_BYTES=Object.freeze({Int8Array:1,Uint8Array:1,Uint8ClampedArray:1,Int16Array:2,Uint16Array:2,Int32Array:4,Uint32Array:4,Float32Array:4,Float64Array:8,BigInt64Array:8,BigUint64Array:8});
+  function osBase64FromBuffer(buffer){const bytes=new Uint8Array(buffer);let binary='';for(let offset=0;offset<bytes.length;offset+=0x8000)binary+=String.fromCharCode(...bytes.subarray(offset,Math.min(offset+0x8000,bytes.length)));return btoa(binary);}
+  function osBufferFromBase64(value){if(typeof value!=='string'||value.length%4||!OS_BACKUP_BASE64_PATTERN.test(value))throw new Error('The backup contains invalid binary data.');const binary=atob(value),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);return bytes.buffer;}
+  async function osPackBackupValue(value,seen=new WeakSet(),state={nodes:0},depth=0){
+    if(depth>OS_BACKUP_MAX_VALUE_DEPTH)throw new Error('A saved value is nested too deeply to export.');
+    if(++state.nodes>OS_BACKUP_MAX_VALUE_NODES)throw new Error('This saved database contains too many values for one backup.');
+    const kind=typeof value;if(value===null||kind==='string'||kind==='boolean'||kind==='number')return value;
+    if(value===undefined)return{[OS_BACKUP_TYPE_MARKER]:'Undefined'};
+    if(typeof value==='bigint')return{[OS_BACKUP_TYPE_MARKER]:'BigInt',value:String(value)};
+    if(typeof value==='function'||typeof value==='symbol')throw new Error('A saved value cannot be exported safely.');
+    if(typeof Blob!=='undefined'&&value instanceof Blob)return{[OS_BACKUP_TYPE_MARKER]:'Blob',mime:value.type||'',data:osBase64FromBuffer(await value.arrayBuffer())};
+    if(value instanceof ArrayBuffer)return{[OS_BACKUP_TYPE_MARKER]:'ArrayBuffer',data:osBase64FromBuffer(value)};
+    if(ArrayBuffer.isView(value))return{[OS_BACKUP_TYPE_MARKER]:'TypedArray',name:value.constructor?.name||'Uint8Array',data:osBase64FromBuffer(value.buffer.slice(value.byteOffset,value.byteOffset+value.byteLength))};
+    if(value instanceof Date)return{[OS_BACKUP_TYPE_MARKER]:'Date',value:value.toISOString()};
+    if(seen.has(value))throw new Error('A saved value contains circular data.');
     seen.add(value);
-    let result;
-    // Walk sequentially: Promise.all can mistake the same shared object in two
-    // sibling fields for a circular reference while both branches are pending.
-    if (Array.isArray(value)) {
-      result = [];
-      for (const item of value) result.push(await osPackBackupValue(item, seen));
-    } else if (value instanceof Map) {
-      const entries = [];
-      for (const [key, item] of value.entries()) entries.push([await osPackBackupValue(key, seen), await osPackBackupValue(item, seen)]);
-      result = { __curioidBackupType: 'Map', entries };
-    } else if (value instanceof Set) {
-      const values = [];
-      for (const item of value.values()) values.push(await osPackBackupValue(item, seen));
-      result = { __curioidBackupType: 'Set', values };
-    } else {
-      const prototype = Object.getPrototypeOf(value);
-      if (prototype !== Object.prototype && prototype !== null) throw new Error('A saved browser record contains an unsupported browser object. Export it with that OS’s native project exporter.');
-      result = {};
-      for (const [key, item] of Object.entries(value)) Object.defineProperty(result, key, { value: await osPackBackupValue(item, seen), enumerable: true, configurable: true, writable: true });
-    }
-    seen.delete(value);
-    return result;
+    try{
+      const pack=item=>osPackBackupValue(item,seen,state,depth+1);
+      if(Array.isArray(value)){const out=[];for(const item of value)out.push(await pack(item));return out;}
+      if(value instanceof Map){const entries=[];for(const [key,item] of value)entries.push([await pack(key),await pack(item)]);return{[OS_BACKUP_TYPE_MARKER]:'Map',entries};}
+      if(value instanceof Set){const values=[];for(const item of value)values.push(await pack(item));return{[OS_BACKUP_TYPE_MARKER]:'Set',values};}
+      const proto=Object.getPrototypeOf(value);if(proto!==Object.prototype&&proto!==null)throw new Error('Unsupported browser object; use its OS native exporter.');
+      const entries=Object.entries(value);
+      if(Object.prototype.hasOwnProperty.call(value,OS_BACKUP_TYPE_MARKER)){const packed=[];for(const [key,item] of entries)packed.push([key,await pack(item)]);return{[OS_BACKUP_TYPE_MARKER]:'PlainObject',entries:packed};}
+      const out={};for(const [key,item] of entries)Object.defineProperty(out,key,{value:await pack(item),enumerable:true,configurable:true,writable:true});return out;
+    }finally{seen.delete(value);}
   }
-  function osUnpackBackupValue(value) {
-    if (!value || typeof value !== 'object') return value;
-    const type = value.__curioidBackupType;
-    if (type === 'Undefined') return undefined;
-    if (type === 'BigInt') return BigInt(value.value);
-    if (type === 'Blob') return new Blob([osBufferFromBase64(value.data)], { type: value.mime || '' });
-    if (type === 'ArrayBuffer') return osBufferFromBase64(value.data);
-    if (type === 'TypedArray') {
-      const buffer = osBufferFromBase64(value.data);
-      const constructors = { Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array, BigInt64Array, BigUint64Array };
-      if (value.name === 'DataView') return new DataView(buffer);
-      const Constructor = constructors[value.name];
-      return Constructor ? new Constructor(buffer) : new Uint8Array(buffer);
+  function osValidatePackedBackupValue(value,state={nodes:0,encodedChars:0},depth=0){
+    if(depth>OS_BACKUP_MAX_VALUE_DEPTH||++state.nodes>OS_BACKUP_MAX_VALUE_NODES)throw new Error('Backup value exceeds safe limits.');
+    if(value===null||typeof value==='string'||typeof value==='boolean')return true;
+    if(typeof value==='number'){if(!Number.isFinite(value))throw new Error('Backup contains an invalid number.');return true;}
+    if(!value||typeof value!=='object')throw new Error('Backup contains an unsupported value.');
+    const visit=item=>osValidatePackedBackupValue(item,state,depth+1);
+    if(Array.isArray(value)){for(const item of value)visit(item);return true;}
+    const type=Object.prototype.hasOwnProperty.call(value,OS_BACKUP_TYPE_MARKER)?value[OS_BACKUP_TYPE_MARKER]:null,keys=Object.keys(value);
+    const exact=(...names)=>keys.length===names.length&&names.every(name=>Object.prototype.hasOwnProperty.call(value,name));
+    const binary=data=>{if(typeof data!=='string'||data.length%4||!OS_BACKUP_BASE64_PATTERN.test(data))throw new Error('Backup binary data is malformed.');state.encodedChars+=data.length;if(state.encodedChars>OS_BACKUP_MAX_ENCODED_CHARS)throw new Error('Backup binary data exceeds the safe restore limit.');return data.length/4*3-(data.endsWith('==')?2:data.endsWith('=')?1:0);};
+    switch(type){
+      case 'Undefined':if(!exact(OS_BACKUP_TYPE_MARKER))throw new Error('Malformed undefined value.');return true;
+      case 'BigInt':if(!exact(OS_BACKUP_TYPE_MARKER,'value')||typeof value.value!=='string'||value.value.length>4096||!/^-?(?:0|[1-9]\d*)$/.test(value.value))throw new Error('Invalid BigInt value.');return true;
+      case 'Blob':if(!exact(OS_BACKUP_TYPE_MARKER,'mime','data')||typeof value.mime!=='string'||value.mime.length>255)throw new Error('Invalid Blob value.');binary(value.data);return true;
+      case 'ArrayBuffer':if(!exact(OS_BACKUP_TYPE_MARKER,'data'))throw new Error('Invalid ArrayBuffer value.');binary(value.data);return true;
+      case 'TypedArray':{
+        if(!exact(OS_BACKUP_TYPE_MARKER,'name','data')||typeof value.name!=='string'||(value.name!=='DataView'&&!Object.prototype.hasOwnProperty.call(OS_BACKUP_TYPED_ARRAY_BYTES,value.name))||typeof globalThis[value.name]!=='function')throw new Error('Unsupported typed-array constructor.');
+        if(binary(value.data)%(OS_BACKUP_TYPED_ARRAY_BYTES[value.name]||1))throw new Error('Misaligned typed-array data.');return true;
+      }
+      case 'Date':{const date=new Date(value.value);if(!exact(OS_BACKUP_TYPE_MARKER,'value')||typeof value.value!=='string'||!Number.isFinite(date.getTime())||date.toISOString()!==value.value)throw new Error('Invalid Date value.');return true;}
+      case 'Map':if(!exact(OS_BACKUP_TYPE_MARKER,'entries')||!Array.isArray(value.entries))throw new Error('Invalid Map value.');for(const pair of value.entries){if(!Array.isArray(pair)||pair.length!==2)throw new Error('Malformed Map entry.');visit(pair[0]);visit(pair[1]);}return true;
+      case 'Set':if(!exact(OS_BACKUP_TYPE_MARKER,'values')||!Array.isArray(value.values))throw new Error('Invalid Set value.');for(const item of value.values)visit(item);return true;
+      case 'PlainObject':{if(!exact(OS_BACKUP_TYPE_MARKER,'entries')||!Array.isArray(value.entries))throw new Error('Invalid escaped object.');const seen=new Set();for(const pair of value.entries){if(!Array.isArray(pair)||pair.length!==2||typeof pair[0]!=='string'||seen.has(pair[0]))throw new Error('Invalid escaped object key.');seen.add(pair[0]);visit(pair[1]);}return true;}
+      default:for(const item of Object.values(value))visit(item);return true;
     }
-    if (type === 'Date') return new Date(value.value);
-    if (type === 'Map') return new Map((value.entries || []).map(([key, item]) => [osUnpackBackupValue(key), osUnpackBackupValue(item)]));
-    if (type === 'Set') return new Set((value.values || []).map(osUnpackBackupValue));
-    if (Array.isArray(value)) return value.map(osUnpackBackupValue);
-    const result = {};
-    for (const [key, item] of Object.entries(value)) Object.defineProperty(result, key, { value: osUnpackBackupValue(item), enumerable: true, configurable: true, writable: true });
-    return result;
+  }
+  function osUnpackBackupValue(value,state={nodes:0},depth=0){
+    if(depth>OS_BACKUP_MAX_VALUE_DEPTH||++state.nodes>OS_BACKUP_MAX_VALUE_NODES)throw new Error('Backup value exceeds safe restore limits.');
+    if(!value||typeof value!=='object')return value;
+    const unpack=item=>osUnpackBackupValue(item,state,depth+1);
+    if(Array.isArray(value))return value.map(unpack);
+    const type=Object.prototype.hasOwnProperty.call(value,OS_BACKUP_TYPE_MARKER)?value[OS_BACKUP_TYPE_MARKER]:null;
+    if(type==='Undefined')return undefined;
+    if(type==='BigInt')return BigInt(value.value);
+    if(type==='Blob')return new Blob([osBufferFromBase64(value.data)],{type:value.mime||''});
+    if(type==='ArrayBuffer')return osBufferFromBase64(value.data);
+    if(type==='TypedArray'){const buffer=osBufferFromBase64(value.data);if(value.name==='DataView')return new DataView(buffer);const Constructor=globalThis[value.name];if(typeof Constructor!=='function'||!Object.prototype.hasOwnProperty.call(OS_BACKUP_TYPED_ARRAY_BYTES,value.name))throw new Error('Unsupported typed-array constructor.');return new Constructor(buffer);}
+    if(type==='Date'){const date=new Date(value.value);if(!Number.isFinite(date.getTime()))throw new Error('Invalid Date value.');return date;}
+    if(type==='Map'){if(!Array.isArray(value.entries))throw new Error('Invalid Map value.');return new Map(value.entries.map(pair=>{if(!Array.isArray(pair)||pair.length!==2)throw new Error('Malformed Map entry.');return[unpack(pair[0]),unpack(pair[1])];}));}
+    if(type==='Set'){if(!Array.isArray(value.values))throw new Error('Invalid Set value.');return new Set(value.values.map(unpack));}
+    const out={};
+    if(type==='PlainObject'){
+      if(!Array.isArray(value.entries))throw new Error('Invalid escaped object.');const keys=new Set();for(const pair of value.entries){if(!Array.isArray(pair)||pair.length!==2||typeof pair[0]!=='string'||keys.has(pair[0]))throw new Error('Invalid escaped object key.');keys.add(pair[0]);Object.defineProperty(out,pair[0],{value:unpack(pair[1]),enumerable:true,configurable:true,writable:true});}return out;
+    }
+    for(const [key,item] of Object.entries(value))Object.defineProperty(out,key,{value:unpack(item),enumerable:true,configurable:true,writable:true});return out;
   }
     function osOpenBackupDatabase(name, version, schema = []) {
     return new Promise((resolve, reject) => {
@@ -9125,6 +9129,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       // Blob/typed-value encoding can be asynchronous, so it happens only
       // after the consistent read transaction has completely finished.
       const stores = [];
+      const packState = { nodes: 0 };
       for (const snapshot of rawStores) {
         const schema = {
           name: snapshot.name, keyPath: snapshot.keyPath, autoIncrement: snapshot.autoIncrement,
@@ -9133,7 +9138,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
         if (!schema.excluded) {
           if (snapshot.keys.length !== snapshot.values.length) throw new Error(`Database snapshot for ${name}/${snapshot.name} returned mismatched keys and values.`);
           for (let index = 0; index < snapshot.values.length; index++) {
-            schema.records.push({ key: await osPackBackupValue(snapshot.keys[index]), value: await osPackBackupValue(snapshot.values[index]) });
+            schema.records.push({ key: await osPackBackupValue(snapshot.keys[index], new WeakSet(), packState), value: await osPackBackupValue(snapshot.values[index], new WeakSet(), packState) });
           }
         }
         stores.push(schema);
@@ -9431,19 +9436,33 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     return {preserved:true,id,name:retained.name,size:retained.size,count:totalCount,bytes:totalBytes};
   }
 
-  function osValidateBackupSnapshot(snapshot) {
+  function osValidateBackupSnapshot(snapshot, budget = { nodes: 0, encodedChars: 0 }) {
     if (!snapshot || !OS_BACKUP_DATABASES.has(snapshot.name) || !Array.isArray(snapshot.stores)) throw new Error('The backup contains an unsupported browser database.');
+    if (snapshot.version !== undefined && (!Number.isSafeInteger(snapshot.version) || snapshot.version < 1 || snapshot.version > 2147483647)) throw new Error(`The ${snapshot.name} backup contains an invalid database version.`);
+    if (snapshot.capturedAt !== undefined || snapshot.completedAt !== undefined) {
+      const captured = Date.parse(snapshot.capturedAt), completed = Date.parse(snapshot.completedAt);
+      if (!Number.isFinite(captured) || !Number.isFinite(completed) || completed < captured) throw new Error(`The ${snapshot.name} backup contains invalid capture timestamps.`);
+    }
     const allowedStores = OS_BACKUP_STORE_NAMES[snapshot.name];
     const seenStores = new Set();
     for (const store of snapshot.stores) {
       if (!store || typeof store.name !== 'string' || !allowedStores.has(store.name) || seenStores.has(store.name) || !Array.isArray(store.records)) throw new Error(`The ${snapshot.name} backup contains an invalid store.`);
       seenStores.add(store.name);
+      if (store.excluded !== undefined && typeof store.excluded !== 'boolean') throw new Error(`The ${snapshot.name}/${store.name} exclusion flag is invalid.`);
       if (store.excluded && !(snapshot.name === 'Doors98_C_Memory' && store.name === 'handles')) throw new Error('The backup tries to exclude an unsupported data store.');
       if (snapshot.name === 'Doors98_C_Memory' && store.name === 'handles' && store.records.length) throw new Error('External folder permissions cannot be restored from a backup.');
       if (store.keyPath !== null && store.keyPath !== undefined && typeof store.keyPath !== 'string' && !(Array.isArray(store.keyPath) && store.keyPath.every(key => typeof key === 'string'))) throw new Error(`The ${snapshot.name}/${store.name} key layout is invalid.`);
       if (store.autoIncrement !== undefined && typeof store.autoIncrement !== 'boolean') throw new Error(`The ${snapshot.name}/${store.name} auto-increment flag is invalid.`);
-      if (store.indexes !== undefined && (!Array.isArray(store.indexes) || store.indexes.some(index => !index || typeof index.name !== 'string' || !index.name || (typeof index.keyPath !== 'string' && !Array.isArray(index.keyPath))))) throw new Error(`The ${snapshot.name}/${store.name} index layout is invalid.`);
-      if (store.records.some(record => !record || !Object.prototype.hasOwnProperty.call(record, 'key') || !Object.prototype.hasOwnProperty.call(record, 'value'))) throw new Error(`The ${snapshot.name}/${store.name} records are invalid.`);
+      if (store.indexes !== undefined && (!Array.isArray(store.indexes) || store.indexes.some(index => !index || typeof index.name !== 'string' || !index.name || index.name.length > 256 || (typeof index.keyPath !== 'string' && !(Array.isArray(index.keyPath) && index.keyPath.every(key => typeof key === 'string'))) || (index.unique !== undefined && typeof index.unique !== 'boolean') || (index.multiEntry !== undefined && typeof index.multiEntry !== 'boolean')))) throw new Error(`The ${snapshot.name}/${store.name} index layout is invalid.`);
+      for (const record of store.records) {
+        if (!record || !Object.prototype.hasOwnProperty.call(record, 'key') || !Object.prototype.hasOwnProperty.call(record, 'value')) throw new Error(`The ${snapshot.name}/${store.name} records are invalid.`);
+        try {
+          osValidatePackedBackupValue(record.key, budget);
+          osValidatePackedBackupValue(record.value, budget);
+        } catch (error) {
+          throw new Error(`The ${snapshot.name}/${store.name} backup contains an invalid value: ${String(error?.message || error).slice(0, 180)}`);
+        }
+      }
     }
   }
   async function osValidateBackupDatabases(snapshots, options = {}) {
@@ -10336,7 +10355,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
         <section><h3>Keyboard shortcuts</h3><dl><div><dt>F1 or Ctrl / ⌘ + /</dt><dd>Open this guide</dd></div><div><dt>Ctrl / ⌘ + Alt + Shift + B</dt><dd>Export a full CURIOID backup</dd></div><div><dt>Ctrl / ⌘ + Alt + Shift + I</dt><dd>Restore from a backup</dd></div><div><dt>Escape</dt><dd>Close this panel or the active menu</dd></div></dl></section>
         <section><h3>Storage & privacy</h3><p>Projects, virtual OS storage, CURIOID Exchange and Kernel data are stored inside this CURIOID installation. There are no accounts or cloud uploads. The only host-folder access is the Downloads folder you explicitly select and approve. CURIOID cannot browse other folders. Clearing this site’s data can erase saved work, so keep Browser Vault backups.</p><p class="os-system-storage" data-os-storage-report role="status">Checking browser storage…</p><div class="os-system-center-actions"><button type="button" data-os-check-storage>Check storage</button><span class="os-system-storage">CURIOID manages its own virtual spaces. No host storage protection is requested.</span></div><h3 class="os-system-subheading">Browser Vault</h3><p>Generated outputs, backups and exports stay inside this browser profile by default. You can explicitly copy selected files to the connected Downloads folder from Downloads Room; no other device folders are available.</p><div class="os-system-center-actions"><button type="button" data-os-open-vault>Open Browser Vault</button><span class="os-system-storage">BROWSER STORAGE · DOWNLOADS ONLY BY APPROVAL</span></div></section>
       </div>
-      <section class="os-system-backup"><div><h3>Backup & recovery</h3><p>Export includes CURIOID browser preferences, Exchange files and messages, Kernel artifacts and capability permissions, local data/settings for Doors98, NOURISH, Echonoise, UMBRA, Aether and AURA, Sandbox desktop appearance and open-window layout, saved personal Sandbox OS packages, private vaults, builder drafts and Browser Vault artifacts when supported. Aether OPFS attachment bytes are included when the browser supports them. The PC Downloads folder itself is not copied or changed. Its saved CURIOID folder handle and permission must be reconnected in another browser profile. Keep important .aether and .umbra project exports too.</p></div><div class="os-system-center-actions"><button type="button" class="is-primary" data-os-export-backup>↓ Save complete backup to Browser Vault</button><label class="os-system-import">Restore backup<input id="${importId}" type="file" accept=".curioidbackup,.json,application/json" data-os-import-backup></label></div></section>
+      <section class="os-system-backup"><div><h3>Backup & recovery</h3><p>Export includes CURIOID browser preferences, Exchange files and messages, Kernel artifacts and capability permissions, local data/settings for Doors98, NOURISH, Echonoise, UMBRA, Aether and AURA, Sandbox desktop appearance and open-window layout, saved personal Sandbox OS packages, private vaults, builder drafts and Browser Vault artifacts when supported. Aether OPFS attachment bytes are included when the browser supports them. The PC Downloads folder itself is not copied or changed. Its saved CURIOID folder handle and permission must be reconnected in another browser profile. Keep important .aether and .umbra project exports too. A full-system backup is downloaded only when localStorage is stable, all supported IndexedDB databases were captured, and every referenced Aether attachment is present. If export is blocked, close other CURIOID tabs and active editors, then retry or use each OS’s native project exporter.</p></div><div class="os-system-center-actions"><button type="button" class="is-primary" data-os-export-backup>↓ Save complete backup to Browser Vault</button><label class="os-system-import">Restore backup<input id="${importId}" type="file" accept=".curioidbackup,.json,application/json" data-os-import-backup></label></div></section>
       <p class="os-system-center-status" data-os-backup-status role="status" aria-live="polite">Backups are local JSON files. Restoring replaces saved CURIOID keys and included database records.</p>`;
     shell.append(dialog);
     let destroyed = false;
@@ -10673,19 +10692,35 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       } catch (_) { if (folderStatus) folderStatus.textContent = 'Downloads status unavailable. Browser Vault remains local.'; }
       report.textContent = 'CURIOID keeps project data in private browser storage spaces. Downloads access is optional, limited to the folder you explicitly connect, and governed by browser permission. Generated outputs stay in Browser Vault until you choose to copy them.';
     }
+    function osValidateCompleteSystemBackup(backup) {
+      if (!backup || backup.format !== OS_BACKUP_FORMAT || backup.version !== OS_BACKUP_VERSION || !backup.localStorage || typeof backup.localStorage !== 'object' || Array.isArray(backup.localStorage) || !Array.isArray(backup.databases)) throw new Error('The system backup has an invalid top-level structure.');
+      osValidateBackupSnapshotManifest(backup);
+      for (const [key, value] of Object.entries(backup.localStorage)) {
+        if (!osIsBackupLocalStorageKey(key) || typeof value !== 'string') throw new Error('The system backup contains an unsupported localStorage entry.');
+      }
+      if (new Set(backup.databases.map(database => database?.name)).size !== backup.databases.length || backup.databases.some(database => !database || !OS_BACKUP_DATABASES.has(database.name))) throw new Error('The system backup contains an unsupported or duplicate database.');
+      const packedValueBudget = { nodes: 0, encodedChars: 0 };
+      for (const database of backup.databases) osValidateBackupSnapshot(database, packedValueBudget);
+      const opfs = osValidateAetherOpfsSnapshot(backup.aetherOpfs, backup.databases);
+      return { settings: Object.keys(backup.localStorage).length, databases: backup.databases.length, attachments: opfs?.files?.length || 0, opfs };
+    }
     async function exportBackup() {
       if (destroyed) return;
-      status.textContent = 'Collecting local settings and saved project databases…';
+      status.textContent = 'Collecting and validating local settings, project databases and attachments…';
       try {
         const backup = await osCollectSystemBackup();
         if (destroyed) return;
+        // Do not create a downloadable file that the restore path itself would
+        // reject. Incomplete IndexedDB enumeration or changing localStorage is
+        // a recovery warning, not a successful full-system backup.
+        const summary = osValidateCompleteSystemBackup(backup);
         const content = JSON.stringify(backup);
         const blob = new Blob([content], { type: 'application/json' });
         if (blob.size > 180 * 1024 * 1024) throw new Error('This backup is larger than 180 MB. Use the native project exporters to make smaller individual backups.');
         await downloadBlob(blob, `curioid-backup-${new Date().toISOString().slice(0,10)}.curioidbackup`);
-        status.textContent = `Backup created · ${(blob.size / 1048576).toFixed(2)} MB · ${Object.keys(backup.localStorage).length} saved settings · ${backup.databases.length} browser databases · ${backup.aetherOpfs?.status === 'complete' ? `${backup.aetherOpfs.files.length} Aether attachments` : 'Aether attachments not included'}.${backup.notes.length ? ` ${backup.notes.join(' ')}` : ''}`;
-        if (api.toast) api.toast('Complete CURIOID backup exported.');
-      } catch (error) { status.textContent = error.message || 'The backup could not be created. Use the native export in this OS.'; }
+        status.textContent = `Verified full-system backup created · ${(blob.size / 1048576).toFixed(2)} MB · ${summary.settings} saved settings · ${summary.databases} browser databases · ${summary.attachments} Aether attachments.${backup.notes.length ? ` ${backup.notes.join(' ')}` : ''}`;
+        if (api.toast) api.toast('Verified complete CURIOID backup exported.');
+      } catch (error) { status.textContent = `${error.message || 'The backup could not be created.'} No full-system backup was downloaded. Close other CURIOID tabs and editors, retry, or use each OS’s native project exporter.`; }
     }
     async function importBackup(file) {
       if (!file) return;
@@ -10694,13 +10729,8 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       try {
         const backup = JSON.parse(await file.text());
         if (destroyed) return;
-        if (!backup || backup.format !== OS_BACKUP_FORMAT || backup.version !== OS_BACKUP_VERSION || !backup.localStorage || typeof backup.localStorage !== 'object' || Array.isArray(backup.localStorage) || !Array.isArray(backup.databases)) throw new Error('This is not a supported CURIOID system backup.');
-        osValidateBackupSnapshotManifest(backup);
-        const incomingKeys = Object.keys(backup.localStorage);
-        if (incomingKeys.some(key => (!osIsBackupLocalStorageKey(key)) || typeof backup.localStorage[key] !== 'string')) throw new Error('The backup contains an unsupported browser-storage key.');
-        if (backup.databases.some(db => !db || !OS_BACKUP_DATABASES.has(db.name) || !Array.isArray(db.stores)) || new Set(backup.databases.map(db => db.name)).size !== backup.databases.length) throw new Error('The backup contains an unrecognized or duplicate browser database.');
-        backup.databases.forEach(osValidateBackupSnapshot);
-        const incomingAetherOpfs = osValidateAetherOpfsSnapshot(backup.aetherOpfs, backup.databases);
+        const backupSummary = osValidateCompleteSystemBackup(backup);
+        const incomingAetherOpfs = backupSummary.opfs;
         if (incomingAetherOpfs?.status === 'complete' && incomingAetherOpfs.files.length && !navigator.storage?.getDirectory) throw new Error('This browser cannot restore the Aether attachments in this backup. Open CURIOID on a browser with Origin Private File System support.');
         // Validate incoming schemas before confirmation. The rollback baseline
         // is refreshed from the verified safety snapshot immediately before
@@ -13863,7 +13893,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     let virtualFiles=loadVirtualFiles();
     function loadRecycleBin(){return loadDriveFallback(recycleKey,starterRecycle,'Key Return');}
     let virtualRecycleBin=loadRecycleBin();
-    const driveBlobs=new Map();let driveDb=null,driveReadyState=false,driveError='',driveWriteChain=Promise.resolve();const pendingOpenApps=new Set(),pendingFileDoorRooms=new Map();let activeFileDoorRoom='',activeFileDoorApp='',pendingRoomId=null;
+    const driveBlobs=new Map();let driveDb=null,driveReadyState=false,driveError='',driveWriteChain=Promise.resolve();const pendingOpenApps=new Set(),pendingFileDoorRooms=new Map();let pendingRoomId='',activeFileDoorRoom='',activeFileDoorApp='';
     function driveRequest(request){return new Promise((resolve,reject)=>{let settled=false;const timer=setTimeout(()=>{if(settled)return;settled=true;try{request.transaction?.abort();}catch(_){}reject(new Error('C: memory request timed out. The browser is using its fallback storage.'));},6000);request.onsuccess=()=>{if(settled)return;settled=true;clearTimeout(timer);resolve(request.result);};request.onerror=()=>{if(settled)return;settled=true;clearTimeout(timer);const error=request.error||new Error('C: memory request failed');try{request.transaction?.abort();}catch(_){}reject(error);};});}
     function openDriveDatabase(){return new Promise((resolve,reject)=>{if(!window.indexedDB){reject(new Error('IndexedDB is not available'));return;}let settled=false,request,migrationError=null;const finish=(fn,value)=>{if(settled)return;settled=true;clearTimeout(timer);fn(value);};const timer=setTimeout(()=>finish(reject,new Error('C: memory did not respond within 5 seconds. The computer will use fallback storage for this session.')),5000);try{request=indexedDB.open('Doors98_C_Memory',1);}catch(error){finish(reject,error);return;}request.onupgradeneeded=()=>{try{const db=request.result,upgradeTransaction=request.transaction;if(!db.objectStoreNames.contains('items'))db.createObjectStore('items',{keyPath:'id'});if(db.objectStoreNames.contains('handles'))upgradeTransaction.objectStore('handles').clear();}catch(error){migrationError=error;try{request.transaction?.abort();}catch(_){}}};request.onsuccess=()=>{const db=request.result;if(settled){try{db.close();}catch(_){}return;}db.onversionchange=()=>{try{db.close();}catch(_){}};finish(resolve,db);};request.onerror=()=>finish(reject,migrationError||request.error||new Error('C: memory could not be opened'));request.onblocked=()=>finish(reject,new Error('C: memory is open in another tab. Close the older Doors98 tab and retry.'));});}
     function dbGetAllItems(){return driveRequest(driveDb.transaction('items','readonly').objectStore('items').getAll());}
@@ -14061,7 +14091,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     try{if(typeof BroadcastChannel==='function'){driveChannel=new BroadcastChannel('doors98-c-drive-v1');driveChannel.addEventListener('message',/** @param {CurioidDOMEvent} event */ event=>{if(event.data?.type==='changed')refreshCDriveFromOtherTab();});}}catch(_){driveChannel=null;}
     const driveVisibilityRefresh=()=>{if(document.visibilityState==='visible')refreshCDriveFromOtherTab();};document.addEventListener('visibilitychange',driveVisibilityRefresh);
     const driveWindowFocus=()=>refreshCDriveFromOtherTab();window.addEventListener('focus',driveWindowFocus);
-    const driveReadyPromise=initialiseCDrive().catch(error=>{driveError=`C: started in fallback mode: ${error?.message||'unknown error'}`;}).then(()=>{if(deadDesktopDisposed)return;driveReadyState=true;for(const app of pendingOpenApps)open(app);pendingOpenApps.clear();if(pendingRoomId){const roomWindow=windowRegistry.get('room-index');roomWindow?.selectRoom?.(pendingRoomId);pendingRoomId=null;}});
+    const driveReadyPromise=initialiseCDrive().catch(error=>{driveError=`C: started in fallback mode: ${error?.message||'unknown error'}`;}).then(()=>{if(deadDesktopDisposed)return;driveReadyState=true;for(const app of pendingOpenApps)open(app);pendingOpenApps.clear();if(pendingRoomId){const requested=pendingRoomId;pendingRoomId='';windowRegistry.get('room-index')?.selectRoom?.(requested);}});
     driveReadyPromise.finally(()=>{if(deadDesktopDisposed&&driveDb){driveDb.close();driveDb=null;}});
     driveReadyPromise.then(()=>{if(deadDesktopDisposed)return;try{const startup=JSON.parse(safeGet('curioid-doors98-startup-apps-v1','[]'));if(Array.isArray(startup))startup.filter(id=>Object.prototype.hasOwnProperty.call(appNames,id)&&id!=='startup-manager').slice(0,4).forEach((id,index)=>setTimeout(()=>{if(!deadDesktopDisposed)open(id);},700*(index+1)));}catch(_){}});
     function currentDriveBytes(){return [...virtualFiles,...virtualRecycleBin].reduce((sum,file)=>sum+fileBytes(file),0);}
@@ -14200,13 +14230,15 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       if(activeApp&&activeApp!==app){const previous=windowRegistry.get(activeApp);if(previous){previous.timerTask=timerTask;if(typeof previous.pause==='function'){try{previous.pause('window-switch');}catch(error){console.warn('Doors98 app pause failed:',previous.app,error);}}}pauseTimer();timerTask=null;}
       activeApp=app;win=entry.el;entry.minimized=false;entry.lastActive=++windowZ;entry.el.hidden=false;entry.el.style.zIndex=String(windowZ);desk.classList.remove('window-minimized');
       if(entry.timerTask){timerTask=entry.timerTask;resumeTimer();}
+      if(entry.isGame&&entry.content&&!entry.content.contains(document.activeElement)){try{entry.content.focus({preventScroll:true});}catch(_){entry.content.focus();}}
       updateTaskbar();$('[data-retro-state]',root).textContent=`${appNames[app]} OPEN`;
     }
     function createWindow(app){
       const shell=firstWindowAvailable?(firstWindowAvailable=false,firstWindow):windowTemplate.cloneNode(true);
       if(shell!==firstWindow)desk.insertBefore(shell,desk.querySelector('.retro-taskbar'));
       shell.classList.remove('retro-window-template');shell.removeAttribute('inert');shell.setAttribute('aria-hidden','false');shell.hidden=false;shell.dataset.retroWindowApp=app;const remembered=windowBounds[app];shell.style.left=remembered?.left||`${Math.min(34,12+(windowRegistry.size%5)*4)}%`;shell.style.top=remembered?.top||`${38+(windowRegistry.size%5)*22}px`;shell.style.width=remembered?.width||'min(74%,620px)';shell.style.height=remembered?.height||'min(74%,560px)';shell.style.zIndex=String(++windowZ);
-      const entry={app,el:shell,content:$('[data-retro-content]',shell),title:$('[data-retro-title]',shell),minimized:false,maximized:false,restoreBounds:null,timerTask:null,lastActive:windowZ,pause:null};
+      const content=$('[data-retro-content]',shell),isGame=doorsGameIds.has(app);if(isGame)content.tabIndex=-1;
+      const entry={app,el:shell,content,title:$('[data-retro-title]',shell),isGame,minimized:false,maximized:false,restoreBounds:null,timerTask:null,lastActive:windowZ,pause:null};
       $('[data-retro-window-location]',shell).textContent=`C:\\ROOMS\\${getRoomName($(`[data-dock-app=\"${app}\"]`,root)?.dataset.room||'service').toUpperCase()}\\${app.toUpperCase()}`;
       shell.addEventListener('pointerdown',()=>{if(activeApp!==app)focusWindow(app);else{entry.lastActive=++windowZ;shell.style.zIndex=String(windowZ);}},true);
       $('[data-retro-close]',shell).addEventListener('click',()=>closeAppWindow(app));
@@ -14340,7 +14372,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
         'word-guess':`<div class="retro-game retro-arcade-game retro-wordguess"><div class="retro-game-head"><div><b>WORD GUESS / THE QUIET CODE</b><small>Guess the five-letter word in six attempts.</small></div><div class="retro-game-score"><span>ROUND <b data-word-round>1</b></span><span>STREAK <b data-word-streak>0</b></span></div></div><div class="retro-word-grid" data-word-grid aria-label="Word guess attempts"></div><form class="retro-word-form" data-word-form><input data-word-input maxlength="5" minlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Five-letter guess" placeholder="FIVE LETTERS"><button type="submit">Guess</button><button type="button" data-word-new>New word</button></form><p class="retro-game-note" data-word-status>Letters turn green when correct and brass when misplaced.</p></div>`
       });
       Object.assign(doors98ExtraTemplates,{
-        'tetris':`<div class="retro-game retro-arcade-game retro-tetris"><div class="retro-game-head"><div><b>BLOCK STACK / STACK ROOM</b><small>Fit the falling pieces. Clear rows. Keep the ceiling free.</small></div><div class="retro-game-score"><span>SCORE <b data-tetris-score>0</b></span><span>LINES <b data-tetris-lines>0</b></span><span>BEST <b data-tetris-best>0</b></span></div></div><div class="retro-tetris-layout"><div class="retro-tetris-board" data-tetris-board role="grid" aria-label="Block Stack board" tabindex="0"></div><aside class="retro-tetris-controls"><b data-tetris-state>READY</b><button type="button" data-tetris-start>Start / restart</button><button type="button" data-tetris-pause>Pause</button><button type="button" data-tetris-move="left">← Left</button><button type="button" data-tetris-move="rotate">↻ Rotate</button><button type="button" data-tetris-move="right">Right →</button><button type="button" data-tetris-move="down">↓ Drop</button></aside></div><p class="retro-game-note" data-tetris-status>Arrow keys move and rotate. Space hard-drops. Click the board first.</p></div>`,
+        'tetris':`<div class="retro-game retro-arcade-game retro-tetris"><div class="retro-game-head"><div><b>BLOCK STACK / STACK ROOM</b><small>Fit the falling pieces. Clear rows. Keep the ceiling free.</small></div><div class="retro-game-score"><span>SCORE <b data-tetris-score>0</b></span><span>LINES <b data-tetris-lines>0</b></span><span>BEST <b data-tetris-best>0</b></span></div></div><div class="retro-tetris-layout"><div class="retro-tetris-board" data-tetris-board role="grid" aria-label="Block Stack board" tabindex="0"></div><aside class="retro-tetris-controls"><b data-tetris-state>READY</b><button type="button" data-tetris-start>Start / restart</button><button type="button" data-tetris-pause>Pause</button><button type="button" data-tetris-move="left">← Left</button><button type="button" data-tetris-move="rotate">↻ Rotate</button><button type="button" data-tetris-move="right">Right →</button><button type="button" data-tetris-move="down">↓ Drop</button></aside></div><p class="retro-game-note" data-tetris-status>Use ← / → to move, ↑ to rotate, ↓ to soft-drop and Space to hard-drop.</p></div>`,
         'flappy-bell':`<div class="retro-game retro-arcade-game retro-flappy"><div class="retro-game-head"><div><b>FLAPPY BELL / LOBBY FLIGHT</b><small>Tap or press Space to keep Bella airborne. The doorframes keep moving.</small></div><div class="retro-game-score"><span>SCORE <b data-flappy-score>0</b></span><span>BEST <b data-flappy-best>0</b></span></div></div><canvas data-flappy-canvas width="520" height="300" aria-label="Flappy Bell game. Tap or press Space to flap." tabindex="0"></canvas><div class="retro-game-toolbar"><button type="button" data-flappy-start>Start / restart</button><span data-flappy-status>Press Start, then tap or press Space.</span></div></div>`,
         'sliding-puzzle':`<div class="retro-game retro-arcade-game retro-sliding"><div class="retro-game-head"><div><b>SLIDING PUZZLE / NUMBER DOOR</b><small>Put the numbered keys back in order. The empty space is the only exit.</small></div><div class="retro-game-score"><span>MOVES <b data-slide-moves>0</b></span><span>BEST <b data-slide-best>-</b></span></div></div><div class="retro-sliding-board" data-slide-board role="group" aria-label="Sliding number puzzle"></div><div class="retro-game-toolbar"><button type="button" data-slide-shuffle>New puzzle</button><span data-slide-status>Move a tile beside the empty space.</span></div></div>`,
         'maze-runner':`<div class="retro-game retro-arcade-game retro-maze"><div class="retro-game-head"><div><b>MAZE RUNNER / SUBLEVEL 00</b><small>Find the exit. Every new floor is generated locally.</small></div><div class="retro-game-score"><span>STEPS <b data-maze-steps>0</b></span><span>BEST <b data-maze-best>-</b></span></div></div><div class="retro-maze-board" data-maze-board role="grid" aria-label="Generated maze"></div><div class="retro-maze-controls"><button type="button" data-maze-dir="up">↑</button><button type="button" data-maze-dir="left">←</button><button type="button" data-maze-dir="down">↓</button><button type="button" data-maze-dir="right">→</button><button type="button" data-maze-new>New floor</button></div><p class="retro-game-note" data-maze-status>Use arrow keys or the direction pad. The exit is at the far corner.</p></div>`,
@@ -14731,7 +14763,7 @@ The typeface is a room of its own.</div><div class="retro-file-actions"><button 
         grid.addEventListener('click',/** @param {CurioidDOMEvent} e */ e=>{const b=e.target.closest('[data-room-select]');if(b)selectRoom(b.dataset.roomSelect);});
         list.addEventListener('click',/** @param {CurioidDOMEvent} e */ e=>{const b=e.target.closest('[data-room-launch],[data-room-file]');if(!b)return;if(b.dataset.roomLaunch)open(b.dataset.roomLaunch);else openFileKey(b.dataset.roomFile);});
         list.addEventListener('dragstart',/** @param {CurioidDOMEvent} e */ e=>{const b=e.target.closest('[data-room-file]');if(!b||!e.dataTransfer)return;e.dataTransfer.setData('application/x-curioid-key',b.dataset.roomFile);e.dataTransfer.setData('text/plain',b.querySelector('b')?.textContent||'CURIOID key');e.dataTransfer.effectAllowed='copy';});
-        search?.addEventListener('input',()=>selectRoom(selectedRoom));entry.selectRoom=selectRoom;entry.refreshRooms=()=>{const selected=selectedRoom;rooms.splice(0,rooms.length,...collectBuiltinRooms(),...userRooms.map(r=>({id:r.id,name:r.name,code:r.code,personal:true})));selectRoom(selected);};entry.applyExpertMode=()=>{const head=appContent.querySelector('.retro-explorer-toolbar>div>small'),note=appContent.querySelector('.retro-room-directory>.retro-small');if(head)head.textContent=doorsExpertMode?'COMPUTER / C: / FOLDERS':'COMPUTER / C: / ROOMS';if(note)note.textContent=doorsExpertMode?'Each folder is a workspace. Programs are launchable shortcuts; your C: files remain in their assigned folders.':'Each Room is a workspace. Programs are stored as launchable keys; your C: documents remain in their assigned rooms.';const personal=rooms.filter(r=>r.personal);rooms.splice(0,rooms.length,...collectBuiltinRooms(),...personal);selectRoom(selectedRoom);};selectRoom(pendingRoomId||'all');pendingRoomId=null;
+        search?.addEventListener('input',()=>selectRoom(selectedRoom));entry.selectRoom=selectRoom;entry.refreshRooms=()=>{const selected=selectedRoom;rooms.splice(0,rooms.length,...collectBuiltinRooms(),...userRooms.map(r=>({id:r.id,name:r.name,code:r.code,personal:true})));selectRoom(selected);};entry.applyExpertMode=()=>{const head=appContent.querySelector('.retro-explorer-toolbar>div>small'),note=appContent.querySelector('.retro-room-directory>.retro-small');if(head)head.textContent=doorsExpertMode?'COMPUTER / C: / FOLDERS':'COMPUTER / C: / ROOMS';if(note)note.textContent=doorsExpertMode?'Each folder is a workspace. Programs are launchable shortcuts; your C: files remain in their assigned folders.':'Each Room is a workspace. Programs are stored as launchable keys; your C: documents remain in their assigned rooms.';const personal=rooms.filter(r=>r.personal);rooms.splice(0,rooms.length,...collectBuiltinRooms(),...personal);selectRoom(selectedRoom);};selectRoom(pendingRoomId||'all');pendingRoomId='';
       }
       if(app==='table-studio'){
         const body=$('[data-table-grid] tbody',appContent),name=$('[data-table-name]',appContent),status=$('[data-table-status]',appContent);
@@ -16753,14 +16785,13 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
         icon.addEventListener('contextmenu',e=>{contextTarget=icon;});
       }
       iconArea?.addEventListener('click',/** @param {CurioidDOMEvent} event */ event=>{if(event.target!==iconArea&&!event.target.matches('.retro-icon-scroll-extent'))return;icons.forEach(icon=>icon.classList.remove('selected'));});
-      iconArea?.addEventListener('click',/** @param {CurioidDOMEvent} event */ event=>{if(event.target!==iconArea&&!event.target.matches('.retro-icon-scroll-extent'))return;icons.forEach(icon=>icon.classList.remove('selected'));});
       icons.forEach(bindDesktopIcon);
       function freeDesktopSlot(){const b=iconBounds(),stepX=86,stepY=82,cols=Math.max(1,Math.floor((b.w-16)/stepX)),visibleRows=Math.max(3,Math.floor((b.h-18)/stepY)),rows=Math.max(visibleRows,Math.ceil((icons.length+1)/cols)+2);for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){const x=10+col*stepX,y=10+row*stepY;if(!icons.some(icon=>Math.abs((parseFloat(icon.style.left)||0)-x)<58&&Math.abs((parseFloat(icon.style.top)||0)-y)<56))return{x,y};}return{x:10,y:10+rows*stepY};}
       function shortcutPosition(key,point){if(point){const area=iconArea.getBoundingClientRect();return{x:point.x-area.left-39,y:point.y-area.top-38+iconArea.scrollTop};}const saved=savedIconPosition(key);return saved?{x:saved.x,y:saved.y}:freeDesktopSlot();}
       function addDesktopFileShortcut(file,point=null,persist=true){if(!file||icons.some(icon=>icon.dataset.userFileShortcut===file.id))return null;const button=document.createElement('button');button.type='button';button.className='retro-icon retro-user-key-shortcut';button.dataset.userFileShortcut=file.id;button.setAttribute('aria-label',`Open key ${file.name}`);button.innerHTML=`<span class="retro-door-icon retro-key-icon"><i></i><b>⚿</b></span><small>${esc(file.name)}</small><em>DOCUMENT KEY</em>`;button.addEventListener('contextmenu',()=>curioidFileClipboard?.copy?.(file.id));iconArea.appendChild(button);icons.push(button);bindDesktopIcon(button);const pos=shortcutPosition(`key:${file.id}`,point);setIconPosition(button,pos.x,pos.y);if(persist)saveIconLayout();return button;}
             function addDesktopRoomShortcut(room,point=null,persist=true){if(!room||icons.some(icon=>icon.dataset.userRoomShortcut===room.id))return null;const button=document.createElement('button');button.type='button';button.className='retro-icon retro-room-shortcut retro-user-room-shortcut';button.dataset.userRoomShortcut=room.id;button.setAttribute('aria-label',`Open Room ${room.name}`);button.innerHTML=`<span class="retro-door-icon"><i></i><b>⌂</b></span><small>${esc(room.name)}</small><em>${esc(room.code||'PERSONAL ROOM')}</em>`;iconArea.appendChild(button);icons.push(button);bindDesktopIcon(button);const pos=shortcutPosition(`userroom:${room.id}`,point);setIconPosition(button,pos.x,pos.y);if(persist)saveIconLayout();return button;}
       function makeDesktopPoint(clientX,clientY){return{x:clientX,y:clientY};}
-      function openRoom(roomId){pendingRoomId=roomId;open('room-index');const roomWindow=windowRegistry.get('room-index');if(roomWindow?.selectRoom){roomWindow.selectRoom(roomId);pendingRoomId=null;}}
+      function openRoom(roomId){if(typeof roomId!=='string'||!roomId||!allRoomIds().includes(roomId))return;pendingRoomId=roomId;const roomWindow=windowRegistry.get('room-index');if(roomWindow?.selectRoom){open('room-index');roomWindow.selectRoom(roomId);pendingRoomId='';return;}open('room-index');const mounted=windowRegistry.get('room-index');if(mounted?.selectRoom){const requested=pendingRoomId;pendingRoomId='';mounted.selectRoom(requested);}}
 
       // BELLA / the hotel-style local concierge. She operates the actual desktop
       // through the same application, room and storage functions as the user.
@@ -16859,20 +16890,22 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
         if(!bellaCharacter||!bellaPanel||bellaPanel.hidden||!bellaCompanionOn||bellaMode!=='avatar'||document.hidden||!bellaMotionAllowed()){bellaStopVisuals();return;}
         bellaStopVisuals();bellaCharacter.classList.add('bella-motion-active');
         // CSS owns the continuous idle float; gesture animations use the inner art layer.
-        const eyes=$$('.bella-avatar-eye',bellaCharacter);if(eyes.length!==2)return;
-        // The shipped concierge portrait bakes in its expression, so it has no
-        // separate eye or pupil nodes to blink. Keep the face art static and let
-        // the character wrapper plus the gesture engine provide companion motion.
-        const blinkOne=(index)=>bellaLaterVisual(()=>{
-          const eye=eyes[index];if(!eye)return;
-          eye.classList.add('bella-eye-blink');
-          bellaLaterVisual(()=>eye.classList.remove('bella-eye-blink'),118+Math.random()*28);
-          if(Math.random()<.22)bellaLaterVisual(()=>{eye.classList.add('bella-eye-blink');bellaLaterVisual(()=>eye.classList.remove('bella-eye-blink'),95);},185+Math.random()*70);
-          blinkOne(index);
-        },1800+Math.random()*4200+index*310);
-        blinkOne(0);blinkOne(1);
-        const glance=()=>bellaLaterVisual(()=>{const pupils=$$('.bella-avatar-pupil',bellaCharacter);const dx=(Math.random()-.5)*2.4,dy=(Math.random()-.5)*1.6;pupils.forEach(p=>bellaTrackAnimation(p.animate([{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px)`},{transform:'translate(0,0)'}],{duration:760+Math.random()*420,easing:'ease-in-out'})));glance();},2800+Math.random()*4300);
-        glance();
+        const eyes=$$('.bella-avatar-eye',bellaCharacter);
+        if(eyes.length===2){
+          const blinkOne=(index)=>bellaLaterVisual(()=>{
+            const eye=eyes[index];if(!eye)return;
+            eye.classList.add('bella-eye-blink');
+            bellaLaterVisual(()=>eye.classList.remove('bella-eye-blink'),118+Math.random()*28);
+            if(Math.random()<.22)bellaLaterVisual(()=>{eye.classList.add('bella-eye-blink');bellaLaterVisual(()=>eye.classList.remove('bella-eye-blink'),95);},185+Math.random()*70);
+            blinkOne(index);
+          },1800+Math.random()*4200+index*310);
+          blinkOne(0);blinkOne(1);
+        }
+        const pupils=$$('.bella-avatar-pupil',bellaCharacter);
+        if(pupils.length){
+          const glance=()=>bellaLaterVisual(()=>{const dx=(Math.random()-.5)*2.4,dy=(Math.random()-.5)*1.6;pupils.forEach(p=>bellaTrackAnimation(p.animate([{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px)`},{transform:'translate(0,0)'}],{duration:760+Math.random()*420,easing:'ease-in-out'})));glance();},2800+Math.random()*4300);
+          glance();
+        }
       }
       const bellaVisibilityHandler=()=>{if(document.hidden){bellaStopVisuals();clearTimeout(bellaIdleTimer);}else{bellaStartVisuals();bellaScheduleIdle();}};
       const bellaMotionUnsubscribe=window.CurioidMotion?.subscribe(enabled=>{if(enabled){bellaStartVisuals();bellaScheduleIdle();}else{bellaStopVisuals();clearTimeout(bellaIdleTimer);bellaCharacter?.classList.remove('bella-happy','bella-wave','bella-curious','bella-wiggle','bella-peek','bella-dozy','bella-listening','bella-glance-left','bella-glance-right','bella-stretch','bella-nod','bella-sway','bella-ring','bella-wink','bella-speaking');clearTimeout(bellaSpeakingTimer);}})||(()=>{});
@@ -19346,7 +19379,7 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
     let state=JSON.parse(JSON.stringify(defaults)),songs=[],lexiconStudies=[],lastLexiconStudy=null,lastLexiconPalette=null,phoneticRhymeIndex=null,phoneticEntries=null,phoneticIndexOverrideSignature='',customPronunciationMap=null,customPronunciationSource=null,audio=null,playing=false,step=0,arrangementBar=0,nextTime=0,schedulerTimer=0,raf=0,clockTimer=0,windowsZ=20,windowOffset=0,drag=null,playRequestToken=0,echoDisposed=false;
     let stateStorageReadOnly=false,stateRawSnapshot=null,lastStateSnapshot=null,songBookReadOnly=false,songBookRawSnapshot=null,lexiconBookReadOnly=false,lexiconBookRawSnapshot=null;
     const voicebank={name:'',files:new Map(),aliases:new Map(),buffers:new Map(),stats:{files:0,aliases:0,loaded:0}};
-    let voicebankSampleNodes=[],generated=[],activeSynthNodes=[],activeSequencerNodes=new Set(),pronunciationDictionaryPromise=null;
+    let voicebankImportGeneration=0,voicebankSampleNodes=[],generated=[],activeSynthNodes=[],activeSequencerNodes=new Set(),pronunciationDictionaryPromise=null;
     const clean=(v,n=240)=>String(v??'').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').slice(0,n);
     const isPlainObject=value=>{if(!value||typeof value!=='object'||Array.isArray(value))return false;const proto=Object.getPrototypeOf(value);return proto===Object.prototype||proto===null;};
     function guardedLocalWrite(key,expectedRaw,serialized,label){
@@ -19365,6 +19398,9 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
         return{ok:false,readOnly:true,message:`${label} changed unexpectedly while saving. The newer stored value was left untouched; reload before editing.`};
       }
     }
+    // Roll back one imported store only while it still contains our exact staged value.
+    // A newer tab write is never overwritten; an originally absent key is removed, not stringified as null.
+    const guardedLocalRestore=(key,expectedRaw,previousRaw,label)=>{let currentRaw;try{currentRaw=localStorage.getItem(key);}catch(error){return{ok:false,readOnly:true,message:`${label} could not inspect the staged value: ${error?.message||'storage read failed'}.`};}if(currentRaw!==expectedRaw)return{ok:false,readOnly:true,message:`${label} found a newer value and left it untouched.`};try{if(previousRaw===null)localStorage.removeItem(key);else localStorage.setItem(key,previousRaw);if(localStorage.getItem(key)!==previousRaw)throw new Error('Rollback read-back verification failed.');return{ok:true,raw:previousRaw};}catch(error){let afterRaw;try{afterRaw=localStorage.getItem(key);}catch(readError){return{ok:false,readOnly:true,message:`${label} failed (${error?.message||'restore failed'}) and the current value could not be inspected (${readError?.message||'read failed'}).`};}if(afterRaw===previousRaw)return{ok:true,raw:previousRaw};return{ok:false,readOnly:true,message:`${label} could not be verified (${error?.message||'restore failed'}). The current value was preserved for recovery.`};}};
     const persist=()=>{
       if(stateStorageReadOnly){if(lastStateSnapshot){try{state=JSON.parse(lastStateSnapshot);}catch(_){}}setFeedback('Echonoise session storage is in read-only recovery mode. The previous session was preserved and no changes were saved.');if(root.isConnected)syncUI();return false;}
       let serialized;try{serialized=JSON.stringify({...state,version:2});if(typeof serialized!=='string'||serialized.length>5*1024*1024)throw new Error('Session data exceeds the 5 MB safety limit.');}catch(error){if(lastStateSnapshot){try{state=JSON.parse(lastStateSnapshot);}catch(_){}}setFeedback(`Echonoise could not prepare the session save: ${error?.message||'serialization failed'}.`);if(root.isConnected)syncUI();return false;}
@@ -19621,7 +19657,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     function setMasterMuted(value){masterMuted=!!value;safeSet('curioid-echonoise-master-muted-v1',masterMuted?'1':'0');if(audio?.master&&audio.ctx){audio.master.gain.setTargetAtTime(masterMuted?0:masterVolume,audio.ctx.currentTime,.035);}syncMuteButton();}function setMasterVolume(value){masterVolume=clamp(Number(value)||0,0,100)/100;safeSet('curioid-echonoise-master-volume-v1',String(Math.round(masterVolume*100)));if(audio?.master&&audio.ctx&&!masterMuted)audio.master.gain.setTargetAtTime(masterVolume,audio.ctx.currentTime,.035);const input=$e('[data-eno-master-volume]'),out=$e('[data-eno-volume-output]');if(input)input.value=String(Math.round(masterVolume*100));if(out)out.textContent=`${Math.round(masterVolume*100)}%`;}
     const enoFullscreen=bindOsFullscreen(enoShell,$e('[data-eno-fullscreen]'),message=>setFeedback(message));
     const toggleEnoFullscreen=enoFullscreen.toggle;
-    function closeWin(win){if(!win)return;const owner=win.dataset.enoWindow,wasActive=win.classList.contains('is-active');if(['vocal','voicebank','choir'].includes(owner))stopSynthPhrase();if(owner==='choir')stopChoir();if(owner==='arcade'){stopArcade(false);arcadeWindow=null;}win.remove();if(wasActive)focusTopEchonoiseWindow();else updateTaskbar();}
+    function closeWin(win){if(!win)return;const owner=win.dataset.enoWindow,wasActive=win.classList.contains('is-active');if(owner==='voicebank')voicebankImportGeneration++;if(['vocal','voicebank','choir'].includes(owner))stopSynthPhrase();if(owner==='choir')stopChoir();if(owner==='arcade'){stopArcade(false);arcadeWindow=null;}win.remove();if(wasActive)focusTopEchonoiseWindow();else updateTaskbar();}
     function setParam(name,value){if(name==='bpm')state.bpm=clamp(Number(value)||108,55,180);if(name==='key')state.key=clamp(Number(value)||0,0,11);if(name==='scale')state.scale=enoScales[value]?value:'minor';if(name==='tone')state.tone=enoToneProfiles[value]?value:'glass';if(name==='bpm')$e('[data-eno-out="bpm"]').textContent=`${state.bpm} BPM`;persist();}
     function makeAudio(){
       if(audio&&audio.ctx.state!=='closed')return audio;const AC=window.AudioContext||/** @type {Window & {webkitAudioContext?: typeof AudioContext}} */ (window).webkitAudioContext;if(!AC){setFeedback('Web Audio is not available in this browser.');return null;}
@@ -20075,13 +20111,18 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       noise.start(when,getVocalNoiseOffset(ctx));noise.stop(when+actual+.018);
       return trackSynthNode({osc:noise,extra:tone,gain:amp,filters,sources});
     }
-    function parseVoicebankFiles(fileList){
-      voicebank.name='';voicebank.files.clear();voicebank.aliases.clear();voicebank.buffers.clear();voicebank.stats={files:0,aliases:0,loaded:0};const files=Array.from(fileList||[]);if(!files.length)throw new Error('Choose the oto.ini and its matching WAV files.');if(files.length>2500)throw new Error('More than 2,500 files were selected. Choose one singer bank at a time.');const total=files.reduce((n,f)=>n+f.size,0);if(total>750*1024*1024)throw new Error('The selected voicebank files exceed 750 MB. Choose a smaller set.');
-      const norm=p=>String(p||'').replace(/\\/g,'/').replace(/^\.\//,'').toLowerCase();const basenameFiles=new Map();files.forEach(f=>{const p=norm(f.name);voicebank.files.set(p,f);if(!basenameFiles.has(p))basenameFiles.set(p,f);else basenameFiles.set(p,null);});const iniFiles=files.filter(f=>/\.ini$/i.test(f.name)&&/oto\.ini$/i.test(f.name));if(!iniFiles.length)throw new Error('No oto.ini was found. Select the oto.ini and matching audio files together. This mode expects a UTAU/OpenUtau-style voicebank.');
+    function parseVoicebankFiles(fileList,isCurrent=()=>true){
+      const ensureCurrent=()=>{if(typeof isCurrent==='function'&&!isCurrent()){const error=new Error('Voicebank import was superseded by a newer selection.');error.name='AbortError';throw error;}};
+      ensureCurrent();const files=Array.from(fileList||[]);if(!files.length)throw new Error('Choose the oto.ini and its matching WAV files.');if(files.length>2500)throw new Error('More than 2,500 files were selected. Choose one singer bank at a time.');const total=files.reduce((n,f)=>n+Number(f.size||0),0);if(total>750*1024*1024)throw new Error('The selected voicebank files exceed 750 MB. Choose a smaller set.');
+      const iniFiles=files.filter(f=>/\.ini$/i.test(f.name)&&/oto\.ini$/i.test(f.name));if(!iniFiles.length)throw new Error('No oto.ini was found. Select the oto.ini and matching audio files together. This mode expects a UTAU/OpenUtau-style voicebank.');if(iniFiles.length>32)throw new Error('More than 32 oto.ini metadata files were selected. Choose one singer bank or a smaller set of sub-banks.');const metadataBytes=iniFiles.reduce((n,f)=>n+Number(f.size||0),0);if(iniFiles.some(f=>Number(f.size)>5*1024*1024)||metadataBytes>16*1024*1024)throw new Error('The selected oto.ini metadata exceeds the 5 MB per-file / 16 MB total safety limit. Select a smaller voicebank metadata set.');
+      // Parse into temporary maps. A malformed or superseded selection must never erase the last working voicebank.
+      const norm=p=>String(p||'').replace(/\\/g,'/').replace(/^\.\//,'').toLowerCase(),nextFiles=new Map(),basenameFiles=new Map();files.forEach(f=>{const p=norm(f.name);nextFiles.set(p,f);if(!basenameFiles.has(p))basenameFiles.set(p,f);else basenameFiles.set(p,null);});
       return Promise.all(iniFiles.map(async ini=>({ini,text:await ini.text()}))).then(results=>{
-        const normPath=p=>norm(p);let aliases=0;
-        results.forEach(({ini,text})=>{const rel=normPath(ini.webkitRelativePath||ini.name),parent=rel.includes('/')?rel.slice(0,rel.lastIndexOf('/')+1):'';text.split(/\r?\n/).forEach(line=>{const at=line.indexOf('=');if(at<1)return;const filename=line.slice(0,at).trim(),parts=line.slice(at+1).split(','),alias=(parts[0]||'').trim();if(!alias)return;const filePath=normPath(parent+filename),normalizedName=normPath(filename),basename=normalizedName.split('/').pop(),file=voicebank.files.get(filePath)||voicebank.files.get(normalizedName)||basenameFiles.get(basename);if(!file)return;const numbers=parts.slice(1).map(x=>Number.parseFloat(x));const entry={alias,file,filename,offset:Number.isFinite(numbers[0])?numbers[0]:0,consonant:Number.isFinite(numbers[1])?numbers[1]:0,cutoff:Number.isFinite(numbers[2])?numbers[2]:0,preutterance:Number.isFinite(numbers[3])?numbers[3]:0,overlap:Number.isFinite(numbers[4])?numbers[4]:0};voicebank.aliases.set(alias.trim().toLowerCase(),entry);aliases++;});});
-        if(!aliases)throw new Error('The oto.ini files did not resolve to any selected WAV files. Select the matching WAV recordings together with oto.ini; folder access is not available.');voicebank.name=files.find(f=>/oto\.ini$/i.test(f.name))?.name.replace(/[_ -]?oto\.ini$/i,'').trim()||'Imported singer';voicebank.stats.files=files.filter(f=>/\.(wav|wave)$/i.test(f.name)).length;voicebank.stats.aliases=aliases;renderVoicebankManager($e('[data-eno-window="voicebank"]'));paintVoicebankStatus();setFeedback(`Voicebank ready: ${voicebank.name} · ${aliases} aliases`);return true;
+        ensureCurrent();const normPath=p=>norm(p),nextAliases=new Map();let aliases=0;
+        results.forEach(({ini,text})=>{const rel=normPath(ini.webkitRelativePath||ini.name),parent=rel.includes('/')?rel.slice(0,rel.lastIndexOf('/')+1):'';text.split(/\r?\n/).forEach(line=>{const at=line.indexOf('=');if(at<1)return;const filename=line.slice(0,at).trim(),parts=line.slice(at+1).split(','),alias=(parts[0]||'').trim();if(!alias)return;const filePath=normPath(parent+filename),normalizedName=normPath(filename),basename=normalizedName.split('/').pop(),file=nextFiles.get(filePath)||nextFiles.get(normalizedName)||basenameFiles.get(basename);if(!file)return;const numbers=parts.slice(1).map(x=>Number.parseFloat(x));const entry={alias,file,filename,offset:Number.isFinite(numbers[0])?numbers[0]:0,consonant:Number.isFinite(numbers[1])?numbers[1]:0,cutoff:Number.isFinite(numbers[2])?numbers[2]:0,preutterance:Number.isFinite(numbers[3])?numbers[3]:0,overlap:Number.isFinite(numbers[4])?numbers[4]:0};nextAliases.set(alias.trim().toLowerCase(),entry);aliases++;});});
+        if(!aliases)throw new Error('The oto.ini files did not resolve to any selected WAV files. Select the matching WAV recordings together with oto.ini; folder access is not available.');ensureCurrent();const nextName=files.find(f=>/oto\.ini$/i.test(f.name))?.name.replace(/[_ -]?oto\.ini$/i,'').trim()||'Imported singer',nextStats={files:files.filter(f=>/\.(wav|wave)$/i.test(f.name)).length,aliases,loaded:0};
+        // Commit only after every metadata file has loaded and at least one alias resolves.
+        stopSynthPhrase();voicebank.name=nextName;voicebank.files=nextFiles;voicebank.aliases=nextAliases;voicebank.buffers=new Map();voicebank.stats=nextStats;renderVoicebankManager($e('[data-eno-window="voicebank"]'));paintVoicebankStatus();setFeedback(`Voicebank ready: ${voicebank.name} · ${aliases} aliases`);return true;
       });
     }
     function paintVoicebankStatus(){const text=voicebank.name?`${voicebank.name} · ${voicebank.stats.aliases} aliases ready`:'No voicebank loaded · using built-in phonetic preview';$$e('[data-eno-vb-status]').forEach(el=>el.textContent=text);const win=$e('[data-eno-window="voicebank"]');if(win){const put=(s,v)=>{const el=win.querySelector(s);if(el)el.textContent=String(v);};put('[data-eno-vb-summary]',voicebank.name?'SINGER READY':'NO SINGER');put('[data-eno-vb-files]',voicebank.stats.files);put('[data-eno-vb-aliases]',voicebank.stats.aliases);put('[data-eno-vb-loaded]',voicebank.stats.loaded);}}
@@ -20352,8 +20393,8 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       if(e.target.matches('[data-eno-piano-length]')){state.pianoNoteLength=clamp(Number(e.target.value)||2,1,8);persist();return;}
       if(e.target.matches('[data-eno-param]')){setParam(e.target.dataset.enoParam,e.target.value);return;}
       if(e.target.matches('[data-eno-vocal-voice]')){state.vocalVoice=Number(e.target.value);persist();}
-      if(e.target.matches('[data-eno-voicebank-files]')){const files=e.target.files;if(files?.length){setFeedback('Reading voicebank metadata…');parseVoicebankFiles(files).catch(err=>{setFeedback(`Voicebank import failed: ${err.message}`);}).finally(()=>{});}}
-      if(e.target.matches('[data-eno-lex-dictionary-file]')){const file=e.target.files?.[0];if(file){file.text().then(text=>{const imported=parseLexiconDictionaryImport(text),content=imported.text,valid=parseCustomPronunciationVariants(content);if(!valid.size)throw new Error('No valid entries found. Use word = W ER1 D or import a CMUdict/ARPABET file.');state.vocalPronunciationOverrides=clean(content,CURIOID_LEXICON_MAX_CUSTOM_TEXT);if(!persist())return;customPronunciationMap=valid;customPronunciationSource=state.vocalPronunciationOverrides;phoneticEntries=null;phoneticRhymeIndex=null;phoneticIndexOverrideSignature='';const field=$e('[data-eno-lex-custom-lines]');if(field)field.value=state.vocalPronunciationOverrides;const out=$e('[data-eno-lex-dictionary-result]');if(out)out.textContent=`Imported ${valid.size.toLocaleString()} pronunciation entr${valid.size===1?'y':'ies'}${imported.cmu?' from an ARPABET dictionary':''}${imported.truncated?' · input capped at 5,000 unique entries or 280 KB':''}. Alternate pronunciations are retained up to four per word.`;setFeedback('Personal pronunciation dictionary imported.');}).catch(error=>setFeedback(error.message||'Dictionary import failed.'));}e.target.value='';}
+      if(e.target.matches('[data-eno-voicebank-files]')){const input=e.target,files=Array.from(input.files||[]);if(files.length){const generation=++voicebankImportGeneration;setFeedback('Reading voicebank metadata…');Promise.resolve().then(()=>parseVoicebankFiles(files,()=>generation===voicebankImportGeneration)).catch(err=>{if(err?.name!=='AbortError'&&generation===voicebankImportGeneration)setFeedback(`Voicebank import failed: ${err?.message||'The selected files could not be imported.'}`);}).finally(()=>{if(generation===voicebankImportGeneration)input.value='';});}}
+      if(e.target.matches('[data-eno-lex-dictionary-file]')){const input=e.target,file=input.files?.[0];if(file){if(Number(file.size)>2*1024*1024){setFeedback('That pronunciation dictionary exceeds the 2 MB import limit. Choose a smaller text or ARPABET dictionary.');input.value='';return;}file.text().then(text=>{const imported=parseLexiconDictionaryImport(text),content=imported.text,valid=parseCustomPronunciationVariants(content);if(!valid.size)throw new Error('No valid entries found. Use word = W ER1 D or import a CMUdict/ARPABET file.');state.vocalPronunciationOverrides=clean(content,CURIOID_LEXICON_MAX_CUSTOM_TEXT);if(!persist())return;customPronunciationMap=valid;customPronunciationSource=state.vocalPronunciationOverrides;phoneticEntries=null;phoneticRhymeIndex=null;phoneticIndexOverrideSignature='';const field=$e('[data-eno-lex-custom-lines]');if(field)field.value=state.vocalPronunciationOverrides;const out=$e('[data-eno-lex-dictionary-result]');if(out)out.textContent=`Imported ${valid.size.toLocaleString()} pronunciation entr${valid.size===1?'y':'ies'}${imported.cmu?' from an ARPABET dictionary':''}${imported.truncated?' · input capped at 5,000 unique entries or 280 KB':''}. Alternate pronunciations are retained up to four per word.`;setFeedback('Personal pronunciation dictionary imported.');}).catch(error=>setFeedback(error.message||'Dictionary import failed.'));}input.value='';}
       if(e.target.matches('[data-eno-alias-overrides]')){state.vocalAliasOverrides=clean(e.target.value,6000);persist();}
       if(e.target.matches('[data-eno-vocal-key]')){state.key=Number(e.target.value);persist();}
       if(e.target.matches('[data-eno-vocal-scale]')){state.scale=e.target.value;persist();}
@@ -20362,7 +20403,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       if(e.target.matches('[data-eno-choir-mood]')){state.mood=e.target.value;persist();}
       if(e.target.matches('[data-eno-choir-toggle]')){state.voices[+e.target.dataset.enoChoirToggle]=e.target.checked;syncUI();persist();}
       if(e.target.matches('[data-eno-interval]')){state.intervals=state.intervals||{};state.intervals[e.target.dataset.enoInterval]=Number(e.target.value);persist();}
-      if(e.target.matches('[data-eno-import]')){const file=e.target.files?.[0];if(file){if(Number(file.size)>5*1024*1024){setFeedback('That backup is over the 5 MB safety limit. Export a smaller Songbook backup and try again.');e.target.value='';return;}const reader=new FileReader();reader.onload=()=>{try{
+      if(e.target.matches('[data-eno-import]')){const file=e.target.files?.[0];if(file){if(Number(file.size)>5*1024*1024){setFeedback('That backup is over the 5 MB safety limit. Export a smaller Songbook backup and try again.');e.target.value='';return;}const reader=new FileReader();reader.onerror=()=>setFeedback(`Import failed: ${reader.error?.message||'The selected backup could not be read.'} The existing session and Songbook were not changed.`);reader.onload=()=>{try{
         if(typeof reader.result!=='string')throw new Error('The selected Echonoise backup could not be read as text.');const data=JSON.parse(reader.result);if(!isPlainObject(data)||data.app!=='Echonoise OS'||data.version!==1||(!Array.isArray(data.songs)&&!data.state))throw new Error('Not an Echonoise backup');
         if(data.songs!==undefined&&(!Array.isArray(data.songs)||data.songs.length>80||data.songs.some(song=>!isPlainObject(song)||song.version!==1||!Array.isArray(song.pattern))))throw new Error('The backup contains malformed or excessive Songbook data.');
         let nextState=null,nextSongs=null;
@@ -20371,18 +20412,29 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
         if(data.state!==undefined){if(!isPlainObject(data.state)||(data.state.version!==1&&data.state.version!==2))throw new Error('The backup contains an unsupported session state.');const legacyState=!data.state.patternBanks,stateKeys=Object.keys(defaults),incoming={...defaults,...Object.fromEntries(stateKeys.filter(key=>Object.prototype.hasOwnProperty.call(data.state,key)).map(key=>[key,data.state[key]]))};if(legacyState){incoming.patternBanks=safePatternBanks(null,incoming.pattern);incoming.selectedPattern='A';}nextState={...state,...incoming,pattern:copyPattern(incoming.pattern),fx:cleanFx(incoming.fx)};normalizeDawState(nextState);nextState.version=2;}
         if(Array.isArray(data.songs))nextSongs=data.songs.map(song=>sanitizeSong(song));
         const priorStateRaw=stateRawSnapshot,priorBookRaw=songBookRawSnapshot,nextStateRaw=nextState?JSON.stringify(nextState):null,nextBookRaw=nextSongs?JSON.stringify(nextSongs):null;
+        let stagedSession=false;
         if(nextState){
           const result=guardedLocalWrite(KEY,priorStateRaw,nextStateRaw,'Echonoise imported session');
           if(!result.ok){stateStorageReadOnly=Boolean(result.readOnly);throw new Error(`${result.message} No in-memory import was applied.`);}
-          stateRawSnapshot=nextStateRaw;lastStateSnapshot=JSON.stringify(nextState);state=nextState;syncUI();renderSteps();applyFx();
+          stagedSession=true;
         }
         if(nextSongs){
           const result=guardedLocalWrite(BOOK,priorBookRaw,nextBookRaw,'Echonoise imported Songbook');
-          if(!result.ok){songBookReadOnly=Boolean(result.readOnly);throw new Error(`${result.message} Any successfully imported session remains saved and active; the existing Songbook was preserved. No cross-key rollback was attempted.`);}
-          songBookRawSnapshot=nextBookRaw;songs=nextSongs;const count=$e('[data-eno-stat="songs"]');if(count)count.textContent=String(songs.length);
+          if(!result.ok){
+            songBookReadOnly=Boolean(result.readOnly);
+            if(stagedSession){
+              const rollback=guardedLocalRestore(KEY,nextStateRaw,priorStateRaw,'Echonoise session import rollback');
+              if(rollback.ok){stateRawSnapshot=priorStateRaw;}
+              else{stateStorageReadOnly=true;throw new Error(`${result.message} The session rollback could not be verified (${rollback.message}). Both stores are now protected in read-only mode; export recovery copies before retrying.`);}
+            }
+            throw new Error(`${result.message} The session import was rolled back; neither imported part was applied.`);
+          }
         }
+        // Update the live model only after every requested store has committed and verified.
+        if(nextState){stateRawSnapshot=nextStateRaw;lastStateSnapshot=JSON.stringify(nextState);state=nextState;syncUI();renderSteps();applyFx();}
+        if(nextSongs){songBookRawSnapshot=nextBookRaw;songs=nextSongs;const count=$e('[data-eno-stat="songs"]');if(count)count.textContent=String(songs.length);}
         renderSongList($e('[data-eno-window="songbook"]'));setFeedback('Echonoise backup imported and verified.');
-      }catch(err){setFeedback(`Import failed: ${err.message}`);}};reader.readAsText(file);} }
+      }catch(err){setFeedback(`Import failed: ${err.message}`);}};e.target.value='';reader.readAsText(file);} }
       if(e.target.matches('[data-eno-theme]'))applyTheme(e.target.dataset.enoTheme);
     });
     enoShell.addEventListener('pointerdown',/** @param {CurioidDOMEvent} e */ e=>{const mainSurface=e.target.closest('[data-eno-main-window]');if(mainSurface){const main=$e('[data-eno-main-window]');if(main&&!main.classList.contains('is-active'))focusMainStudio();}const mainBar=e.target.closest('[data-eno-main-drag]');if(mainBar&&!e.target.closest('button')){const win=$e('[data-eno-main-window]');if(!win||win.classList.contains('is-maximized'))return;const layer=$e('.eno-desktop'),bounds=layer.getBoundingClientRect(),rect=win.getBoundingClientRect();win.classList.add('is-floating');win.style.position='absolute';win.style.left=`${rect.left-bounds.left}px`;win.style.top=`${rect.top-bounds.top}px`;win.style.setProperty('--eno-main-left',`${rect.left-bounds.left}px`);win.style.setProperty('--eno-main-top',`${rect.top-bounds.top}px`);win.style.width=`${rect.width}px`;win.style.height=`${rect.height}px`;win.style.zIndex=String(++windowsZ);drag={win,x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,container:layer};mainBar.setPointerCapture?.(e.pointerId);return;}const bar=e.target.closest('[data-eno-titlebar]');if(!bar||e.target.closest('button'))return;const win=bar.closest('[data-eno-window]');if(!win||win.classList.contains('is-maximized'))return;focusWindow(win);const rect=win.getBoundingClientRect();drag={win,x:e.clientX,y:e.clientY,left:rect.left,top:rect.top,container:$e('.echonoise-os')};bar.setPointerCapture?.(e.pointerId);});
@@ -22098,6 +22150,9 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
     let creatorWorkspaces=readCreatorWorkspaces();
     let creatorSelectedId=creatorWorkspaces[0]?.id||null;
     let creatorSaveTimer=0;
+    // Imported workspace files are read asynchronously. A closed window or a
+    // newer selection must never commit an obsolete import into the local vault.
+    let creatorImportGeneration=0;
     function persistCreatorWorkspaces(){return safeWrite(creatorWorkspaceKey,JSON.stringify(creatorWorkspaces.slice(0,40)));}
     function selectedCreatorProject(){return creatorWorkspaces.find(project=>project.id===creatorSelectedId)||null;}
     function makeCreatorProject(templateId='web-app'){
@@ -22133,7 +22188,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       const status=$('[data-cw-status]',scope);if(status)status.textContent=stored?`Saved locally at ${new Date(project.updatedAt).toLocaleTimeString()}.`:'Browser storage is unavailable. The current project remains open; export a copy to keep it.';renderCreatorStats(project,scope);if(makeSnapshot&&stored)renderCreatorWorkbench(scope);return stored;
     }
     function exportCreatorProject(scope){const project=selectedCreatorProject();if(!project)return;saveCreatorProject(scope,false);const payload={format:'curioid-creator-workspace',schemaVersion:1,exportedAt:new Date().toISOString(),project};download(`curioid-${(project.title||'project').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,48)||'project'}.curioidworkspace.json`,JSON.stringify(payload,null,2),'application/json');}
-    async function importCreatorProject(file,scope){if(!file)return;if(file.size>1024*1024)throw new Error('Workspace import exceeds the 1 MB limit.');if(creatorWorkspaces.length>=40)throw new Error('Project limit reached (40). Export or delete an older workspace first.');const raw=JSON.parse(await file.text());if(raw?.format!=='curioid-creator-workspace'||raw.schemaVersion!==1||!raw.project)throw new Error('Unsupported Creator Workbench file.');const project=sanitizeCreatorProject(raw.project);if(!project?.title)throw new Error('The imported project has no valid title.');project.id=creatorId();project.createdAt=new Date().toISOString();project.updatedAt=project.createdAt;creatorWorkspaces.unshift(project);creatorSelectedId=project.id;const stored=persistCreatorWorkspaces();renderCreatorWorkbench(scope);const status=$('[data-cw-status]',scope);if(status)status.textContent=stored?`Imported ${project.title}. Review the project and save a new snapshot when ready.`:`Imported ${project.title} for this session. Browser storage is unavailable; export a copy.`;}
+    async function importCreatorProject(file,scope){if(!file)return false;const generation=++creatorImportGeneration,isCurrent=()=>generation===creatorImportGeneration&&scope?.isConnected!==false;if(!scope?.isConnected)throw new Error('Creator Workbench is closed. The import was cancelled.');if(!Number.isFinite(file.size)||file.size<0||file.size>1024*1024)throw new Error('Workspace import exceeds the 1 MB limit or has an invalid size.');if(creatorWorkspaces.length>=40)throw new Error('Project limit reached (40). Export or delete an older workspace first.');const text=await file.text();if(!isCurrent())return false;const raw=JSON.parse(text);if(raw?.format!=='curioid-creator-workspace'||raw.schemaVersion!==1||!raw.project)throw new Error('Unsupported Creator Workbench file.');const project=sanitizeCreatorProject(raw.project);if(!project?.title)throw new Error('The imported project has no valid title.');if(!isCurrent())return false;if(creatorWorkspaces.length>=40)throw new Error('Project limit reached (40). Export or delete an older workspace first.');project.id=creatorId();project.createdAt=new Date().toISOString();project.updatedAt=project.createdAt;creatorWorkspaces.unshift(project);creatorSelectedId=project.id;const stored=persistCreatorWorkspaces();if(!isCurrent())return false;renderCreatorWorkbench(scope);const status=$('[data-cw-status]',scope);if(status)status.textContent=stored?`Imported ${project.title}. Review the project and save a new snapshot when ready.`:`Imported ${project.title} for this session. Browser storage is unavailable; export a copy.`;return true;}
     function restoreCreatorSnapshot(index,scope){
       const project=selectedCreatorProject(),snapshot=project?.snapshots[index];if(!project||!snapshot?.data)return;
       const data=sanitizeCreatorProject({...snapshot.data,id:project.id,template:snapshot.data.template,snapshots:[]});if(!data)return;
@@ -23780,8 +23835,6 @@ const PALETTES = [
     curioidStorageWarningIssued=true;
     curioidAnnounceEgg(message||'CURIOID could not access saved progress. Your progress was not overwritten; check browser storage and try again.');
   }
-  // Web Locks provide a real same-origin critical section across tabs. Browsers
-  // without the API retain the verified synchronous localStorage fallback.
   function curioidWithStorageLock(name,action){
     let locks=null;
     try{locks=window.navigator&&window.navigator.locks;}catch(_){}
@@ -23801,16 +23854,18 @@ const PALETTES = [
     curioidActivityState=latest.state;curioidActivityStorageValid=true;return true;
   }
   function curioidReadEggCollection(){
-    const empty={version:1,creatures:[],claimedTasks:[]};
+    const empty={version:2,creatures:[],claimedTasks:[],spentTasks:[],dust:0};
     try{
       const raw=localStorage.getItem(CURIOID_EGG_COLLECTION_KEY);
       if(raw===null||raw==='')return {...empty,valid:true};
       if(typeof raw!=='string'||raw.length>32768)return {...empty,valid:false,reason:'oversized'};
       const value=JSON.parse(raw);
-      if(!value||typeof value!=='object'||Array.isArray(value)||value.version!==1||!Array.isArray(value.creatures)||!Array.isArray(value.claimedTasks)||value.creatures.length>100||value.claimedTasks.length>100)return {...empty,valid:false,reason:'corrupt'};
+      if(!value||typeof value!=='object'||Array.isArray(value)||![1,2].includes(value.version)||!Array.isArray(value.creatures)||!Array.isArray(value.claimedTasks)||value.creatures.length>100||value.claimedTasks.length>100)return {...empty,valid:false,reason:'corrupt'};
       const validCreature=id=>typeof id==='string'&&/^c(?:0[1-9]|[1-9][0-9]|100)$/.test(id);
-      if(value.creatures.some(id=>!validCreature(id))||value.claimedTasks.some(id=>typeof id!=='string'||!CURIOID_EGG_TASKS_BY_ID.has(id)))return {...empty,valid:false,reason:'corrupt'};
-      return {version:1,creatures:[...new Set(value.creatures)],claimedTasks:[...new Set(value.claimedTasks)],valid:true};
+      const spent=Array.isArray(value.spentTasks)?value.spentTasks:[];
+      if(spent.length>100||value.creatures.some(id=>!validCreature(id))||value.claimedTasks.some(id=>typeof id!=='string'||!CURIOID_EGG_TASKS_BY_ID.has(id))||spent.some(id=>typeof id!=='string'||!CURIOID_EGG_TASKS_BY_ID.has(id)))return {...empty,valid:false,reason:'corrupt'};
+      const dust=Number.isSafeInteger(value.dust)&&value.dust>=0?Math.min(1000,value.dust):0;
+      return {version:2,creatures:[...new Set(value.creatures)],claimedTasks:[...new Set(value.claimedTasks)],spentTasks:[...new Set(spent)],dust,valid:true};
     }catch(_){return {...empty,valid:false,reason:'unavailable'};}
   }
   function curioidOwnedCreatureIds(){
@@ -23821,7 +23876,7 @@ const PALETTES = [
   }
   function curioidPersistEggCollection(collection){
     try{
-      const payload=JSON.stringify({version:1,creatures:collection.creatures,claimedTasks:collection.claimedTasks});
+      const payload=JSON.stringify({version:2,creatures:[...new Set(collection.creatures)].slice(0,100),claimedTasks:[...new Set(collection.claimedTasks)].slice(0,100),spentTasks:[...new Set(collection.spentTasks||[])].slice(0,100),dust:Math.max(0,Math.min(1000,Math.trunc(Number(collection.dust)||0)))});
       if(payload.length>32768)return false;
       localStorage.setItem(CURIOID_EGG_COLLECTION_KEY,payload);
       return localStorage.getItem(CURIOID_EGG_COLLECTION_KEY)===payload;
@@ -23830,65 +23885,118 @@ const PALETTES = [
   function curioidAnnounceEgg(message){
     let node=document.getElementById('curioid-egg-announcer');if(!node){node=document.createElement('div');node.id='curioid-egg-announcer';node.className='curioid-egg-announcer';node.setAttribute('role','status');node.setAttribute('aria-live','polite');document.body.appendChild(node);}node.textContent=message;node.classList.add('is-visible');clearTimeout(node._hideTimer);node._hideTimer=setTimeout(()=>node.classList.remove('is-visible'),4200);
   }
+  let curioidEggHuntEnabled=false;
+  try{curioidEggHuntEnabled=localStorage.getItem('curioid-egg-hunt-enabled-v1')==='1';}catch(_){}
+  const curioidEggHuntToggle=document.getElementById('curioidEggHuntToggle');
+  function curioidSyncEggHuntToggle(){
+    if(!curioidEggHuntToggle)return;
+    curioidEggHuntToggle.dataset.enabled=String(curioidEggHuntEnabled);
+    curioidEggHuntToggle.setAttribute('aria-pressed',String(curioidEggHuntEnabled));
+    curioidEggHuntToggle.setAttribute('aria-label',curioidEggHuntEnabled?'Turn Egg Hunt off':'Turn Egg Hunt on');
+    curioidEggHuntToggle.title=curioidEggHuntEnabled?'Egg Hunt is on · click to pause hidden eggs':'Egg Hunt is paused · click to resume hidden eggs';
+  }
   function curioidHideActiveEgg(){
-    if(!curioidActiveEgg)return;clearTimeout(curioidActiveEgg.timer);document.removeEventListener('visibilitychange',curioidActiveEgg.visibilityHandler);curioidActiveEgg.button.remove();CURIOID_EGG_ATTEMPTS.delete(curioidActiveEgg.task.id);curioidActiveEgg=null;
+    if(!curioidActiveEgg)return;
+    const entry=curioidActiveEgg;
+    clearTimeout(entry.timer);document.removeEventListener('visibilitychange',entry.visibilityHandler);entry.button.remove();
+    CURIOID_EGG_ATTEMPTS.add(entry.task.id);
+    curioidActiveEgg=null;
+  }
+  function curioidPauseActiveEgg(){
+    const entry=curioidActiveEgg;if(!entry)return;
+    if(entry.timer){clearTimeout(entry.timer);entry.timer=null;entry.remaining=Math.max(0,entry.remaining-(Date.now()-entry.started));}
+    entry.button.remove();
+  }
+  function curioidSetEggHuntEnabled(enabled){
+    curioidEggHuntEnabled=Boolean(enabled);
+    try{localStorage.setItem('curioid-egg-hunt-enabled-v1',curioidEggHuntEnabled?'1':'0');}catch(_){}
+    curioidSyncEggHuntToggle();
+    if(!curioidEggHuntEnabled){curioidPauseActiveEgg();return;}
+    if(curioidActiveEgg){const entry=curioidActiveEgg;if(!entry.button.isConnected)document.body.appendChild(entry.button);if(!document.hidden&&entry.remaining>0&&!entry.timer){entry.started=Date.now();entry.timer=setTimeout(()=>curioidExpireActiveEgg(entry),entry.remaining);}return;}
+    curioidShowNextEgg();
+  }
+  function curioidNextEggReward(collection){
+    const owned=curioidOwnedCreatureIds();
+    for(let number=1;number<=100;number++){const id=`c${String(number).padStart(2,'0')}`;if(!owned.has(id)&&!collection.creatures.includes(id))return {type:'creature',creatureId:id};}
+    return {type:'dust',creatureId:''};
+  }
+  function curioidExpireActiveEgg(entry){
+    if(curioidActiveEgg!==entry||entry.saving)return;
+    entry.saving=true;
+    const result=curioidWithStorageLock('CURIOID:egg-collection:v2',()=>{
+      const latest=curioidReadEggCollection();if(!latest.valid)return 'invalid';
+      if(latest.claimedTasks.includes(entry.task.id))return 'claimed';
+      if(!latest.spentTasks.includes(entry.task.id))latest.spentTasks.push(entry.task.id);
+      return curioidPersistEggCollection(latest)?'spent':'save-failed';
+    });
+    Promise.resolve(result).then(status=>{
+      if(curioidActiveEgg!==entry)return;
+      if(status==='save-failed'||status==='invalid')curioidNotifyStorageIssue('The egg timed out, but its one-time status could not be saved. Check browser storage before continuing.');
+      curioidHideActiveEgg();
+      curioidShowNextEgg();
+    }).catch(()=>{if(curioidActiveEgg===entry){curioidNotifyStorageIssue('The egg timed out, but its one-time status could not be saved. Check browser storage before continuing.');curioidHideActiveEgg();curioidShowNextEgg();}});
   }
   function curioidShowNextEgg(){
-    if(curioidActiveEgg||document.hidden||!CURIOID_EGG_QUEUE.length)return;
+    if(!curioidEggHuntEnabled||curioidActiveEgg||document.hidden||!CURIOID_EGG_QUEUE.length)return;
     const task=CURIOID_EGG_QUEUE[0];
     const collection=curioidReadEggCollection();
     if(!collection.valid){curioidNotifyStorageIssue('CURIOID cannot read your creature collection. No egg was removed or awarded; check browser storage to continue.');return;}
     CURIOID_EGG_QUEUE.shift();
-    if(!task||curioidOwnedCreatureIds().has(task.creatureId)||collection.claimedTasks.includes(task.id)){CURIOID_EGG_ATTEMPTS.delete(task?.id);curioidShowNextEgg();return;}
+    if(!task||collection.claimedTasks.includes(task.id)||collection.spentTasks.includes(task.id)){CURIOID_EGG_ATTEMPTS.delete(task?.id);curioidShowNextEgg();return;}
+    const reward=curioidNextEggReward(collection);
     const button=document.createElement('button');button.type='button';button.className='curioid-hidden-egg';button.setAttribute('aria-label','A hidden Curioid egg is here. Click to collect it before it disappears.');button.title='A Curioid egg! Click quickly!';
     const shell=document.createElement('span');shell.className='curioid-hidden-egg-shell';shell.setAttribute('aria-hidden','true');button.appendChild(shell);
-    const size=46;const maxX=Math.max(12,window.innerWidth-size-12);const maxY=Math.max(105,window.innerHeight-size-18);
+    const glint=document.createElement('span');glint.className='curioid-hidden-egg-glint';glint.setAttribute('aria-hidden','true');button.appendChild(glint);
+    const size=54,maxX=Math.max(12,window.innerWidth-size-12),maxY=Math.max(105,window.innerHeight-size-18);
     button.style.left=`${Math.round(12+Math.random()*Math.max(0,maxX-12))}px`;button.style.top=`${Math.round(92+Math.random()*Math.max(0,maxY-92))}px`;
     document.body.appendChild(button);
-    const entry={task,button,remaining:5000,started:Date.now(),timer:null,visibilityHandler:null};
-    const expire=()=>{curioidHideActiveEgg();curioidShowNextEgg();};
-    const resume=()=>{if(document.hidden)return;entry.started=Date.now();entry.timer=setTimeout(expire,entry.remaining);};
-    entry.visibilityHandler=()=>{if(document.hidden){clearTimeout(entry.timer);entry.remaining=Math.max(0,entry.remaining-(Date.now()-entry.started));}else if(curioidActiveEgg===entry){if(entry.remaining<=0)expire();else resume();}};
+    const entry={task,reward,button,remaining:5000,started:Date.now(),timer:null,visibilityHandler:null,saving:false};
+    const resume=()=>{if(document.hidden||!curioidEggHuntEnabled||entry.timer)return;entry.started=Date.now();entry.timer=setTimeout(()=>curioidExpireActiveEgg(entry),entry.remaining);};
+    entry.visibilityHandler=()=>{if(document.hidden){if(entry.timer){clearTimeout(entry.timer);entry.timer=null;entry.remaining=Math.max(0,entry.remaining-(Date.now()-entry.started));}}else if(curioidActiveEgg===entry){if(entry.remaining<=0)curioidExpireActiveEgg(entry);else if(curioidEggHuntEnabled)resume();}};
     curioidActiveEgg=entry;document.addEventListener('visibilitychange',entry.visibilityHandler);resume();
     button.addEventListener('click',()=>{
       if(curioidActiveEgg!==entry||entry.saving)return;
-      entry.saving=true;button.disabled=true;clearTimeout(entry.timer);entry.timer=null;
+      entry.saving=true;button.disabled=true;if(entry.timer){clearTimeout(entry.timer);entry.timer=null;}
       entry.remaining=Math.max(0,entry.remaining-Math.max(0,Date.now()-entry.started));
-      const saveResult=curioidWithStorageLock('CURIOID:egg-collection:v1',()=>{
-        const latest=curioidReadEggCollection();
-        if(!latest.valid)return 'invalid';
-        if(latest.creatures.includes(task.creatureId)||latest.claimedTasks.includes(task.id))return 'already-collected';
-        latest.creatures.push(task.creatureId);latest.claimedTasks.push(task.id);
-        return curioidPersistEggCollection(latest)?'saved':'save-failed';
+      const saveResult=curioidWithStorageLock('CURIOID:egg-collection:v2',()=>{
+        const latest=curioidReadEggCollection();if(!latest.valid)return {status:'invalid'};
+        if(latest.claimedTasks.includes(task.id))return {status:'already-collected'};
+        if(latest.spentTasks.includes(task.id))return {status:'spent'};
+        const currentReward=curioidNextEggReward(latest);
+        if(currentReward.type==='creature')latest.creatures.push(currentReward.creatureId);else latest.dust=Math.min(1000,latest.dust+1);
+        latest.claimedTasks.push(task.id);
+        return curioidPersistEggCollection(latest)?{status:'saved',reward:currentReward}:{status:'save-failed'};
       });
       Promise.resolve(saveResult).then(result=>{
         if(curioidActiveEgg!==entry)return;
-        if(result==='saved'){
-          for(const frame of [...CURIOID_ACTIVITY_FRAMES]){if(!frame.isConnected||!frame.contentWindow){CURIOID_ACTIVITY_FRAMES.delete(frame);continue;}try{frame.contentWindow.postMessage({channel:'CURIOID_EGG_HUNT',type:'collection-update',creatureId:task.creatureId,taskId:task.id},window.location.origin);}catch(_){}}
-          curioidHideActiveEgg();curioidAnnounceEgg('New Curioid caught! Open Curioids → Creature Collection to see it.');curioidShowNextEgg();return;
+        if(result?.status==='saved'){
+          const reward=result.reward;
+          for(const frame of [...CURIOID_ACTIVITY_FRAMES]){if(!frame.isConnected||!frame.contentWindow){CURIOID_ACTIVITY_FRAMES.delete(frame);continue;}try{frame.contentWindow.postMessage({channel:'CURIOID_EGG_HUNT',type:'collection-update',rewardType:reward.type,creatureId:reward.creatureId,amount:1,taskId:task.id},window.location.origin);}catch(_){}}
+          curioidHideActiveEgg();
+          curioidAnnounceEgg(reward.type==='creature'?`New Curioid caught: ${reward.creatureId.toUpperCase()}! Open Curioids → Creature Collection to see it.`:'✨ Egg Dust collected! Your creature collection is complete.');
+          curioidShowNextEgg();return;
         }
-        if(result==='already-collected'){curioidHideActiveEgg();curioidAnnounceEgg('This egg was already collected in another tab.');curioidShowNextEgg();return;}
-        entry.saving=false;button.disabled=false;
-        curioidNotifyStorageIssue(result==='invalid'?'Your creature collection could not be read safely. No progress was changed; check browser storage and try again.':'The creature was not saved. The egg will remain while its collection is retried; free browser storage and try again.');
-        if(entry.remaining<=0)expire();else resume();
-      }).catch(()=>{
-        if(curioidActiveEgg!==entry)return;
-        entry.saving=false;button.disabled=false;curioidNotifyStorageIssue('The creature was not saved. The egg is still available; please retry.');
-        if(entry.remaining<=0)expire();else resume();
-      });
+        if(result?.status==='already-collected'||result?.status==='spent'){curioidHideActiveEgg();curioidShowNextEgg();return;}
+        entry.saving=false;button.disabled=false;curioidNotifyStorageIssue(result?.status==='invalid'?'Your creature collection could not be read safely. No progress was changed; check browser storage and try again.':'The creature was not saved. The egg will remain while its collection is retried; free browser storage and try again.');
+        if(entry.remaining<=0)curioidExpireActiveEgg(entry);else resume();
+      }).catch(()=>{if(curioidActiveEgg!==entry)return;entry.saving=false;button.disabled=false;curioidNotifyStorageIssue('The creature was not saved. The egg is still available; please retry.');if(entry.remaining<=0)curioidExpireActiveEgg(entry);else resume();});
     });
   }
   function curioidAttemptEggTask(task){
     if(!task)return;
     const collection=curioidReadEggCollection();
     if(!collection.valid){curioidNotifyStorageIssue();return;}
-    if(curioidOwnedCreatureIds().has(task.creatureId)||collection.claimedTasks.includes(task.id))return;
+    if(collection.claimedTasks.includes(task.id)||collection.spentTasks.includes(task.id))return;
     if(CURIOID_EGG_ATTEMPTS.has(task.id)||CURIOID_EGG_QUEUE.some(item=>item.id===task.id)||curioidActiveEgg?.task.id===task.id)return;
-    CURIOID_EGG_ATTEMPTS.add(task.id);if(CURIOID_EGG_QUEUE.length<3)CURIOID_EGG_QUEUE.push(task);else CURIOID_EGG_ATTEMPTS.delete(task.id);curioidShowNextEgg();
+    CURIOID_EGG_ATTEMPTS.add(task.id);CURIOID_EGG_QUEUE.push(task);curioidShowNextEgg();
   }
+  curioidSyncEggHuntToggle();
+  curioidEggHuntToggle?.addEventListener('click',()=>curioidSetEggHuntEnabled(!curioidEggHuntEnabled));
   function curioidCheckActivityMilestones(){
     if(!curioidActivityStorageValid)return;
     const projects=curioidActivityState.projects.length,categories=curioidActivityState.categories.length;
+    for(const id of curioidActivityState.projects){const task=CURIOID_EGG_TASKS_BY_PROJECT.get(id);if(task)curioidAttemptEggTask(task);}
+    for(const id of curioidActivityState.categories){const task=CURIOID_EGG_TASKS_BY_CATEGORY.get(id);if(task)curioidAttemptEggTask(task);}
     for(const task of CURIOID_EGG_TASKS){
       if(task.kind==='projects'&&projects>=Number(task.key))curioidAttemptEggTask(task);
       if(task.kind==='categories'&&categories>=Number(task.key))curioidAttemptEggTask(task);
@@ -23955,6 +24063,12 @@ const PALETTES = [
     }
   });
   window.addEventListener('storage',event=>{
+    if(event.key===CURIOID_EGG_COLLECTION_KEY){
+      const collection=curioidReadEggCollection();
+      if(collection.valid&&curioidActiveEgg&&(collection.claimedTasks.includes(curioidActiveEgg.task.id)||collection.spentTasks.includes(curioidActiveEgg.task.id))){curioidHideActiveEgg();curioidShowNextEgg();}
+      else if(collection.valid)curioidShowNextEgg();
+      return;
+    }
     if(event.key!==CURIOID_SITE_ACTIVITY_KEY)return;
     const latest=curioidReadActivityStorage(event.newValue);
     if(!latest.valid){curioidActivityStorageValid=false;curioidNotifyStorageIssue();return;}
@@ -24341,7 +24455,7 @@ const PALETTES = [
     const fields = app.fields.map((sourceField,index) => {
       if (!sourceField || typeof sourceField !== 'object' || Array.isArray(sourceField)) throw new Error(`Field ${index+1} is invalid.`);
       const fieldId = String(sourceField.id || '');
-      if (!/^[a-z][a-z0-9_]{0,29}$/i.test(fieldId) || seen.has(fieldId) || ['constructor','prototype','length','name','value','form','submit','reset','elements'].includes(fieldId.toLowerCase())) throw new Error(`Field ${index+1} needs a unique safe ID using letters, numbers or underscores.`);
+      if (!/^[a-z][a-z0-9_]{0,29}$/i.test(fieldId) || seen.has(fieldId) || ['constructor','prototype','length','name','value','form','submit','reset','elements','tostring','valueof','hasownproperty','isprototypeof','propertyisenumerable','tolocalestring'].includes(fieldId.toLowerCase())) throw new Error(`Field ${index+1} needs a unique safe ID using letters, numbers or underscores.`);
       seen.add(fieldId);
       const type = String(sourceField.type || 'text');
       if (!CURIOID_APP_PACKAGE_FIELD_TYPES.has(type)) throw new Error(`Field ${fieldId} uses an unsupported type.`);
@@ -24802,7 +24916,13 @@ const PALETTES = [
     if(bytes>CURIOID_APP_PACKAGE_MAX_DATA_BYTES)throw new Error('Transfer records exceed the 1 MB per-app data limit.');
     return {source:{id:sourceId,name:synthetic.manifest.name,version:synthetic.manifest.version},app:synthetic.app,records};
   };
-  const curioidAppPackageTransferSignature = fields => JSON.stringify(Object.keys(fields||{}).sort().map(key=>[key,fields[key]]));
+  // Canonicalize every target field, including omitted optional fields. A user
+  // record can legitimately omit an empty optional value, while a transfer
+  // preview materializes that same value as ''. Those records must compare equal.
+  const curioidAppPackageTransferSignature = (fields,appDefinition) => {
+    const keys=Array.isArray(appDefinition?.fields)?appDefinition.fields.map(field=>field.id).sort():Object.keys(fields||{}).sort();
+    return JSON.stringify(keys.map(key=>[key,fields?.[key]??'']));
+  };
   const curioidAppPackagePreviewTransfer = (targetId,raw,options={}) => {
     const target=curioidAppPackageReadRegistry().packages.find(item=>item.id===String(targetId));
     if(!target)throw new Error('Install the destination app before importing data.');
@@ -24822,9 +24942,9 @@ const PALETTES = [
         if(targetField.type==='select'&&value&&!targetField.options.some(option=>option.value===String(value)))invalidChoices.push(`${targetField.label} has an unsupported choice`);
       }
     }
-    const existing=curioidAppPackageReadData(target.id,target.package.app),seen=new Set(existing.map(row=>curioidAppPackageTransferSignature(row.fields)));
+    const existing=curioidAppPackageReadData(target.id,target.package.app),seen=new Set(existing.map(row=>curioidAppPackageTransferSignature(row.fields,target.package.app)));
     let importable=0,duplicateCount=0,invalidRecordCount=0;
-    for(const row of transfer.records){const mapped={};for(const [targetField,sourceId] of Object.entries(map))mapped[targetField]=row.fields[sourceId]??'';try{curioidAppPackageNormalizeRecords([{fields:mapped}],target.package.app);}catch(error){invalidRecordCount++;invalidChoices.push(error.message);}const signature=curioidAppPackageTransferSignature(mapped);if(seen.has(signature))duplicateCount++;else{seen.add(signature);importable++;}}
+    for(const row of transfer.records){const mapped={};for(const [targetField,sourceId] of Object.entries(map))mapped[targetField]=row.fields[sourceId]??'';try{curioidAppPackageNormalizeRecords([{fields:mapped}],target.package.app);}catch(error){invalidRecordCount++;invalidChoices.push(error.message);}const signature=curioidAppPackageTransferSignature(mapped,target.package.app);if(seen.has(signature))duplicateCount++;else{seen.add(signature);importable++;}}
     return {compatible:requiredMissing.length===0&&invalidChoices.length===0&&invalidRecordCount===0&&Object.keys(map).length>0,source:transfer.source,target:{id:target.id,name:target.package.manifest.name},fieldMap:map,matchingFields:Object.keys(map).length,sourceFieldCount:transfer.app.fields.length,targetFieldCount:target.package.app.fields.length,recordCount:transfer.records.length,importableCount:importable,duplicateCount,invalidRecordCount,requiredMissing:[...new Set(requiredMissing)],invalidChoices:[...new Set(invalidChoices)].slice(0,8),unmappedSourceFields:transfer.app.fields.filter(field=>!Object.values(map).includes(field.id)).map(field=>field.label)};
   };
   const curioidAppPackageImportTransfer = async (targetId,raw,options={}) => {
@@ -24836,8 +24956,8 @@ const PALETTES = [
       if(!preview.compatible)throw new Error(`Transfer cannot be applied. ${preview.requiredMissing.length?`Missing required fields: ${preview.requiredMissing.join(', ')}. `:''}${preview.invalidChoices.length?`Some values need mapping or cleanup: ${preview.invalidChoices.join('; ')}.`:''}`);
       const transfer=curioidAppPackageValidateTransfer(raw),inspected=curioidAppPackageInspectData(target.id,target.package.app);
       if(inspected.error)throw inspected.error;
-      const records=inspected.records,seen=new Set(records.map(row=>curioidAppPackageTransferSignature(row.fields))),incoming=[];
-      for(const row of transfer.records){const fields={};for(const [targetField,sourceId] of Object.entries(preview.fieldMap))fields[targetField]=row.fields[sourceId]??'';const signature=curioidAppPackageTransferSignature(fields);if(seen.has(signature))continue;seen.add(signature);incoming.push({id:`rec_${Date.now().toString(36)}_${uid()}`,createdAt:row.createdAt,updatedAt:Date.now(),fields});}
+      const records=inspected.records,seen=new Set(records.map(row=>curioidAppPackageTransferSignature(row.fields,target.package.app))),incoming=[];
+      for(const row of transfer.records){const fields={};for(const [targetField,sourceId] of Object.entries(preview.fieldMap))fields[targetField]=row.fields[sourceId]??'';const signature=curioidAppPackageTransferSignature(fields,target.package.app);if(seen.has(signature))continue;seen.add(signature);incoming.push({id:`rec_${Date.now().toString(36)}_${uid()}`,createdAt:row.createdAt,updatedAt:Date.now(),fields});}
       if(records.length+incoming.length>CURIOID_APP_PACKAGE_MAX_RECORDS)throw new Error(`Import would exceed the ${CURIOID_APP_PACKAGE_MAX_RECORDS} record limit. Export or remove records first.`);
       curioidAppPackageWriteData(target.id,target.package.app,[...records,...incoming]);
       window.dispatchEvent(new CustomEvent('curioid:app-packages-changed',{detail:{type:'transfer-imported',appId:target.id,count:incoming.length}}));

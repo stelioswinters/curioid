@@ -7,18 +7,18 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="description" content="Explore six browser-based operating systems, 54 creative projects, tiny games and tools, plus Sandbox OS for building your own local-first desktop.">
+  <meta name="description" content="Explore six browser-based operating systems, 55 creative projects, tiny games and tools, plus Sandbox OS for building your own local-first desktop.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="Stelios Winters">
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-QlLuirs6F12OBmVTIGvRvPOoVDuoCYeoQG4lFBOPfk4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-awqIDlhzjgqTaX7yyA9a2RHYIIhVjDiGw0UtgmLZg7k='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.github.io/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
   <meta property="og:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
-  <meta property="og:description" content="Six browser-based operating systems, 54 creative projects, tiny games and tools, plus Sandbox OS for building a personal desktop.">
+  <meta property="og:description" content="Six browser-based operating systems, 55 creative projects, tiny games and tools, plus Sandbox OS for building a personal desktop.">
   <meta property="og:url" content="https://stelioswinters.github.io/curioid/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
@@ -213,31 +213,9 @@
 
     /* Main page */
     .main { min-height: 100vh; margin-left: var(--sidebar-width); padding: 0 38px 55px; }
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      min-height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      background: rgba(16,16,20,.92);
-      border-bottom: 1px solid var(--line);
-      backdrop-filter: blur(14px);
-    }
-    .topbar-left { display: flex; align-items: center; gap: 11px; min-width: 0; color: var(--muted); font-size:11px; }
-    .topbar-brand { color: var(--text); font-size:11px; font-weight: 850; letter-spacing: .12em; }
-    .topbar-separator { color: #55535f; }
-    .topbar-context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .topbar-right { display: flex; align-items: center; gap: 13px; color: var(--dim); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
     .status-live { display: inline-flex; align-items: center; gap: 7px; color: var(--acid); }
     .status-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 9px rgba(214,255,105,.55); }
-    .topbar-action { padding: 5px 8px; border: 1px solid #393843; border-radius: 6px; background: #17171e; color: #a09eaa; font:inherit; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: color .16s ease, border-color .16s ease, background .16s ease; }
-    .topbar-action:hover { color: var(--text); border-color: #68645c; background: #222229; }
-    .topbar-action:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
-    .topbar-action[hidden] { display: none; }
-    .menu-toggle { display: none; width: 39px; height: 39px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); cursor: pointer; }
+    .menu-toggle { display: none; width: 32px; height: 28px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 6px; background: #20212a; color: var(--text); cursor: pointer; }
     .page-wrap { max-width: 1380px; margin: 0 auto; }
     .hero { padding: 43px 0 29px; }
     .hero-kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 13px; color: var(--acid); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .17em; text-transform: uppercase; }
@@ -303,6 +281,34 @@
     .section-rule { height: 1px; margin: 0 0 22px; border: 0; background: var(--line); }
     .rooms-label { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: 0 0 10px; color: var(--dim); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .15em; text-transform: uppercase; }
     .rooms-label span:last-child { color: #686674; letter-spacing: .08em; }
+
+    .hero-kicker .menu-toggle{display:none;}
+    .rooms-label{align-items:center;}
+    .rooms-label-actions{display:flex;align-items:center;gap:9px;min-width:0;}
+    .rooms-label-actions>span:first-child{color:#858390;letter-spacing:.08em;}
+    .egg-hunt-toggle{position:relative;display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;padding:5px;border:1px solid #424452;border-radius:8px;background:linear-gradient(145deg,#252631,#181a21);color:#d7d8e2;cursor:pointer;transition:border-color .18s,background .18s,transform .18s;}
+    .egg-hunt-toggle svg{display:block;width:19px;height:19px;fill:rgba(240,202,120,.16);stroke:currentColor;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
+    .egg-hunt-toggle[data-enabled="true"]{border-color:#9f8754;color:#ffe2a0;box-shadow:0 0 0 1px rgba(246,203,116,.12),0 0 18px rgba(246,203,116,.08);}
+    .egg-hunt-toggle[data-enabled="false"]{opacity:.62;filter:grayscale(.65);}
+    .egg-hunt-toggle:hover{transform:translateY(-1px);border-color:#e5bd70;}
+    .egg-hunt-toggle:focus-visible{outline:2px solid var(--acid);outline-offset:3px;}
+    .egg-hunt-status-dot{position:absolute;right:3px;bottom:3px;width:6px;height:6px;border-radius:50%;background:#8ddd91;box-shadow:0 0 6px currentColor;}
+    .egg-hunt-toggle[data-enabled="false"] .egg-hunt-status-dot{background:#83838b;box-shadow:none;}
+    .egg-hunt-toggle-hint{display:none!important;}
+    .sidebar-notification-button>span:first-child{flex-basis:25px;width:25px;height:25px;}
+    .sidebar-notification-button .notification-count{top:-4px;right:-4px;}
+    .site-control-preferences{display:grid;gap:11px;margin:0 18px 14px;padding:12px;border:1px solid #343642;border-radius:10px;background:#20212a;}
+    .global-volume-control{display:grid;grid-template-columns:105px minmax(70px,1fr) 42px;align-items:center;gap:10px;color:#aaa8b5;font:9px ui-monospace,monospace;letter-spacing:.08em;}
+    .global-volume-control input{width:100%;min-width:0;accent-color:var(--acid);}
+    .global-volume-control output{color:#e9e7ef;text-align:right;font-size:10px;}
+    .site-control-preference-actions{display:flex;flex-wrap:wrap;gap:7px;}
+    .site-control-small-action{min-height:31px;padding:6px 9px;border:1px solid #41434f;border-radius:7px;background:#171820;color:#d5d3dd;font-size:10px;cursor:pointer;}
+    .site-control-small-action:hover{border-color:#8f995d;background:#24261f;}
+    .site-control-small-action[hidden]{display:none;}
+    .site-control-preferences .status-live{font-size:9px;letter-spacing:.08em;}
+    @media(max-width:900px){.hero-kicker .menu-toggle{display:grid;place-items:center;}.hero-kicker{gap:9px;}.rooms-label{align-items:flex-start;}.rooms-label-actions{flex-shrink:0;}}
+    @media(max-width:560px){.rooms-label{font-size:8px;letter-spacing:.1em;}.rooms-label-actions{gap:6px;}.site-control-preferences{margin-inline:12px;}.global-volume-control{grid-template-columns:1fr 42px;}.global-volume-control>span{grid-column:1/-1;}}
+
     .category-stack { display: grid; gap: 37px; }
     .category-section { min-width: 0; scroll-margin-top: 83px; }
     .category-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 0 0 12px; padding: 0 2px 11px; border-bottom: 1px solid var(--line-soft); }
@@ -388,35 +394,9 @@
       .main { margin-left: 0; padding-right: 22px; padding-left: 22px; }
       .category-section { scroll-margin-top: 70px; }
       .menu-toggle { display: grid; place-items: center; }
-      .topbar { min-height: 60px; justify-content: flex-start; }
-      .topbar-right { margin-left: auto; }
-    }
-    @media (max-width: 420px) {
-      .topbar { gap: 7px; }
-      .topbar-left { flex: 0 1 auto; min-width: 0; }
-      .topbar-context { max-width: 68px; }
-      .topbar-right { flex: 0 1 auto; min-width: 0; gap: 5px; }
-      .global-volume-control { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-size:0; letter-spacing: 0; }
-      .global-volume-control input { width: clamp(34px, 12vw, 48px); min-width: 0; }
-      .global-volume-control output { font-size:9px; letter-spacing: 0; }
-      .motion-toggle { padding: 4px 5px; font-size:9px; }
-    }
-    @media (max-width: 340px) {
-      /* Keep the Close all control inside the viewport on narrow phones. */
-      .topbar-right { gap: 4px; }
-      .topbar-action { padding-right: 5px; padding-left: 5px; }
-      .topbar-context { max-width: 46px; }
-      .global-volume-control input { width: 32px; }
-      .global-volume-control output { display: none; }
     }
     @media (max-width: 600px) {
       .main { padding: 0 12px 32px; }
-      .topbar { min-height: 56px; gap: 9px; }
-      .topbar-left { gap: 7px; font-size:9px; }
-      .topbar-brand { font-size:10px; }
-      .topbar-right { gap: 6px; font-size:9px; }
-      .motion-toggle { padding: 4px 6px; font-size:9px; white-space: nowrap; }
-      .status-live { display: none; }
       .hero { padding: 31px 1px 22px; }
       h1 { font-size:clamp(34px, 10vw, 47px); }
       .hero-bottom { display: block; margin-top: 13px; }
@@ -571,21 +551,24 @@
     .universe-data-grid article { display:grid; align-content:start; gap:4px; min-width:0; padding:9px; border:1px solid #30313a; border-radius:7px; background:#17171d; }
     .universe-data-grid b { color:#e4e1ea; font-size:9px; }
     .universe-data-grid span { color:#9996a3; font-size:9px; line-height:1.5; }
-    .room-card-head { display:grid; grid-template-columns:minmax(0,1fr) 38px; align-items:stretch; gap:5px; }
+    .room-card-head { display:grid; grid-template-columns:minmax(0,1fr) 38px 38px; align-items:stretch; gap:5px; }
     .room-card-head .room-heading { min-width:0; }
     .room-window.open .room-card-head { border-bottom:1px solid var(--line); }
     .room-window.open .room-card-head .room-heading { border-bottom:0; }
-    .room-favorite { display:grid; place-items:center; align-self:center; width:34px; height:34px; margin-right:5px; border:1px solid #3b3a45; border-radius:8px; background:#1c1c24; color:#898694; font-size:17px; cursor:pointer; }
+    .room-favorite,.room-share { display:grid; place-items:center; align-self:center; width:34px; height:34px; margin-right:2px; border:1px solid #3b3a45; border-radius:8px; background:#1c1c24; color:#898694; font-size:17px; cursor:pointer; }
     .room-favorite:hover,.room-favorite.is-favorite { border-color:#687548; background:#23291c; color:var(--acid); }
-    .room-favorite:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    .room-share { font-size:15px; }
+    .room-share:hover { border-color:#4b8b91; background:#1d292b; color:#85e6da; }
+    .room-favorite:focus-visible,.room-share:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    @media(max-width:420px){.room-card-head{grid-template-columns:minmax(0,1fr) 34px 34px}.room-favorite,.room-share{width:32px;height:32px;margin-right:0;}}
     .room-heading { border-bottom:0!important; }
 
-    .topbar-notification-wrap{position:relative;display:flex;align-items:center}
-    .topbar-notification-button{position:relative;display:grid;place-items:center;width:32px;height:32px;border:1px solid #393a46;border-radius:8px;background:#1a1b22;color:#d9d7e0;cursor:pointer}
-    .topbar-notification-button:hover,.topbar-notification-button[aria-expanded="true"]{border-color:var(--acid);color:var(--acid);background:#22241d}
-    .topbar-notification-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .sidebar-notification-wrap{position:relative;display:block;min-width:0}
+    .sidebar-notification-button{position:relative;width:100%;min-width:0}
+    .sidebar-notification-button:hover,.sidebar-notification-button[aria-expanded="true"]{border-color:var(--acid);color:var(--acid);background:#22241d}
+    .sidebar-notification-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
     .notification-count{position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 4px;border:1px solid #17171d;border-radius:9px;background:var(--acid);color:#171914;font:9px/13px ui-monospace,monospace;text-align:center}
-    .site-notification-panel{position:absolute;z-index:150;top:calc(100% + 9px);right:0;width:min(360px,calc(100vw - 26px));max-height:min(65vh,520px);display:flex;flex-direction:column;border:1px solid #41424d;border-radius:12px;background:#181920;color:#e8e6ed;box-shadow:0 18px 55px rgba(0,0,0,.48);text-transform:none;letter-spacing:normal}
+    .site-notification-panel{position:absolute;z-index:150;top:calc(100% + 9px);left:0;right:auto;width:min(360px,calc(100vw - 26px));max-height:min(65vh,520px);display:flex;flex-direction:column;border:1px solid #41424d;border-radius:12px;background:#181920;color:#e8e6ed;box-shadow:0 18px 55px rgba(0,0,0,.48);text-transform:none;letter-spacing:normal}
     .site-notification-panel[hidden]{display:none}
     .site-notification-panel>header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid #30313b}
     .site-notification-panel>header>div:first-child{display:grid;gap:3px;min-width:0}
@@ -602,6 +585,21 @@
     .site-notification-item time{color:#858592;font:9px ui-monospace,monospace;white-space:nowrap}
     .site-notification-item p{margin:0;color:#dddbe4;font:11px/1.45 system-ui,sans-serif;overflow-wrap:anywhere}
     .site-notification-panel>footer{padding:8px 12px;border-top:1px solid #30313b}
+    .site-shortcuts-dialog{width:min(520px,calc(100vw - 24px));max-width:none;max-height:min(82dvh,680px);padding:0;overflow:auto;border:1px solid #41424d;border-radius:15px;background:#191a21;color:#e9e7ef;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+    .site-shortcuts-dialog::backdrop{background:rgba(5,6,10,.72);backdrop-filter:blur(5px)}
+    .site-shortcuts-dialog[open]{display:block}
+    .site-shortcuts-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:19px 20px 14px;border-bottom:1px solid #30313a}
+    .site-shortcuts-head small{color:#d6ff69;font:9px ui-monospace,monospace;letter-spacing:.14em}
+    .site-shortcuts-head h2{margin:6px 0;font:600 21px system-ui,sans-serif}
+    .site-shortcuts-head p{margin:0;color:#a4a3af;font:11px/1.5 system-ui,sans-serif}
+    .site-shortcuts-head>button{width:30px;height:30px;flex:0 0 30px;border:1px solid #393a46;border-radius:7px;background:#22232b;color:#d8d6df;font-size:20px;cursor:pointer}
+    .site-shortcuts-list{display:grid;gap:0;padding:5px 18px}
+    .site-shortcuts-row{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:56px;padding:8px 2px;border-bottom:1px solid #2c2d36}
+    .site-shortcuts-row>span{display:grid;gap:3px;min-width:0}
+    .site-shortcuts-row b{color:#e9e7ef;font:600 11px system-ui,sans-serif}
+    .site-shortcuts-row small{color:#92919e;font:10px/1.4 system-ui,sans-serif}
+    .site-shortcuts-row kbd{flex:0 0 auto;padding:5px 8px;border:1px solid #464752;border-radius:6px;background:#24252e;color:#e6e4ec;font:10px ui-monospace,monospace;white-space:nowrap}
+    .site-shortcuts-foot{margin:0;padding:12px 20px 15px;color:#9998a4;font:10px/1.5 system-ui,sans-serif}
     .site-control-center{width:min(560px,calc(100vw - 24px));max-width:none;max-height:min(86vh,760px);padding:0;border:1px solid #41424d;border-radius:15px;background:#191a21;color:#e9e7ef;box-shadow:0 24px 70px rgba(0,0,0,.55)}
     .site-control-center::backdrop{background:rgba(5,6,10,.72);backdrop-filter:blur(5px)}
     .site-control-center[open]{display:block}
@@ -622,7 +620,7 @@
     .site-control-actions small{color:#a3a2ae;font:10px/1.35 system-ui,sans-serif}
     .site-control-footnote{margin:0;padding:11px 18px 15px;border-top:1px solid #30313b;color:#9998a4;font:10px/1.5 system-ui,sans-serif}
     @media(max-width:760px){.site-control-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:560px){.site-control-status-grid{grid-template-columns:1fr}.site-control-status-grid article{grid-template-columns:78px 1fr;align-items:center}.site-control-status-grid span{grid-column:2}.site-control-actions{grid-template-columns:1fr}.site-notification-panel{right:-36px}}
+    @media(max-width:560px){.site-control-status-grid{grid-template-columns:1fr}.site-control-status-grid article{grid-template-columns:78px 1fr;align-items:center}.site-control-status-grid span{grid-column:2}.site-control-actions{grid-template-columns:1fr}.site-notification-panel{left:0;right:auto;width:min(360px,calc(100vw - 26px))}}
 
 
     /* Fast, keyboard-first project and action launcher. Results are built with DOM nodes. */
@@ -726,6 +724,7 @@
         <button class="sidebar-tool" type="button" id="openUniverseWorkshop"><span aria-hidden="true">✳</span><span><b>Sandbox OS</b><small>Build your own OS</small></span></button>
         <button class="sidebar-tool" type="button" id="openMySandboxWorlds"><span aria-hidden="true">▣</span><span><b>My Sandbox OS</b><small>Launch saved worlds</small></span></button>
         <button class="sidebar-tool" type="button" id="openConnectConsole"><span aria-hidden="true">⌘</span><span><b>Connect Console</b><small>Manage connections</small></span></button>
+        <div class="sidebar-notification-wrap"><button class="sidebar-tool sidebar-notification-button" type="button" id="notificationBell" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg></span><span><b>Notifications</b><small>Important site messages</small></span><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div>
         <button class="sidebar-tool" type="button" id="openControlCenter"><span aria-hidden="true">⚙</span><span><b>Control Center</b><small>Storage, recovery and site settings</small></span></button>
         <button class="sidebar-tool" type="button" id="openBrowserVault"><span aria-hidden="true">▤</span><span><b>Browser Vault</b><small>Saved outputs, browser only</small></span></button>
       </div>
@@ -760,15 +759,10 @@
   </aside>
 
   <main class="main" id="top">
-    <header class="topbar">
-      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
-      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">55 Projects</span></div>
-      <div class="topbar-right"><button class="topbar-action command-palette-trigger" id="commandPaletteOpen" type="button" aria-label="Search projects and actions" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">⌕ <span>SEARCH</span></button><label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label><button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button><div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div><span class="status-live" id="topStatus" aria-live="polite">0 windows open</span></div>
-    </header>
 
     <div class="page-wrap">
       <section class="hero" aria-labelledby="heroTitle">
-        <p class="hero-kicker">EXPLORE THE CURIOID UNIVERSE</p>
+        <p class="hero-kicker"><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button><span>EXPLORE THE CURIOID UNIVERSE</span></p>
         <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> <span class="results-word">results.</span></h1>
         <div class="hero-bottom">
           <p class="hero-copy">Six creative worlds, useful tools and Sandbox OS. Explore a world or build one of your own.</p>
@@ -796,11 +790,11 @@
         </details>
       </section>
       <hr class="section-rule">
-      <div class="rooms-label"><span>Explore the collections</span><span>Open a project window to begin</span></div>
+      <div class="rooms-label"><span>Explore the collections</span><div class="rooms-label-actions"><span id="projectCount" aria-live="polite">55 Projects</span><button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button></div></div>
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.271</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.284</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -820,7 +814,20 @@
       <button type="button" data-control-action="vault"><b>Browser Vault</b><small>View saved outputs in this browser</small></button>
       <button type="button" data-control-action="backup"><b>Backup &amp; Restore</b><small>Open the full local system backup tools</small></button>
     </section>
+    <section class="site-control-preferences" aria-label="Site-wide preferences and shortcuts"><label class="global-volume-control" title="Master volume"><span>MASTER VOLUME</span><input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label><div class="site-control-preference-actions"><button type="button" class="site-control-small-action" id="motionToggle" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button type="button" class="site-control-small-action" id="commandPaletteOpen" aria-label="Open command palette" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">Command palette · Ctrl+K</button><button type="button" class="site-control-small-action" id="openShortcutsHelp" title="Show keyboard shortcuts (?)" aria-keyshortcuts="Shift+Slash">Keyboard shortcuts · ?</button><button type="button" class="site-control-small-action" id="closeAllRooms" hidden>Close all open projects</button></div><span class="status-live" id="topStatus" aria-live="polite">0 windows open</span></section>
     <p class="site-control-footnote">No cloud account or background upload. Browser storage can still be cleared, so export a backup before clearing site data or changing devices.</p>
+  </dialog>
+  <dialog class="site-shortcuts-dialog" id="siteShortcutsDialog" aria-labelledby="siteShortcutsTitle" aria-describedby="siteShortcutsDescription">
+    <header class="site-shortcuts-head"><div><small>CURIOID / KEYBOARD GUIDE</small><h2 id="siteShortcutsTitle">Keyboard shortcuts</h2><p id="siteShortcutsDescription">Quick ways to explore without changing the independence of each world.</p></div><button type="button" data-shortcuts-close aria-label="Close keyboard shortcuts">×</button></header>
+    <div class="site-shortcuts-list">
+      <div class="site-shortcuts-row"><span><b>Find a project</b><small>Focus the catalogue search field.</small></span><kbd>/</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Quick launch</b><small>Search projects and site-wide actions.</small></span><kbd>Ctrl / ⌘ K</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Show this guide</b><small>Open the keyboard shortcut reference.</small></span><kbd>?</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Move through results</b><small>Choose an item in the command palette.</small></span><kbd>↑ ↓ ↵</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Close the current panel</b><small>Dismiss dialogs and close the menu.</small></span><kbd>Esc</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Move between controls</b><small>Use the standard browser focus order.</small></span><kbd>Tab</kbd></div>
+    </div>
+    <p class="site-shortcuts-foot">Global shortcuts are paused while you type in a field. Individual worlds may have their own additional controls.</p>
   </dialog>
   <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top" title="Back to top" hidden>↑</button>
 
@@ -1510,6 +1517,32 @@
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => toast.classList.remove("show"), 2500);
       }
+      async function copyProjectLink(roomId) {
+        const info = ROOM_INFO[roomId];
+        if (!info) { showToast("That project link is unavailable."); return; }
+        const url = new URL(window.location.href);
+        url.hash = `curioid=${encodeURIComponent(roomId)}`;
+        let copied = false;
+        try {
+          if (navigator.clipboard?.writeText && window.isSecureContext) {
+            await navigator.clipboard.writeText(url.href);
+            copied = true;
+          }
+        } catch (_) {}
+        if (!copied) {
+          const previousFocus = document.activeElement;
+          const field = document.createElement("textarea");
+          field.value = url.href;
+          field.setAttribute("readonly", "");
+          field.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0";
+          document.body.appendChild(field);
+          field.select();
+          try { copied = document.execCommand("copy"); } catch (_) { copied = false; }
+          field.remove();
+          if (previousFocus?.isConnected) previousFocus.focus?.({ preventScroll: true });
+        }
+        showToast(copied ? `Direct link copied for ${info.title}.` : "Could not copy the link. Check your browser permissions.");
+      }
 
       // Site-level notifications stay in memory for this page session. Only
       // meaningful warnings/recovery events are promoted from ordinary toasts.
@@ -1581,7 +1614,7 @@
         }
       });
       document.addEventListener('pointerdown', event => {
-        if (notificationPanel && !notificationPanel.hidden && !event.target?.closest?.('.topbar-notification-wrap')) setNotificationPanel(false);
+        if (notificationPanel && !notificationPanel.hidden && !event.target?.closest?.('.sidebar-notification-wrap')) setNotificationPanel(false);
       }, true);
       document.addEventListener('keydown', event => {
         if (event.key === 'Escape' && notificationPanel && !notificationPanel.hidden) { setNotificationPanel(false); notificationBell?.focus({preventScroll:true}); }
@@ -1618,6 +1651,33 @@
         else controlCenter.setAttribute('open','');
       }
       $('#openControlCenter')?.addEventListener('click', openSiteControlCenter);
+      const shortcutsDialog = $('#siteShortcutsDialog');
+      let shortcutsReturnFocus = null;
+      function openKeyboardShortcuts() {
+        if (!shortcutsDialog || shortcutsDialog.open) return;
+        shortcutsReturnFocus = document.activeElement;
+        if (shortcutsReturnFocus?.closest?.('#siteControlCenter')) {
+          shortcutsReturnFocus = $('#openControlCenter');
+          controlCenter?.close?.();
+          controlCenter?.removeAttribute('open');
+        }
+        if (typeof shortcutsDialog.showModal === 'function') shortcutsDialog.showModal();
+        else shortcutsDialog.setAttribute('open', '');
+        shortcutsDialog.querySelector('[data-shortcuts-close]')?.focus?.({ preventScroll: true });
+      }
+      $('#openShortcutsHelp')?.addEventListener('click', openKeyboardShortcuts);
+      shortcutsDialog?.querySelector('[data-shortcuts-close]')?.addEventListener('click', () => {
+        shortcutsDialog.close?.();
+        shortcutsDialog.removeAttribute('open');
+      });
+      shortcutsDialog?.addEventListener('click', event => {
+        if (event.target === shortcutsDialog) { shortcutsDialog.close?.(); shortcutsDialog.removeAttribute('open'); }
+      });
+      shortcutsDialog?.addEventListener('close', () => {
+        const target = shortcutsReturnFocus;
+        shortcutsReturnFocus = null;
+        if (target?.isConnected) target.focus?.({ preventScroll: true });
+      });
       controlCenter?.addEventListener('click', event => {
         const close = event.target.closest('[data-control-close]');
         if (close || event.target === controlCenter) { controlCenter.close?.(); controlCenter.removeAttribute('open'); return; }
@@ -1868,7 +1928,8 @@
         heading.append(roomIcon, roomNumber, nameWrap, roomState, roomChevron);
         const cardHead = document.createElement('div'); cardHead.className = 'room-card-head';
         const favorite = document.createElement('button'); favorite.type = 'button'; favorite.className = 'room-favorite'; favorite.dataset.roomFavorite = roomId; favorite.textContent = '☆'; favorite.setAttribute('aria-pressed', 'false'); favorite.title = 'Add to favorites'; favorite.setAttribute('aria-label', `Add ${info.title} to favorites`);
-        cardHead.append(heading, favorite);
+        const share = document.createElement('button'); share.type = 'button'; share.className = 'room-share'; share.dataset.roomShare = roomId; share.textContent = '↗'; share.title = `Copy a direct link to ${info.title}`; share.setAttribute('aria-label', `Copy a direct link to ${info.title}`);
+        cardHead.append(heading, favorite, share);
         const body = document.createElement("div");
         body.className = "room-body";
         body.id = `body-${roomId}`;
@@ -2102,7 +2163,7 @@
           if (previous) previous.remove();
           projectCssPromise = loadAssetWithFallback({
             type: "link",
-            file: "projects.css", hash: "0ba2a1f0deb827633a84259bf2bfaefa5d1e42e97c663e9b335887e9861ae9c3", integrity: "sha384-qL3jVfOQcE9pLU5kFIFdMEJrgXLOy/B6wvNz8IDeEEHENzY2+deKuJrICV2JJbz6",
+            file: "projects.css", hash: "5c8f858e06d23c4d79c8f356b9321882822179a29bde26dda487641893f06776", integrity: "sha384-g3Oy2QZwM+MXZB/E6vlVoE3Kn7sRafdYgR5cJAzKFR/9DBJQjUMitsvH+YS04Enz",
             expected: "Project styles",
             markReady: element => { element.dataset.loaded = "true"; }
           }).then(() => {
@@ -2131,7 +2192,7 @@
           if (window.CurioidProjects) return Promise.resolve();
           return loadAssetWithFallback({
             type: "script",
-            file: "projects.js", hash: "ff2da7aac6d4de9dba2aa004b8f20efb68efb5caebdbec07837766eb8e0f5e92", integrity: "sha384-OAaDgu8Xe6hn/3w8VLWIuzGijEMvxLGTDmWShYYS0Vid0NuF+wnp0DZh8FbxrR8T",
+            file: "projects.js", hash: "ecbbecbf4117d7d261c37dd96a9093734a849dd8c183b7cbe59909d008130164", integrity: "sha384-jdI3f+bna+JHqcqpE3B27raaxJ5D56ml0Jpy0YxUBwi2kJVqmmwLOQshcNFZhDII",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -2400,6 +2461,11 @@
           closeMenu(true);
           return;
         }
+        if (!editing && !event.altKey && !event.ctrlKey && !event.metaKey && event.key === "?") {
+          event.preventDefault();
+          openKeyboardShortcuts();
+          return;
+        }
         if (!editing && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
           event.preventDefault();
           openCommandPalette();
@@ -2416,6 +2482,17 @@
         requestAnimationFrame(() => target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' }));
       }
       window.CurioidNavigateToProject = openUniverseProject;
+      function openProjectFromShareHash() {
+        if (!location.hash.startsWith('#curioid=')) return false;
+        let projectId = '';
+        try { projectId = decodeURIComponent(location.hash.slice('#curioid='.length)); }
+        catch (_) { return false; }
+        if (!Object.prototype.hasOwnProperty.call(ROOM_INFO, projectId)) return false;
+        openUniverseProject(projectId);
+        return true;
+      }
+      window.addEventListener('hashchange', openProjectFromShareHash);
+      if (location.hash.startsWith('#curioid=')) requestAnimationFrame(openProjectFromShareHash);
       $('#personalShortcuts')?.addEventListener('click', event => {
         const restoreSession = event.target.closest('[data-restore-site-session]');
         if (restoreSession) { restoreSiteSession(); return; }
@@ -2531,6 +2608,8 @@
       $('#categorySections').addEventListener('click', event => {
         const favorite = event.target.closest('[data-room-favorite]');
         if (favorite) { event.preventDefault(); event.stopPropagation(); toggleSiteFavorite(favorite.dataset.roomFavorite); return; }
+        const share = event.target.closest('[data-room-share]');
+        if (share) { event.preventDefault(); event.stopPropagation(); copyProjectLink(share.dataset.roomShare); return; }
         const related = event.target.closest('[data-related-project]');
         if (related) { event.preventDefault(); event.stopPropagation(); openUniverseProject(related.dataset.relatedProject); return; }
         const heading = event.target.closest('.room-heading');
@@ -2679,6 +2758,7 @@
         {id:'connect',title:'Connect Console',description:'Review local components, permissions and connections.',icon:'⌘',keywords:'kernel capabilities grants events components',target:'openConnectConsole'},
         {id:'app-library',title:'Universal App Library',description:'Find, install and manage safe local app packages.',icon:'▦',keywords:'installed custom apps packages templates data',run:()=>{window.CurioidConnectConsole?.open?.();document.querySelector('[data-ccc-tab="library"]')?.click();}},
         {id:'control',title:'Control Center',description:'Storage, recovery, runtime health and settings.',icon:'⚙',keywords:'settings backup restore health diagnostics',target:'openControlCenter'},
+        {id:'keyboard-help',title:'Keyboard shortcuts',description:'Show the quick keyboard guide for navigating CURIOID.',icon:'⌨',keywords:'help hotkeys keys slash question mark',run:openKeyboardShortcuts},
         {id:'vault',title:'Browser Vault',description:'Open locally saved outputs and recovery copies.',icon:'▤',keywords:'files exports backups packages local storage',target:'openBrowserVault'},
         {id:'shortcuts',title:'Favorites and recent projects',description:'Show your saved shortcuts and recently opened worlds.',icon:'★',keywords:'favorite recent history saved projects',run:()=>{const panel=$('#personalShortcuts');if(panel){panel.open=true;panel.scrollIntoView({behavior:scrollBehavior(),block:'nearest'});}}},
         {id:'restore-session',title:'Restore last session',description:'Reopen the project windows saved from your previous visit.',icon:'↶',keywords:'resume reopen restore windows',run:()=> $('[data-restore-site-session]')?.click(),enabled:()=>!!$('[data-restore-site-session]')&&!$('[data-restore-site-session]').disabled},

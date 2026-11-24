@@ -1,11 +1,11 @@
-/* CURIOID v1.271 offline application shell. Same-origin, scope-isolated assets only. */
+/* CURIOID v1.284 offline application shell. Same-origin, scope-isolated assets only. */
 'use strict';
 const SCOPE_URL = new URL(self.registration.scope);
 // Cache Storage is origin-wide, not service-worker-scope-wide. Namespacing by
 // the exact registration path prevents another GitHub Pages project on this
 // origin from overwriting or deleting this site's cache (and vice versa).
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
-const CACHE_NAME = `${CACHE_PREFIX}v1.271`;
+const CACHE_NAME = `${CACHE_PREFIX}v1.284`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const SHELL_PATHS = [
   '', 'index.html', 'projects.css', 'projects.js', 'vocal-lexicon.js',
