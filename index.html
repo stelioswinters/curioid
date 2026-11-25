@@ -7,22 +7,22 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <meta name="description" content="Explore six browser-based operating systems, 55 creative projects, tiny games and tools, plus Sandbox OS for building your own local-first desktop.">
+  <meta name="description" content="Explore six browser-based operating systems, 58 creative projects, tiny games and tools, plus Sandbox OS for building your own local-first desktop.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="Stelios Winters">
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZIzvIzLkNsDfvnyoj5wJAsjB7jlv5adVz4V8lTBpSo0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-L4nIru9m1NPwbPNIXluZKbYMTI6tJqy3aZKHhep5Ei4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
   <link rel="canonical" href="https://stelioswinters.com/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
   <meta property="og:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
-  <meta property="og:description" content="Six browser-based operating systems, 55 creative projects, tiny games and tools, plus Sandbox OS for building a personal desktop.">
+  <meta property="og:description" content="Six browser-based operating systems, 58 creative projects, tiny games and tools, plus Sandbox OS for building a personal desktop.">
   <meta property="og:url" content="https://stelioswinters.com/curioid/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CURIOID | Browser Worlds, Creative Projects and Sandbox OS">
-  <meta name="twitter:description" content="Six independent browser-based operating systems, 55 projects, tiny games and creative tools, plus Sandbox OS for building your own. Explore locally in your browser.">
+  <meta name="twitter:description" content="Six independent browser-based operating systems, 56 projects, tiny games and creative tools, plus Sandbox OS for building your own. Explore locally in your browser.">
   <meta property="og:image" content="https://stelioswinters.com/curioid/social-preview.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -252,11 +252,11 @@
     .rooms-label{align-items:center;}
     .rooms-label-actions{display:flex;align-items:center;gap:9px;min-width:0;}
     .rooms-label-actions>span:first-child{color:#858390;letter-spacing:.08em;}
-    .egg-hunt-toggle{position:relative;display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;padding:5px;border:1px solid #424452;border-radius:8px;background:linear-gradient(145deg,#252631,#181a21);color:#d7d8e2;cursor:pointer;transition:border-color .18s,background .18s,transform .18s;}
-    .egg-hunt-toggle svg{display:block;width:19px;height:19px;fill:rgba(94,221,133,.18);stroke:#a6f4bd;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
+    .egg-hunt-toggle{position:relative;display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;padding:5px;border:1px solid rgba(214,255,105,.72);border-radius:8px;background:linear-gradient(145deg,#252a1d,#181a21);color:var(--acid);cursor:pointer;transition:border-color .18s,background .18s,transform .18s;}
+    .egg-hunt-toggle svg{display:block;width:19px;height:19px;fill:rgba(214,255,105,.18);stroke:var(--acid);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
     .topbar .egg-hunt-toggle{width:32px;height:32px;flex:0 0 32px;padding:5px;}
-    .egg-hunt-toggle[data-enabled="true"]{border-color:#347d50;color:#a6f4bd;box-shadow:0 0 0 1px rgba(94,221,133,.14),0 0 15px rgba(94,221,133,.10);}
-    .egg-hunt-toggle[data-enabled="false"]{border-color:#347d50;color:#a6f4bd;box-shadow:0 0 0 1px rgba(94,221,133,.14),0 0 15px rgba(94,221,133,.10);filter:none;opacity:1;}
+    .egg-hunt-toggle[data-enabled="true"]{border-color:var(--acid);color:var(--acid);box-shadow:0 0 0 1px rgba(214,255,105,.14),0 0 15px rgba(214,255,105,.10);}
+    .egg-hunt-toggle[data-enabled="false"]{border-color:var(--acid);color:var(--acid);box-shadow:0 0 0 1px rgba(214,255,105,.14),0 0 15px rgba(214,255,105,.10);filter:none;opacity:1;}
     .egg-hunt-toggle:hover{transform:translateY(-1px);}
     .egg-hunt-toggle:focus-visible{outline:2px solid var(--acid);outline-offset:3px;}
     .egg-hunt-status-dot{position:absolute;right:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:#55dc84;box-shadow:0 0 7px rgba(85,220,132,.8);}
@@ -293,6 +293,13 @@
     .category-title { margin: 0; color: #efeee9; font-size:clamp(20px, 2.5vw, 26px); font-weight: 810; letter-spacing: -.045em; }
     .category-description { margin: 4px 0 0; color: var(--muted); font-size:11px; line-height: 1.6; }
     .category-count { flex: 0 0 auto; padding: 5px 8px; border: 1px solid #373641; border-radius: 6px; color: #898793; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; white-space: nowrap; }
+    .studio-filter-row { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:-1px 0 12px; }
+    .studio-filter-button { min-height:28px; padding:5px 9px; border:1px solid #34333e; border-radius:7px; background:#17171d; color:#aaa8b3; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.035em; cursor:pointer; transition:background .14s ease,border-color .14s ease,color .14s ease; }
+    .studio-filter-button:hover { border-color:#66694b; color:#eeede6; }
+    .studio-filter-button.is-active { border-color:#687b48; background:rgba(214,255,105,.09); color:var(--acid); }
+    .standalone-project-frame { display:block; width:100%; min-height:760px; height:860px; border:0; border-radius:9px; background:#090b0e; }
+
+    @media(max-width:620px) { .studio-filter-row { flex-wrap:wrap; max-width:100%; overflow:visible; padding:1px 0 5px; } .studio-filter-button { flex:0 1 auto; } }
     .category-nav .nav-item { min-height: 43px; }
 
     /* Click-to-expand project windows */
@@ -681,7 +688,7 @@
   @media(max-width:560px){.site-control-storage{margin-inline:12px}.site-control-storage-actions{align-items:stretch;flex-direction:column}.site-control-storage-actions button{width:100%}}
   .site-control-panel .site-control-head{position:sticky;top:0;z-index:2;background:rgba(25,26,33,.97);backdrop-filter:blur(12px)}
   .site-control-health{margin:14px 0;padding:13px;border:1px solid #3a4149;border-radius:10px;background:linear-gradient(145deg,#191f25,#15191f)}
-  .site-control-health-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.site-control-health-head h3{margin:0;color:#d6ff69;font:800 10px ui-monospace,monospace;letter-spacing:.12em}.site-control-health-head p{max-width:620px;margin:6px 0 0;color:#9aa5aa;font-size:10px;line-height:1.55}.site-control-health-head>[data-health-state]{flex:0 0 auto;padding:4px 7px;border:1px solid #4d6260;border-radius:4px;color:#b8d2cb;font:8px ui-monospace,monospace;letter-spacing:.08em}.site-control-health-head>[data-state="healthy"]{border-color:#426d50;color:#a8e3ae}.site-control-health-head>[data-state="issues-found"]{border-color:#8d5149;color:#ffc0a9}.site-control-health-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.site-control-health-status{margin:9px 0;color:#b8c1c5;font-size:9px;line-height:1.5}.site-control-health-results{display:grid;gap:5px;margin:0;padding:0;list-style:none}.site-control-health-results li{display:grid;grid-template-columns:minmax(105px,.3fr) minmax(0,1fr);gap:10px;padding:7px 8px;border:1px solid #303a40;border-radius:6px;background:#11171c;font-size:9px}.site-control-health-results li>b{color:#bce4cd}.site-control-health-results li>span{min-width:0;color:#98a5aa;overflow-wrap:anywhere}.site-control-health-results li[data-state="warning"]>b{color:#e6d08f}.site-control-health-results li[data-state="error"]>b{color:#f19c94}
+  .site-control-health-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.site-control-health-head h3{margin:0;color:#d6ff69;font:800 10px ui-monospace,monospace;letter-spacing:.12em}.site-control-health-head p{max-width:620px;margin:6px 0 0;color:#9aa5aa;font-size:10px;line-height:1.55}.site-control-health-head>[data-health-state]{flex:0 0 auto;padding:4px 7px;border:1px solid #4d6260;border-radius:4px;color:#b8d2cb;font:8px ui-monospace,monospace;letter-spacing:.08em}.site-control-health-head>[data-state="healthy"]{border-color:#426d50;color:#a8e3ae}.site-control-health-head>[data-state="issues-found"]{border-color:#8d5149;color:#ffc0a9}.site-control-health-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.site-control-health-status{margin:9px 0;color:#b8c1c5;font-size:9px;line-height:1.5}.site-control-health-results{display:grid;gap:5px;margin:0;padding:0;list-style:none}.site-control-health-results li{display:grid;grid-template-columns:minmax(105px,.3fr) minmax(0,1fr);gap:10px;padding:7px 8px;border:1px solid #303a40;border-radius:6px;background:#11171c;font-size:9px}.site-control-health-results li>b{color:#bce4cd}.site-control-health-results li>span{min-width:0;color:#98a5aa;overflow-wrap:anywhere}.site-control-health-results li[data-state="warning"]>b{color:#e6d08f}.site-control-health-results li[data-state="error"]>b{color:#f19c94}.site-control-health-details{margin-top:8px;border:1px solid #303a40;border-radius:7px;background:#12171c}.site-control-health-details>summary{padding:9px 10px;color:#cbd4d4;font:700 9px ui-monospace,monospace;letter-spacing:.06em;cursor:pointer;list-style:none}.site-control-health-details>summary::-webkit-details-marker{display:none}.site-control-health-details>summary::after{content:"＋";float:right;color:var(--acid)}.site-control-health-details[open]>summary::after{content:"−"}.site-control-health-results-scroll{max-height:min(34vh,320px);overflow:auto;overscroll-behavior:contain;padding:0 7px 7px}.site-control-health-results-scroll:focus-visible,.site-control-health-details>summary:focus-visible{outline:2px solid var(--acid);outline-offset:2px}.site-control-health-actions .site-control-small-action:disabled{opacity:.45;cursor:not-allowed}
   @media(max-width:560px){.site-control-health-results li{grid-template-columns:1fr;gap:3px}.site-control-health-head{flex-direction:column}}
 
   .site-control-tool-section,.site-control-personal,.site-control-about{padding:0 18px 15px}
@@ -787,7 +794,7 @@
         <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Digital Art</span><span class="nav-indicator"></span>
       </button>
       <button class="nav-item" type="button" data-category="sound-motion">
-        <span class="nav-symbol" aria-hidden="true">〰</span><span class="nav-label">Sound &amp; Motion</span><span class="nav-indicator"></span>
+        <span class="nav-symbol" aria-hidden="true">〰</span><span class="nav-label">Music &amp; Audio</span><span class="nav-indicator"></span>
       </button>
       <button class="nav-item" type="button" data-category="creative-tools">
         <span class="nav-symbol" aria-hidden="true">⌘</span><span class="nav-label">Applications &amp; Tools</span><span class="nav-indicator"></span>
@@ -807,7 +814,7 @@
   <main class="main" id="top">
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
-      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">55 Projects</span></div>
+      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">58 Projects</span></div>
       <div class="topbar-right">
         <button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" data-enabled="false" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button>
         <label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label>
@@ -831,7 +838,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.297</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.307</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
     </div>
   </main>
 
@@ -851,11 +858,14 @@
       <small class="site-control-storage-note">The browser decides whether to grant this domain-wide request. Protection is not a backup: export important work regularly and before clearing site data or changing devices.</small>
     </section>
     <section class="site-control-health" aria-labelledby="controlPanelHealthTitle">
-      <div class="site-control-health-head"><div><h3 id="controlPanelHealthTitle">CURIOID HEALTH CHECK</h3><p>Run local checks for the app runtime, browser storage, offline shell and operating-system registry. Nothing is uploaded or saved as a diagnostics history.</p></div><span data-health-state>NOT RUN</span></div>
-      <div class="site-control-health-actions"><button type="button" class="site-control-small-action" data-health-run>Run diagnostics</button><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
-      <p class="site-control-health-status" data-health-status role="status" aria-live="polite">Diagnostics run only when requested.</p>
-      <ul class="site-control-health-results" data-health-results aria-label="CURIOID health check results"></ul>
-      <small class="site-control-storage-note">Repair only refreshes the browser's service-worker registration. It does not clear saved projects, OS packages, Browser Vault artifacts or backups.</small>
+      <div class="site-control-health-head"><div><h3 id="controlPanelHealthTitle">CURIOID HEALTH CHECK</h3><p>Run local checks for project delivery, browser capabilities, storage, offline assets and app runtime. Nothing is uploaded automatically.</p></div><span data-health-state>NOT RUN</span></div>
+      <div class="site-control-health-actions"><button type="button" class="site-control-small-action" data-health-run>Run diagnostics</button><button type="button" class="site-control-small-action" data-health-download disabled>Download report (.txt)</button><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
+      <p class="site-control-health-status" data-health-status role="status" aria-live="polite">Diagnostics run only when requested. The report contains technical status and error details, not saved project contents or passwords.</p>
+      <details class="site-control-health-details" data-health-details>
+        <summary data-health-details-summary>View detailed results</summary>
+        <div class="site-control-health-results-scroll"><ul class="site-control-health-results" data-health-results aria-label="CURIOID health check results"></ul></div>
+      </details>
+      <small class="site-control-storage-note">Refresh only checks the service-worker registration. It does not clear saved projects, OS packages, Browser Vault artifacts or backups. The report is generated locally and downloaded only when you press its button.</small>
     </section>
     <section class="site-control-tool-section" aria-labelledby="controlPanelCreateTitle">
       <h3 id="controlPanelCreateTitle">CREATE &amp; BUILD</h3>
@@ -1406,9 +1416,9 @@
         { id: "strange-archives", title: "Strange Archives", kicker: "01 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
         { id: "web-experiments", title: "Web Experiments", kicker: "02 / INTERACTIVE", description: "Curious machines, interactive systems and things to explore.", rooms: ["oddity-lab", "gravity-garden", "pattern-engine", "impossible-objects", "pixel-weather", "dream-index", "rule-garden", "pendulum-choir"] },
         { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["curioids", "pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers", "unreliable-lift", "moth-census"] },
-        { id: "digital-art", title: "Digital Art", kicker: "04 / VISUAL", description: "Generative images, strange compositions and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather", "strata-loom", "negative-space"] },
-        { id: "sound-motion", title: "Sound & Motion", kicker: "05 / AUDIOVISUAL", description: "Experiments with rhythm, sound, movement and visual response.", rooms: ["frequency-garden", "motion-residue", "listening-room", "orbit-choir", "tide-signal"] },
-        { id: "creative-tools", title: "Applications & Tools", kicker: "06 / STUDIO", description: "Standalone creative tools, generators and useful experiments that work without a separate operating system.", rooms: ["color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio", "print-room", "poster-press"] }
+        { id: "digital-art", title: "Digital Art", kicker: "04 / VISUAL", description: "Generative images, strange compositions, motion drawings and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather", "strata-loom", "motion-residue", "negative-space"] },
+        { id: "sound-motion", title: "Music & Audio", kicker: "05 / MUSIC", description: "Instruments, rhythm makers, audio experiments and sound-responsive worlds.", rooms: ["dark-looper", "frequency-garden", "listening-room", "orbit-choir", "tide-signal"] },
+        { id: "creative-tools", title: "Applications & Tools", kicker: "06 / STUDIO", description: "Standalone creative tools, generators and useful experiments that work without a separate operating system.", rooms: ["vanta-deck", "devtoys", "color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio", "print-room", "poster-press"] }
       ];
 
       const ROOM_INFO = {
@@ -1442,6 +1452,7 @@
         "orbit-choir": { title: "Orbit Choir", mark: "05", icon: "◎", description: "Three voices circling the same note without agreeing", copy: "Build an evolving ambient chord from three orbiting oscillators. Change their paths, tuning and speed, then listen to the harmony almost settle." },
 
         "echonoise-os": { title: "Chambers of Echoes", mark: "01", icon: "♫", description: "A sound-making world with five synthetic voices, lyric-born melodies and a phonetic songwriting lab", copy: "Build a sound world in Echonoise OS 2126. Program five choir voices across a 16-step sequencer, write lyrics and map them to a generated melody, explore 125,093 US-English headwords and 134,119 pronunciation variants in Lexicon Lab, scan stress and meter, reverse-search phonemes, discover rhyme and sound palettes, shape reflections with EchoWeave effects, and save sessions in your local Songbook." },
+        "dark-looper": { title: "D4RK L00P3R", mark: "01", icon: "♫", description: "A dark, browser-native 16-step groove box with live synthesis and recording", copy: "Build a beat with twelve playable pads, shape a sixteen-step pattern, swap between more than thirty synthesized sounds, set the tempo from 40 to 200 BPM, overdub patterns and record a live performance for download. Sounds are generated on this device with the Web Audio API; no samples or music are uploaded." , category: "sound-motion" },
         "frequency-garden": { title: "Frequency Garden", mark: "02", icon: "〰", description: "Living shapes that respond to sound", copy: "Plant tone-generating blooms in a responsive sound garden. Their positions decide pitch, while the controls shape the sound." },
         "motion-residue": { title: "Motion Residue", mark: "03", icon: "⌁", description: "Movement that leaves strange traces behind", copy: "Draw with a mouse, finger or pen. Build mirrored trails and motion echoes, then export the resulting composition." },
 
@@ -1452,6 +1463,8 @@
         "dead-interface": { title: "The Uncatalogued Desktop", mark: "01", icon: "▤", description: "A working computer from a neighbouring timeline", copy: "Explore a complete late-1990s personal computer with practical programs, miniature games, scientific instruments, saved keys, room-based storage and utilities that do not appear in the manual.", category: "operating-systems" },
         "unbuilt-tomorrow": { title: "Unbuilt Tomorrow", mark: "03", icon: "⌂", description: "Futures imagined, designed, then forgotten", copy: "Browse shelved proposals for transit, housing, civic design and domestic technology from futures that almost arrived." },
 
+        "vanta-deck": { title: "VANTA DECK", mark: "01", icon: "⬡", description: "A private personal and system workbench for diagnostics, focus resets and everyday utilities", copy: "A compact control deck for browser and device diagnostics, display and keyboard checks, a private one-minute reset, breathing and countdown timers, text cleanup, links, encoding, JSON, hashes and password generation. Processing stays in this browser; it does not ask for accounts or send your input to a server.", category: "creative-tools" },
+        "devtoys": { title: "GLITCHYARD", mark: "02", icon: "⌘", description: "A vivid local developer lab with 37 tools for formatting, conversion, inspection, testing and generation", copy: "A browser-native developer workbench for JSON, XML, SQL, YAML, URLs, HTTP headers, MIME types, HTTP status codes, encoding, hashing, regular expressions, text analysis, Unicode, mock data and more. GLITCHYARD processes your input locally in this tab and does not upload it.", category: "creative-tools" },
         "color-alchemist": { title: "Color Alchemist", mark: "02", icon: "◍", description: "Mix, bend and discover unusual color relationships", copy: "Generate color harmonies, lock the swatches you like, check text contrast and export CSS variables or a palette file." },
         "type-foundry": { title: "Type Foundry", mark: "03", icon: "Aa", description: "A playground for letters, forms and tiny type tools", copy: "Create a typographic poster with editable phrases, type styles, layout, scale and distortion. Export the composition as PNG." },
         "idea-tumbler": { title: "Idea Tumbler", mark: "04", icon: "✳", description: "Shake unrelated ideas together and see what sticks", copy: "Combine subjects, formats and constraints into original project seeds. Save ideas locally or copy a concept to develop further." },
@@ -1487,9 +1500,9 @@
         "aether-os":"✧", "sandbox-os":"✳", "oddity-lab":"◉", "gravity-garden":"⊙", "pattern-engine":"▦", "impossible-objects":"◇", "pixel-weather":"☼", "dream-index":"☾", "rule-garden":"▥", "pendulum-choir":"⚖",
         "umbra-os":"◐", "chromatic-fossils":"◈", "organic-errors":"✿", "afterimage-studio":"▤", "faultline-portrait":"◍", "velvet-weather":"☁", "strata-loom":"▧", "negative-space":"◩",
         "curioids":"✹", "pocket-universe":"◎", "one-button-ritual":"⦿", "last-corridor":"▭", "borrowed-gravity":"↕", "room-remembers":"▧", "unreliable-lift":"⇅", "moth-census":"✦", "food-alchemy":"♨",
-        "echonoise-os":"♫", "frequency-garden":"〰", "motion-residue":"⇢", "listening-room":"◖", "orbit-choir":"◉", "tide-signal":"≈",
+        "echonoise-os":"♫", "dark-looper":"♫", "vanta-deck":"⬡", "frequency-garden":"〰", "motion-residue":"⇢", "listening-room":"◖", "orbit-choir":"◉", "tide-signal":"≈",
         "museum-almost":"▣", "dead-interface":"▤", "unbuilt-tomorrow":"⌂", "missing-minutes":"◷", "unreturned-doors":"▯", "atlas-unclaimed":"⌖",
-        "aura-synthesis":"◈", "color-alchemist":"◍", "type-foundry":"Aa", "idea-tumbler":"✳", "texture-press":"▨", "sprite-sheet-studio":"▦", "vector-mark-studio":"◇", "layout-composer":"▤", "palette-extractor":"◒", "gradient-atlas":"◓", "contact-sheet":"▩", "pixel-sort-lab":"▥", "shape-composer":"△", "icon-set-studio":"⌘", "print-room":"▱", "poster-press":"▣"
+        "aura-synthesis":"◈", "vanta-deck":"⬡", "devtoys":"⌘", "color-alchemist":"◍", "type-foundry":"Aa", "idea-tumbler":"✳", "texture-press":"▨", "sprite-sheet-studio":"▦", "vector-mark-studio":"◇", "layout-composer":"▤", "palette-extractor":"◒", "gradient-atlas":"◓", "contact-sheet":"▩", "pixel-sort-lab":"▥", "shape-composer":"△", "icon-set-studio":"⌘", "print-room":"▱", "poster-press":"▣"
       };
 
       // Stage 5–7: structured links plus validated, approval-driven workflow support.
@@ -1864,126 +1877,47 @@
       const healthStatus = $('[data-health-status]', controlCenter);
       const healthState = $('[data-health-state]', controlCenter);
       const healthResults = $('[data-health-results]', controlCenter);
-      const healthTimeout = (promise, ms, label) => new Promise((resolve, reject) => {
-        const timer = window.setTimeout(() => reject(new Error(`${label} timed out`)), ms);
-        Promise.resolve(promise).then(value => { window.clearTimeout(timer); resolve(value); }, error => { window.clearTimeout(timer); reject(error); });
+      const healthDownloadButton = $('[data-health-download]', controlCenter);
+      const healthDetails = $('[data-health-details]', controlCenter);
+      const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
+      const HEALTH_MODULE_HASH = '1b5862b1064b0d05def568c44932c07cc352f35e0627265b7014ce15d5f94acb';
+      const HEALTH_MODULE_SRI = 'sha384-/EiafMvMqBAuFAWvhpGV9GmbWw1MQ7gIsb9JODB1h8Q0bBOytOzxHT3oytfHcltK';
+      let healthApi = null, healthModulePromise = null;
+      const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
+      const ensureHealthApi = () => {
+        if (healthApi) return Promise.resolve(healthApi);
+        if (window.CurioidHealthCheck?.create) { healthApi=createHealthApi(); return Promise.resolve(healthApi); }
+        if (!healthModulePromise) {
+          healthModulePromise = new Promise((resolve,reject) => {
+            const script=document.createElement('script');
+            const canonicalBase=document.querySelector('link[rel="canonical"]')?.href||document.baseURI;
+            const url=new URL('health-check-v1.307.js',new URL('.',canonicalBase));
+            url.searchParams.set('v',`sha256-${HEALTH_MODULE_HASH}`);
+            script.async=true; script.crossOrigin='anonymous'; script.integrity=HEALTH_MODULE_SRI;
+            script.referrerPolicy='strict-origin-when-cross-origin'; script.setAttribute('data-cfasync','false');
+            const timer=window.setTimeout(()=>{script.remove();reject(new Error('Health Check module request timed out'));},12000);
+            script.addEventListener('load',()=>{window.clearTimeout(timer);try{if(!window.CurioidHealthCheck?.create)throw new Error('Health Check module did not initialize');healthApi=createHealthApi();resolve(healthApi);}catch(error){reject(error);}},{once:true});
+            script.addEventListener('error',()=>{window.clearTimeout(timer);reject(new Error('Health Check module failed to load. Check health-check-v1.307.js beside index.html and its HTTP/CSP/SRI response.'));},{once:true});
+            script.src=url.href; document.head.appendChild(script);
+          }).catch(error=>{healthModulePromise=null;throw error;});
+        }
+        return healthModulePromise;
+      };
+      const showHealthModuleError = error => {
+        const message=String(error?.message||error).slice(0,260);
+        if(healthStatus)healthStatus.textContent=`Health Check could not load: ${message}`;
+        if(healthState){healthState.textContent='UNAVAILABLE';healthState.dataset.state='issues-found';}
+        if(healthResults){const item=document.createElement('li');item.dataset.state='error';const label=document.createElement('b');label.textContent='Health Check module';const detail=document.createElement('span');detail.textContent=message;item.replaceChildren(label,detail);healthResults.replaceChildren(item);}
+        if(healthDetailsSummary)healthDetailsSummary.textContent='View diagnostic load details (1 issue)';
+      };
+      healthRunButton?.addEventListener('click',async()=>{
+        healthRunButton.disabled=true;healthRunButton.textContent='Loading checks…';
+        try{const api=await ensureHealthApi();await api.run();}
+        catch(error){showHealthModuleError(error);}
+        finally{healthRunButton.disabled=false;if(healthRunButton.textContent==='Loading checks…')healthRunButton.textContent='Run diagnostics';}
       });
-      function paintHealthResults(rows, statusText, stateText) {
-        if (healthResults) {
-          healthResults.replaceChildren();
-          for (const row of rows) {
-            const item = document.createElement('li');
-            item.dataset.state = row.ok ? 'ok' : row.warning ? 'warning' : 'error';
-            const label = document.createElement('b'); label.textContent = row.label;
-            const detail = document.createElement('span'); detail.textContent = row.detail;
-            item.append(label, detail); healthResults.appendChild(item);
-          }
-        }
-        if (healthStatus) healthStatus.textContent = statusText;
-        if (healthState) { healthState.textContent = stateText; healthState.dataset.state = stateText.toLowerCase().replace(/[^a-z]+/g, '-'); }
-      }
-      async function probeTemporaryIndexedDB() {
-        if (!window.indexedDB?.open) return { ok:false, warning:true, detail:'IndexedDB is unavailable in this browser.' };
-        const name = `__curioid_health_probe_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
-        let database = null;
-        try {
-          const opened = await healthTimeout(new Promise((resolve, reject) => {
-            const request = indexedDB.open(name, 1);
-            request.onupgradeneeded = () => { try { request.result.createObjectStore('probe'); } catch (_) {} };
-            request.onsuccess = () => { database = request.result; resolve(database); };
-            request.onerror = () => reject(request.error || new Error('IndexedDB open failed'));
-            request.onblocked = () => reject(new Error('IndexedDB probe was blocked by another tab'));
-          }), 3500, 'IndexedDB probe');
-          opened.close(); database = null;
-          await healthTimeout(new Promise((resolve, reject) => {
-            const request = indexedDB.deleteDatabase(name);
-            request.onsuccess = resolve; request.onerror = () => reject(request.error || new Error('temporary probe cleanup failed')); request.onblocked = resolve;
-          }), 2500, 'IndexedDB probe cleanup');
-          return { ok:true, detail:'Temporary read/write database probe passed; temporary database removed.' };
-        } catch (error) {
-          try { database?.close(); indexedDB.deleteDatabase(name); } catch (_) {}
-          return { ok:false, warning:true, detail:String(error?.message || error).slice(0,180) };
-        }
-      }
-      async function probeOpfs() {
-        const storage = navigator.storage;
-        if (typeof storage?.getDirectory !== 'function') return { ok:false, warning:true, detail:'Origin Private File System is unavailable; apps must use their supported fallback.' };
-        let directory = null, name = `.__curioid-health-probe-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
-        try {
-          directory = await healthTimeout(storage.getDirectory(), 3500, 'OPFS access');
-          const handle = await healthTimeout(directory.getFileHandle(name, { create:true }), 2500, 'OPFS temporary file');
-          const writable = await handle.createWritable(); await writable.write('CURIOID local health probe'); await writable.close();
-          await directory.removeEntry(name);
-          return { ok:true, detail:'Temporary OPFS write/read capability probe passed; probe file removed.' };
-        } catch (error) {
-          try { if (directory) await directory.removeEntry(name); } catch (_) {}
-          return { ok:false, warning:true, detail:String(error?.message || error).slice(0,180) };
-        }
-      }
-      async function runCurioidHealthCheck() {
-        if (healthRunButton) { healthRunButton.disabled = true; healthRunButton.textContent = 'Checking…'; }
-        if (healthRepairButton) healthRepairButton.disabled = true;
-        paintHealthResults([], 'Running read-only diagnostics. Temporary probes clean up.', 'CHECKING');
-        const rows = [];
-        const add = (label, result) => rows.push({ label, ...result });
-        const projects=window.CurioidProjects;
-        const osBootReady=['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'].every(id=>projects?.ids?.includes(id));
-        add('OS boot contracts',{ok:osBootReady,warning:!projects?.ids?.length,detail:osBootReady?'Six OS modules registered.':'Runtime or OS modules unavailable.'});
-        const runtime = window.CurioidRuntimeSupervisor?.getStatus?.();
-        add('Application lifecycle', runtime ? (runtime.cleanupFailures ? { ok:false, detail:`${runtime.activeScopes} active scopes; ${runtime.cleanupFailures} cleanup issue(s) recorded this session.` } : { ok:true, detail:`${runtime.activeScopes} active scope(s), ${runtime.activeResources} tracked resource(s), no cleanup errors recorded.` }) : { ok:false, warning:true, detail:'Runtime Supervisor is not available yet.' });
-        const assetSRI=[...document.scripts].some(n=>n.src.includes('projects.js')&&n.integrity.startsWith('sha384-'))&&[...document.querySelectorAll('link[rel=stylesheet]')].some(n=>n.href.includes('projects.css')&&n.integrity.startsWith('sha384-'));
-        const registration=await(navigator.serviceWorker?.getRegistration?.().catch(()=>null)||Promise.resolve(null));
-        const cacheNames=await(window.caches?.keys?.().catch(()=>[])||Promise.resolve([]));
-        const hasCache=cacheNames.some(name=>name.includes('curioid-shell'));
-        add('Assets / offline',{ok:!!(assetSRI&&registration?.active&&hasCache),warning:!(assetSRI&&registration?.active&&hasCache),detail:`SRI ${assetSRI?'ok':'missing'}; SW ${registration?.active?'active':'inactive'}; cache ${hasCache?'yes':'no'}.`});
-        const estimate = await (navigator.storage?.estimate?.().catch(() => null) || Promise.resolve(null));
-        const usage = Number.isFinite(estimate?.usage) ? formatStorageSize(estimate.usage) : 'unavailable';
-        const quota = Number.isFinite(estimate?.quota) ? formatStorageSize(estimate.quota) : 'unavailable';
-        add('Browser storage', estimate ? { ok:true, detail:`Origin-wide estimate: ${usage} used of ${quota}. This is not per-app accounting.` } : { ok:false, warning:true, detail:'Browser storage estimate is unavailable.' });
-        const [idb, opfs] = await Promise.all([probeTemporaryIndexedDB(), probeOpfs()]);
-        add('IndexedDB', idb); add('OPFS', opfs);
-        if (typeof projects?.inspectLocalStorage === 'function') {
-          try {
-            const inventory = await healthTimeout(projects.inspectLocalStorage({ maxRecords:8000, budgetMs:4500 }), 7000, 'per-tool storage inventory');
-            if (!inventory?.available) {
-              add('Per-tool storage inventory', { ok:false, warning:true, detail:inventory?.reason || 'Per-tool database inventory is unavailable in this browser.' });
-              add('Storage estimate note', { ok:true, detail:'Per-tool estimates require a normal HTTPS site origin and browser support. The origin-wide Storage API estimate remains the fallback.' });
-            }
-            else {
-              const databases = Array.isArray(inventory.databases) ? inventory.databases : [];
-              add('Per-tool storage inventory', { ok:true, detail:`${databases.length} known CURIOID database(s), ${inventory.scannedRecords||0} sampled record(s), approximately ${formatStorageSize(inventory.approxBytes||0)}. ${inventory.truncated?'Partial scan.':'Scan complete.'} Backup coverage ${inventory.coverageComplete?'complete':'needs review'}.` });
-              for (const database of databases) {
-                const detail = database.error ? database.error : `${database.records} record(s) across ${database.stores} store(s), approximately ${formatStorageSize(database.approxBytes||0)}${database.partial?' (partial scan)':''}.`;
-                add(`Storage · ${database.label}`, database.error ? { ok:false, warning:true, detail } : { ok:true, detail });
-              }
-              if (inventory.opfs) add(inventory.opfs.label, inventory.opfs.error ? { ok:false, warning:true, detail:inventory.opfs.error } : { ok:true, detail:`${inventory.opfs.files} file(s), ${formatStorageSize(inventory.opfs.bytes)}${inventory.opfs.partial?' (partial scan)':''}.` });
-              add('Storage estimate note', { ok:true, detail:inventory.note || 'Per-database byte estimates are approximate and do not replace the browser’s origin-wide quota report.' });
-            }
-          } catch (error) { add('Per-tool storage inventory', { ok:false, warning:true, detail:String(error?.message||error).slice(0,180) }); }
-        } else add('Per-tool storage inventory', { ok:false, warning:true, detail:'Open a CURIOID project once to load the project runtime, then run diagnostics again for per-tool inventory.' });
-        try{const backups=await healthTimeout(projects?.inspectBackupArtifacts?.()||Promise.resolve({}),12000,'backup');add('Backup recoverability',backups?.verified>0&&!backups.warning?{ok:true,detail:backups.detail}:{ok:false,warning:true,detail:backups?.detail||'No verified backup.'});}
-        catch(error){add('Backup recoverability',{ok:false,warning:true,detail:String(error?.message||error).slice(0,100)});}
-        const roomCount = document.querySelectorAll('.room-window[data-room]').length;
-        add('Project catalogue', roomCount ? { ok:true, detail:`${roomCount} project room(s) are present in the website catalogue.` } : { ok:false, detail:'No project rooms were found in the page.' });
-        const failed = rows.filter(row => !row.ok && !row.warning).length;
-        const warnings = rows.filter(row => row.warning).length;
-        paintHealthResults(rows, `${rows.filter(row=>row.ok).length}/${rows.length} checks passed · ${warnings} browser capability warning(s) · ${failed} issue(s). Results are local to this panel.`, failed ? 'ISSUES FOUND' : warnings ? 'CHECKED WITH WARNINGS' : 'HEALTHY');
-        if (healthRunButton) { healthRunButton.disabled = false; healthRunButton.textContent = 'Run again'; }
-        if (healthRepairButton) healthRepairButton.disabled = !registration;
-        return rows;
-      }
-      healthRunButton?.addEventListener('click',async()=>{try{await runCurioidHealthCheck();}catch(error){paintHealthResults([],`Diagnostics could not finish: ${String(error?.message||error).slice(0,180)}`,'INCOMPLETE');}finally{if(healthRunButton)healthRunButton.disabled=false;}});
-      healthRepairButton?.addEventListener('click', async () => {
-        const registration = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
-        if (!registration) { paintHealthResults([], 'No service-worker registration exists to refresh. Open CURIOID over HTTPS, then run diagnostics again.', 'UNAVAILABLE'); return; }
-        healthRepairButton.disabled = true; healthRepairButton.textContent = 'Refreshing…';
-        try {
-          await healthTimeout(registration.update(), 10000, 'Service-worker update check');
-          paintHealthResults([{ label:'Service-worker registration', ok:true, detail:`Update check completed. Active: ${Boolean(registration.active)}; waiting: ${Boolean(registration.waiting)}. No saved data or caches were deleted.` }], 'Only the service-worker registration was refreshed. Any new version still follows the normal update-ready prompt.', 'CHECKED');
-        } catch (error) {
-          paintHealthResults([{ label:'Service-worker registration', ok:false, warning:true, detail:String(error?.message||error).slice(0,180) }], 'The browser could not refresh the service-worker registration. Your saved data was not changed.', 'UNAVAILABLE');
-        } finally { healthRepairButton.disabled = false; healthRepairButton.textContent = 'Refresh service-worker registration'; }
-      });
+      healthDownloadButton?.addEventListener('click',async()=>{try{const api=await ensureHealthApi();api.download();}catch(error){showHealthModuleError(error);}});
+      healthRepairButton?.addEventListener('click',async()=>{try{const api=await ensureHealthApi();await api.refresh();}catch(error){showHealthModuleError(error);}});
       function openSiteControlCenter() {
         if (!controlCenter) return;
         refreshControlCenter();
@@ -2327,6 +2261,46 @@
         return total;
       }
 
+      const STUDIO_TOOL_FILTERS = Object.freeze([
+        { id: "all", label: "All", rooms: ["vanta-deck", "devtoys", "color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio", "print-room", "poster-press"] },
+        { id: "workbench", label: "Workbench", rooms: ["vanta-deck", "devtoys"] },
+        { id: "color", label: "Color", rooms: ["color-alchemist", "palette-extractor", "gradient-atlas"] },
+        { id: "image", label: "Image", rooms: ["texture-press", "sprite-sheet-studio", "contact-sheet", "pixel-sort-lab"] },
+        { id: "vector", label: "Vector", rooms: ["vector-mark-studio", "shape-composer", "icon-set-studio"] },
+        { id: "layout", label: "Layout", rooms: ["type-foundry", "layout-composer", "print-room", "poster-press"] },
+        { id: "ideas", label: "Ideas", rooms: ["idea-tumbler"] }
+      ]);
+      let activeStudioToolFilter = "all";
+      const STANDALONE_PROJECT_FILES = Object.freeze({
+        "dark-looper": { file: "music-audio-apps.html", app: "dark-looper", title: "D4RK L00P3R" },
+        "vanta-deck": { file: "applications-tools-apps.html", app: "vanta-deck", title: "VANTA DECK" },
+        "devtoys": { file: "applications-tools-apps.html", app: "devtoys", title: "GLITCHYARD" }
+      });
+      const STANDALONE_PROJECT_IDS = new Set(["dark-looper", "vanta-deck", "devtoys"]);
+      function renderStudioToolFilters() {
+        const wrapper = document.createElement("div");
+        wrapper.className = "studio-filter-row";
+        wrapper.setAttribute("role", "group");
+        wrapper.setAttribute("aria-label", "Filter Applications & Tools by workflow");
+        STUDIO_TOOL_FILTERS.forEach(filter => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "studio-filter-button";
+          button.dataset.studioFilter = filter.id;
+          button.setAttribute("aria-pressed", String(filter.id === activeStudioToolFilter));
+          button.textContent = `${filter.label} ${filter.rooms.length}`;
+          wrapper.appendChild(button);
+        });
+        return wrapper;
+      }
+      function syncStudioToolFilters() {
+        document.querySelectorAll("[data-studio-filter]").forEach(button => {
+          const selected = button.dataset.studioFilter === activeStudioToolFilter;
+          button.classList.toggle("is-active", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+      }
+
       function renderCategories() {
         updateProjectCount();
         const host = $("#categorySections");
@@ -2372,17 +2346,50 @@
             ROOM_SEARCH_TEXT_BY_ID.set(roomId, `${projectDisplayTitle(roomId, info.title)} ${info.title} ${info.description} ${info.copy || ""} ${category.title} ${profile?.role || ''} ${relatedNames}`.toLocaleLowerCase());
             list.appendChild(card);
           });
-          section.append(heading,list);
+          if (category.id === "creative-tools") section.append(heading, renderStudioToolFilters(), list);
+          else section.append(heading,list);
           CATEGORY_SECTION_BY_ID.set(category.id, section);
           host.appendChild(section);
         });
         renderPersonalShortcuts();
       }
 
+      const markCurioidPerformance = name => { try { performance.mark(name); } catch (_) {} };
+      const measureCurioidPerformance = (name, start, end) => { try { performance.measure(name, start, end); } catch (_) {} };
+      let curioidAssetTimingSequence = 0;
+      const startCurioidAssetTiming = kind => {
+        const token = `curioid:${kind}:${++curioidAssetTimingSequence}`;
+        markCurioidPerformance(`${token}:start`);
+        return token;
+      };
+      const finishCurioidAssetTiming = token => {
+        if (!token) return;
+        markCurioidPerformance(`${token}:ready`);
+        measureCurioidPerformance(`${token}:load`, `${token}:start`, `${token}:ready`);
+      };
+      const finishCurioidProjectLaunch = room => {
+        const mark = room?._curioidPerfMark;
+        if (!mark) return;
+        markCurioidPerformance(`${mark}:ready`);
+        measureCurioidPerformance(`curioid:project-launch:${room.dataset.room || 'unknown'}`, `${mark}:start`, `${mark}:ready`);
+        room._curioidPerfMark = null;
+      };
       let projectAssetsPromise = null;
       let projectCssPromise = null;
       let projectCssError = null;
       let retryProjectCss = null;
+      // Each category bundle contains only its own project modules. The shared
+      // core owns storage, Kernel, navigation and lifecycle APIs; modules are
+      // evaluated only after a visitor opens a project in that category.
+      const PROJECT_CATEGORY_ASSETS = Object.freeze({
+        "operating-systems": { file: "projects-category-operating-systems.v1.307.js", hash: "cb2383349bec43378236ad59dcc4f948e8dd45f03349a3045f7a2c627c608736", integrity: "sha384-QW28lPqFzIn1NpgzZPkzlZ0ADZqOu2bGzBB0B37/hSIlpcQXgeC9Bt/T7SLK0uW2" },
+        "strange-archives": { file: "projects-category-strange-archives.v1.307.js", hash: "a6a6b661bc8ef2a8647e1f4e469d55631632dc1c29ce8d9377bcb455c0ea0d8d", integrity: "sha384-LLioS9DQ7aI0O7VObYQjHd9t7x4uo8IfmO1bfQYF6YrVH5yXftVyti4200v7Q8Gb" },
+        "web-experiments": { file: "projects-category-web-experiments.v1.307.js", hash: "ae88c87efe9f1feb00e7d2755a9f75fe63841a65666a6831a482ca90d93abec1", integrity: "sha384-mhnNWXYWrK359Q4Z9T/P7OaidAWnhCnTqMzU8tUa164HhL3Z6/+LqB6fd5sZU9D3" },
+        "tiny-games": { file: "projects-category-tiny-games.v1.307.js", hash: "b045fdee6f01ac155c7575b032d4dec9811a3dd0e0f6774811e3555b7d448e4e", integrity: "sha384-l8NPHvdsHhm1YykrY8IcPuiYUJC76Kg0C9hoKGw1nNGE7HPMhhWmAPoGyPANAkqa" },
+        "digital-art": { file: "projects-category-digital-art.v1.307.js", hash: "4d77665ecbc20f4b4edd667e071c75bc479c8ac087de1d3ee2e733fc84abba0d", integrity: "sha384-Fju8IcWstVTzw8Ns9fL0CfVWL7gCZBS/LJ75M1Oaof8FYsdU4RTWdF4O4maXAY8E" },
+        "sound-motion": { file: "projects-category-sound-motion.v1.307.js", hash: "ae9499c544e79c1855a754bd98b5f83c8b94c363b98e4402ca2d95ca0129bcaf", integrity: "sha384-VWMqgVz/olXFKpwcYq8zcnqktBm4tz5R5fN5hbujmD9NHlEHE8DP/aY0bbtLhJU9" },
+        "creative-tools": { file: "projects-category-creative-tools.v1.307.js", hash: "2edd951334864b255c6106815d93cc569d6121af5a4d0283b414b3da0ac3fb26", integrity: "sha384-G0Vdv40jx6RWMDsL7BzIn9oAFiFUdh2e+w+73fVcFVhss3sGfE9u7ETFwNpCNbsT" }
+      });
       function ensureProjectAssets() {
         // A file:// page has an opaque origin in modern browsers. Do not try to
         // mix local files with a remote copy of another release: SRI must reject
@@ -2403,6 +2410,7 @@
         if (cssLoaded) projectCssError = null;
         if (cssLoaded && jsLoaded) return Promise.resolve(window.CurioidProjects);
         if (projectAssetsPromise) return projectAssetsPromise;
+        markCurioidPerformance('curioid:shared-assets:start');
 
         const getProjectAssetUrls = (file, hash) => {
           const current = new URL(window.location.href);
@@ -2447,6 +2455,10 @@
               error.code = "CURIOID_PROJECT_ASSET_LOAD_FAILED";
               error.attemptedUrls = urls.slice();
               error.failures = failures.slice();
+              window.__CURIOID_LAST_ASSET_LOAD_FAILURE = {
+                file, urls: urls.slice(), failures: failures.slice(),
+                page: window.location.href, time: new Date().toISOString()
+              };
               console.error("CURIOID project asset loading failed", { file, urls, failures, page: window.location.href, canonical: document.querySelector('link[rel="canonical"]')?.href || null });
               return Promise.reject(error);
             }
@@ -2459,11 +2471,14 @@
                 element.async = true;
               }
               const assetUrl = new URL(urls[index]);
-              if (assetUrl.origin !== window.location.origin) element.crossOrigin = "anonymous";
-              if (type === "link") element.href = urls[index];
-              else element.src = urls[index];
+              // SRI must use a CORS-enabled request if an edge redirect changes host.
+              element.crossOrigin = "anonymous";
+              // Prevent Cloudflare Rocket Loader from rewriting execution order.
+              element.setAttribute("data-cfasync", "false");
               element.integrity = integrity;
               element.referrerPolicy = "strict-origin-when-cross-origin";
+              if (type === "link") element.href = urls[index];
+              else element.src = urls[index];
               let settled = false;
               const timeout = setTimeout(() => finish(new Error("request timed out")), 12000);
               const cleanup = () => {
@@ -2510,17 +2525,20 @@
           if (retry) projectCssPromise = null;
           const previous = document.querySelector('link[data-curioid-project-css]');
           if (previous) previous.remove();
+          const cssTiming = startCurioidAssetTiming('project-css');
           projectCssPromise = loadAssetWithFallback({
             type: "link",
-            file: "projects.css", hash: "f1c8a30681035b9b0c68cce1adebb11bd434f6d3a12fb5cd903e4d3e00c1bb6c", integrity: "sha384-hwewMDO46vQvM5TQcPNLp6qZdaRvH8WhSV4tTD48BcOv9xmbC0CzH5Yic7WkD99m",
+            file: "projects-v1.304.css", hash: "9f6232f165a914d57d5412ea25bdd9813b87f19641bd716ee860386ae771f03d", integrity: "sha384-+6Yap2mfvxzQcpZUcOaVrWlVio38bO/uNidcaLUMDS8ahMofPO995uT+YTQIvIOO",
             expected: "Project styles",
             markReady: element => { element.dataset.loaded = "true"; }
           }).then(() => {
+            finishCurioidAssetTiming(cssTiming);
             projectCssError = null;
             projectCssPromise = Promise.resolve(true);
             document.querySelectorAll('[data-project-style-warning]').forEach(node => node.remove());
             return true;
           }).catch(error => {
+            finishCurioidAssetTiming(cssTiming);
             projectCssError = error;
             projectCssPromise = Promise.resolve(false);
             // Stylesheet loading can finish after the app runtime. Notify only
@@ -2539,9 +2557,10 @@
         retryProjectCss = () => loadProjectCss({ retry: true });
         const loadProjectJs = () => {
           if (window.CurioidProjects) return Promise.resolve();
+          const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects.js", hash: "ce698fee67c8dd03836d3a838a9a5babfa3da4a99f39e8f6d1872d6ff948dbbb", integrity: "sha384-033kStxzQM8v0WEKpfKxAFMYCf6px6HWCZHBfFD3EYBRlbpQFm1oTr3mZimgrQE5",
+            file: "projects-core.v1.307.js", hash: "501791dae05b39dcdf83163f036a12e71ba05b2059f0236e1be71553bfaad286", integrity: "sha384-mORhBq6grWLqf8DhWbgXNqrpEY70QVCV9WbWuGZxoii3zKSE7+N7pWStXspU5uqO",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -2554,7 +2573,7 @@
                 window.CURIOID_PROJECT_ASSET_BASE_URL = new URL(".", loadedUrl).href;
               } catch (_) {}
             }
-          });
+          }).then(value => { finishCurioidAssetTiming(jsTiming); return value; }, error => { finishCurioidAssetTiming(jsTiming); throw error; });
         };
 
         // Start the stylesheet request before the project script and wait until
@@ -2574,11 +2593,79 @@
         const jsReady = loadProjectJs();
         projectAssetsPromise = Promise.all([cssReady, jsReady])
           .then(() => {
-            if (!window.CurioidProjects) throw new Error("Project code did not initialize.");
-            return window.CurioidProjects;
+            const projects = window.CurioidProjects;
+            if (!projects) throw new Error("Project core did not initialize.");
+            projects.setCategoryLoader(async categoryId => {
+              const asset = PROJECT_CATEGORY_ASSETS[categoryId];
+              if (!asset) throw new Error(`No category bundle is configured for ${categoryId}.`);
+              const started = startCurioidAssetTiming(`project-category-${categoryId}`);
+              try {
+                await loadAssetWithFallback({
+                  type: "script", file: asset.file, hash: asset.hash, integrity: asset.integrity,
+                  expected: `${categoryId} project modules`,
+                  isReady: () => projects.isCategoryLoaded(categoryId)
+                });
+                finishCurioidAssetTiming(started);
+              } catch (error) {
+                finishCurioidAssetTiming(started);
+                throw error;
+              }
+            });
+            markCurioidPerformance('curioid:shared-assets:ready');
+            measureCurioidPerformance('curioid:shared-assets:load', 'curioid:shared-assets:start', 'curioid:shared-assets:ready');
+            return projects;
           })
           .catch(error => { projectAssetsPromise = null; throw error; });
         return projectAssetsPromise;
+      }
+
+      // Hint the browser to fetch the shared runtime at low priority after
+      // genuine browsing intent. Unlike the old warm-up, this never injects or
+      // executes the 1.29 MB bundle while the visitor is only browsing cards.
+      // The real app-open path still performs SHA-256/SRI verification before use.
+      const SHARED_PREFETCH_ASSETS = Object.freeze([
+        { file: "projects-core.v1.307.js", hash: "501791dae05b39dcdf83163f036a12e71ba05b2059f0236e1be71553bfaad286", as: "script" },
+        { file: "projects-v1.304.css", hash: "9f6232f165a914d57d5412ea25bdd9813b87f19641bd716ee860386ae771f03d", as: "style" }
+      ]);
+      let projectPrefetchScheduled = false;
+      const projectPrefetchHints = new Set();
+      function scheduleSharedRuntimePrefetch() {
+        if (projectPrefetchScheduled || projectAssetsPromise || window.CurioidProjects || document.hidden || projectPrefetchHints.size === SHARED_PREFETCH_ASSETS.length) return;
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        const effectiveType = String(connection?.effectiveType || "").toLowerCase();
+        if (connection?.saveData || ["slow-2g", "2g", "3g"].includes(effectiveType) ||
+            (Number.isFinite(connection?.downlink) && connection.downlink > 0 && connection.downlink < 2.5) ||
+            (Number.isFinite(connection?.rtt) && connection.rtt > 500)) return;
+        projectPrefetchScheduled = true;
+        const begin = () => {
+          projectPrefetchScheduled = false;
+          if (document.hidden || window.CurioidProjects || projectAssetsPromise) return;
+          let base;
+          try {
+            const canonical = document.querySelector('link[rel="canonical"]')?.href || location.href;
+            base = new URL(".", canonical);
+            if (base.origin !== location.origin) base = new URL(".", location.href);
+          } catch (_) { base = new URL(".", location.href); }
+          for (const asset of SHARED_PREFETCH_ASSETS) {
+            if (projectPrefetchHints.has(asset.file)) continue;
+            const url = new URL(asset.file, base);
+            if (url.origin !== location.origin) continue;
+            url.searchParams.set("v", `sha256-${asset.hash}`);
+            const hint = document.createElement("link");
+            hint.rel = "prefetch";
+            hint.as = asset.as;
+            hint.href = url.href;
+            hint.crossOrigin = "anonymous";
+            hint.referrerPolicy = "strict-origin-when-cross-origin";
+            try { hint.fetchPriority = "low"; } catch (_) {}
+            hint.dataset.curioidRuntimePrefetch = asset.file;
+            hint.addEventListener("error", () => { projectPrefetchHints.delete(asset.file); hint.remove(); }, { once: true });
+            document.head.appendChild(hint);
+            projectPrefetchHints.add(asset.file);
+          }
+        };
+        if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(begin, { timeout: 2500 });
+        else window.setTimeout(begin, 1600);
       }
 
       function attachProjectStyleWarning(mount) {
@@ -2588,8 +2675,8 @@
         warning.dataset.projectStyleWarning = "true";
         warning.setAttribute("role", "status");
         const message = document.createElement("p");
-        const failedUrls = projectCssError.attemptedUrls?.join("; ") || "the configured projects.css URL";
-        message.textContent = `The app runtime loaded, but its visual stylesheet did not. Tried: ${failedUrls}. Check that projects.css is in the same deployment folder as index.html, then retry.`;
+        const failedUrls = projectCssError.attemptedUrls?.join("; ") || "the configured projects-v1.304.css URL";
+        message.textContent = `The app runtime loaded, but its visual stylesheet did not. Tried: ${failedUrls}. Check that projects-v1.304.css is in the same deployment folder as index.html, then retry.`;
         const retry = document.createElement("button");
         retry.type = "button";
         retry.textContent = "Retry styles";
@@ -2607,9 +2694,63 @@
         mount.prepend(warning);
       }
 
+      function mountStandaloneProject(roomId, room, mount) {
+        const project = STANDALONE_PROJECT_FILES[roomId];
+        if (!project) return false;
+        const frame = document.createElement("iframe");
+        frame.className = "standalone-project-frame";
+        frame.title = project.title;
+        frame.loading = "eager";
+        frame.referrerPolicy = "no-referrer";
+        frame.allow = "autoplay; clipboard-read; clipboard-write";
+        frame.setAttribute("allowfullscreen", "");
+        let disposed = false;
+        let observer = null;
+        let resizeQueued = false;
+        const resize = () => {
+          if (disposed || resizeQueued) return;
+          resizeQueued = true;
+          requestAnimationFrame(() => {
+            resizeQueued = false;
+            if (disposed) return;
+            try {
+              const doc = frame.contentDocument;
+              const body = doc?.body;
+              const root = doc?.documentElement;
+              if (!body || !root) return;
+              const contentHeight = Math.max(body.scrollHeight, root.scrollHeight, body.offsetHeight, root.offsetHeight) + 16;
+              frame.style.height = `${Math.max(760, Math.min(1900, contentHeight))}px`;
+              if (!observer && typeof ResizeObserver === "function") {
+                observer = new ResizeObserver(resize);
+                observer.observe(root);
+                observer.observe(body);
+              }
+            } catch (_) { /* Cross-origin/early document access is intentionally ignored. */ }
+          });
+        };
+        frame.addEventListener("load", () => { resize(); finishCurioidProjectLaunch(room); }, { once: true });
+        const base = window.CURIOID_PROJECT_ASSET_BASE_URL || new URL(".", window.location.href).href;
+        const appUrl = new URL(project.file, base);
+        appUrl.hash = project.app;
+        frame.src = appUrl.href;
+        mount.replaceChildren(frame);
+        room._curioidCleanup = () => {
+          if (disposed) return;
+          disposed = true;
+          observer?.disconnect();
+          frame.removeEventListener("load", resize);
+          try { frame.contentWindow?.postMessage({ type: "CURIOID_APP_DISPOSE" }, window.location.origin); } catch (_) {}
+          frame.src = "about:blank";
+        };
+        return true;
+      }
+
       function loadRoom(room) {
         const roomId = room.dataset.room;
         const mount = $(".room-mount", room);
+        const launchToken = `${String(roomId).replace(/[^a-z0-9_-]/gi,'-')}:${Math.round(performance.now()*1000)}`;
+        room._curioidPerfMark = `curioid:project:${launchToken}`;
+        markCurioidPerformance(`${room._curioidPerfMark}:start`);
         if (room.dataset.loaded === "true" || room.dataset.loading === "true") return;
         mount.replaceChildren();
         // Regular projects use the shared module loader; Sandbox OS is a first-class
@@ -2620,9 +2761,51 @@
         room.setAttribute("aria-busy", "true");
         const status = createProjectLoadingStatus("Opening project…");
         mount.appendChild(status);
-        ensureProjectAssets().then(projects => {
+        if (STANDALONE_PROJECT_IDS.has(roomId)) {
+          try {
+            if (!room.isConnected || room._loadToken !== loadToken || !room.classList.contains("open")) {
+              room.dataset.loading = "false";
+              room.setAttribute("aria-busy", "false");
+              return;
+            }
+            mount.replaceChildren();
+            if (!mountStandaloneProject(roomId, room, mount)) throw new Error(`No standalone mount is registered for ${roomId}.`);
+            room.dataset.loading = "false";
+            room.dataset.loaded = "true";
+            room.setAttribute("aria-busy", "false");
+            window.dispatchEvent(new CustomEvent("curioid:room-mounted", { detail: { id: roomId } }));
+          } catch (error) {
+            room.dataset.loading = "false";
+            room.dataset.loaded = "false";
+            room.setAttribute("aria-busy", "false");
+            mount.replaceChildren();
+            const failure = document.createElement("div");
+            failure.className = "project-load-error";
+            failure.setAttribute("role", "alert");
+            const message = document.createElement("p");
+            message.textContent = error?.message || "This standalone project could not be opened.";
+            const retry = document.createElement("button");
+            retry.type = "button";
+            retry.className = "project-utility-button";
+            retry.textContent = "Try again";
+            retry.addEventListener("click", () => loadRoom(room), { once: true });
+            failure.append(message, retry);
+            mount.appendChild(failure);
+            console.error("CURIOID standalone project load failed:", roomId, error);
+          }
+          return;
+        }
+        ensureProjectAssets().then(async projects => {
           if (!room.isConnected || room._loadToken !== loadToken) return;
           if (!room.classList.contains("open")) {
+            room.dataset.loading = "false";
+            room.setAttribute("aria-busy", "false");
+            return;
+          }
+          // Load only the selected category's code. The complete catalogue and
+          // stable project IDs are already registered in the shared core.
+          if (roomId !== "sandbox-os") await projects.loadCategoryForId(roomId);
+          if (!room.isConnected || room._loadToken !== loadToken || !room.classList.contains("open")) {
             room.dataset.loading = "false";
             room.setAttribute("aria-busy", "false");
             return;
@@ -2669,6 +2852,7 @@
           room.dataset.loading = "false";
           room.dataset.loaded = "true";
           room.setAttribute("aria-busy", "false");
+          finishCurioidProjectLaunch(room);
           window.dispatchEvent(new CustomEvent('curioid:room-mounted', { detail: { id: roomId } }));
         }).catch(error => {
           if (!room.isConnected || room._loadToken !== loadToken) return;
@@ -2785,6 +2969,9 @@
         if (!nav) return;
         const category = $(`[data-category-section="${nav.dataset.category}"]`);
         if (category) {
+          // Music & Audio and Applications & Tools lead with standalone apps;
+          // wait for intent on a regular project before warming the big runtime.
+          if (!['sound-motion', 'creative-tools'].includes(nav.dataset.category)) scheduleSharedRuntimePrefetch();
           setActiveCategory(nav.dataset.category);
           category.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
         }
@@ -2959,7 +3146,23 @@
         } catch (error) { showToast(`My Sandbox OS could not open: ${error.message}`); }
         finally { if (button) { button.disabled = false; button.removeAttribute('aria-busy'); } }
       });
+      const maybeWarmForProjectIntent = event => {
+        const heading = event.target.closest?.('.room-heading');
+        const room = heading?.closest('.room-window');
+        const id = room?.dataset.room;
+        if (id && !STANDALONE_PROJECT_IDS.has(id)) scheduleSharedRuntimePrefetch();
+      };
+      $('#categorySections').addEventListener('pointerover', maybeWarmForProjectIntent, { passive: true });
+      $('#categorySections').addEventListener('pointerdown', maybeWarmForProjectIntent, { passive: true });
+      $('#categorySections').addEventListener('focusin', maybeWarmForProjectIntent);
       $('#categorySections').addEventListener('click', event => {
+        const studioFilter = event.target.closest('[data-studio-filter]');
+        if (studioFilter) {
+          activeStudioToolFilter = STUDIO_TOOL_FILTERS.some(item => item.id === studioFilter.dataset.studioFilter) ? studioFilter.dataset.studioFilter : "all";
+          syncStudioToolFilters();
+          applyProjectSearch();
+          return;
+        }
         const favorite = event.target.closest('[data-room-favorite]');
         if (favorite) { event.preventDefault(); event.stopPropagation(); toggleSiteFavorite(favorite.dataset.roomFavorite); return; }
         const share = event.target.closest('[data-room-share]');
@@ -3002,6 +3205,12 @@
       const searchEmpty = $("#searchEmpty");
       function applyProjectSearch() {
         const query = (projectSearch.value || "").trim().toLocaleLowerCase();
+        if (query && activeStudioToolFilter !== "all") {
+          activeStudioToolFilter = "all";
+          syncStudioToolFilters();
+        }
+        const studioFilter = STUDIO_TOOL_FILTERS.find(item => item.id === activeStudioToolFilter) || STUDIO_TOOL_FILTERS[0];
+        const studioIds = new Set(studioFilter.rooms);
         let matches = 0;
         CATEGORIES.forEach(category => {
           const section = CATEGORY_SECTION_BY_ID.get(category.id);
@@ -3009,7 +3218,9 @@
           category.rooms.forEach(roomId => {
             const room = ROOM_CARD_BY_ID.get(roomId);
             if (!room) return;
-            const match = !query || ROOM_SEARCH_TEXT_BY_ID.get(roomId).includes(query);
+            const queryMatch = !query || ROOM_SEARCH_TEXT_BY_ID.get(roomId).includes(query);
+            const groupMatch = category.id !== "creative-tools" || activeStudioToolFilter === "all" || studioIds.has(roomId);
+            const match = queryMatch && groupMatch;
             if (!match && room.classList.contains("open")) setRoomOpen(room, false);
             room.hidden = !match;
             if (match) { matches++; categoryMatches++; }
