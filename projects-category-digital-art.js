@@ -1,4 +1,4 @@
-/* CURIOID v1.320 category bundle: digital-art. */
+/* CURIOID v1.322 category bundle: digital-art. */
 (() => {
   'use strict';
   const window = globalThis.window;

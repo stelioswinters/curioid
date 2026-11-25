@@ -475,6 +475,101 @@
       "use strict";
 
       const scrollBehavior = () => document.documentElement.classList.contains("motion-reduced") ? "auto" : "smooth";
+      // Open projects are portalled outside content-visibility sections into one
+      // viewport layer. This prevents fixed-position containment bugs and gives
+      // every app the same responsive fullscreen workspace.
+      const curioidAppLayer = document.createElement('div');
+      curioidAppLayer.id = 'curioid-app-layer';
+      curioidAppLayer.hidden = true;
+      curioidAppLayer.setAttribute('aria-label','Fullscreen project workspace');
+      const curioidAppSwitcher = document.createElement('nav');
+      curioidAppSwitcher.className = 'curioid-app-switcher';
+      curioidAppSwitcher.setAttribute('aria-label','Open project windows');
+      curioidAppSwitcher.setAttribute('role','tablist');
+      curioidAppLayer.appendChild(curioidAppSwitcher);
+      document.body.appendChild(curioidAppLayer);
+      let curioidActiveRoomId = '';
+      let curioidSavedPageScroll = 0;
+      let curioidRoomStackSequence = 0;
+      function curioidOpenRooms() { return [...document.querySelectorAll('.room-window.open.curioid-fullscreen-window')]; }
+      function curioidActivateRoom(room) {
+        if (!room || !room.classList.contains('open')) return;
+        curioidActiveRoomId = room.dataset.room || '';
+        for (const item of curioidOpenRooms()) {
+          const active = item === room;
+          item.classList.toggle('curioid-app-active',active);
+          item.setAttribute('aria-hidden',String(!active));
+          if (active) item.style.zIndex = String(++curioidRoomStackSequence);
+        }
+        curioidRenderAppSwitcher();
+        const heading = room.querySelector('.room-heading');
+        if (heading && document.activeElement?.closest?.('#curioid-app-layer')) heading.focus({preventScroll:true});
+      }
+      function curioidRenderAppSwitcher() {
+        const rooms = curioidOpenRooms();
+        curioidAppLayer.hidden = rooms.length === 0;
+        document.documentElement.classList.toggle('curioid-app-open',rooms.length>0);
+        document.body.classList.toggle('curioid-app-open',rooms.length>0);
+        if (!rooms.length) {
+          curioidActiveRoomId = '';
+          curioidAppSwitcher.replaceChildren();
+          window.scrollTo({top:curioidSavedPageScroll,behavior:'auto'});
+          return;
+        }
+        if (!curioidActiveRoomId || !rooms.some(room=>room.dataset.room===curioidActiveRoomId)) curioidActiveRoomId = rooms[rooms.length-1].dataset.room;
+        const fragment = document.createDocumentFragment();
+        const label = document.createElement('span');
+        label.className = 'curioid-app-switcher-label';
+        label.textContent = rooms.length > 1 ? 'OPEN APPS' : 'CURIOID / APP';
+        fragment.appendChild(label);
+        for (const room of rooms) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.dataset.curioidAppSelect = room.dataset.room;
+          button.id = `curioid-app-tab-${String(room.dataset.room||'app').replace(/[^a-z0-9_-]/gi,'-')}`;
+          button.setAttribute('role','tab');
+          const active = room.dataset.room === curioidActiveRoomId;
+          button.setAttribute('aria-selected',String(active));
+          button.setAttribute('aria-pressed',String(active));
+          room.setAttribute('role','tabpanel');
+          room.setAttribute('aria-labelledby',button.id);
+          button.setAttribute('aria-controls',room.id);
+          button.textContent = room.querySelector('.room-name')?.textContent?.trim() || room.dataset.room;
+          button.title = `Show ${button.textContent}`;
+          fragment.appendChild(button);
+        }
+        curioidAppSwitcher.replaceChildren(fragment);
+      }
+      curioidAppSwitcher.addEventListener('click',event=>{
+        const button=event.target.closest('[data-curioid-app-select]');
+        if(!button)return;
+        const room=document.getElementById(`room-${button.dataset.curioidAppSelect}`);
+        if(room)curioidActivateRoom(room);
+      });
+      function curioidPortalRoom(room) {
+        if (!room || room.parentElement === curioidAppLayer) return;
+        if (!room._curioidPortalOrigin) room._curioidPortalOrigin={parent:room.parentNode,next:room.nextSibling};
+        if (!document.body.classList.contains('curioid-app-open')) curioidSavedPageScroll=window.scrollY||window.pageYOffset||0;
+        curioidAppLayer.appendChild(room);
+        room.classList.add('curioid-fullscreen-window');
+        room.dataset.curioidPortalled='true';
+      }
+      function curioidRestoreRoom(room) {
+        room.classList.remove('curioid-fullscreen-window','curioid-app-active');
+        room.removeAttribute('aria-hidden');
+        room.removeAttribute('role');
+        room.removeAttribute('aria-labelledby');
+        room.style.removeProperty('z-index');
+        if(room.dataset.curioidPortalled==='true'){
+          const origin=room._curioidPortalOrigin;
+          if(origin?.parent?.isConnected){
+            const before=origin.next?.parentNode===origin.parent?origin.next:null;
+            origin.parent.insertBefore(room,before);
+          }
+          delete room._curioidPortalOrigin;
+          delete room.dataset.curioidPortalled;
+        }
+      }
       const CATEGORIES = [
         { id: "operating-systems", title: "Operating Systems", kicker: "00 / INDEPENDENT WORLDS", description: "Six independent environments plus Sandbox OS, a workshop for building your own Basic, Advanced or Hybrid world. Keep each OS local and independent.", rooms: ["dead-interface", "food-alchemy", "echonoise-os", "umbra-os", "aura-synthesis", "aether-os", "sandbox-os"] },
         { id: "strange-archives", title: "Strange Archives", kicker: "01 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
@@ -945,8 +1040,8 @@
       const healthDownloadFallback = $('[data-health-download-fallback]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = 'f9e91c4678ff54ddb7bec9c2ce9c30d020f3c41603f6f39d2dba8e4562f47eb1';
-      const HEALTH_MODULE_SRI = 'sha384-+c22Om3E9VCs5WlJzfqR/sLzD/AUXlRJRlg1L/2PwQQaHvi2KE+z9lPcmDe270OS';
+      const HEALTH_MODULE_HASH = '23094a55cef26501560a635c2df7f23be9fde33abe33af4302515eeb055c9395';
+      const HEALTH_MODULE_SRI = 'sha384-0piBvVMSShbkPBaAWMsHCfjxlPeOn+mp6/lT39cPDvV5kXzdo3Hx+2dUMwzi7nfq';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null;
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,downloadFallback:healthDownloadFallback,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -959,7 +1054,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.320', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.322', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -991,7 +1086,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.320','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.322','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1003,7 +1098,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.320') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.322') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1385,7 +1480,12 @@
         const cardHead = document.createElement('div'); cardHead.className = 'room-card-head';
         const favorite = document.createElement('button'); favorite.type = 'button'; favorite.className = 'room-favorite'; favorite.dataset.roomFavorite = roomId; favorite.textContent = '☆'; favorite.setAttribute('aria-pressed', 'false'); favorite.title = 'Add to favorites'; favorite.setAttribute('aria-label', `Add ${info.title} to favorites`);
         const share = document.createElement('button'); share.type = 'button'; share.className = 'room-share'; share.dataset.roomShare = roomId; share.textContent = '↗'; share.title = `Copy a direct link to ${info.title}`; share.setAttribute('aria-label', `Copy a direct link to ${info.title}`);
-        cardHead.append(heading, favorite, share);
+        const close = document.createElement('button'); close.type = 'button'; close.className = 'room-fullscreen-close'; close.textContent = '×'; close.title = `Close ${info.title}`; close.setAttribute('aria-label', `Close ${info.title}`);
+        heading.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();toggleRoom(article);});
+        favorite.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();toggleSiteFavorite(roomId);});
+        share.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();copyProjectLink(roomId);});
+        close.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();setRoomOpen(article,false);});
+        cardHead.append(heading, favorite, share, close);
         const body = document.createElement("div");
         body.className = "room-body";
         body.id = `body-${roomId}`;
@@ -1416,6 +1516,7 @@
             button.className = 'room-related-link';
             button.dataset.relatedProject = relatedId;
             button.textContent = projectDisplayTitle(relatedId, relatedInfo.title);
+            button.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();openUniverseProject(relatedId);});
             links.appendChild(button);
           });
           if (links.childElementCount) { related.append(label, links); body.appendChild(related); }
@@ -1555,13 +1656,13 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "8cf3bb862076f5e9ae7bccbebc698f94c62033b0def73311a1dbfb8a6e17c80e", integrity: "sha384-8H/BtiSQE34brgutHTWtQuQp3cOmBH+HaKg3VUwQZZ/W81rRp38SVczdYbSHf3HH" },
-        "strange-archives": { file: "projects-category-strange-archives.js", hash: "2c1ac457623dd4136136fe4a9873f0a9c298b926c978824a508a13801a88cb12", integrity: "sha384-vexRTrYsn9EkccXC0QMxKjRBCrso6Ecu4r2Wbz0WUV5WoERNtaOwXPezWfPskQlL" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "2b2e60ef06f15cec206d71a4cd1a7937b0780f5ff7c1d9e59f0fd490508b6941", integrity: "sha384-2fD1FJaREA+46JWhLrmZ3Cz4C24n83oeSENMyEyE7cFimIgQKJ5zG1o0e0feUN6p" },
-        "tiny-games": { file: "projects-category-tiny-games.js", hash: "bd117e2018d5cc5fb9a6887edde6a0994a858d22ba1a2f2e6b148281fa55dfde", integrity: "sha384-1Hto+NhEiqApW6LnQoq1L4aPObIkVQcPrWkJ44ClEGlhQ7d2xYcBr1NmvCcJmlt/" },
-        "digital-art": { file: "projects-category-digital-art.js", hash: "9332adf796367552960a43258db57825afc2a522c17255a05f057b1d8a10e615", integrity: "sha384-wqwgrGYVUDe9ybPY/jmyVPG9VZC+zWhLWpl2ahfIKZSPDSRUCmHVt2BinD2rej2d" },
-        "sound-motion": { file: "projects-category-sound-motion.js", hash: "8a9c2300aeffca0226396bb98d6aac8a139ae02cfdde2493302bd4a46dc1bdbd", integrity: "sha384-J9pAWfLuG+/iQbx8WySNY1UGVlVXq4LQSXu90ZTT2SCey8lmo24A0vWmAi88D4bN" },
-        "creative-tools": { file: "projects-category-creative-tools.js", hash: "7dccb0868f1eb38172bf1e9e47123e74a1ceaa3d30de6a8500c8367f3658cb6e", integrity: "sha384-oatqtjt55DwVDerJ/qGxXhLWs1HXT3j06YwZ4IsU2OnZV0BAM0tQugi7o7pF7EZj" }
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "4d297b3904d22f75d49d5bacb70f2581956bedc1ed3e5f9a5ed951851bf492b2", integrity: "sha384-0KMrsR4Kmzl39AB6FstG+C2akfDQRNDM1eO/WhoHx6e76hHHMDVMGpOruXOWJ9L5" },
+        "strange-archives": { file: "projects-category-strange-archives.js", hash: "cf998bd7f5a7fd4d6b8e3bf8edcd89d690e2eb80506fd7c633e4e4b7e7e36062", integrity: "sha384-cjgSUDfwSyYKvAzXROd08cTH7X9QDXGhz3ftsyDW89FGx4Z7i5gXlDXjZ1sLdZ8G" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "79feb9fb85ce57b37ea609fbd3fce9091da357dd5fe11fc531044dcba077765b", integrity: "sha384-oGc4oV6d/RlwoyA/eOopNKIxiPxPF+WM9Y+kA8Uby8ke+3Q5vs9BfgOR7E69b2WX" },
+        "tiny-games": { file: "projects-category-tiny-games.js", hash: "1a93b1ebc30760721195671f31ad773bacd0cada99b8ee2cadb689bbabf15003", integrity: "sha384-izwwk8zUhopiwVux8+9sLfpW4tqMG8qe+1h8BcWynLoQRMPmsoxi58zT/f/cMf/z" },
+        "digital-art": { file: "projects-category-digital-art.js", hash: "b54f9b1cebd0655404614c157cdbbb4725a78efc02f13323ed4c2de023b86df7", integrity: "sha384-z1UDaZ6ssnbQp1c4vZ8G3jL6hFxnyNc+LFyzBV5IqShROKlLDKF0HmO9v98PqXmG" },
+        "sound-motion": { file: "projects-category-sound-motion.js", hash: "6d691e0df4a4bd6367a178caeb6d130e993a5210436691e975a72967c89e828f", integrity: "sha384-k53dKJm2eMVMge6R1yKv0vbszpixeDvF9i/yB7rLTks2KWowVUVGTajrRo/eaOal" },
+        "creative-tools": { file: "projects-category-creative-tools.js", hash: "022bd7ac8801bd282a6e5e213e86519c9e55f27aaea89dd2e207f807fe7168cb", integrity: "sha384-vDh9cA0oXvC/qyvNs+wNpEW9fRKIDCq4weOROuqCmn/e7civH8VZ7XwdTiUN/gDk" }
       });
       function ensureProjectAssets() {
         // A file:// page has an opaque origin in modern browsers. Do not try to
@@ -1694,7 +1795,7 @@
         };
 
         const PROJECT_STYLES_FILE = "projects-styles.txt";
-        const PROJECT_STYLES_SHA256 = "bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89";
+        const PROJECT_STYLES_SHA256 = "a847d1b34f8cbe820f4ae5479c8d17001d837e5648cb7a2e7dd8959a61835257";
         const loadProjectCss = ({ retry = false } = {}) => {
           if (document.querySelector('[data-curioid-project-css][data-loaded="true"]')) {
             projectCssError = null;
@@ -1764,7 +1865,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "f4ac573e4e9f18fe7f5dfe1673c9b8570ff08f2cf2454f97d064a0b353598118", integrity: "sha384-JgZ8BHO4PpGNxPOnUrwaE5vUxaH66Cz0n90RyRWMsbhpXe+gs0/ImZgWkwJOVVSr",
+            file: "projects-core.js", hash: "ea247195c2b757707cbe59d68e33afffec2cf31bf17bc2f54edb4786b1a75f0c", integrity: "sha384-wQ7uYgw/GDIL63J6GJkBxj1aGGyg6KeWbwVLiolEDR+ZyT4mjVRX0WM0lCEvVkq2",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -1875,8 +1976,8 @@
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "f4ac573e4e9f18fe7f5dfe1673c9b8570ff08f2cf2454f97d064a0b353598118", as: "script" },
-        { file: "projects-styles.txt", hash: "bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89", as: "fetch" }
+        { file: "projects-core.js", hash: "ea247195c2b757707cbe59d68e33afffec2cf31bf17bc2f54edb4786b1a75f0c", as: "script" },
+        { file: "projects-styles.txt", hash: "a847d1b34f8cbe820f4ae5479c8d17001d837e5648cb7a2e7dd8959a61835257", as: "fetch" }
       ]);
       let projectPrefetchScheduled = false;
       const projectPrefetchHints = new Set();
@@ -1966,6 +2067,62 @@
         mount.prepend(warning);
       }
 
+      function installAdaptiveProjectFit(room) {
+        const body=room.querySelector('.room-body');
+        const mount=room.querySelector('.room-mount');
+        const root=mount?.querySelector(':scope > .project-tool') || [...(mount?.children||[])].find(node=>node.nodeType===1&&!node.classList.contains('project-style-warning')&&node.tagName!=='IFRAME');
+        if(!body||!mount||!root)return;
+        const disclosure=root.querySelector?.('.tool-controls-disclosure');
+        if(disclosure&&!disclosure.dataset.curioidAutoPrepared){
+          const groups=disclosure.querySelectorAll('.tool-panel').length;
+          const controls=disclosure.querySelectorAll('input,select,textarea,button').length;
+          const density=Math.max(groups,Math.ceil(controls/8));
+          const viewportHeight=window.visualViewport?.height||window.innerHeight;
+          const compact=window.matchMedia('(max-width: 920px)').matches||viewportHeight<760||density>=5;
+          disclosure.open=!compact;
+          disclosure.dataset.curioidAutoPrepared='true';
+          const summary=disclosure.querySelector('summary');
+          const updateLabel=()=>{if(summary)summary.textContent=`CONTROLS & OPTIONS · ${groups||density} GROUP${(groups||density)===1?'':'S'} · ${disclosure.open?'OPEN':'COLLAPSED'}`;};
+          disclosure.addEventListener('toggle',updateLabel);
+          updateLabel();
+        }
+        if(!window.CSS?.supports?.('zoom','1'))return;
+        const originalZoom=root.style.zoom;
+        let frame=0,disposed=false,lastZoom=1;
+        const update=()=>{
+          cancelAnimationFrame(frame);
+          frame=requestAnimationFrame(()=>{
+            if(disposed||!root.isConnected||!room.classList.contains('open'))return;
+            const width=Math.max(260,body.clientWidth-28);
+            const height=Math.max(240,body.clientHeight-28);
+            const currentZoom=Math.max(.01,Number.parseFloat(root.style.zoom)||1);
+            const rect=root.getBoundingClientRect();
+            // scrollWidth/scrollHeight can be reported in the element's layout
+            // coordinate space while getBoundingClientRect is visually zoomed.
+            // Normalize both to the unzoomed coordinate space without toggling
+            // zoom back to 1 (which would create a ResizeObserver feedback loop).
+            const naturalWidth=Math.max(rect.width/currentZoom,root.scrollWidth);
+            const naturalHeight=Math.max(rect.height/currentZoom,root.scrollHeight);
+            let next=Math.min(1,width/Math.max(1,naturalWidth),height/Math.max(1,naturalHeight));
+            // Shrink dense clusters modestly; preserve readable text and let very
+            // long apps scroll instead of becoming microscopic.
+            next=Math.max(.68,Math.min(1,next));
+            next=Math.round(next*1000)/1000;
+            if(Math.abs(next-currentZoom)>.012)root.style.zoom=String(next);
+            lastZoom=next;
+            if(next<.995){room.dataset.curioidFit=`${Math.round(next*100)}%`;room.setAttribute('data-curioid-auto-fit','true');}
+            else{delete room.dataset.curioidFit;room.removeAttribute('data-curioid-auto-fit');}
+          });
+        };
+        const observer=typeof ResizeObserver==='function'?new ResizeObserver(update):null;
+        observer?.observe(body);observer?.observe(mount);observer?.observe(root);
+        window.addEventListener('resize',update,{passive:true});
+        window.visualViewport?.addEventListener('resize',update,{passive:true});
+        disclosure?.addEventListener('toggle',update);
+        room._curioidFitCleanup=()=>{disposed=true;cancelAnimationFrame(frame);observer?.disconnect();window.removeEventListener('resize',update);window.visualViewport?.removeEventListener('resize',update);disclosure?.removeEventListener('toggle',update);root.style.zoom=originalZoom;delete room.dataset.curioidFit;room.removeAttribute('data-curioid-auto-fit');};
+        update();
+      }
+
       function mountStandaloneProject(roomId, room, mount) {
         const project = STANDALONE_PROJECT_FILES[roomId];
         if (!project) return false;
@@ -1991,7 +2148,8 @@
               const root = doc?.documentElement;
               if (!body || !root) return;
               const contentHeight = Math.max(body.scrollHeight, root.scrollHeight, body.offsetHeight, root.offsetHeight) + 16;
-              frame.style.height = `${Math.max(760, Math.min(1900, contentHeight))}px`;
+              const fullscreenHeight = room.classList.contains('curioid-fullscreen-window') ? room.querySelector('.room-body')?.clientHeight : 0;
+              frame.style.height = fullscreenHeight > 0 ? `${fullscreenHeight}px` : `${Math.max(760, Math.min(1900, contentHeight))}px`;
               if (!observer && typeof ResizeObserver === "function") {
                 observer = new ResizeObserver(resize);
                 observer.observe(root);
@@ -2121,6 +2279,7 @@
             });
           }
           attachProjectStyleWarning(mount);
+          installAdaptiveProjectFit(room);
           room.dataset.loading = "false";
           room.dataset.loaded = "true";
           room.setAttribute("aria-busy", "false");
@@ -2154,6 +2313,8 @@
 
       function unloadRoom(room) {
         room._loadToken = (room._loadToken || 0) + 1;
+        try { room._curioidFitCleanup?.(); } catch (_) {}
+        room._curioidFitCleanup = null;
         room.dataset.loading = "false";
         room.setAttribute("aria-busy", "false");
         if (typeof room._curioidCleanup === "function") {
@@ -2175,6 +2336,8 @@
         heading.setAttribute("aria-label", `${ROOM_INFO[roomId]?.title || roomId}. ${ROOM_INFO[roomId]?.description || "Project"}. ${open ? "Open" : "Closed"}.`);
         body.hidden = !open;
         if (open) {
+          curioidPortalRoom(room);
+          curioidActivateRoom(room);
           recordSiteRecent(roomId);
           loadRoom(room);
           if (state) {
@@ -2185,6 +2348,11 @@
           }
         } else {
           unloadRoom(room);
+          curioidRestoreRoom(room);
+          const remainingApps=curioidOpenRooms();
+          const stillActive=remainingApps.find(item=>item.dataset.room===curioidActiveRoomId);
+          const nextApp=stillActive||remainingApps.reduce((best,item)=>!best||Number(item.style.zIndex||0)>Number(best.style.zIndex||0)?item:best,null);
+          if(nextApp)curioidActivateRoom(nextApp);else curioidRenderAppSwitcher();
           if (state) {
             state.textContent = "CLOSED";
             state.classList.remove("open");
@@ -2194,7 +2362,7 @@
         }
         updateOpenStatus();
         saveSiteSession(open?roomId:'');
-        if (shouldScroll) {
+        if (shouldScroll && room.parentElement !== curioidAppLayer) {
           room.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
           if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
         }
@@ -2302,7 +2470,7 @@
         const section = target.closest('[data-category-section]');
         if (section) setActiveCategory(section.dataset.categorySection);
         setRoomOpen(target, true, false);
-        requestAnimationFrame(() => target.scrollIntoView({ behavior: scrollBehavior(), block: 'start' }));
+        requestAnimationFrame(() => target.querySelector('.room-heading')?.focus({preventScroll:true}));
       }
       window.CurioidNavigateToProject = openUniverseProject;
       function openProjectFromShareHash() {
@@ -2445,16 +2613,8 @@
           applyProjectSearch();
           return;
         }
-        const favorite = event.target.closest('[data-room-favorite]');
-        if (favorite) { event.preventDefault(); event.stopPropagation(); toggleSiteFavorite(favorite.dataset.roomFavorite); return; }
-        const share = event.target.closest('[data-room-share]');
-        if (share) { event.preventDefault(); event.stopPropagation(); copyProjectLink(share.dataset.roomShare); return; }
-        const related = event.target.closest('[data-related-project]');
-        if (related) { event.preventDefault(); event.stopPropagation(); openUniverseProject(related.dataset.relatedProject); return; }
-        const heading = event.target.closest('.room-heading');
-        if (!heading) return;
-        const room = heading.closest('.room-window');
-        if (room) toggleRoom(room);
+        // Room-card actions have direct listeners so they continue working after
+        // an open card is moved into the fullscreen app layer.
       });
 
       // Render lightweight category/project headings before observing their scroll positions.
@@ -2908,7 +3068,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.320", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.322", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {

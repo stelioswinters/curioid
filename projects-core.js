@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.25 / CURIOID v1.320 — shared core */
+/* Build: 2026.11.25 / CURIOID v1.322 — shared core */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
@@ -13066,7 +13066,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
           <button type="button" class="project-utility-button" data-project-reset>Reset controls</button>
         </div>
       </div>
-      <div class="tool-layout"><section class="tool-main">${stage}${foot ? `<div class="tool-footnote">${foot}</div>` : ''}</section><aside class="tool-controls">${controls}</aside></div>
+      <div class="tool-layout"><section class="tool-main">${stage}${foot ? `<div class="tool-footnote">${foot}</div>` : ''}</section><details class="tool-controls tool-controls-disclosure" open><summary class="tool-controls-summary">CONTROLS &amp; OPTIONS</summary><div class="tool-controls-stack">${controls}</div></details></div>
     </div>`;
   }
   function panel(title, body, extra = '') { return `<section class="tool-panel"><header class="tool-panel-head"><h4>${title}</h4>${extra}</header><div class="tool-panel-body">${body}</div></section>`; }

@@ -1,7 +1,7 @@
-/* CURIOID v1.320 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.322 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.320';
+  const EXPECTED_RELEASE = 'v1.322';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -19,6 +19,7 @@
     } = options || {};
     const deploymentBase = (() => { try { const canonical=document.querySelector('link[rel="canonical"]')?.href; return new URL('.',canonical||location.href); } catch (_) { return new URL('.',location.href); } })();
   let lastHealthReport = null;
+  let activeDiagnosticRows = [];
   const diagnosticEvents = [];
   const observedLongTasks = [];
   const observedEventTimings = [];
@@ -613,7 +614,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.320',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.322',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -665,7 +666,7 @@
       const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid;
       const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
       const releaseAligned=publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE;
-      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.320; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
+      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.322; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
     }catch(error){return {ok:false,detail:String(error?.message||error).slice(0,240)}}
   }
   function safeJson(value) {
@@ -862,7 +863,7 @@
     if (healthRepairButton) healthRepairButton.disabled = true;
     if (healthDownloadButton) healthDownloadButton.disabled = true;
     paintHealthResults([], 'Running local checks. Temporary probes are removed after use.', 'CHECKING');
-    const rows = [], assetMeta = [];
+    const rows = activeDiagnosticRows = [], assetMeta = [];
     const add = (label, result) => {
       const row = { label, ...result };
       rows.push(row);
@@ -934,6 +935,13 @@
     const osBootReady = osIds.every(id => projects?.ids?.includes(id));
     add('Secure context', isSecureContext ? {ok:true,detail:'The page is running in a secure context.'} : {ok:false,detail:'HTTPS is required for service workers and several storage APIs.'});
     add('Page and catalogue', roomCount ? {ok:true,detail:`${roomCount} project room(s) are present in the page.`} : {ok:false,detail:'No project rooms were found in the page.'});
+    add('Browser tab title',document.title==='CURIOID'?{ok:true,detail:'The active browser tab title is exactly CURIOID.'}:{ok:false,detail:`Expected the exact tab title CURIOID; received ${JSON.stringify(document.title)}.`});
+    const fullscreenStyle=document.getElementById('curioid-fullscreen-app-layout');
+    const fullscreenLayer=document.getElementById('curioid-app-layer');
+    const fullscreenRulesReady=Boolean(fullscreenStyle&&fullscreenStyle.textContent.includes('#curioid-app-layer:not([hidden])')&&fullscreenStyle.textContent.includes('position:fixed')&&fullscreenStyle.textContent.includes('grid-template-rows'));
+    add('Fullscreen app workspace',fullscreenRulesReady&&fullscreenLayer?.isConnected?{ok:true,detail:'The viewport-level app layer and fixed fullscreen CSS are present. Open project windows can be moved out of catalogue containment and centered in the viewport.'}:{ok:false,detail:`Fullscreen workspace incomplete: style ${fullscreenRulesReady?'present':'missing or incomplete'}, app layer ${fullscreenLayer?.isConnected?'present':'not initialized'}. Reload the current release if runtime initialization did not complete.`});
+    const zoomFitSupported=Boolean(window.CSS?.supports?.('zoom','1'));
+    add('Adaptive app fitting capability',zoomFitSupported?{ok:true,detail:'CSS zoom is supported. The shared runtime can fit dense app roots to the available workspace and preserve scrolling for content that remains taller than the viewport.'}:{ok:false,warning:true,detail:'This browser does not expose CSS zoom. Fullscreen layout remains available, but automatic whole-app scaling is limited to the app’s responsive layout and internal scrolling.'});
     add('Project runtime state', projects ? {ok:true,detail:`Project code initialized with ${projects.ids?.length||0} catalogue ID(s).`} : {ok:false,warning:true,detail:`Project code is not initialized in this tab. ${window.__CURIOID_LAST_ASSET_LOAD_FAILURE ? 'A previous runtime asset load failure is recorded below.' : 'This is normal until a project is opened; asset delivery is tested independently below.'}`});
     const siteRuntimeTag=[...document.scripts].find(node=>{try{return new URL(node.src).pathname.endsWith('/site-runtime-current.js');}catch(_){return false;}});
     const siteRuntimePreload=[...document.querySelectorAll('link[rel="preload"][as="script"]')].find(node=>{try{return new URL(node.href).pathname.endsWith('/site-runtime-current.js');}catch(_){return false;}});
@@ -1244,14 +1252,18 @@
     if(healthDownloadButton) healthDownloadButton.disabled=false;
     return rows;
   }
-      async function runSafe() {
-        try { return await runCurioidHealthCheck(runOptions); }
+      async function runSafe(runOptions = {}) {
+        const safeOptions = runOptions && typeof runOptions === 'object' ? runOptions : {};
+        try { return await runCurioidHealthCheck(safeOptions); }
         catch(error) {
           const message=String(error?.message||error).slice(0,260);
-          paintHealthResults([{label:'Diagnostics execution',ok:false,detail:message}],'Diagnostics could not finish. Download the partial report and send it for investigation.','INCOMPLETE');
-          lastHealthReport={title:'CURIOID PARTIAL HEALTH REPORT',generatedAt:new Date().toISOString(),release:document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown',page:{url:location.origin+location.pathname,title:document.title},diagnosticSupport:{longTask:!!longTaskObserver,eventTiming:!!eventTimingObserver,lcp:!!lcpObserver,layoutShift:!!layoutShiftObserver,longAnimationFrame:!!longAnimationFrameObserver},checks:[{label:'Diagnostics execution',ok:false,detail:message}],lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE||null,recentErrors:diagnosticEvents.slice(-40),privacy:'No cookies, passwords, localStorage contents, database records, files or project content included.'};
+          const completed = activeDiagnosticRows.slice();
+          completed.push({label:'Diagnostics execution',ok:false,detail:message});
+          paintHealthResults(completed,'Diagnostics could not finish. Download the partial report and send it for investigation.','INCOMPLETE');
+          lastHealthReport={title:'CURIOID PARTIAL HEALTH REPORT',generatedAt:new Date().toISOString(),release:document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown',page:{url:location.origin+location.pathname,title:document.title},diagnosticSupport:{longTask:!!longTaskObserver,eventTiming:!!eventTimingObserver,lcp:!!lcpObserver,layoutShift:!!layoutShiftObserver,longAnimationFrame:!!longAnimationFrameObserver},checks:completed,lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE||null,recentErrors:diagnosticEvents.slice(-40),maintenance:window.__CURIOID_HEALTH_MAINTENANCE||null,privacy:'No cookies, passwords, localStorage contents, database records, files or project content included.'};
           if(healthDownloadButton) healthDownloadButton.disabled=false;
-          if(healthDetailsSummary) healthDetailsSummary.textContent='View partial diagnostic results (1 check)';
+          if(healthRepairButton) healthRepairButton.disabled=!navigator.serviceWorker;
+          if(healthDetailsSummary) healthDetailsSummary.textContent=`View partial diagnostic results (${completed.length} checks)`;
           return [];
         } finally {
           if(healthRunButton){healthRunButton.disabled=false;if(healthRunButton.textContent==='Checking…')healthRunButton.textContent='Run again';}

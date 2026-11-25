@@ -1,31 +1,31 @@
-/* CURIOID v1.320 offline shell. CDN-tolerant document validation; strict hashes for executable assets. */
+/* CURIOID v1.322 offline shell. CDN-tolerant document validation; strict hashes for executable assets. */
 'use strict';
-const RELEASE_ID = 'v1.320';
+const RELEASE_ID = 'v1.322';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const EXPECTED_SHA256 = Object.freeze({
-  "applications-tools-apps.html": "ef08918ad301ee39b3aebc2d64248a1c2ab06eb453a3d58ca037c7f79d4272f9",
+  "applications-tools-apps.html": "1ec6e6b881a8b58594d91fe3448ac73a79261beb13b19c3a5b42e8bb0e65a379",
   "curioid-icon-192.png": "32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887",
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
-  "curioids.html": "31e6a25716293af72bc89ed64769e6122d68b658202fac8772a794898f996167",
-  "health-check.js": "f9e91c4678ff54ddb7bec9c2ce9c30d020f3c41603f6f39d2dba8e4562f47eb1",
-  "index.html": "6860ef53e302c877bb606f5a6ab5468e904a906e7af277c03117fa64b2796b11",
-  "manifest.webmanifest": "92b55c1c8faa99121bd4ff79919d52cd48adb2c17353154abf428016f184846f",
-  "music-audio-apps.html": "0bb0dcec33dbed8b6f15072a4a9cf586a7a141b61a6a6e68bbe16904a7761faa",
-  "projects-category-creative-tools.js": "7dccb0868f1eb38172bf1e9e47123e74a1ceaa3d30de6a8500c8367f3658cb6e",
-  "projects-category-digital-art.js": "9332adf796367552960a43258db57825afc2a522c17255a05f057b1d8a10e615",
-  "projects-category-operating-systems.js": "8cf3bb862076f5e9ae7bccbebc698f94c62033b0def73311a1dbfb8a6e17c80e",
-  "projects-category-sound-motion.js": "8a9c2300aeffca0226396bb98d6aac8a139ae02cfdde2493302bd4a46dc1bdbd",
-  "projects-category-strange-archives.js": "2c1ac457623dd4136136fe4a9873f0a9c298b926c978824a508a13801a88cb12",
-  "projects-category-tiny-games.js": "bd117e2018d5cc5fb9a6887edde6a0994a858d22ba1a2f2e6b148281fa55dfde",
-  "projects-category-web-experiments.js": "2b2e60ef06f15cec206d71a4cd1a7937b0780f5ff7c1d9e59f0fd490508b6941",
-  "projects-core.js": "f4ac573e4e9f18fe7f5dfe1673c9b8570ff08f2cf2454f97d064a0b353598118",
-  "projects-styles.txt": "bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89",
+  "curioids.html": "1d0368df115575c6ef753a8678d964f733bda070e8629f4b4df47cbf6a04ed84",
+  "health-check.js": "23094a55cef26501560a635c2df7f23be9fde33abe33af4302515eeb055c9395",
+  "index.html": "86c6582c8ce7cead72a467e1daa2c7c4d69c7df0ead77f7dd9fa279192f72f0d",
+  "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
+  "music-audio-apps.html": "ba0e5ac1043aaba39ac80515e4f26edb0f540860f516ab8458995f5092b7fc9d",
+  "projects-category-creative-tools.js": "022bd7ac8801bd282a6e5e213e86519c9e55f27aaea89dd2e207f807fe7168cb",
+  "projects-category-digital-art.js": "b54f9b1cebd0655404614c157cdbbb4725a78efc02f13323ed4c2de023b86df7",
+  "projects-category-operating-systems.js": "4d297b3904d22f75d49d5bacb70f2581956bedc1ed3e5f9a5ed951851bf492b2",
+  "projects-category-sound-motion.js": "6d691e0df4a4bd6367a178caeb6d130e993a5210436691e975a72967c89e828f",
+  "projects-category-strange-archives.js": "cf998bd7f5a7fd4d6b8e3bf8edcd89d690e2eb80506fd7c633e4e4b7e7e36062",
+  "projects-category-tiny-games.js": "1a93b1ebc30760721195671f31ad773bacd0cada99b8ee2cadb689bbabf15003",
+  "projects-category-web-experiments.js": "79feb9fb85ce57b37ea609fbd3fce9091da357dd5fe11fc531044dcba077765b",
+  "projects-core.js": "ea247195c2b757707cbe59d68e33afffec2cf31bf17bc2f54edb4786b1a75f0c",
+  "projects-styles.txt": "a847d1b34f8cbe820f4ae5479c8d17001d837e5648cb7a2e7dd8959a61835257",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "f29364a505850d855451a653822a2eff637e94e98e6eb1c9667c546acf60b3e1",
+  "site-runtime-current.js": "cde14241881e1789c5cd8de8584377c80c7095ed5d0615ef830ff5bd415bd536",
   "sitemap.xml": "6983c2451814d79ea47ff138849bda8faabd386b3379dd089445e72476836a87",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
   "vocal-lexicon.js": "1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a",
@@ -73,7 +73,7 @@ async function responseHasCurrentPageIdentity(response) {
   if (!response?.ok || !response.clone) return false;
   try {
     const html = await response.clone().text();
-    const marker = /<meta\s+name=["']curioid-release["']\s+content=["']v1\.320["']/i.test(html);
+    const marker = /<meta\s+name=["']curioid-release["']\s+content=["']v1\.322["']/i.test(html);
     const runtime = html.includes(`site-runtime-current.js?v=sha256-${RUNTIME_HASH}`);
     return marker && runtime;
   } catch (_) { return false; }

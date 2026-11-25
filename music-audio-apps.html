@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#10131a">
 <meta name="robots" content="noindex,nofollow">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-nv/J4GhPZhS47ltkV2dGN955wzMS1QXDImsn7v/KXVg=' 'sha256-8bINOR2MBE95GmCcDFtnPBtOe1ViopgGA5O+nt6VlwE='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>D4RK L00P3R — CURIOID</title>
+<title>CURIOID</title>
 <style>
 :root {
   color-scheme: dark;
@@ -946,7 +946,7 @@ body {
   const active=allowed.has(requested)?requested:"dark-looper";
   const labels={"dark-looper": "D4RK L00P3R"};
   document.body.dataset.app=active;
-  document.title=`${labels[active]} — CURIOID`;
+  document.title='CURIOID';
   const section=document.querySelector(`[data-studio-app="${active}"]`);
   if(section)section.hidden=false;
   function executeSource(id){
