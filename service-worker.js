@@ -1,39 +1,40 @@
-/* CURIOID v1.307 offline shell. Minimal install; larger assets cache on first use. */
+/* CURIOID v1.315 offline shell. Minimal install; larger assets cache on first use. */
 'use strict';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
-const CACHE_NAME = `${CACHE_PREFIX}v1.307`;
+const CACHE_NAME = `${CACHE_PREFIX}v1.315`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 // Generated from the exact production files by scripts/refresh_release_assets.py.
 const EXPECTED_SHA256 = Object.freeze({
                               /* CURIOID_ASSET_HASHES_START */
-  'index.html': '2efe784e91e5a806dc7d6cb5f4172ffc14038f2e77a2ec5041c771f2625cc4ea',
-  'projects-core.v1.307.js': '501791dae05b39dcdf83163f036a12e71ba05b2059f0236e1be71553bfaad286',
-  'projects-category-operating-systems.v1.307.js': 'cb2383349bec43378236ad59dcc4f948e8dd45f03349a3045f7a2c627c608736',
-  'projects-category-strange-archives.v1.307.js': 'a6a6b661bc8ef2a8647e1f4e469d55631632dc1c29ce8d9377bcb455c0ea0d8d',
-  'projects-category-web-experiments.v1.307.js': 'ae88c87efe9f1feb00e7d2755a9f75fe63841a65666a6831a482ca90d93abec1',
-  'projects-category-tiny-games.v1.307.js': 'b045fdee6f01ac155c7575b032d4dec9811a3dd0e0f6774811e3555b7d448e4e',
-  'projects-category-digital-art.v1.307.js': '4d77665ecbc20f4b4edd667e071c75bc479c8ac087de1d3ee2e733fc84abba0d',
-  'projects-category-sound-motion.v1.307.js': 'ae9499c544e79c1855a754bd98b5f83c8b94c363b98e4402ca2d95ca0129bcaf',
-  'projects-category-creative-tools.v1.307.js': '2edd951334864b255c6106815d93cc569d6121af5a4d0283b414b3da0ac3fb26',
-  'projects-v1.304.css': '9f6232f165a914d57d5412ea25bdd9813b87f19641bd716ee860386ae771f03d',
-  'health-check-v1.307.js': '1b5862b1064b0d05def568c44932c07cc352f35e0627265b7014ce15d5f94acb',
-  'music-audio-apps.html': '8c0285587a561c0db1116af930f221a261d66ad46d51044f1e978d72dc82055b',
-  'applications-tools-apps.html': '8d2573eb366470d1b69bbfd88a7d8e890030ab5b6080fde2fc362d118be48e39',
+  'index.html': '07f34f253f34b8a70c512f5ded55ae0eb98397f0664010bc84dbd58c9d98e74b',
+  'projects-core.js': '2f70ee579db07ebd0a577833c9c092c6108f8c490fba3a3098fb628cd133abe6',
+  'projects-category-operating-systems.js': '7ee9480c2c0f08b4a2ea0bd6df14c7cd571bd18f124f14f6c048e21ffa52198d',
+  'projects-category-strange-archives.js': '64036451348e2bdd5f44561406169f25c2e596c005e2524be8342f7a852fc3a4',
+  'projects-category-web-experiments.js': 'fc86bffa5a0f9099c884bf15d92c1ca333f8a7c6fd2624cdb0ea7ee0caa7b01e',
+  'projects-category-tiny-games.js': '2f0bfe48fc5addda431a9cacc3248347874a0d35242a794595b6ac93f8851e9b',
+  'projects-category-digital-art.js': 'b17c028c30ea65bc0f88d1538e5d6b80debc0242094ecdd2fae8b9958224c502',
+  'projects-category-sound-motion.js': '93c02bd7d8559ff79cc8c7fe9f7a154a78b6aaf0235680ecf635263262e63c86',
+  'projects-category-creative-tools.js': '222b923b12b03ce5acb17efafcd35ca7768e1a1c3445915a3fd8b58ed1573587',
+  'projects.css': 'bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89',
+  'health-check.js': 'ceb22836c87c43f8a2b27f7d67535a7ab99e9e30cb9e3ac6529b0a912d5a55a4',
+  'music-audio-apps.html': '0bb0dcec33dbed8b6f15072a4a9cf586a7a141b61a6a6e68bbe16904a7761faa',
+  'applications-tools-apps.html': '8013dfd67f16c17a294f0b53eae51bdbb46068e41c494873efabac768b643b82',
   'vocal-lexicon.js': '1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a',
-  'curioids.html': 'd7428edefd11708b748891a93757894793e3fa0d091ebb6a89faab4d97554a9e',
-  'manifest.webmanifest': '1868963388ab187bace09b717e9172a03fef1f9d203f9c41305d9d4e5272e505',
+  'curioids.html': '75fb135faaf274514c972c9b1bf9bc80db0b54d5d3bdf20c048ce807badab592',
+  'manifest.webmanifest': '92b55c1c8faa99121bd4ff79919d52cd48adb2c17353154abf428016f184846f',
   'robots.txt': '23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4',
   'sitemap.xml': '6983c2451814d79ea47ff138849bda8faabd386b3379dd089445e72476836a87',
-  'social-preview.png': '287c93a40b36717b8a58989c0d1481e6f916307d156853dea0d23a823c28190e',
-  'curioid-icon-192.png': '4641e5416a61e181b85c8ba11b602d3d2235aa1b5616dfbcdaae71d754f0bc08',
-  'curioid-icon-512.png': 'a66c7ad5e5d1debe570fa46569e9791359a76e91bbabb1172b98e1a3ceea9c41',
+  'social-preview.png': '562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809',
+  'curioid-icon.svg': 'd2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78',
+  'curioid-icon-192.png': '32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887',
+  'curioid-icon-512.png': 'f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086',
   /* CURIOID_ASSET_HASHES_END */
 });
 // Install only the small shell required to reopen CURIOID offline.
-const SHELL_PATHS = ['index.html', 'manifest.webmanifest', 'curioid-icon-192.png', 'curioid-icon-512.png'];
+const SHELL_PATHS = ['index.html', 'manifest.webmanifest', 'curioid-icon.svg', 'curioid-icon-192.png', 'curioid-icon-512.png'];
 // Larger resources are cached on first request, not during PWA installation.
-const ON_DEMAND_CACHEABLE = new Set(['projects-core.v1.307.js','projects-category-operating-systems.v1.307.js','projects-category-strange-archives.v1.307.js','projects-category-web-experiments.v1.307.js','projects-category-tiny-games.v1.307.js','projects-category-digital-art.v1.307.js','projects-category-sound-motion.v1.307.js','projects-category-creative-tools.v1.307.js','projects-v1.304.css','health-check-v1.307.js','music-audio-apps.html','applications-tools-apps.html','vocal-lexicon.js','curioids.html','robots.txt','sitemap.xml','social-preview.png']);
+const ON_DEMAND_CACHEABLE = new Set(['projects-core.js','projects-category-operating-systems.js','projects-category-strange-archives.js','projects-category-web-experiments.js','projects-category-tiny-games.js','projects-category-digital-art.js','projects-category-sound-motion.js','projects-category-creative-tools.js','projects.css','health-check.js','music-audio-apps.html','applications-tools-apps.html','vocal-lexicon.js','curioids.html','robots.txt','sitemap.xml','social-preview.png']);
 const CACHEABLE_DOCUMENTS = new Set(['index.html','curioids.html','music-audio-apps.html','applications-tools-apps.html']);
 const CACHEABLE = new Set([...SHELL_PATHS.filter(Boolean), ...ON_DEMAND_CACHEABLE]);
 const absolute = path => new URL(path || './', SCOPE_URL).href;

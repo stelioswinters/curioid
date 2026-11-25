@@ -254,3 +254,9 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
     scrollbar-width: thin;
   }
 }
+
+
+/* CURIOID embedded standalone tools: mounted only on demand. */
+.curioid-embedded-app{width:100%;min-width:0;overflow:hidden;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:#080b10}.curioid-embedded-app iframe{display:block;width:100%;height:calc(100vh - 150px);min-height:760px;max-height:1900px;border:0;background:transparent}.curioid-embedded-loading{padding:24px;color:var(--muted,#9ba6af);font:11px ui-monospace,monospace;text-align:center}
+@media(max-width:700px){.curioid-embedded-app iframe{height:calc(100vh - 130px);min-height:790px}}
+.os-restore-recovery{margin:12px 0;padding:13px;border:1px solid rgba(251,191,36,.42);border-radius:10px;background:rgba(120,82,18,.13);color:var(--text,#eee)}.os-restore-recovery[hidden]{display:none!important}.os-restore-recovery>b{display:block;color:#fbbf24;font-size:12px;letter-spacing:.035em}.os-restore-recovery>p{margin:7px 0 10px;font-size:11px;line-height:1.55;color:var(--muted,#aaa)}.os-restore-recovery .os-system-center-actions{display:flex;flex-wrap:wrap;gap:7px}.os-restore-recovery button:disabled{opacity:.48;cursor:not-allowed}
