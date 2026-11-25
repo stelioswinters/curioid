@@ -1,4 +1,4 @@
-/* CURIOID v1.317 category bundle: web-experiments. */
+/* CURIOID v1.320 category bundle: web-experiments. */
 (() => {
   'use strict';
   const window = globalThis.window;

@@ -942,20 +942,24 @@
       const healthState = $('[data-health-state]', controlCenter);
       const healthResults = $('[data-health-results]', controlCenter);
       const healthDownloadButton = $('[data-health-download]', controlCenter);
+      const healthDownloadFallback = $('[data-health-download-fallback]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = '47d6302fef26d800fb02fb30edcda7bb976dc1a026086fa9f9e33276f3608a36';
-      const HEALTH_MODULE_SRI = 'sha384-aJTMMzyy9jFqtMej+IYp5G2hoZg13LikHnQN94TlCU5mzdsJ3BqqHSWZAesTN4sH';
-      let healthApi = null, healthModulePromise = null;
-      const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
+      const HEALTH_MODULE_HASH = 'f9e91c4678ff54ddb7bec9c2ce9c30d020f3c41603f6f39d2dba8e4562f47eb1';
+      const HEALTH_MODULE_SRI = 'sha384-+c22Om3E9VCs5WlJzfqR/sLzD/AUXlRJRlg1L/2PwQQaHvi2KE+z9lPcmDe270OS';
+      let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null;
+      window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
+      const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,downloadFallback:healthDownloadFallback,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
       let curioidWorkerRepairPromise = null;
       async function refreshCurioidWorker({activateWaiting=true, timeoutMs=12000}={}) {
         const sw = navigator.serviceWorker;
         if (!sw) throw new Error('This browser does not support service workers.');
         const canonical = document.querySelector('link[rel="canonical"]')?.href || document.baseURI;
         const siteRoot = new URL('.', canonical);
-        let registration = await sw.getRegistration(siteRoot.pathname).catch(() => null);
-        if (!registration) registration = await sw.register(new URL('service-worker.js', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        // Re-register the same scope with the new script URL. Merely calling
+        // getRegistration()/update() would keep the old service-worker.js (and
+        // its stale cache) in control indefinitely.
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.320', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -967,28 +971,27 @@
             setTimeout(finish, timeoutMs);
           });
         }
-        if (!activateWaiting || !registration.waiting || !sw.controller) {
+        if (!activateWaiting || !registration.waiting) {
           return {registration, activated:false, waiting:Boolean(registration.waiting), controller:Boolean(sw.controller)};
         }
         const waiting = registration.waiting;
         const previousController = sw.controller;
         return await new Promise(resolve => {
           let settled = false;
-          const timer = setTimeout(() => finish({registration,activated:false,waiting:true,controller:true,timeout:true}), timeoutMs);
-          const cleanup = () => { clearTimeout(timer); sw.removeEventListener('controllerchange',onController); sw.removeEventListener('message',onMessage); };
-          const finish = result => { if(settled)return; settled=true; cleanup(); resolve(result); };
+          const finish = result => { if(settled)return; settled=true; clearTimeout(timer); sw.removeEventListener('controllerchange',onController); sw.removeEventListener('message',onMessage); waiting.removeEventListener('statechange',onWorkerState); resolve(result); };
+          const timer = setTimeout(() => finish({registration,activated:false,waiting:true,controller:Boolean(sw.controller),timeout:true}), timeoutMs);
           const onController = () => { if(sw.controller && sw.controller !== previousController) finish({registration,activated:true,waiting:false,controller:true}); };
-          const onMessage = event => {
-            if(event.data?.type==='CURIOID_UPDATE_BLOCKED') finish({registration,activated:false,waiting:true,controller:true,blocked:true,openTabs:event.data.openTabs});
-          };
+          const onMessage = event => { if(event.data?.type==='CURIOID_UPDATE_BLOCKED') finish({registration,activated:false,waiting:true,controller:Boolean(sw.controller),blocked:true,openTabs:event.data.openTabs}); };
+          const onWorkerState = () => { if(waiting.state==='activated') finish({registration,activated:true,waiting:false,controller:Boolean(sw.controller)}); };
           sw.addEventListener('controllerchange',onController);
           sw.addEventListener('message',onMessage);
+          waiting.addEventListener('statechange',onWorkerState);
           try { waiting.postMessage({type:'CURIOID_ACTIVATE_UPDATE'}); }
-          catch(error) { finish({registration,activated:false,waiting:true,controller:true,error:String(error?.message||error)}); }
+          catch(error) { finish({registration,activated:false,waiting:true,controller:Boolean(sw.controller),error:String(error?.message||error)}); }
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.317','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.320','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1000,7 +1003,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.317') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.320') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1039,14 +1042,38 @@
         if(healthState){healthState.textContent='UNAVAILABLE';healthState.dataset.state='issues-found';}
         if(healthResults){const item=document.createElement('li');item.dataset.state='error';const label=document.createElement('b');label.textContent='Health Check module';const detail=document.createElement('span');detail.textContent=message;item.replaceChildren(label,detail);healthResults.replaceChildren(item);}
         if(healthDetailsSummary)healthDetailsSummary.textContent='View diagnostic load details (1 issue)';
+        // Minimal fallback report generated by the always-loaded site runtime.
+        // This remains downloadable even when health-check.js itself is blocked.
+        try {
+          const report={title:'CURIOID HEALTH CHECK MODULE FAILURE',generatedAt:new Date().toISOString(),release:document.querySelector('meta[name="curioid-release"]')?.content||'unknown',page:location.href,error:message,secureContext:isSecureContext,online:navigator.onLine,serviceWorker:{controller:navigator.serviceWorker?.controller?.scriptURL||null,registration:navigator.serviceWorker?.getRegistration? 'available':'unavailable'},lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE||null,resourceErrors:performance.getEntriesByType('resource').filter(entry=>entry.name.includes('/curioid/')).slice(-20).map(entry=>({name:new URL(entry.name).pathname,durationMs:Math.round(entry.duration),transferSize:entry.transferSize||null})),privacy:'Fallback report generated locally. No cookies, passwords, form values, storage contents or project data are included.'};
+          if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}}
+          healthFailureReportUrl=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json;charset=utf-8'}));
+          if(healthDownloadFallback){healthDownloadFallback.href=healthFailureReportUrl;healthDownloadFallback.download=`CURIOID-Health-Module-Failure-${new Date().toISOString().replace(/[:.]/g,'-')}.json`;healthDownloadFallback.textContent='Download module-failure diagnostic (.json)';healthDownloadFallback.hidden=false;}
+          if(healthDownloadButton)healthDownloadButton.disabled=false;
+        } catch(_) {}
       };
       healthRunButton?.addEventListener('click',async()=>{
         healthRunButton.disabled=true;healthRunButton.textContent='Loading checks…';
-        try{const api=await ensureHealthApi();await api.run();}
+        // Request persistent storage synchronously inside the diagnostic button's
+        // user gesture, before awaiting the lazy Health Check module import.
+        let persistencePromise=null;
+        try { persistencePromise=typeof navigator.storage?.persist==='function' ? navigator.storage.persist().catch(()=>null) : Promise.resolve(null); }
+        catch(_) { persistencePromise=Promise.resolve(null); }
+        try{const api=await ensureHealthApi();await api.run({persistencePromise});}
         catch(error){try{await recoverStaleWorkerAfterAssetFailure();}catch(recoveryError){if(recoveryError?.code==='CURIOID_SW_RECOVERY_RELOAD')return;}showHealthModuleError(error);}
         finally{healthRunButton.disabled=false;if(healthRunButton.textContent==='Loading checks…')healthRunButton.textContent='Run diagnostics';}
       });
-      healthDownloadButton?.addEventListener('click',async()=>{try{const api=await ensureHealthApi();api.download();}catch(error){try{await recoverStaleWorkerAfterAssetFailure();}catch(recoveryError){if(recoveryError?.code==='CURIOID_SW_RECOVERY_RELOAD')return;}showHealthModuleError(error);}});
+      healthDownloadButton?.addEventListener('click',()=>{
+        try {
+          // The module is already loaded when this button becomes enabled.
+          // Keep the download invocation synchronous inside the user's click.
+          if (healthApi?.download) { const started=healthApi.download(); if(!started&&healthStatus)healthStatus.textContent='The report could not be started automatically. Use the “Download report file” link that appears below this button.'; return; }
+          if (healthDownloadFallback?.href && !healthDownloadFallback.hidden) { healthDownloadFallback.click(); return; }
+          if (healthStatus) healthStatus.textContent='Run diagnostics first. Once a report is ready, this button starts the download immediately; a manual download link will also appear.';
+        } catch(error) {
+          if(healthStatus)healthStatus.textContent=`Report download failed: ${String(error?.message||error).slice(0,180)}. The report link remains available when prepared.`;
+        }
+      });
       healthRepairButton?.addEventListener('click',async()=>{
         if(!healthRepairButton)return;
         healthRepairButton.disabled=true;healthRepairButton.textContent='Refreshing…';
@@ -1528,13 +1555,13 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "907e64ad559cdc473d55adf80ab136d72cd40198c9f39878334d7e5485f4e368", integrity: "sha384-7jBo0Mp4ErKNtjt8dX29gIoCzw3ncgD27/VUuFtw4JPq1HbZyLmERns14MkACeK/" },
-        "strange-archives": { file: "projects-category-strange-archives.js", hash: "0952c44a86591986a0743eea295fbbd5cc84a4564208aa4246ade1ea230e52e9", integrity: "sha384-CM6+kMjNrA/ZQXjXYHqEbdO9tzAxuYuNyXbTgR90xnn27m+U+iKyr4dHXfGcbhgk" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "f266fc8b3cd40802f1dc0fa3c1aef706611cbe03571ea2d62deef81110b04d9f", integrity: "sha384-5VWKK3Vd2VCAC7DciNRgCPtpzm6ZUOGW3NiOhKeEnjASQe9Ck4g8h5fP9lQLP7D6" },
-        "tiny-games": { file: "projects-category-tiny-games.js", hash: "3d26c8aad4bf8d3b31253ef06d05f6afa5e941b08d2c1b2fc66a99ccb399d59e", integrity: "sha384-5M/vmJmtVG/rgxFVPfHg+dJaIN1kgnxSMKg/scrrOFAK0vNcpsMiZSM6GFLlmcgA" },
-        "digital-art": { file: "projects-category-digital-art.js", hash: "5664e5f0f2b600c7ee7457dd58aca3366f458cf8ac3c059971c23bf93a161dd0", integrity: "sha384-h6mu8BgWHrhPc8ItgontSdW0vaboxH1iUaSkMBb6GVjfji+Cv0igU+uTgRRW5AtV" },
-        "sound-motion": { file: "projects-category-sound-motion.js", hash: "39ce4863c12e0cd56e3fa1355c7f0830b1ee04a8bf9ac7650fa2d40077951bf2", integrity: "sha384-Y5zHfVhN/E1ZUwY3jzZaJUtpYyjaXOoOpagRZ0Hkl5srBFW0g9fa0VQn/bk+u3y/" },
-        "creative-tools": { file: "projects-category-creative-tools.js", hash: "8eba29d095469c2b98b95b2d144fd553a1aa05c1dc70f61c23fd2c077dd634a5", integrity: "sha384-WUg8OAKFXeE+uMuogbwOY9N6wP+EF9LKf2+aRqbiWHTJSxn5NwZ2Pur4J+z2vSqA" }
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "8cf3bb862076f5e9ae7bccbebc698f94c62033b0def73311a1dbfb8a6e17c80e", integrity: "sha384-8H/BtiSQE34brgutHTWtQuQp3cOmBH+HaKg3VUwQZZ/W81rRp38SVczdYbSHf3HH" },
+        "strange-archives": { file: "projects-category-strange-archives.js", hash: "2c1ac457623dd4136136fe4a9873f0a9c298b926c978824a508a13801a88cb12", integrity: "sha384-vexRTrYsn9EkccXC0QMxKjRBCrso6Ecu4r2Wbz0WUV5WoERNtaOwXPezWfPskQlL" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "2b2e60ef06f15cec206d71a4cd1a7937b0780f5ff7c1d9e59f0fd490508b6941", integrity: "sha384-2fD1FJaREA+46JWhLrmZ3Cz4C24n83oeSENMyEyE7cFimIgQKJ5zG1o0e0feUN6p" },
+        "tiny-games": { file: "projects-category-tiny-games.js", hash: "bd117e2018d5cc5fb9a6887edde6a0994a858d22ba1a2f2e6b148281fa55dfde", integrity: "sha384-1Hto+NhEiqApW6LnQoq1L4aPObIkVQcPrWkJ44ClEGlhQ7d2xYcBr1NmvCcJmlt/" },
+        "digital-art": { file: "projects-category-digital-art.js", hash: "9332adf796367552960a43258db57825afc2a522c17255a05f057b1d8a10e615", integrity: "sha384-wqwgrGYVUDe9ybPY/jmyVPG9VZC+zWhLWpl2ahfIKZSPDSRUCmHVt2BinD2rej2d" },
+        "sound-motion": { file: "projects-category-sound-motion.js", hash: "8a9c2300aeffca0226396bb98d6aac8a139ae02cfdde2493302bd4a46dc1bdbd", integrity: "sha384-J9pAWfLuG+/iQbx8WySNY1UGVlVXq4LQSXu90ZTT2SCey8lmo24A0vWmAi88D4bN" },
+        "creative-tools": { file: "projects-category-creative-tools.js", hash: "7dccb0868f1eb38172bf1e9e47123e74a1ceaa3d30de6a8500c8367f3658cb6e", integrity: "sha384-oatqtjt55DwVDerJ/qGxXhLWs1HXT3j06YwZ4IsU2OnZV0BAM0tQugi7o7pF7EZj" }
       });
       function ensureProjectAssets() {
         // A file:// page has an opaque origin in modern browsers. Do not try to
@@ -1551,7 +1578,7 @@
           error.code = "CURIOID_UNSUPPORTED_PROTOCOL";
           return Promise.reject(error);
         }
-        const cssLoaded = Boolean(document.querySelector('link[data-curioid-project-css][data-loaded="true"]'));
+        const cssLoaded = Boolean(document.querySelector('[data-curioid-project-css][data-loaded="true"]'));
         const jsLoaded = Boolean(window.CurioidProjects);
         if (cssLoaded) projectCssError = null;
         if (cssLoaded && jsLoaded) return Promise.resolve(window.CurioidProjects);
@@ -1666,22 +1693,54 @@
           return attempt(0);
         };
 
+        const PROJECT_STYLES_FILE = "projects-styles.txt";
+        const PROJECT_STYLES_SHA256 = "bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89";
         const loadProjectCss = ({ retry = false } = {}) => {
-          if (document.querySelector('link[data-curioid-project-css][data-loaded="true"]')) {
+          if (document.querySelector('[data-curioid-project-css][data-loaded="true"]')) {
             projectCssError = null;
             return Promise.resolve(true);
           }
           if (projectCssPromise && !retry) return projectCssPromise;
           if (retry) projectCssPromise = null;
-          const previous = document.querySelector('link[data-curioid-project-css]');
+          const previous = document.querySelector('[data-curioid-project-css]');
           if (previous) previous.remove();
           const cssTiming = startCurioidAssetTiming('project-css');
-          projectCssPromise = loadAssetWithFallback({
-            type: "link",
-            file: "projects.css", hash: "bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89", integrity: "sha384-BLJGBD3vmOE+GPftdtAsbf1q17giAPfJzbCvZZpba1unLWhQTYjiP0sK4qlcC0rF",
-            expected: "Project styles",
-            markReady: element => { element.dataset.loaded = "true"; }
-          }).then(() => {
+          const urls = getProjectAssetUrls(PROJECT_STYLES_FILE, PROJECT_STYLES_SHA256);
+          const failures = [];
+          const loadFrom = async index => {
+            if (index >= urls.length) {
+              const details = failures.map(item => `${item.url}: ${item.reason}`).join('; ');
+              const error = new Error(`Project styles could not be verified. Tried ${details || urls.join(', ')}. Check ${PROJECT_STYLES_FILE} beside index.html and deploy the matching release.`);
+              error.code = 'CURIOID_PROJECT_STYLES_UNAVAILABLE';
+              error.attemptedUrls = urls.slice();
+              error.failures = failures.slice();
+              window.__CURIOID_LAST_ASSET_LOAD_FAILURE = {file:PROJECT_STYLES_FILE,urls:urls.slice(),failures:failures.slice(),page:location.href,time:new Date().toISOString()};
+              throw error;
+            }
+            const url = urls[index];
+            try {
+              const response = await fetch(url, {method:'GET',mode:'same-origin',credentials:'same-origin',cache:'no-store',redirect:'follow'});
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              const bytes = await response.arrayBuffer();
+              if (!crypto?.subtle?.digest) throw new Error('Web Crypto SHA-256 is unavailable');
+              const digest = await crypto.subtle.digest('SHA-256', bytes);
+              const actual = [...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('');
+              if (actual !== PROJECT_STYLES_SHA256) throw new Error(`SHA-256 mismatch (expected ${PROJECT_STYLES_SHA256}, received ${actual}; ${bytes.byteLength.toLocaleString()} bytes)`);
+              const source = new TextDecoder('utf-8', {fatal:true}).decode(bytes);
+              const style = document.createElement('style');
+              style.dataset.curioidProjectCss = 'true';
+              style.dataset.loaded = 'true';
+              style.dataset.source = PROJECT_STYLES_FILE;
+              style.textContent = source;
+              document.head.appendChild(style);
+              if (!style.sheet) { style.remove(); throw new Error('The browser did not create a usable stylesheet under the current Content Security Policy'); }
+              return style;
+            } catch (error) {
+              failures.push({url,reason:String(error?.message||error).slice(0,240)});
+              return loadFrom(index+1);
+            }
+          };
+          projectCssPromise = loadFrom(0).then(() => {
             finishCurioidAssetTiming(cssTiming);
             projectCssError = null;
             projectCssPromise = Promise.resolve(true);
@@ -1691,14 +1750,9 @@
             finishCurioidAssetTiming(cssTiming);
             projectCssError = error;
             projectCssPromise = Promise.resolve(false);
-            // Stylesheet loading can finish after the app runtime. Notify only
-            // currently open mounts; loadRoom also attaches the warning after
-            // its own mount completes, covering the opposite race.
-            document.querySelectorAll(".room-window.open .room-mount").forEach(mount => {
-              const room = mount.closest(".room-window");
-              if (room && (room.dataset.loaded === "true" || room.dataset.loading === "true")) {
-                attachProjectStyleWarning(mount);
-              }
+            document.querySelectorAll('.room-window.open .room-mount').forEach(mount => {
+              const room = mount.closest('.room-window');
+              if (room && (room.dataset.loaded === 'true' || room.dataset.loading === 'true')) attachProjectStyleWarning(mount);
             });
             return false;
           });
@@ -1710,7 +1764,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "6d329993525c76ab76efb063d4785ad3942fcb37d3893e53a538719555780cb8", integrity: "sha384-6I7hY2X7ZxZ+KD9h2rwRuRuvIGSj8+1BvzRnz4QZZJPxIftPc1psjbQ42a1y9h+f",
+            file: "projects-core.js", hash: "f4ac573e4e9f18fe7f5dfe1673c9b8570ff08f2cf2454f97d064a0b353598118", integrity: "sha384-JgZ8BHO4PpGNxPOnUrwaE5vUxaH66Cz0n90RyRWMsbhpXe+gs0/ImZgWkwJOVVSr",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -1774,13 +1828,55 @@
         return projectAssetsPromise;
       }
 
+      // Explicit, on-demand deep diagnostics. These load category modules through
+      // the same verified SRI loader used by real project launches, but never mount
+      // apps or write project data. This lets Health Check prove all seven bundles
+      // can execute and register without opening or modifying a user's work.
+      window.CurioidSiteDiagnostics = Object.freeze({
+        async loadAllProjectCategories() {
+          const projects = await ensureProjectAssets();
+          const results = [];
+          for (const [category, asset] of Object.entries(PROJECT_CATEGORY_ASSETS)) {
+            const startedAt = performance.now();
+            try {
+              if (!projects.isCategoryLoaded(category)) {
+                await loadAssetWithFallback({
+                  type: "script", file: asset.file, hash: asset.hash, integrity: asset.integrity,
+                  expected: `${category} project modules`,
+                  isReady: () => projects.isCategoryLoaded(category)
+                });
+              }
+              results.push({ category, file: asset.file, ok: projects.isCategoryLoaded(category),
+                moduleCount: projects.getCategoryManifest?.().find(item => item.category === category)?.ids.length ?? null,
+                durationMs: Math.round(performance.now() - startedAt) });
+            } catch (error) {
+              results.push({ category, file: asset.file, ok: false, error: String(error?.message || error).slice(0, 320),
+                durationMs: Math.round(performance.now() - startedAt) });
+            }
+          }
+          return { results, registry: projects.inspectRegistry?.() || null,
+            projectCount: projects.ids?.length || 0, loadedCategories: projects.getLoadedCategories?.() || [],
+            stylesLoaded: Boolean(document.querySelector('[data-curioid-project-css][data-loaded="true"]')) };
+        },
+        retryProjectStyles() { return retryProjectCss ? retryProjectCss() : Promise.resolve(false); },
+        getProjectStyleStatus() {
+          return { loaded: Boolean(document.querySelector('[data-curioid-project-css][data-loaded="true"]')),
+            failed: Boolean(projectCssError), error: projectCssError ? String(projectCssError.message || projectCssError).slice(0, 320) : null };
+        },
+        prepareServiceWorkerUpdate() {
+          return typeof refreshCurioidWorker === "function"
+            ? refreshCurioidWorker({ activateWaiting: false, timeoutMs: 15000 })
+            : Promise.resolve({ available: false });
+        }
+      });
+
       // Hint the browser to fetch the shared runtime at low priority after
       // genuine browsing intent. Unlike the old warm-up, this never injects or
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "6d329993525c76ab76efb063d4785ad3942fcb37d3893e53a538719555780cb8", as: "script" },
-        { file: "projects.css", hash: "bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89", as: "style" }
+        { file: "projects-core.js", hash: "f4ac573e4e9f18fe7f5dfe1673c9b8570ff08f2cf2454f97d064a0b353598118", as: "script" },
+        { file: "projects-styles.txt", hash: "bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89", as: "fetch" }
       ]);
       let projectPrefetchScheduled = false;
       const projectPrefetchHints = new Set();
@@ -1851,8 +1947,8 @@
         warning.dataset.projectStyleWarning = "true";
         warning.setAttribute("role", "status");
         const message = document.createElement("p");
-        const failedUrls = projectCssError.attemptedUrls?.join("; ") || "the configured projects.css URL";
-        message.textContent = `The app runtime loaded, but its visual stylesheet did not. Tried: ${failedUrls}. Check that projects.css is in the same deployment folder as index.html, then retry.`;
+        const failedUrls = projectCssError.attemptedUrls?.join("; ") || "the configured projects-styles.txt URL";
+        message.textContent = `The app runtime loaded, but its visual stylesheet did not. Tried: ${failedUrls}. Check that projects-styles.txt is in the same deployment folder as index.html, then retry.`;
         const retry = document.createElement("button");
         retry.type = "button";
         retry.textContent = "Retry styles";
@@ -2812,7 +2908,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker.js", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.320", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {

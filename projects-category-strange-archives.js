@@ -1,4 +1,4 @@
-/* CURIOID v1.317 category bundle: strange-archives. */
+/* CURIOID v1.320 category bundle: strange-archives. */
 (() => {
   'use strict';
   const window = globalThis.window;

@@ -1,6 +1,8 @@
-/* CURIOID v1.317 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.320 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
+  const EXPECTED_RELEASE = 'v1.320';
+  const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
       runButton: healthRunButton,
@@ -9,6 +11,7 @@
       state: healthState,
       results: healthResults,
       downloadButton: healthDownloadButton,
+      downloadFallback: healthDownloadFallback,
       details: healthDetails,
       detailsSummary: healthDetailsSummary,
       formatStorageSize,
@@ -31,7 +34,7 @@
     if (typeof PerformanceObserver === 'function' && (PerformanceObserver.supportedEntryTypes || []).includes('longtask')) {
       longTaskObserver = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
-          observedLongTasks.push({ startTimeMs:Math.round(entry.startTime), durationMs:Math.round(entry.duration) });
+          observedLongTasks.push({ startTimeMs:Math.round(entry.startTime), durationMs:Math.round(entry.duration), attribution:(entry.attribution||[]).slice(0,5).map(item=>({name:String(item.name||'').slice(0,40),containerType:String(item.containerType||'').slice(0,24),containerPath:safePathMaybe(item.containerSrc||'')})) });
           if (observedLongTasks.length > 120) observedLongTasks.shift();
         }
       });
@@ -50,7 +53,9 @@
             startTimeMs:Math.round(start), durationMs:Math.round(duration),
             inputDelayMs:Number.isFinite(processingStart) ? Math.max(0,Math.round(processingStart-start)) : null,
             processingMs:Number.isFinite(processingStart) && Number.isFinite(processingEnd) ? Math.max(0,Math.round(processingEnd-processingStart)) : null,
-            presentationDelayMs:Number.isFinite(processingEnd) ? Math.max(0,Math.round(start+duration-processingEnd)) : null
+            presentationDelayMs:Number.isFinite(processingEnd) ? Math.max(0,Math.round(start+duration-processingEnd)) : null,
+            targetTag:String(entry.target?.tagName||entry.target?.parentElement?.tagName||'unknown').slice(0,24).toLowerCase(),
+            targetRole:String(entry.target?.getAttribute?.('role')||'').slice(0,32)
           };
           observedEventTimings.push(sample);
           if (observedEventTimings.length > 200) observedEventTimings.shift();
@@ -63,7 +68,7 @@
     if (typeof PerformanceObserver === 'function' && (PerformanceObserver.supportedEntryTypes || []).includes('largest-contentful-paint')) {
       lcpObserver = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
-          observedLcpEntries.push({ startTimeMs:roundedSafe(entry.startTime), renderTimeMs:roundedSafe(entry.renderTime), loadTimeMs:roundedSafe(entry.loadTime), size:Number.isFinite(entry.size)?Math.round(entry.size):null, elementTag:String(entry.element?.tagName||'').slice(0,24), url:safePathMaybe(entry.url||'') });
+          observedLcpEntries.push({ startTimeMs:roundedSafe(entry.startTime), renderTimeMs:roundedSafe(entry.renderTime), loadTimeMs:roundedSafe(entry.loadTime), size:Number.isFinite(entry.size)?Math.round(entry.size):null, elementTag:String(entry.element?.tagName||'').slice(0,24), elementRole:String(entry.element?.getAttribute?.('role')||'').slice(0,32), url:safePathMaybe(entry.url||'') });
           if (observedLcpEntries.length > 60) observedLcpEntries.shift();
         }
       });
@@ -74,7 +79,7 @@
     if (typeof PerformanceObserver === 'function' && (PerformanceObserver.supportedEntryTypes || []).includes('layout-shift')) {
       layoutShiftObserver = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
-          observedLayoutShifts.push({ startTimeMs:roundedSafe(entry.startTime), value:roundedSafe(entry.value,4), hadRecentInput:!!entry.hadRecentInput, sourceTags:(entry.sources||[]).slice(0,3).map(source=>String(source.node?.nodeName||'unknown').slice(0,24)) });
+          observedLayoutShifts.push({ startTimeMs:roundedSafe(entry.startTime), value:roundedSafe(entry.value,4), hadRecentInput:!!entry.hadRecentInput, sourceTags:(entry.sources||[]).slice(0,3).map(source=>({tag:String(source.node?.nodeName||'unknown').slice(0,24),role:String(source.node?.getAttribute?.('role')||'').slice(0,32)})) });
           if (observedLayoutShifts.length > 150) observedLayoutShifts.shift();
         }
       });
@@ -86,7 +91,7 @@
       longAnimationFrameObserver = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
           const scripts = Array.isArray(entry.scripts) ? entry.scripts : [];
-          observedLongAnimationFrames.push({ startTimeMs:roundedSafe(entry.startTime), durationMs:roundedSafe(entry.duration), blockingDurationMs:roundedSafe(entry.blockingDuration), scriptCount:scripts.length, longestScriptMs:scripts.reduce((max,item)=>Math.max(max,Number(item.duration)||0),0) });
+          observedLongAnimationFrames.push({ startTimeMs:roundedSafe(entry.startTime), durationMs:roundedSafe(entry.duration), blockingDurationMs:roundedSafe(entry.blockingDuration), scriptCount:scripts.length, longestScriptMs:scripts.reduce((max,item)=>Math.max(max,Number(item.duration)||0),0), scripts:scripts.slice(0,6).map(item=>({durationMs:roundedSafe(item.duration),sourcePath:safePathMaybe(item.sourceURL||''),invokerType:String(item.invokerType||'').slice(0,32),functionName:String(item.sourceFunctionName||'').slice(0,64)})) });
           if (observedLongAnimationFrames.length > 80) observedLongAnimationFrames.shift();
         }
       });
@@ -106,6 +111,19 @@
   window.addEventListener('unhandledrejection', event => recordDiagnosticEvent({
     type:'unhandledrejection', message:String(event.reason?.message || event.reason || 'Unhandled promise rejection').slice(0,300)
   }));
+  window.addEventListener('error', event => {
+    const target = event.target;
+    if (!target || target === window) return;
+    const raw = target.src || target.href || '';
+    recordDiagnosticEvent({ type:'resource-error', tag:String(target.tagName || 'resource').slice(0,24), path:safePathMaybe(raw), message:'A resource emitted a load error.' });
+  }, true);
+  window.addEventListener('securitypolicyviolation', event => recordDiagnosticEvent({
+    type:'csp-violation', directive:String(event.effectiveDirective || event.violatedDirective || '').slice(0,100),
+    blockedPath:safePathMaybe(event.blockedURI || ''), disposition:String(event.disposition || '').slice(0,24),
+    message:'Content Security Policy blocked a resource or operation.'
+  }));
+  window.addEventListener('pageshow', event => recordDiagnosticEvent({type:'pageshow', persisted:!!event.persisted, message:event.persisted?'Page restored from the back/forward cache.':'Page shown.'}));
+  window.addEventListener('pagehide', event => recordDiagnosticEvent({type:'pagehide', persisted:!!event.persisted, message:event.persisted?'Page entering the back/forward cache.':'Page leaving.'}));
   const healthTimeout = (promise, ms, label) => new Promise((resolve, reject) => {
     const timer = window.setTimeout(() => reject(new Error(`${label} timed out`)), ms);
     Promise.resolve(promise).then(value => { window.clearTimeout(timer); resolve(value); }, error => { window.clearTimeout(timer); reject(error); });
@@ -124,6 +142,278 @@
     if (healthStatus) healthStatus.textContent = statusText;
     if (healthState) { healthState.textContent = stateText; healthState.dataset.state = stateText.toLowerCase().replace(/[^a-z]+/g, '-'); }
   }
+  async function fetchReleaseManifest() {
+    const url = new URL(`service-worker-current.js?release=${EXPECTED_RELEASE}`, deploymentBase);
+    const response = await healthTimeout(fetch(url.href, { cache:'no-store', credentials:'same-origin' }), 10000, 'deployment manifest request');
+    if (!response.ok) throw new Error(`Service worker returned HTTP ${response.status}`);
+    const source = await response.text();
+    const marker = source.match(/const RELEASE_ID\s*=\s*['"](v[0-9.]+)['"]/);
+    const match = source.match(/const EXPECTED_SHA256\s*=\s*Object\.freeze\((\{[\s\S]*?\})\);/);
+    if (!marker || marker[1] !== EXPECTED_RELEASE) throw new Error(`Worker release ${marker?.[1] || 'unknown'} does not match ${EXPECTED_RELEASE}`);
+    if (!match) throw new Error('The worker does not expose its release asset manifest.');
+    const manifest = JSON.parse(match[1].replace(/,\s*}/g, '}'));
+    const entries = Object.entries(manifest);
+    if (entries.length < 15 || entries.some(([file, hash]) => !/^[a-z0-9._-]+$/i.test(file) || !/^[a-f0-9]{64}$/i.test(hash))) {
+      throw new Error('The release manifest is incomplete or contains an invalid SHA-256 entry.');
+    }
+    return { url:url.href, response, source, release:marker[1], manifest, count:entries.length,
+      headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status')} };
+  }
+  function expectedKindForAsset(file) {
+    if (/\.js$/i.test(file)) return 'js';
+    if (file === 'projects-styles.txt') return 'styles';
+    if (/\.html?$/i.test(file)) return 'html';
+    if (/\.png$/i.test(file)) return 'png';
+    if (/\.svg$/i.test(file)) return 'svg';
+    if (/\.webmanifest$/i.test(file)) return 'manifest';
+    return 'text';
+  }
+  function labelForAsset(file) {
+    const known = {
+      'health-check.js':'Health Check module', 'projects-core.js':'Shared project core',
+      'projects-styles.txt':'Project stylesheet source', 'projects-category-operating-systems.js':'Operating Systems category bundle',
+      'projects-category-strange-archives.js':'Strange Archives category bundle', 'projects-category-web-experiments.js':'Web Experiments category bundle',
+      'projects-category-tiny-games.js':'Tiny Games category bundle', 'projects-category-digital-art.js':'Digital Art category bundle',
+      'projects-category-sound-motion.js':'Sound Motion category bundle', 'projects-category-creative-tools.js':'Creative Tools category bundle',
+      'music-audio-apps.html':'Music & Audio apps page', 'applications-tools-apps.html':'Applications & Tools apps page',
+      'vocal-lexicon.js':'Vocal Lexicon asset', 'curioids.html':'Curioids page', 'manifest.webmanifest':'PWA manifest',
+      'curioid-icon.svg':'Brand SVG icon', 'curioid-icon-192.png':'192px app icon', 'curioid-icon-512.png':'512px app icon',
+      'social-preview.png':'Social preview image', 'robots.txt':'Robots policy', 'sitemap.xml':'XML sitemap', 'index.html':'Homepage document'
+    };
+    return known[file] || file;
+  }
+  async function mapWithConcurrency(items, limit, mapper) {
+    const results = new Array(items.length); let cursor = 0;
+    const workers = Array.from({length:Math.max(1,Math.min(limit,items.length))}, async () => {
+      while (true) { const index = cursor++; if (index >= items.length) return; results[index] = await mapper(items[index], index); }
+    });
+    await Promise.all(workers); return results;
+  }
+  async function cleanupOwnedHealthProbes() {
+    const removed = { caches:0, databases:0, opfsFiles:0 };
+    try {
+      for (const name of await caches.keys()) if (name.startsWith(HEALTH_PROBE_PREFIX)) {
+        if (await caches.delete(name)) removed.caches++;
+      }
+    } catch (_) {}
+    try {
+      if (typeof indexedDB.databases === 'function') {
+        for (const item of await indexedDB.databases()) {
+          if (String(item?.name || '').startsWith(HEALTH_PROBE_PREFIX)) {
+            await new Promise(resolve => { const req=indexedDB.deleteDatabase(item.name); req.onsuccess=req.onerror=req.onblocked=()=>resolve(); });
+            removed.databases++;
+          }
+        }
+      }
+    } catch (_) {}
+    try {
+      if (typeof navigator.storage?.getDirectory === 'function') {
+        const root = await navigator.storage.getDirectory();
+        for await (const [name, handle] of root.entries()) {
+          if (handle.kind === 'file' && name.startsWith('.' + HEALTH_PROBE_PREFIX)) {
+            await root.removeEntry(name); removed.opfsFiles++;
+          }
+        }
+      }
+    } catch (_) {}
+    return removed;
+  }
+  async function probeWebLocks() {
+    if (!navigator.locks?.request) return {ok:false,warning:true,detail:'Web Locks API is unavailable; production backup operations will advise closing other CURIOID tabs.'};
+    const name = `${HEALTH_PROBE_PREFIX}lock-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+    let releaseFirst, acquiredResolve;
+    const acquired = new Promise(resolve => { acquiredResolve = resolve; });
+    const first = navigator.locks.request(name, {mode:'exclusive'}, async lock => {
+      if (!lock) throw new Error('First exclusive lock was not granted.');
+      acquiredResolve(true);
+      await new Promise(resolve => { releaseFirst = resolve; });
+    });
+    try {
+      await healthTimeout(acquired, 2500, 'Web Locks first acquisition');
+      const second = await healthTimeout(navigator.locks.request(name, {mode:'exclusive',ifAvailable:true}, lock => Boolean(lock)), 2500, 'Web Locks contention check');
+      if (second !== false) throw new Error('A second exclusive lock was granted while the first was held.');
+      releaseFirst?.(); await healthTimeout(first, 2500, 'Web Locks release');
+      return {ok:true,detail:'Disposable Web Lock contention test passed: second writer was denied while the first held the exclusive lock; no production lock or data was touched.'};
+    } catch (error) {
+      releaseFirst?.(); try { await first; } catch (_) {}
+      return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)};
+    }
+  }
+  function probeRuntimeSupervisor() {
+    const supervisor = window.CurioidRuntimeSupervisor;
+    if (!supervisor?.createScope) return {ok:false,warning:true,detail:'Runtime Supervisor is not initialized; a resource cleanup canary could not run.'};
+    let cleanupCount = 0, url = '';
+    try {
+      const scope = supervisor.createScope({owner:'Health Check disposable lifecycle canary'});
+      scope.addCleanup(() => { cleanupCount++; });
+      if (scope.createObjectURL) url = scope.createObjectURL(new Blob(['CURIOID_LIFECYCLE_PROBE'], {type:'text/plain'}));
+      scope.timeout(() => {}, 60000);
+      scope.interval(() => {}, 60000);
+      const globalBefore = supervisor.getStatus();
+      const before = scope.getStatus();
+      scope.dispose('health-check-canary');
+      const after = scope.getStatus();
+      const active = supervisor.getStatus();
+      const ok = cleanupCount === 1 && after.state === 'disposed' && after.activeResources === 0 && active.activeScopes === globalBefore.activeScopes;
+      return {ok,warning:!ok,detail:`Disposable scope ${before.state} → ${after.state}; cleanup callbacks ${cleanupCount}; remaining scope resources ${after.activeResources}; global scopes ${globalBefore.activeScopes} → ${active.activeScopes}. Existing application scopes are preserved.${url?' Object URL lifecycle included.':''}`};
+    } catch (error) { return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}; }
+  }
+  async function probeDownloadCanary() {
+    let url = '';
+    try {
+      const text = `CURIOID download canary ${Date.now()}`;
+      const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+      url = URL.createObjectURL(blob);
+      const response = await healthTimeout(fetch(url), 2500, 'Blob download canary read-back');
+      const readBack = await response.text();
+      const anchor = document.createElement('a');
+      anchor.download = 'curioid-health-download-test.txt';
+      const supported = 'download' in anchor;
+      if (readBack !== text || !supported) throw new Error('The Blob read-back or anchor download capability check failed.');
+      return {ok:true,detail:'Temporary Blob URL was created, fetched and read back correctly; anchor download attribute is supported. This verifies browser-side preparation, not the operating-system save prompt.'};
+    } catch (error) { return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}; }
+    finally { if (url) URL.revokeObjectURL(url); }
+  }
+  async function probeIndexedDBRollback() {
+    if (!window.indexedDB?.open) return {ok:false,warning:true,detail:'IndexedDB is unavailable; atomic rollback cannot be tested.'};
+    const name = `${HEALTH_PROBE_PREFIX}rollback-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+    let db = null;
+    try {
+      db = await healthTimeout(new Promise((resolve,reject)=>{
+        const request=indexedDB.open(name,1);
+        request.onupgradeneeded=()=>request.result.createObjectStore('probe');
+        request.onsuccess=()=>resolve(request.result);
+        request.onerror=()=>reject(request.error||new Error('Temporary rollback database failed to open'));
+        request.onblocked=()=>reject(new Error('Temporary rollback database open was blocked'));
+      }),3500,'IndexedDB rollback database open');
+      const aborted = await healthTimeout(new Promise((resolve,reject)=>{
+        const tx=db.transaction('probe','readwrite');
+        tx.objectStore('probe').put('must-not-commit','rollback-key');
+        tx.onabort=()=>resolve(true);
+        tx.onerror=()=>{};
+        tx.oncomplete=()=>reject(new Error('The intentionally aborted transaction unexpectedly committed'));
+        try { tx.abort(); } catch(error) { reject(error); }
+      }),2500,'IndexedDB transaction abort');
+      const persisted = await healthTimeout(new Promise((resolve,reject)=>{
+        const tx=db.transaction('probe','readonly');
+        const request=tx.objectStore('probe').get('rollback-key');
+        request.onsuccess=()=>resolve(request.result);
+        request.onerror=()=>reject(request.error||new Error('Rollback read-back failed'));
+      }),2500,'IndexedDB rollback verification');
+      if (!aborted || persisted !== undefined) throw new Error('Aborted IndexedDB write was visible after transaction rollback');
+      db.close(); db=null;
+      await healthTimeout(new Promise(resolve=>{const request=indexedDB.deleteDatabase(name);request.onsuccess=request.onerror=request.onblocked=()=>resolve();}),2500,'IndexedDB rollback probe cleanup');
+      return {ok:true,detail:'Disposable IndexedDB transaction was deliberately aborted and its write was not committed; temporary database deleted. This validates browser transaction atomicity, not the full production restore journal.'};
+    } catch(error) {
+      try { db?.close(); indexedDB.deleteDatabase(name); } catch(_) {}
+      return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)};
+    }
+  }
+  async function probeCryptoCanary() {
+    try {
+      if (!crypto?.subtle?.digest) throw new Error('Web Crypto digest is unavailable');
+      const bytes=new TextEncoder().encode('abc');
+      const digest=await crypto.subtle.digest('SHA-256',bytes);
+      const actual=[...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('');
+      const expected='ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad';
+      if(actual!==expected)throw new Error('SHA-256 known-answer test returned an unexpected digest');
+      return {ok:true,detail:'Web Crypto SHA-256 known-answer test passed against the published test vector; no user data was hashed.'};
+    } catch(error) { return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}; }
+  }
+  async function probeCompressionCanary() {
+    if (typeof CompressionStream!=='function'||typeof DecompressionStream!=='function') return {ok:false,warning:true,detail:'CompressionStream or DecompressionStream is unavailable; compression remains an optional capability.'};
+    try {
+      const input='CURIOID compression round-trip probe · '.repeat(48);
+      const compressed=await new Response(new Blob([input]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer();
+      const output=await new Response(new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+      if(output!==input)throw new Error('Gzip decompression did not reproduce the original test string');
+      return {ok:true,detail:`Gzip compression/decompression round-trip passed (${input.length} input characters → ${compressed.byteLength} compressed bytes). Temporary in-memory data only.`};
+    } catch(error) { return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}; }
+  }
+  async function probeBroadcastChannel() {
+    if (typeof BroadcastChannel!=='function') return {ok:false,warning:true,detail:'BroadcastChannel is unavailable; cross-tab messaging must use supported fallbacks.'};
+    const name=`${HEALTH_PROBE_PREFIX}broadcast-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
+    let sender=null,receiver=null;
+    try {
+      sender=new BroadcastChannel(name); receiver=new BroadcastChannel(name);
+      const token=`probe-${Date.now()}`;
+      const received=await healthTimeout(new Promise((resolve,reject)=>{receiver.onmessage=event=>resolve(event.data);receiver.onmessageerror=()=>reject(new Error('BroadcastChannel message could not be deserialized'));sender.postMessage({token});}),2500,'BroadcastChannel message round-trip');
+      if(received?.token!==token)throw new Error('BroadcastChannel returned an unexpected payload');
+      return {ok:true,detail:'Two temporary same-origin channels exchanged a unique test message successfully; both channels are closed after the probe.'};
+    } catch(error) { return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}; }
+    finally { try{sender?.close();receiver?.close();}catch(_){} }
+  }
+  async function probeWasmExecution() {
+    if(typeof WebAssembly!=='object')return {ok:false,warning:true,detail:'WebAssembly is unavailable.'};
+    try {
+      const module=await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0]));
+      const instance=await WebAssembly.instantiate(module);
+      if(!(instance instanceof WebAssembly.Instance))throw new Error('Minimal WebAssembly module did not instantiate');
+      return {ok:true,detail:'A minimal in-memory WebAssembly module compiled and instantiated successfully.'};
+    } catch(error) { return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}; }
+  }
+  async function discoverStorageInventory() {
+    const result={indexedDB:{supported:typeof indexedDB?.databases==='function',databaseCount:null,databases:[]},opfs:{supported:typeof navigator.storage?.getDirectory==='function',fileCount:0,directoryCount:0,totalBytes:0,entries:[]},webStorage:{localStorageKeys:null,sessionStorageKeys:null}};
+    try {
+      if(typeof indexedDB?.databases==='function') {
+        const dbs=await healthTimeout(indexedDB.databases(),3500,'IndexedDB database inventory');
+        result.indexedDB.databaseCount=dbs.length;
+        result.indexedDB.databases=dbs.map(item=>({name:String(item.name||'').slice(0,120),version:Number(item.version)||null})).sort((a,b)=>a.name.localeCompare(b.name));
+      }
+    } catch(error) { result.indexedDB.error=String(error?.message||error).slice(0,180); }
+    try {
+      if(result.opfs.supported) {
+        const root=await healthTimeout(navigator.storage.getDirectory(),3500,'OPFS inventory');
+        for await (const [name,handle] of root.entries()) {
+          if(handle.kind==='directory') result.opfs.directoryCount++;
+          else if(handle.kind==='file') {
+            result.opfs.fileCount++;
+            try { const file=await handle.getFile(); result.opfs.totalBytes+=Number(file.size)||0; if(result.opfs.entries.length<30)result.opfs.entries.push({kind:'file',sizeBytes:Number(file.size)||0}); } catch(_) { result.opfs.entries.push({kind:'file',sizeBytes:null}); }
+          }
+        }
+      }
+    } catch(error) { result.opfs.error=String(error?.message||error).slice(0,180); }
+    try { result.webStorage.localStorageKeys=window.localStorage.length; } catch(_) {}
+    try { result.webStorage.sessionStorageKeys=window.sessionStorage.length; } catch(_) {}
+    return result;
+  }
+  async function auditCurrentShellCache(cacheName, manifest) {
+    const required=[
+      {file:'index.html',strict:false},{file:'manifest.webmanifest',strict:false},
+      {file:'curioid-icon.svg',strict:false},{file:'curioid-icon-192.png',strict:false},{file:'curioid-icon-512.png',strict:false}
+    ];
+    const criticalOfflineAssets=['site-runtime-current.js','projects-core.js','projects-styles.txt','health-check.js',
+      'projects-category-operating-systems.js','projects-category-strange-archives.js','projects-category-web-experiments.js',
+      'projects-category-tiny-games.js','projects-category-digital-art.js','projects-category-sound-motion.js','projects-category-creative-tools.js'];
+    for(const file of criticalOfflineAssets) if(manifest?.[file]) required.push({file,hash:manifest[file],strict:true});
+    try {
+      const cache=await caches.open(cacheName);
+      const missing=[],verified=[];
+      for(const asset of required) {
+        const url=new URL(asset.file,deploymentBase);
+        if(asset.hash) url.searchParams.set('v',`sha256-${asset.hash}`);
+        const response=await cache.match(new Request(url.href));
+        if(!response?.ok){missing.push(asset.file);continue;}
+        if(asset.strict) {
+          const bytes=await response.clone().arrayBuffer();
+          const digest=await crypto.subtle.digest('SHA-256',bytes);
+          const actual=[...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('');
+          if(actual!==asset.hash){missing.push(`${asset.file} (cached SHA-256 mismatch)`);continue;}
+        }
+        verified.push(asset.file);
+      }
+      const deepCount=verified.filter(file=>criticalOfflineAssets.includes(file)).length;
+      return {ok:missing.length===0,missing,verified,criticalOfflineAssets:deepCount,criticalOfflineExpected:criticalOfflineAssets.filter(file=>manifest?.[file]).length,
+        detail:missing.length?`Current shell cache is missing or has invalid: ${missing.join(', ')}. ${deepCount}/${criticalOfflineAssets.length} core/category/Health Check assets are cached and hash-verified.`:`All ${required.length} required offline entries exist. ${deepCount} shared-core, stylesheet, Health Check and category assets are cached with matching release SHA-256 hashes.`};
+    } catch(error) { return {ok:false,missing:required.map(item=>item.file),detail:String(error?.message||error).slice(0,220)}; }
+  }
+  function scanStaticSecuritySinks(source) {
+    const patterns={innerHTML:/\.innerHTML\s*=/g,outerHTML:/\.outerHTML\s*=/g,insertAdjacentHTML:/\.insertAdjacentHTML\s*\(/g,documentWrite:/document\.write(?:ln)?\s*\(/g,dynamicEval:/(?:\beval\s*\(|\bnew\s+Function\s*\()/g,srcdoc:/\.srcdoc\s*=/g};
+    const counts={};
+    for(const [name,pattern] of Object.entries(patterns))counts[name]=(source.match(pattern)||[]).length;
+    return counts;
+  }
+
   async function probeTemporaryIndexedDB() {
     if (!window.indexedDB?.open) return { ok:false, warning:true, detail:'IndexedDB is unavailable in this browser.' };
     const name = `__curioid_health_probe_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
@@ -181,6 +471,7 @@
     const storage = navigator.storage;
     if (typeof storage?.getDirectory !== 'function') return { ok:false, warning:true, detail:'Origin Private File System is unavailable in this browser.' };
     const name = `.__curioid_health_probe_${Date.now()}_${Math.random().toString(36).slice(2,8)}.tmp`;
+    const stageName = name + '.stage';
     let root = null;
     try {
       root = await healthTimeout(storage.getDirectory(), 3500, 'OPFS root access');
@@ -191,11 +482,19 @@
       const file = await healthTimeout(handle.getFile(), 3500, 'OPFS temporary file read');
       const value = await healthTimeout(file.text(), 3500, 'OPFS temporary file decode');
       if (value !== 'CURIOID_OPFS_PROBE') throw new Error('OPFS read-back did not match the temporary probe value');
-      return { ok:true, detail:'Temporary OPFS create/write/read probe passed; the probe file is removed after verification.' };
+      const stageHandle=await healthTimeout(root.getFileHandle(stageName,{create:true}),3500,'OPFS staged file creation');
+      const staged=await healthTimeout(stageHandle.createWritable(),3500,'OPFS staged writable stream');
+      await healthTimeout(staged.write('CURIOID_OPFS_STAGE'),3500,'OPFS staged write');
+      await healthTimeout(staged.close(),3500,'OPFS staged commit');
+      const stagedValue=await (await stageHandle.getFile()).text();
+      if(stagedValue!=='CURIOID_OPFS_STAGE')throw new Error('OPFS staged commit read-back failed');
+      await root.removeEntry(stageName);
+      return { ok:true, detail:'Temporary OPFS create/write/read and staged commit/read/remove probes passed; both temporary files are removed after verification. User files are not touched.' };
     } catch (error) {
       return { ok:false, warning:true, detail:String(error?.message || error).slice(0,220) };
     } finally {
       try { await root?.removeEntry(name); } catch (_) {}
+      try { await root?.removeEntry(stageName); } catch (_) {}
     }
   }
   async function probeCacheStorage() {
@@ -240,99 +539,134 @@
     const url = new URL(file, deploymentBase);
     url.searchParams.set('v', `sha256-${expectedHash}`);
     try {
-      const response = await healthTimeout(fetch(url.href, { method:'GET', cache:'no-store', credentials:'same-origin' }), 10000, `${file} request`);
+      const response = await healthTimeout(fetch(url.href, { method:'GET', cache:'no-store', credentials:'same-origin' }), 12000, `${file} request`);
       const contentType = response.headers.get('content-type') || 'not supplied';
       if (!response.ok) return { ok:false, detail:`HTTP ${response.status} ${response.statusText || ''}; ${contentType}; URL ${response.url || url.href}`.trim() };
-      const bytes = await healthTimeout(response.arrayBuffer(), 12000, `${file} download`);
+      const bytes = await healthTimeout(response.arrayBuffer(), 15000, `${file} download`);
       const size = bytes.byteLength;
       if (!window.crypto?.subtle?.digest) return { ok:false, warning:true, detail:`HTTP ${response.status}; ${contentType}; ${size.toLocaleString()} bytes; Web Crypto SHA-256 unavailable.` };
       const digest = await crypto.subtle.digest('SHA-256', bytes);
       const actual = [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
       const matches = actual === expectedHash;
-      const prefix = new TextDecoder().decode(bytes.slice(0,512)).trimStart();
+      const strictIntegrity = expectedKind === 'js' || expectedKind === 'styles';
+      let actualSha384 = null;
+      if (strictIntegrity) {
+        const sha384 = await crypto.subtle.digest('SHA-384', bytes);
+        actualSha384 = 'sha384-' + btoa(String.fromCharCode(...new Uint8Array(sha384)));
+      }
+      const prefix = new TextDecoder().decode(bytes.slice(0, Math.min(1024, size))).trimStart();
       const looksLikeHtml = /text\/html/i.test(contentType) || /^<!doctype html|^<html/i.test(prefix);
       const looksLikeSvg = /<svg[\s>]/i.test(prefix);
-      const pngSignature = bytes.byteLength>=8 && new Uint8Array(bytes.slice(0,8)).join(',')==='137,80,78,71,13,10,26,10';
-      let pngDimensions=null;
-      if(pngSignature&&bytes.byteLength>=24){const v=new DataView(bytes);pngDimensions={width:v.getUint32(16),height:v.getUint32(20)};}
-      let parsedManifest=null;
-      if(expectedKind==='manifest'){try{parsedManifest=JSON.parse(new TextDecoder().decode(bytes));}catch(_){} }
-      const kindLooksRight = expectedKind === 'js' ? /javascript|ecmascript/i.test(contentType) : expectedKind === 'css' ? /text\/css/i.test(contentType) : expectedKind === 'html' ? looksLikeHtml : expectedKind === 'svg' ? /image\/svg\+xml/i.test(contentType) : expectedKind === 'png' ? /image\/png/i.test(contentType) : expectedKind === 'manifest' ? /manifest\+json|application\/json/i.test(contentType) : true;
-      const expectedPngDimensions=file==='social-preview.png'?{width:1200,height:630}:file==='curioid-icon-192.png'?{width:192,height:192}:file==='curioid-icon-512.png'?{width:512,height:512}:null;
-      const pngDimensionsMatch=!!pngDimensions&&(!expectedPngDimensions||(pngDimensions.width===expectedPngDimensions.width&&pngDimensions.height===expectedPngDimensions.height));
-      const contentLooksRight = expectedKind === 'html' ? looksLikeHtml : expectedKind === 'svg' ? looksLikeSvg : expectedKind === 'png' ? pngSignature&&pngDimensionsMatch : expectedKind === 'manifest' ? !!parsedManifest?.name&&!!parsedManifest?.start_url : !looksLikeHtml;
-      const headers = { cacheControl:response.headers.get('cache-control'), etag:response.headers.get('etag'), age:response.headers.get('age'), cfCacheStatus:response.headers.get('cf-cache-status'), server:response.headers.get('server'), xCache:response.headers.get('x-cache') };
-      const dimensions=pngDimensions?`; ${pngDimensions.width}×${pngDimensions.height}px`:'';
-      const details = `HTTP ${response.status}; ${contentType}; ${size.toLocaleString()} bytes${dimensions}; SHA-256 ${matches ? 'MATCH' : 'MISMATCH'}${!contentLooksRight ? `; response content does not match expected ${expectedKind} asset type/dimensions` : ''}; CF cache ${headers.cfCacheStatus || 'not reported'}; age ${headers.age || 'not reported'}; ${response.redirected ? `redirected to ${response.url}` : 'no redirect'}; ${url.href}`;
-      return { ok:matches && contentLooksRight, warning:matches && !kindLooksRight, detail:details, meta:{file,url:url.href,status:response.status,contentType,bytes:size,pngDimensions,manifest:parsedManifest?{name:parsedManifest.name,short_name:parsedManifest.short_name,icons:parsedManifest.icons}:null,expectedHash,actualHash:actual,hashMatches:matches,redirected:response.redirected,finalUrl:response.url || url.href,headers} };
-    } catch (error) {
-      return { ok:false, detail:`${String(error?.message || error).slice(0,220)}; URL ${url.href}` };
-    }
+      const pngSignature = size >= 8 && new Uint8Array(bytes.slice(0,8)).join(',') === '137,80,78,71,13,10,26,10';
+      let pngDimensions = null;
+      if (pngSignature && size >= 24) { const view = new DataView(bytes); pngDimensions = {width:view.getUint32(16),height:view.getUint32(20)}; }
+      let parsedManifest = null, cssRuleCount = null, decodedText = '', securityScan = null;
+      if (expectedKind === 'manifest') { try { parsedManifest = JSON.parse(new TextDecoder().decode(bytes)); } catch (_) {} }
+      if (expectedKind === 'js') { try { securityScan = scanStaticSecuritySinks(new TextDecoder().decode(bytes)); } catch (_) { securityScan = null; } }
+      if (expectedKind === 'html') {
+        try {
+          const htmlText = new TextDecoder().decode(bytes);
+          const parsedHtml = new DOMParser().parseFromString(htmlText, 'text/html');
+          const executableInlineScripts = [...parsedHtml.querySelectorAll('script:not([src])')].filter(node=>!/^application\/ld\+json$/i.test(node.type||''));
+          const inlineScripts = executableInlineScripts.map(node => node.textContent || '').join('\n');
+          const inlineScan = scanStaticSecuritySinks(inlineScripts);
+          const eventHandlers = [...parsedHtml.querySelectorAll('*')].reduce((count,node)=>count+[...node.attributes].filter(attribute=>/^on/i.test(attribute.name)).length,0);
+          const javascriptUrls = [...parsedHtml.querySelectorAll('[href],[src],[action]')].filter(node=>['href','src','action'].some(name=>/^\s*javascript:/i.test(node.getAttribute(name)||''))).length;
+          securityScan = {...inlineScan,inlineScriptBlocks:executableInlineScripts.length,inlineEventHandlers:eventHandlers,javascriptUrls};
+        } catch (_) { securityScan = null; }
+      }
+      if (expectedKind === 'styles') {
+        try {
+          decodedText = new TextDecoder('utf-8', {fatal:true}).decode(bytes);
+          if (typeof CSSStyleSheet === 'function') {
+            const sheet = new CSSStyleSheet(); sheet.replaceSync(decodedText); cssRuleCount = sheet.cssRules?.length ?? null;
+          } else {
+            const opens = (decodedText.match(/{/g)||[]).length, closes = (decodedText.match(/}/g)||[]).length;
+            cssRuleCount = opens === closes ? opens : -1;
+          }
+        } catch (_) { cssRuleCount = -1; }
+      }
+      const kindLooksRight = expectedKind === 'js' ? /javascript|ecmascript/i.test(contentType)
+        : expectedKind === 'styles' ? /text\/plain|text\/css|application\/octet-stream/i.test(contentType)
+        : expectedKind === 'html' ? looksLikeHtml
+        : expectedKind === 'svg' ? /image\/svg\+xml|text\/xml/i.test(contentType)
+        : expectedKind === 'png' ? /image\/png/i.test(contentType)
+        : expectedKind === 'manifest' ? /manifest\+json|application\/json/i.test(contentType)
+        : expectedKind === 'text' ? /text\/|application\/xml/i.test(contentType)
+        : true;
+      const expectedPngDimensions = file === 'social-preview.png' ? {width:1200,height:630} : file === 'curioid-icon-192.png' ? {width:192,height:192} : file === 'curioid-icon-512.png' ? {width:512,height:512} : null;
+      const pngDimensionsMatch = !!pngDimensions && (!expectedPngDimensions || (pngDimensions.width === expectedPngDimensions.width && pngDimensions.height === expectedPngDimensions.height));
+      const contentLooksRight = expectedKind === 'html' ? looksLikeHtml
+        : expectedKind === 'svg' ? looksLikeSvg
+        : expectedKind === 'png' ? pngSignature && pngDimensionsMatch
+        : expectedKind === 'manifest' ? !!parsedManifest?.name && !!parsedManifest?.start_url
+        : expectedKind === 'styles' ? !looksLikeHtml && size > 10000 && Number(cssRuleCount) > 100
+        : !looksLikeHtml;
+      const headers = {cacheControl:response.headers.get('cache-control'),etag:response.headers.get('etag'),age:response.headers.get('age'),cfCacheStatus:response.headers.get('cf-cache-status'),server:response.headers.get('server'),xCache:response.headers.get('x-cache'),contentLength:response.headers.get('content-length')};
+      const dimensions = pngDimensions ? `; ${pngDimensions.width}×${pngDimensions.height}px` : '';
+      const cssDetail = expectedKind === 'styles' ? `; CSS rules ${cssRuleCount ?? 'not measured'}` : '';
+      const integrityLabel = matches ? 'MATCH' : strictIntegrity ? 'MISMATCH' : 'EDGE-TRANSFORMED / NOT SRI-BOUND';
+      const details = `HTTP ${response.status}; ${contentType}; ${size.toLocaleString()} bytes${dimensions}${cssDetail}; SHA-256 ${integrityLabel}${!contentLooksRight ? `; response content does not match expected ${expectedKind} asset type/structure` : ''}; CF cache ${headers.cfCacheStatus || 'not reported'}; age ${headers.age || 'not reported'}; ${response.redirected ? `redirected to ${response.url}` : 'no redirect'}; ${url.href}`;
+      return { ok:(matches || !strictIntegrity) && contentLooksRight && kindLooksRight, warning:(!matches && !strictIntegrity) || !kindLooksRight, detail:details,
+        meta:{file,url:url.href,status:response.status,contentType,bytes:size,pngDimensions,cssRuleCount,manifest:parsedManifest?{name:parsedManifest.name,short_name:parsedManifest.short_name,icons:parsedManifest.icons}:null,securityScan,expectedHash,actualHash:actual,actualSha384,hashMatches:matches,redirected:response.redirected,finalUrl:response.url || url.href,headers} };
+    } catch (error) { return {ok:false,detail:`${String(error?.message || error).slice(0,220)}; URL ${url.href}`}; }
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker.js',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.320',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
-      if(!swResponse.ok)throw new Error(`Service worker manifest returned HTTP ${swResponse.status}`);
+      if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
-      const match=swText.match(/['\"]index\.html['\"]\s*:\s*['\"]([a-f0-9]{64})['\"]/i);
-      if(!match)throw new Error('The active service-worker file does not expose an index.html release hash');
-      const expected=match[1].toLowerCase();
-      const pageUrl=new URL('index.html',deploymentBase);
-      pageUrl.searchParams.set('health-check',expected);
+      if(!new RegExp('const\\s+RELEASE_ID\\s*=\\s*[\"\\\']'+EXPECTED_RELEASE.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\"\\\']').test(swText))throw new Error(`The deployed service-worker script is not ${EXPECTED_RELEASE}.`);
+      const pageUrl=new URL('./',deploymentBase);
+      pageUrl.searchParams.set('health-check-release',EXPECTED_RELEASE);
       const response=await healthTimeout(fetch(pageUrl.href,{cache:'no-store',credentials:'same-origin'}),10000,'published shell request');
-      if(!response.ok)throw new Error(`Published index.html returned HTTP ${response.status}`);
+      if(!response.ok)throw new Error(`Published homepage returned HTTP ${response.status}`);
       const bytes=await healthTimeout(response.arrayBuffer(),10000,'published shell download');
-      if(!crypto?.subtle?.digest)return {ok:false,warning:true,detail:`index.html HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; Web Crypto unavailable.`};
-      const digest=await crypto.subtle.digest('SHA-256',bytes);
-      const actual=[...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('');
-      const matched=actual===expected;
-      const type=response.headers.get('content-type')||'not supplied';
-      let siteSnapshot=null;
-      try {
-        const shellDoc=new DOMParser().parseFromString(new TextDecoder().decode(bytes),'text/html');
-        const meta=name=>shellDoc.querySelector(`meta[name="${name}"]`)?.content||'';
-        const prop=name=>shellDoc.querySelector(`meta[property="${name}"]`)?.content||'';
-        const publishedRelease=meta('curioid-release')||shellDoc.querySelector('.site-version')?.textContent?.trim()||'unknown';
-        const expectedRelease=document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown';
-        const count=Number(meta('curioid-project-count'))||Number((shellDoc.querySelector('#projectCount')?.textContent||'').match(/\d+/)?.[0])||null;
-        const categoryCount=Number(meta('curioid-category-count'))||shellDoc.querySelectorAll('.category-nav [data-category]').length||null;
-        const ogImage=prop('og:image'), twitterImage=meta('twitter:image');
-        const iconSvg=shellDoc.querySelector('link[rel="icon"][type="image/svg+xml"]')?.getAttribute('href')||'';
-        const iconPng=shellDoc.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href')||'';
-        const ogDescription=prop('og:description'), twitterDescription=meta('twitter:description');
-        const ogTitle=prop('og:title'), twitterTitle=meta('twitter:title');
-        const sameSocialImage=!!ogImage&&!!twitterImage&&new URL(ogImage,pageUrl).pathname===new URL(twitterImage,pageUrl).pathname;
-        const iconDeclarationsAligned=!!iconSvg&&!!iconPng&&sameSocialImage;
-        const socialCountAligned=!!count&&ogDescription.includes(String(count))&&twitterDescription.includes(String(count));
-        const socialTextAligned=!!ogTitle&&ogTitle===twitterTitle&&!!ogDescription&&ogDescription===twitterDescription;
-        const expectedCount=Number(document.querySelector('meta[name="curioid-project-count"]')?.content)||null;
-        const expectedCategories=Number(document.querySelector('meta[name="curioid-category-count"]')?.content)||null;
-        const canonicalUrl=(()=>{try{const u=new URL(shellDoc.querySelector('link[rel="canonical"]')?.href||'');return u.origin+u.pathname;}catch(_){return null;}})();
-        const canonicalAligned=!!canonicalUrl&&canonicalUrl===pageUrl.origin+pageUrl.pathname;
-        const projectCountAligned=!!count&&count===expectedCount;
-        const categoryCountAligned=!!categoryCount&&categoryCount===expectedCategories;
-        const brandMarkMatches=await (async()=>{
-          try {
-            const iconResponse=await healthTimeout(fetch(new URL(iconSvg,pageUrl).href,{cache:'no-store',credentials:'same-origin'}),7000,'brand SVG request');
-            if(!iconResponse.ok)return false;
-            const iconDoc=new DOMParser().parseFromString(await iconResponse.text(),'image/svg+xml');
-            const headerSvg=shellDoc.querySelector('.brand-mark svg'), iconRoot=iconDoc.querySelector('svg');
-            if(!headerSvg||!iconRoot||iconDoc.querySelector('parsererror'))return false;
-            const headerPaths=[...headerSvg.querySelectorAll('.brand-eye-aperture path,.brand-eye-crease')].map(node=>node.getAttribute('d'));
-            const iconPaths=[...iconRoot.querySelectorAll('path')].map(node=>node.getAttribute('d'));
-            const headerCircles=[...headerSvg.querySelectorAll('.brand-eye-aperture circle')].map(node=>['cx','cy','r'].map(key=>node.getAttribute(key)).join(':'));
-            const iconCircles=[...iconRoot.querySelectorAll('circle')].map(node=>['cx','cy','r'].map(key=>node.getAttribute(key)).join(':'));
-            return headerPaths.length===3&&headerCircles.length===2&&JSON.stringify(headerPaths)===JSON.stringify(iconPaths)&&JSON.stringify(headerCircles)===JSON.stringify(iconCircles);
-          } catch(_) { return false; }
-        })();
-        siteSnapshot={url:pageUrl.origin+pageUrl.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
-      } catch(_) { siteSnapshot={parseError:'Published HTML metadata could not be parsed in this browser.'}; }
-      const expectedLocal=document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown';
-      const releaseAligned=siteSnapshot?.release===expectedLocal;
-      const metadataAligned=siteSnapshot?.iconDeclarationsAligned&&siteSnapshot?.socialCountAligned&&siteSnapshot?.socialTextAligned&&siteSnapshot?.canonicalAligned&&siteSnapshot?.projectCountAligned&&siteSnapshot?.categoryCountAligned&&siteSnapshot?.brandMarkMatches;
-      return {ok:matched&&releaseAligned,warning:matched&&!metadataAligned,detail:`index.html HTTP ${response.status}; ${type}; ${bytes.byteLength.toLocaleString()} bytes; SHA-256 ${matched?'MATCH':'MISMATCH'}; published ${siteSnapshot?.release||'unknown'} vs expected ${expectedLocal}; ${siteSnapshot?.projectCount??'unknown'} project windows; ${siteSnapshot?.categoryCount??'unknown'} categories; canonical ${siteSnapshot?.canonicalAligned?'aligned':'needs review'}; social metadata ${siteSnapshot?.socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${siteSnapshot?.brandMarkMatches?'MATCH':'needs review'}; ${response.redirected?`redirected to ${response.url}`:'no redirect'}.` ,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:type,bytes:bytes.byteLength,expectedHash:expected,actualHash:actual,hashMatches:matched,redirected:response.redirected,finalUrl:response.url||pageUrl.href,siteSnapshot}};
-    } catch(error) { return {ok:false,detail:String(error?.message||error).slice(0,240)}; }
+      const shellDoc=new DOMParser().parseFromString(new TextDecoder().decode(bytes),'text/html');
+      const meta=name=>shellDoc.querySelector(`meta[name="${name}"]`)?.content||'';
+      const prop=name=>shellDoc.querySelector(`meta[property="${name}"]`)?.content||'';
+      const publishedRelease=meta('curioid-release')||shellDoc.querySelector('.site-version')?.textContent?.trim()||'unknown';
+      const expectedRelease=document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown';
+      const count=Number(meta('curioid-project-count'))||Number((shellDoc.querySelector('#projectCount')?.textContent||'').match(/\d+/)?.[0])||null;
+      const categoryCount=Number(meta('curioid-category-count'))||shellDoc.querySelectorAll('.category-nav [data-category]').length||null;
+      const ogImage=prop('og:image'), twitterImage=meta('twitter:image');
+      const ogDescription=prop('og:description'), twitterDescription=meta('twitter:description');
+      const ogTitle=prop('og:title'), twitterTitle=meta('twitter:title');
+      const sameSocialImage=!!ogImage&&!!twitterImage&&new URL(ogImage,pageUrl).pathname===new URL(twitterImage,pageUrl).pathname;
+      const iconSvg=shellDoc.querySelector('link[rel="icon"][type="image/svg+xml"]')?.getAttribute('href')||'';
+      const iconPng=shellDoc.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href')||'';
+      const iconDeclarationsAligned=!!iconSvg&&!!iconPng&&sameSocialImage;
+      const socialCountAligned=!!count&&ogDescription.includes(String(count))&&twitterDescription.includes(String(count));
+      const socialTextAligned=!!ogTitle&&ogTitle===twitterTitle&&!!ogDescription&&ogDescription===twitterDescription;
+      const expectedCount=Number(document.querySelector('meta[name="curioid-project-count"]')?.content)||null;
+      const expectedCategories=Number(document.querySelector('meta[name="curioid-category-count"]')?.content)||null;
+      const canonicalUrl=(()=>{try{const u=new URL(shellDoc.querySelector('link[rel="canonical"]')?.href||'');const path=u.pathname.replace(/index\.html$/,'');return u.origin+(path.endsWith('/')?path:path+'/');}catch(_){return null;}})();
+      const expectedCanonical=deploymentBase.origin+deploymentBase.pathname;
+      const canonicalAligned=!!canonicalUrl&&canonicalUrl===expectedCanonical;
+      const projectCountAligned=!!count&&count===expectedCount;
+      const categoryCountAligned=!!categoryCount&&categoryCount===expectedCategories;
+      const runtimeTag=shellDoc.querySelector('script[src*="site-runtime-current.js"]');
+      const runtimeSRIValid=!!runtimeTag&&/^sha384-[A-Za-z0-9+/]+=*$/.test(runtimeTag.integrity||'')&&new URL(runtimeTag.src,pageUrl).searchParams.get('v')?.startsWith('sha256-');
+      const brandMarkMatches=await (async()=>{
+        try{
+          const iconResponse=await healthTimeout(fetch(new URL(iconSvg,pageUrl).href,{cache:'no-store',credentials:'same-origin'}),7000,'brand SVG request');
+          if(!iconResponse.ok)return false;
+          const iconDoc=new DOMParser().parseFromString(await iconResponse.text(),'image/svg+xml');
+          const headerSvg=shellDoc.querySelector('.brand-mark svg'),iconRoot=iconDoc.querySelector('svg');
+          if(!headerSvg||!iconRoot||iconDoc.querySelector('parsererror'))return false;
+          const headerPaths=[...headerSvg.querySelectorAll('.brand-eye-aperture path,.brand-eye-crease')].map(node=>node.getAttribute('d'));
+          const iconPaths=[...iconRoot.querySelectorAll('path')].map(node=>node.getAttribute('d'));
+          const headerCircles=[...headerSvg.querySelectorAll('.brand-eye-aperture circle')].map(node=>['cx','cy','r'].map(key=>node.getAttribute(key)).join(':'));
+          const iconCircles=[...iconRoot.querySelectorAll('circle')].map(node=>['cx','cy','r'].map(key=>node.getAttribute(key)).join(':'));
+          return headerPaths.length===3&&headerCircles.length===2&&JSON.stringify(headerPaths)===JSON.stringify(iconPaths)&&JSON.stringify(headerCircles)===JSON.stringify(iconCircles);
+        }catch(_){return false;}
+      })();
+      const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid;
+      const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
+      const releaseAligned=publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE;
+      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.320; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
+    }catch(error){return {ok:false,detail:String(error?.message||error).slice(0,240)}}
   }
   function safeJson(value) {
     try { return JSON.stringify(value, (key, item) => typeof item === 'bigint' ? item.toString() : item, 2); }
@@ -367,6 +701,7 @@
       ...observedEventTimings,
       ...entries('event').filter(entry=>Number.isFinite(entry.duration)&&entry.duration>0).map(entry=>({
         name:String(entry.name||'event').slice(0,24),startTimeMs:Math.round(entry.startTime),durationMs:Math.round(entry.duration),
+        targetTag:String(entry.target?.tagName||entry.target?.parentElement?.tagName||'unknown').slice(0,24).toLowerCase(),targetRole:String(entry.target?.getAttribute?.('role')||'').slice(0,32),
         inputDelayMs:Number.isFinite(entry.processingStart)?Math.max(0,Math.round(entry.processingStart-entry.startTime)):null,
         processingMs:Number.isFinite(entry.processingStart)&&Number.isFinite(entry.processingEnd)?Math.max(0,Math.round(entry.processingEnd-entry.processingStart)):null,
         presentationDelayMs:Number.isFinite(entry.processingEnd)?Math.max(0,Math.round(entry.startTime+entry.duration-entry.processingEnd)):null
@@ -397,23 +732,25 @@
         dnsMs:rounded(nav.domainLookupEnd-nav.domainLookupStart), connectionMs:rounded(nav.connectEnd-nav.connectStart), tlsMs:nav.secureConnectionStart>0?rounded(nav.connectEnd-nav.secureConnectionStart):null,
         serverResponseWaitMs:rounded(nav.responseStart-nav.requestStart), responseDownloadMs:rounded(nav.responseEnd-nav.responseStart),
         domInteractiveMs:rounded(nav.domInteractive), domContentLoadedMs:rounded(nav.domContentLoadedEventEnd),
-        loadEventMs:rounded(nav.loadEventEnd), transferBytes:Number.isFinite(nav.transferSize)&&nav.transferSize>0?Math.round(nav.transferSize):null
+        loadEventMs:rounded(nav.loadEventEnd), transferBytes:Number.isFinite(nav.transferSize)&&nav.transferSize>0?Math.round(nav.transferSize):null,
+        notRestoredReasons:nav.notRestoredReasons?String(nav.notRestoredReasons).slice(0,800):null
       }:null,
       paint:{firstPaintMs:rounded(paint.find(entry=>entry.name==='first-paint')?.startTime),firstContentfulPaintMs:rounded(paint.find(entry=>entry.name==='first-contentful-paint')?.startTime)},
       webVitalsSnapshot:{
         largestContentfulPaintMs:lcp?rounded(lcp.renderTimeMs??lcp.renderTime??lcp.loadTimeMs??lcp.loadTime??lcp.startTimeMs??lcp.startTime):null,
-        largestContentfulPaintElement:lcp?{tag:String(lcp.elementTag||lcp.element?.tagName||'').slice(0,24)||null,size:Number.isFinite(lcp.size)?Math.round(lcp.size):null,url:lcp.url||safePathMaybe(lcp.url||'')}:null,
+        largestContentfulPaintElement:lcp?{tag:String(lcp.elementTag||lcp.element?.tagName||'').slice(0,24)||null,role:String(lcp.elementRole||'').slice(0,32)||null,size:Number.isFinite(lcp.size)?Math.round(lcp.size):null,url:lcp.url||safePathMaybe(lcp.url||'')}:null,
         cumulativeLayoutShift:shiftEntries.length?rounded(cls,4):null,
         layoutShiftSamples:shiftEntries.slice(-16).map(entry=>({startTimeMs:rounded(entry.startTimeMs??entry.startTime),value:rounded(entry.value,4),hadRecentInput:!!entry.hadRecentInput,sourceTags:entry.sourceTags||((entry.sources||[]).slice(0,3).map(source=>String(source.node?.nodeName||'unknown').slice(0,24)))})),
         interpretation:'Single-browser, current-navigation snapshot only. Not a field 75th-percentile Core Web Vitals assessment. INP is not inferred from a short local check.',
         guidance:{lcpGoodMs:2500,lcpPoorMs:4000,clsGood:0.1,clsPoor:0.25,inpGoodMs:200,inpPoorMs:500}
       },
       resources:{sameOriginCount:resources.length,knownTransferCount:knownTransfer.length,knownTransferBytes:knownTransfer.reduce((sum,item)=>sum+item.transferBytes,0),cacheOrTimingUnavailableCount:resources.length-knownTransfer.length,slowest:sortedSlow,largest:sortedLarge},
-      longTasks:{supported:supported.includes('longtask'),count:uniqueTasks.length,totalDurationMs:uniqueTasks.reduce((sum,item)=>sum+item.durationMs,0),longestDurationMs:uniqueTasks.reduce((max,item)=>Math.max(max,item.durationMs),0),samples:uniqueTasks.slice(-20)},
-      observedEventTiming:{supported:supported.includes('event'),sampleCount:uniqueEventSamples.length,p75DurationMs:eventP75,p75InputDelayMs:eventP75Of('inputDelayMs'),p75ProcessingMs:eventP75Of('processingMs'),p75PresentationDelayMs:eventP75Of('presentationDelayMs'),slowest:slowEvents,interpretation:'Local Event Timing sample distribution only. This is not official field INP; no event targets, selectors, form values or entered text are collected.'},
+      longTasks:{supported:supported.includes('longtask'),count:uniqueTasks.length,totalDurationMs:uniqueTasks.reduce((sum,item)=>sum+item.durationMs,0),totalBlockingTimeProxyMs:uniqueTasks.reduce((sum,item)=>sum+Math.max(0,item.durationMs-50),0),longestDurationMs:uniqueTasks.reduce((max,item)=>Math.max(max,item.durationMs),0),samples:uniqueTasks.slice(-20)},
+      observedEventTiming:{supported:supported.includes('event'),sampleCount:uniqueEventSamples.length,p75DurationMs:eventP75,p75InputDelayMs:eventP75Of('inputDelayMs'),p75ProcessingMs:eventP75Of('processingMs'),p75PresentationDelayMs:eventP75Of('presentationDelayMs'),slowest:slowEvents,interpretation:'Local Event Timing sample distribution only, not official field INP. Includes only interacted element tag/ARIA role; no element IDs, selectors, text, form values or entered content.'},
       longAnimationFrames:{supported:supported.includes('long-animation-frame'),count:observedLongAnimationFrames.length,totalBlockingMs:observedLongAnimationFrames.reduce((sum,item)=>sum+(item.blockingDurationMs||0),0),longest:observedLongAnimationFrames.slice().sort((a,b)=>b.durationMs-a.durationMs).slice(0,8)},
       appLaunchMeasures:measures.filter(item=>/project-launch|shared-assets|project-css|project-js|project-category-/.test(item.name)),
       categoryRuntime:{loaded:projects?.getLoadedCategories?.()||[],known:['operating-systems','strange-archives','web-experiments','tiny-games','digital-art','sound-motion','creative-tools']},
+      memory:(()=>{const value=performance.memory;if(!value)return null;return{jsHeapSizeLimit:Number(value.jsHeapSizeLimit)||null,totalJSHeapSize:Number(value.totalJSHeapSize)||null,usedJSHeapSize:Number(value.usedJSHeapSize)||null,usedRatio:Number(value.jsHeapSizeLimit)>0?rounded(value.usedJSHeapSize/value.jsHeapSizeLimit,4):null};})(),
       footprint:{elementCount,scriptCount:document.scripts.length,stylesheetCount:document.styleSheets.length,iframeCount:document.querySelectorAll('iframe').length,imageCount:document.images.length,canvasCount:document.querySelectorAll('canvas').length},
       observerSupport:{longtask:supported.includes('longtask'),longAnimationFrame:supported.includes('long-animation-frame'),largestContentfulPaint:supported.includes('largest-contentful-paint'),layoutShift:supported.includes('layout-shift'),event:supported.includes('event'),resource:supported.includes('resource')}
     };
@@ -438,6 +775,15 @@
     const categoryCount=Number(document.querySelector('meta[name="curioid-category-count"]')?.content)||document.querySelectorAll('.category-nav [data-category]').length||null;
     const report = {
       title:'CURIOID LOCAL HEALTH & DELIVERY REPORT',
+      storageInventory:window.__CURIOID_HEALTH_STORAGE_INVENTORY||null,
+      automaticMaintenance:window.__CURIOID_HEALTH_MAINTENANCE||null,
+      ownerActionsRemaining:[
+        'Publish the deployment ZIP to the existing GitHub Pages repository; this browser page has no repository write authorization.',
+        'Confirm rendering on physical Android and iOS devices and in a private-browsing profile.',
+        'Confirm the operating-system download/save prompt and destination-folder permissions.',
+        'Test abrupt browser-process termination and multi-hour restore/tab stability in a persistent real browser profile.',
+        'Decide whether cloud sync, sign-in, analytics or remote services are wanted.'
+      ],
       generatedAt:new Date().toISOString(),
       release:localRelease,
       runDurationMs:Number.isFinite(runDurationMs)?Math.round(runDurationMs):null,
@@ -448,7 +794,7 @@
       capabilities:{ fetch:typeof fetch==='function', webCrypto:!!crypto?.subtle, serviceWorker:!!navigator.serviceWorker, cacheStorage:!!window.caches, indexedDB:!!window.indexedDB, opfs:typeof navigator.storage?.getDirectory==='function', localStorage:(()=>{try{return !!window.localStorage;}catch(_){return false;}})(), sessionStorage:(()=>{try{return !!window.sessionStorage;}catch(_){return false;}})(), workers:typeof Worker==='function', sharedWorkers:typeof SharedWorker==='function', broadcastChannel:typeof BroadcastChannel==='function', webLocks:!!navigator.locks?.request, resizeObserver:typeof ResizeObserver==='function', intersectionObserver:typeof IntersectionObserver==='function', mutationObserver:typeof MutationObserver==='function', offscreenCanvas:typeof OffscreenCanvas==='function', compressionStream:typeof CompressionStream==='function', decompressionStream:typeof DecompressionStream==='function', fileSystemAccess:typeof showOpenFilePicker==='function', webShare:typeof navigator.share==='function', clipboard:!!navigator.clipboard?.writeText, webgpu:!!navigator.gpu, canvas:!!document.createElement('canvas').getContext('2d'), webgl:(()=>{try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(_){return false;}})(), webAudio:!!(window.AudioContext||window.webkitAudioContext), wasm:typeof WebAssembly==='object', webCodecs:typeof VideoDecoder==='function'||typeof AudioDecoder==='function' },
       runtime:{ projectCodeLoaded:!!projects, projectCount:projects?.ids?.length || projectCount || 0, osIds:projects?.ids?.filter(id=>['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'].includes(id)) || [], loadedCategories:projects?.getLoadedCategories?.()||[], activeWindows, supervisor:runtime, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null },
       serviceWorker:{ supported:!!navigator.serviceWorker, controller:navigator.serviceWorker?.controller?.scriptURL || null, registration:registration ? { scope:registration.scope, active:registration.active?.scriptURL || null, waiting:registration.waiting?.scriptURL || null, installing:registration.installing?.scriptURL || null, updateViaCache:registration.updateViaCache || null } : null },
-      delivery:{ csp:document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || null, baseUri:deploymentBase.href, referrerPolicy:document.querySelector('meta[name="referrer"]')?.content || null, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null },
+      delivery:{ csp:document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || null, baseUri:deploymentBase.href, referrerPolicy:document.querySelector('meta[name="referrer"]')?.content || null, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null, htmlInlineHandlerCount:document.querySelectorAll('*').reduce((count,node)=>count+[...node.attributes].filter(attribute=>/^on/i.test(attribute.name)).length,0), externalScriptOrigins:[...document.scripts].map(node=>{try{return new URL(node.src,location.href).origin;}catch(_){return null;}}).filter(origin=>origin&&origin!==location.origin) },
       cacheStorage:{ names:cacheNames, totalCaches:cacheNames.length, inventory:cacheInventory || null },
       storage:{ estimate:estimate ? { usageBytes:estimate.usage ?? null, quotaBytes:estimate.quota ?? null, usageDetails:estimate.usageDetails || null, usageRatio:Number.isFinite(estimate.usage)&&Number.isFinite(estimate.quota)&&estimate.quota>0?rounded(estimate.usage/estimate.quota,4):null } : null, persistent:persisted ?? null },
       performance:performanceSnapshot || collectPerformanceSnapshot(),
@@ -456,44 +802,61 @@
       checks:rows.map(row=>({label:String(row.label||''),ok:!!row.ok,warning:!!row.warning,detail:String(row.detail||'')})),
       loadedScriptTags:[...document.scripts].map(node=>({src:(()=>{try{const u=new URL(node.src);return u.origin+u.pathname;}catch(_){return null;}})(),integrity:node.integrity||null,async:!!node.async,defer:!!node.defer})).filter(node=>node.src),
       resourceTimings:(performanceSnapshot?.resources?.slowest||[]).map(item=>({...item})),
-      recentErrors:diagnosticEvents.slice(-24),
+      projectSmoke:window.__CURIOID_LAST_HEALTH_PROJECT_SMOKE||null,
+      recentErrors:diagnosticEvents.slice(-40),
       diagnosticSupport:{longTask:!!longTaskObserver,eventTiming:!!eventTimingObserver,lcp:!!lcpObserver,layoutShift:!!layoutShiftObserver,longAnimationFrame:!!longAnimationFrameObserver},
-      privacy:'Generated locally on request. Contains technical environment, same-origin asset paths without query strings, timing summaries, storage estimates and error messages. It does not include cookies, passwords, form values, localStorage contents, database records, files or project content. Nothing is uploaded automatically.'
+      privacy:'Generated locally on request. Contains technical environment, same-origin asset paths without query strings, timing summaries, interacted element tag/ARIA role only, storage metadata/estimates and error messages. It does not include cookies, passwords, element IDs/selectors, text, form values, localStorage contents, database records, file names/content or project content. Nothing is uploaded automatically.'
     };
     return report;
   }
+  let lastReportObjectUrl = null;
+  window.addEventListener('pagehide',()=>{if(lastReportObjectUrl){try{URL.revokeObjectURL(lastReportObjectUrl);}catch(_){}lastReportObjectUrl=null;}},{once:true});
   function downloadHealthReport() {
-    if (!lastHealthReport) return;
+    if (!lastHealthReport) return false;
     const lines = [
       'CURIOID HEALTH CHECK REPORT',
       '===========================',
       `Generated: ${lastHealthReport.generatedAt}`,
       `Release: ${lastHealthReport.release}`,
       `Page: ${lastHealthReport.page.url}`,
-      '',
-      'SUMMARY',
-      '-------',
+      '', 'SUMMARY', '-------',
       lastHealthReport.checks.map(row => `${row.ok ? 'PASS' : row.warning ? 'WARN' : 'FAIL'}  ${row.label}\n      ${row.detail}`).join('\n'),
-      '',
-      'FULL TECHNICAL DETAILS',
-      '----------------------',
-      safeJson(lastHealthReport),
-      '',
-      'PRIVACY',
-      lastHealthReport.privacy
+      '', 'FULL TECHNICAL DETAILS', '----------------------', safeJson(lastHealthReport),
+      '', 'PRIVACY', lastHealthReport.privacy
     ].join('\n');
-    const blob = new Blob([lines], { type:'text/plain;charset=utf-8' });
-    const objectUrl = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = objectUrl;
-    anchor.download = `CURIOID-Health-Report-${new Date().toISOString().replace(/[:.]/g,'-')}.txt`;
-    anchor.hidden = true;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+    try {
+      const blob = new Blob(['\ufeff', lines], {type:'text/plain;charset=utf-8'});
+      const objectUrl = URL.createObjectURL(blob);
+      if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} }
+      lastReportObjectUrl = objectUrl;
+      const filename = `CURIOID-Health-Report-${new Date().toISOString().replace(/[:.]/g,'-')}.txt`;
+      let anchor = healthDownloadFallback;
+      if (!anchor) {
+        anchor = document.createElement('a');
+        anchor.className = 'site-control-small-action';
+        anchor.textContent = 'Download report file';
+        anchor.hidden = true;
+        healthDownloadButton?.insertAdjacentElement('afterend', anchor);
+      }
+      anchor.href = objectUrl;
+      anchor.download = filename;
+      anchor.hidden = false;
+      anchor.setAttribute('aria-label', `Download ${filename}`);
+      anchor.setAttribute('target', '_self');
+      anchor.setAttribute('rel', 'nofollow');
+      // The button handler calls this synchronously inside the user's click.
+      // Keep the real link visible even if the browser blocks the scripted click.
+      if (navigator.userActivation?.isActive === true) anchor.click();
+      // Keep the visible fallback link usable for the entire page session.
+      // Revoke only when a newer report replaces it or this page is leaving.
+      if (healthStatus) healthStatus.textContent = 'Report prepared. The download should start; the “Download report file” link remains available if your browser blocks automatic downloads.';
+      return true;
+    } catch (error) {
+      if (healthStatus) healthStatus.textContent = `Could not prepare the report download: ${String(error?.message||error).slice(0,180)}. Try the visible download link or rerun diagnostics.`;
+      return false;
+    }
   }
-  async function runCurioidHealthCheck() {
+  async function runCurioidHealthCheck(runOptions = {}) {
     const diagnosticsStartedAt=performance.now();
     if (healthRunButton) { healthRunButton.disabled = true; healthRunButton.textContent = 'Checking…'; }
     if (healthRepairButton) healthRepairButton.disabled = true;
@@ -511,6 +874,60 @@
       }
       if (healthStatus) healthStatus.textContent = `Running local checks · ${rows.length} completed.`;
     };
+    let projectSmoke = null;
+    const maintenance = window.__CURIOID_HEALTH_MAINTENANCE = { startedAt:new Date().toISOString(), persistentStorageRequested:Boolean(runOptions.persistencePromise), projectStylesRetryAttempted:false, projectStylesRetrySucceeded:null, serviceWorkerUpdatePreflight:null, temporaryProbeCleanup:null, destructiveActions:0 };
+    const connectionForSmoke = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+    if (window.CurioidSiteDiagnostics?.loadAllProjectCategories && navigator.onLine && !connectionForSmoke?.saveData && !['slow-2g','2g'].includes(String(connectionForSmoke?.effectiveType||'').toLowerCase())) {
+      try {
+        projectSmoke = await healthTimeout(window.CurioidSiteDiagnostics.loadAllProjectCategories(), 90000, 'all-category runtime smoke test');
+      } catch (firstError) {
+        const styleStatus = window.CurioidSiteDiagnostics.getProjectStyleStatus?.();
+        if (styleStatus?.failed && window.CurioidSiteDiagnostics.retryProjectStyles) {
+          try {
+            const retried = await healthTimeout(window.CurioidSiteDiagnostics.retryProjectStyles(), 15000, 'stylesheet safe retry');
+            maintenance.projectStylesRetryAttempted = true; maintenance.projectStylesRetrySucceeded = Boolean(retried);
+            if (retried) projectSmoke = await healthTimeout(window.CurioidSiteDiagnostics.loadAllProjectCategories(), 90000, 'category runtime retry');
+            else projectSmoke = {error:String(firstError?.message||firstError).slice(0,260),retryFailed:true};
+          } catch (retryError) { projectSmoke = {error:String(retryError?.message||retryError).slice(0,260),retryFailed:true}; }
+        } else projectSmoke = {error:String(firstError?.message||firstError).slice(0,260)};
+      }
+    } else if (window.CurioidSiteDiagnostics?.loadAllProjectCategories) {
+      projectSmoke = {skipped:true,reason:!navigator.onLine?'offline':connectionForSmoke?.saveData?'Save-Data is enabled':'connection is reported as slow-2g/2g'};
+    }
+    if (projectSmoke?.results) {
+      let failedCategories = projectSmoke.results.filter(item=>!item.ok);
+      if (failedCategories.length && window.CurioidSiteDiagnostics?.loadAllProjectCategories) {
+        // One controlled retry for transient CDN/cache/network failures. Already-loaded
+        // categories are skipped by the production loader; no project windows or data
+        // are touched. This also helps the report separate transient from persistent faults.
+        maintenance.categoryRetryAttempted = true;
+        maintenance.categoryRetryFailuresFirstPass = failedCategories.map(item=>({category:item.category,error:String(item.error||'not registered').slice(0,220)}));
+        try {
+          const retry = await healthTimeout(window.CurioidSiteDiagnostics.loadAllProjectCategories(), 90000, 'failed category retry');
+          const retryByCategory = new Map((retry.results||[]).map(item=>[item.category,item]));
+          projectSmoke = {...retry, results:projectSmoke.results.map(first=>{
+            const second=retryByCategory.get(first.category);
+            if(first.ok || !second) return first;
+            return second.ok ? {...second,recoveredOnRetry:true,firstAttemptError:String(first.error||'first attempt failed').slice(0,220)}
+              : {...second,recoveredOnRetry:false,firstAttemptError:String(first.error||'first attempt failed').slice(0,220),retryError:String(second.error||'retry failed').slice(0,220)};
+          })};
+        } catch(retryError) { maintenance.categoryRetryError=String(retryError?.message||retryError).slice(0,220); }
+        failedCategories = projectSmoke.results.filter(item=>!item.ok);
+        maintenance.categoryRetryRecovered = projectSmoke.results.filter(item=>item.recoveredOnRetry).map(item=>item.category);
+        maintenance.categoryRetryFailures = failedCategories.map(item=>({category:item.category,error:String(item.error||'not registered').slice(0,220)}));
+      } else {
+        maintenance.categoryRetryAttempted = false;
+        maintenance.categoryRetryRecovered = [];
+        maintenance.categoryRetryFailures = [];
+      }
+      const registryOk = projectSmoke.registry?.ok !== false;
+      add('All seven project category runtime smoke tests',failedCategories.length===0&&registryOk
+        ? {ok:true,detail:`All ${projectSmoke.results.length} category bundles were loaded and executed through the production SRI loader; ${projectSmoke.projectCount} project IDs registered; registry audit ${registryOk?'passed':'failed'}. No project window was mounted and no user data was written.`}
+        : {ok:false,detail:`${failedCategories.length}/${projectSmoke.results.length} category bundle(s) failed: ${failedCategories.map(item=>`${item.category}: ${item.error||'registration missing'}`).join('; ')||'registry audit failed'}.`});
+    } else add('All seven project category runtime smoke tests',projectSmoke?.skipped
+      ? {ok:false,warning:true,detail:`Skipped to respect the browser's ${projectSmoke.reason}; use a normal connection and rerun for full category execution tests.`}
+      : {ok:false,warning:true,detail:projectSmoke?.error||'The shared project runtime diagnostics API is unavailable in this release.'});
+    window.__CURIOID_LAST_HEALTH_PROJECT_SMOKE = projectSmoke;
     const projects = window.CurioidProjects;
     const roomCount = document.querySelectorAll('.room-window[data-room]').length;
     const osIds = ['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'];
@@ -538,8 +955,8 @@
     const sriValue=siteRuntimeTag?.integrity||'';
     const siteRuntimeSriConfigured=Boolean(siteRuntimeTag&&/^sha384-[A-Za-z0-9+/]+=*$/.test(sriValue)&&sriValue===siteRuntimeDigest&&siteRuntimeTag.crossOrigin==='anonymous'&&siteRuntimePreload&&siteRuntimePreload.integrity===sriValue&&siteRuntimePreload.crossOrigin==='anonymous'&&declaredRuntimeHash===siteRuntimeHash);
     const runtimeAssetDeclaration=siteRuntimeSource.match(/file:\s*["']projects-core\.js["'][^}]*integrity:\s*["'](sha384-[^"']+)["']/);
-    const expectedProjectRuntimeSri='sha384-6I7hY2X7ZxZ+KD9h2rwRuRuvIGSj8+1BvzRnz4QZZJPxIftPc1psjbQ42a1y9h+f';
-    const sriConfigured=siteRuntimeSriConfigured&&siteRuntimeSource.includes('element.integrity = integrity')&&siteRuntimeSource.includes('element.crossOrigin = "anonymous"')&&runtimeAssetDeclaration?.[1]===expectedProjectRuntimeSri;
+    const runtimeCoreHashDeclaration = siteRuntimeSource.match(/file:\s*["']projects-core\.js["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1] || '';
+    const sriConfigured=siteRuntimeSriConfigured&&siteRuntimeSource.includes('element.integrity = integrity')&&siteRuntimeSource.includes('element.crossOrigin = "anonymous"')&&Boolean(runtimeCoreHashDeclaration&&/^[a-f0-9]{64}$/i.test(runtimeCoreHashDeclaration)&&runtimeAssetDeclaration?.[1]);
     add('Site and project runtime SRI policy',sriConfigured?{ok:true,detail:'The published runtime bytes match both their SHA-384 script integrity and SHA-256 cache-busting URL; the project loader also applies release SRI and anonymous CORS.'}:{ok:false,detail:`The site runtime integrity contract is missing or mismatched. Tag SHA-384: ${sriValue||'missing'}; downloaded SHA-384: ${siteRuntimeDigest||'unavailable'}; URL SHA-256: ${declaredRuntimeHash||'missing'}; actual SHA-256: ${siteRuntimeHash||'unavailable'}.`});
     add('OS boot contracts', projects ? (osBootReady ? {ok:true,detail:'All six OS project IDs are catalogued; their category modules load on demand.'} : {ok:false,detail:`One or more expected OS modules are missing. Found: ${(projects.ids||[]).filter(id=>osIds.includes(id)).join(', ')||'none'}.`}) : {ok:false,warning:true,detail:'Not evaluated because the shared project core has not initialized in this tab.'});
     let registryAudit = null;
@@ -559,46 +976,102 @@
     add('Cross-tab backup coordination', navigator.locks?.request ? {ok:true,detail:'The Web Locks API is available. Current-version CURIOID tabs serialize full-system backup and restore operations.'} : {ok:false,warning:true,detail:'This browser does not expose Web Locks. Close other CURIOID tabs before exporting or restoring a full-system backup.'});
     const runtime = window.CurioidRuntimeSupervisor?.getStatus?.();
     add('Application lifecycle', runtime ? (runtime.cleanupFailures ? {ok:false,detail:`${runtime.activeScopes} active scope(s); ${runtime.cleanupFailures} cleanup issue(s) recorded this session.`} : {ok:true,detail:`${runtime.activeScopes} active scope(s), ${runtime.activeResources} tracked resource(s), no cleanup errors recorded.`}) : {ok:false,warning:true,detail:'Runtime Supervisor is not available yet.'});
-    const registration = await (navigator.serviceWorker?.getRegistration?.().catch(()=>null) || Promise.resolve(null));
+    let workerUpdatePreflight = null;
+    try {
+      if (window.CurioidSiteDiagnostics?.prepareServiceWorkerUpdate) {
+        workerUpdatePreflight = await healthTimeout(window.CurioidSiteDiagnostics.prepareServiceWorkerUpdate(), 20000, 'safe service-worker update preflight');
+      }
+    } catch (error) { workerUpdatePreflight = {error:String(error?.message||error).slice(0,220)}; }
+    maintenance.serviceWorkerUpdatePreflight = workerUpdatePreflight ? {error:workerUpdatePreflight.error||null,waiting:Boolean(workerUpdatePreflight.waiting),activated:Boolean(workerUpdatePreflight.activated),controller:Boolean(workerUpdatePreflight.controller)} : null;
+    const registration = await (navigator.serviceWorker?.getRegistration?.(deploymentBase.pathname).catch(()=>null) || Promise.resolve(null));
     const cacheNames = await (window.caches?.keys?.().catch(()=>[]) || Promise.resolve([]));
     const cacheInventory = await collectCacheInventory(cacheNames);
     const hasCache = cacheNames.some(name=>name.includes('curioid-shell'));
-    add('Service-worker registration', !navigator.serviceWorker ? {ok:false,warning:true,detail:'Service workers are unavailable in this browser.'} : registration?.active ? {ok:true,detail:`Active: ${registration.active.scriptURL}; scope: ${registration.scope}; waiting update: ${Boolean(registration.waiting)}; controller: ${Boolean(navigator.serviceWorker.controller)}.`} : {ok:false,warning:true,detail:'No active CURIOID service worker is registered for this scope.'});
-    add('Offline cache presence', hasCache ? {ok:true,detail:`${cacheNames.filter(name=>name.includes('curioid-shell')).length} CURIOID shell cache(s) found: ${cacheNames.filter(name=>name.includes('curioid-shell')).join(', ')}.`} : {ok:false,warning:true,detail:'No CURIOID shell cache found yet. It is created after the service worker installs successfully.'});
+    const expectedCacheName = `curioid-shell:${encodeURIComponent(deploymentBase.pathname)}:${EXPECTED_RELEASE}`;
+    const hasCurrentCache = cacheNames.includes(expectedCacheName);
+    const isCurrentWorkerUrl = raw => { try { const url=raw?new URL(raw):null;return Boolean(url&&url.pathname.endsWith('/service-worker-current.js')&&url.searchParams.get('release')===EXPECTED_RELEASE); } catch(_) { return false; } };
+    const currentWorkerActive = isCurrentWorkerUrl(registration?.active?.scriptURL);
+    const currentWorkerControlsPage = isCurrentWorkerUrl(navigator.serviceWorker?.controller?.scriptURL);
+    const workerScopeMatches = (()=>{try{return Boolean(registration&&new URL(registration.scope).origin===deploymentBase.origin&&new URL(registration.scope).pathname===deploymentBase.pathname);}catch(_){return false;}})();
+    maintenance.currentWorkerActive = currentWorkerActive;
+    maintenance.currentWorkerControlsPage = currentWorkerControlsPage;
+    maintenance.workerScopeMatches = workerScopeMatches;
+    add('Service-worker registration', !navigator.serviceWorker ? {ok:false,warning:true,detail:'Service workers are unavailable in this browser.'}
+      : currentWorkerActive && currentWorkerControlsPage && workerScopeMatches
+        ? {ok:true,detail:`Current ${EXPECTED_RELEASE} worker is active and controls this page: ${registration.active.scriptURL}; exact scope ${registration.scope}; waiting update: ${Boolean(registration.waiting)}.`}
+        : currentWorkerActive && !currentWorkerControlsPage
+          ? {ok:false,warning:true,detail:`The ${EXPECTED_RELEASE} worker is active, but this page is still controlled by ${navigator.serviceWorker.controller?.scriptURL||'no service worker'}. Reload this tab after any open work is saved so the page and worker use the same release.`}
+          : registration?.active
+            ? {ok:false,warning:true,detail:`An older or incorrectly scoped worker is active: ${registration.active.scriptURL}; controller: ${navigator.serviceWorker.controller?.scriptURL||'none'}; scope matches: ${workerScopeMatches}. Use Refresh service-worker registration to replace it with ${EXPECTED_RELEASE}. Saved data will not be cleared.`}
+            : {ok:false,warning:true,detail:'No active CURIOID service worker is registered for this exact deployment scope.'});
+    add('Automatic service-worker update preflight', workerUpdatePreflight?.error
+      ? {ok:false,warning:true,detail:`Could not preinstall the current worker safely: ${workerUpdatePreflight.error}`}
+      : workerUpdatePreflight
+        ? {ok:true,detail:`Update check completed; waiting=${Boolean(workerUpdatePreflight.waiting)}; activated=${Boolean(workerUpdatePreflight.activated)}; no update was force-activated during diagnostics. ${workerUpdatePreflight.waiting?'Use the separate Refresh control after reviewing the report to activate it safely.':'No new worker is waiting.'}`}
+        : {ok:false,warning:true,detail:'Automatic service-worker update preflight is not exposed in this runtime.'});
+    add('Offline cache presence', hasCurrentCache ? {ok:true,detail:`Current ${EXPECTED_RELEASE} shell cache is present: ${expectedCacheName}.`} : {ok:false,detail:`The current ${EXPECTED_RELEASE} shell cache is missing. Found: ${cacheNames.filter(name=>name.includes('curioid-shell')).join(', ')||'no CURIOID shell cache'}. The current worker may have failed installation or an older controller is still active.`});
     add('Offline cache inventory',cacheInventory.available?{ok:true,detail:`${cacheInventory.totalCaches} browser cache(s), ${cacheInventory.totalEntries} cached request(s) inventoried. Names and counts only; no cached content was opened or changed.`}:{ok:false,warning:true,detail:'Cache Storage inventory is unavailable.'});
-    const releaseAssets = [
-      ['Shared project core','projects-core.js','6d329993525c76ab76efb063d4785ad3942fcb37d3893e53a538719555780cb8','js'],
-      ['Project stylesheet','projects.css','bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89','css'],
-      ['Operating Systems category bundle','projects-category-operating-systems.js','907e64ad559cdc473d55adf80ab136d72cd40198c9f39878334d7e5485f4e368','js'],
-      ['Strange Archives category bundle','projects-category-strange-archives.js','0952c44a86591986a0743eea295fbbd5cc84a4564208aa4246ade1ea230e52e9','js'],
-      ['Web Experiments category bundle','projects-category-web-experiments.js','f266fc8b3cd40802f1dc0fa3c1aef706611cbe03571ea2d62deef81110b04d9f','js'],
-      ['Tiny Games category bundle','projects-category-tiny-games.js','3d26c8aad4bf8d3b31253ef06d05f6afa5e941b08d2c1b2fc66a99ccb399d59e','js'],
-      ['Digital Art category bundle','projects-category-digital-art.js','5664e5f0f2b600c7ee7457dd58aca3366f458cf8ac3c059971c23bf93a161dd0','js'],
-      ['Sound Motion category bundle','projects-category-sound-motion.js','39ce4863c12e0cd56e3fa1355c7f0830b1ee04a8bf9ac7650fa2d40077951bf2','js'],
-      ['Creative Tools category bundle','projects-category-creative-tools.js','8eba29d095469c2b98b95b2d144fd553a1aa05c1dc70f61c23fd2c077dd634a5','js'],
-      ['Music & Audio apps page','music-audio-apps.html','0bb0dcec33dbed8b6f15072a4a9cf586a7a141b61a6a6e68bbe16904a7761faa','html'],
-      ['Applications & Tools apps page','applications-tools-apps.html','87fb4e2477a8380aa728e21b0b034995dc558da8e4f7aeb8f31a64bf64bb4105','html'],
-      ['Vocal Lexicon asset','vocal-lexicon.js','1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a','js'],
-      ['Curioids page','curioids.html','a27c77fe230698927dedcc49d6d3fc530d8171c38c8931fd5bef2a644bd3b3d3','html'],
-      ['PWA manifest','manifest.webmanifest','92b55c1c8faa99121bd4ff79919d52cd48adb2c17353154abf428016f184846f','manifest'],
-      ['Brand SVG icon','curioid-icon.svg','d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78','svg'],
-      ['192px app icon','curioid-icon-192.png','32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887','png'],
-      ['512px app icon','curioid-icon-512.png','f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086','png'],
-      ['Social preview image','social-preview.png','562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809','png'],
-    ];
-        const releaseResults = await Promise.all(releaseAssets.map(([label,file,hash,kind]) =>
-      probeReleaseAsset(file, hash, kind).then(result => ({label,file,result}))
-    ));
+    let releaseManifest = null;
+    try {
+      releaseManifest = await fetchReleaseManifest();
+      maintenance.releaseManifest = {valid:true,release:releaseManifest.release,assetCount:releaseManifest.count,manifestUrl:deploymentBase.origin+deploymentBase.pathname+'service-worker-current.js'};
+      const healthHashFromManifest = releaseManifest.manifest['health-check.js'];
+      add('Published deployment manifest', healthHashFromManifest === expectedHealthHash
+        ? {ok:true,detail:`${releaseManifest.release} worker manifest is valid; ${releaseManifest.count} assets have 64-character SHA-256 declarations; Health Check module hash matches its loader.`}
+        : {ok:false,detail:`The worker manifest has ${releaseManifest.count} asset(s), but its Health Check hash ${healthHashFromManifest||'is missing'} does not match the page loader ${expectedHealthHash||'declaration missing'}.`});
+    } catch (error) {
+      maintenance.releaseManifest = {valid:false,error:String(error?.message||error).slice(0,260)};
+      add('Published deployment manifest',{ok:false,detail:String(error?.message||error).slice(0,260)});
+    }
+    const shellCacheAudit = hasCurrentCache && releaseManifest ? await auditCurrentShellCache(expectedCacheName,releaseManifest.manifest) : null;
+    maintenance.offlineShellCacheAudit = shellCacheAudit ? {ok:shellCacheAudit.ok,verified:shellCacheAudit.verified||[],missing:shellCacheAudit.missing||[],criticalOfflineAssets:shellCacheAudit.criticalOfflineAssets??null,criticalOfflineExpected:shellCacheAudit.criticalOfflineExpected??null} : {available:false};
+    add('Offline shell cache completeness',shellCacheAudit ? (shellCacheAudit.ok?{ok:true,detail:shellCacheAudit.detail}:{ok:false,detail:shellCacheAudit.detail}) : {ok:false,warning:true,detail:'Shell cache verification is unavailable until the current cache and release manifest are present.'});
+    const releaseAssets = releaseManifest ? Object.entries(releaseManifest.manifest)
+      .filter(([file]) => file !== 'index.html')
+      .sort(([a],[b]) => a.localeCompare(b))
+      .map(([file,hash]) => ({label:labelForAsset(file),file,hash,kind:expectedKindForAsset(file)})) : [];
+    const releaseResults = await mapWithConcurrency(releaseAssets, 4, async asset => ({
+      ...asset, result:await probeReleaseAsset(asset.file, asset.hash, asset.kind)
+    }));
     for (const {label,file,result} of releaseResults) {
       assetMeta.push(result.meta || {file,url:new URL(file,deploymentBase).href,error:result.detail});
       add(label, result);
     }
+    maintenance.releaseAssetAudit = {checked:releaseResults.length,failed:releaseResults.filter(item=>!item.result.ok).map(item=>({file:item.file,detail:String(item.result.detail||'').slice(0,220)})),edgeTransformed:releaseResults.filter(item=>item.result.warning&&item.result.meta&&!item.result.meta.hashMatches&&item.result.ok).map(item=>item.file)};
+    const sinkTotals={innerHTML:0,outerHTML:0,insertAdjacentHTML:0,documentWrite:0,dynamicEval:0,srcdoc:0,inlineScriptBlocks:0,inlineEventHandlers:0,javascriptUrls:0};
+    for(const item of assetMeta) if(item.securityScan) for(const key of Object.keys(sinkTotals)) sinkTotals[key]+=Number(item.securityScan[key])||0;
+    const sinkTotal=Object.values(sinkTotals).reduce((sum,value)=>sum+value,0);
+    maintenance.staticSecuritySinkInventory = sinkTotals;
+    add('Static HTML/JavaScript security-sink inventory',sinkTotal===0
+      ? {ok:true,detail:'No common dynamic HTML/script sink patterns, inline event handlers, or javascript: URLs were found in the HTML and JavaScript assets scanned.'}
+      : {ok:false,warning:true,detail:`Static inventory across external JS and inline HTML scripts/attributes (not a vulnerability verdict): ${JSON.stringify(sinkTotals)}. Constant/template-controlled and sanitized uses may be safe; source review is needed before changing any sink.`});
+    const coreAssetMeta = assetMeta.find(item=>item.file==='projects-core.js');
+    const runtimeCoreHash = siteRuntimeSource.match(/file:\s*["']projects-core\.js["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1] || '';
+    const runtimeCoreSri = siteRuntimeSource.match(/file:\s*["']projects-core\.js["'][^}]*integrity:\s*["'](sha384-[^"']+)["']/)?.[1] || '';
+    const coreMapMatches = Boolean(coreAssetMeta && runtimeCoreHash && runtimeCoreSri && runtimeCoreHash===releaseManifest?.manifest?.['projects-core.js'] && coreAssetMeta.hashMatches && coreAssetMeta.actualSha384===runtimeCoreSri);
+    const categoryBlock = siteRuntimeSource.match(/const PROJECT_CATEGORY_ASSETS = Object\.freeze\((\{[\s\S]*?\})\);/);
+    let categoryAssetMap = null, categoryMapIssues = [];
     try {
-      const swUrl = new URL('service-worker.js', deploymentBase);
+      const descriptorPattern=/["']([^"']+)["']\s*:\s*\{\s*file:\s*["']([^"']+)["']\s*,\s*hash:\s*["']([a-f0-9]{64})["']\s*,\s*integrity:\s*["'](sha384-[^"']+)["']\s*\}/gi;
+      categoryAssetMap={}; let descriptorMatch;
+      while((descriptorMatch=descriptorPattern.exec(categoryBlock?.[1]||''))) categoryAssetMap[descriptorMatch[1]]={file:descriptorMatch[2],hash:descriptorMatch[3],integrity:descriptorMatch[4]};
+      if(Object.keys(categoryAssetMap).length!==7) throw new Error(`expected seven category descriptors, found ${Object.keys(categoryAssetMap).length}`);
+    } catch(error) { categoryAssetMap=null; categoryMapIssues.push(`category descriptor parse: ${String(error?.message||error).slice(0,100)}`); }
+    if (categoryAssetMap && releaseManifest) {
+      for (const [category,descriptor] of Object.entries(categoryAssetMap)) {
+        const meta=assetMeta.find(item=>item.file===descriptor.file);
+        if (!meta || descriptor.hash!==releaseManifest.manifest[descriptor.file] || !meta.hashMatches || descriptor.integrity!==meta.actualSha384) categoryMapIssues.push(category);
+      }
+    } else categoryMapIssues.push('category descriptor map missing or unparseable');
+    add('Runtime-to-release asset map',coreMapMatches&&categoryMapIssues.length===0
+      ? {ok:true,detail:`projects-core.js SHA-256/SHA-384 matches the loader; ${Object.keys(categoryAssetMap||{}).length} category descriptors match the worker manifest and downloaded bytes.`}
+      : {ok:false,detail:`Shared core SRI/hash ${coreMapMatches?'match':'MISMATCH'}; category descriptor problems: ${categoryMapIssues.join(', ')||'none'}.`});
+    try {
+      const swUrl = new URL(`service-worker-current.js?release=${EXPECTED_RELEASE}`, deploymentBase);
       const swResponse = await healthTimeout(fetch(swUrl.href, {cache:'no-store',credentials:'same-origin'}), 8000, 'Service-worker file request');
       const swText = swResponse.ok ? await swResponse.text() : '';
-      const swValid = swResponse.ok && swText.includes('CURIOID v1.317 offline shell') && swText.includes('CACHE_NAME');
-      add('Service-worker file delivery', swValid ? {ok:true,detail:`HTTP ${swResponse.status}; release marker v1.317 found; ${swText.length.toLocaleString()} characters.`} : {ok:false,detail:`HTTP ${swResponse.status}; release marker missing or response was not a valid v1.317 service worker; ${swResponse.headers.get('content-type')||'content type not supplied'}.`});
+      const swValid = swResponse.ok && new RegExp('const\\s+RELEASE_ID\\s*=\\s*[\"\\\']'+EXPECTED_RELEASE.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\"\\\']').test(swText) && swText.includes('CACHE_NAME');
+      add('Service-worker file delivery', swValid ? {ok:true,detail:`HTTP ${swResponse.status}; release marker ${EXPECTED_RELEASE} found; ${swText.length.toLocaleString()} characters.`} : {ok:false,detail:`HTTP ${swResponse.status}; release marker missing or response was not a valid ${EXPECTED_RELEASE} service worker; ${swResponse.headers.get('content-type')||'content type not supplied'}.`});
     } catch(error) { add('Service-worker file delivery',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
     const shellIntegrity=await probePublishedShell();
     if(shellIntegrity.meta)assetMeta.push(shellIntegrity.meta);
@@ -626,21 +1099,31 @@
     const quota = Number.isFinite(estimate?.quota) ? formatStorageSize(estimate.quota) : 'unavailable';
     const usageRatio=Number.isFinite(estimate?.usage)&&Number.isFinite(estimate?.quota)&&estimate.quota>0?estimate.usage/estimate.quota:null;
     add('Storage quota estimate', estimate ? usageRatio!==null&&usageRatio>=0.9?{ok:false,warning:true,detail:`Origin-wide usage is about ${Math.round(usageRatio*100)}% (${usage} of ${quota}). This is a high-pressure warning, not an exact browser eviction threshold.`}:usageRatio!==null&&usageRatio>=0.8?{ok:false,warning:true,detail:`Origin-wide usage is about ${Math.round(usageRatio*100)}% (${usage} of ${quota}). Review backups and unused temporary data before adding large files.`}:{ok:true,detail:`Origin-wide estimate: ${usage} used of ${quota}${usageRatio!==null?` (${Math.round(usageRatio*100)}%)`:''}. This is not per-app accounting.`} : {ok:false,warning:true,detail:'Browser storage estimate is unavailable.'});
+    const persistRequestResult = runOptions.persistencePromise ? await healthTimeout(runOptions.persistencePromise, 6000, 'persistent storage protection request').catch(()=>null) : null;
+    maintenance.persistentStorageRequestResult = persistRequestResult;
     const persisted = await navigator.storage?.persisted?.().catch(()=>null);
-    add('Persistent storage protection', persisted === true ? {ok:true,detail:'The browser reports persistent storage protection is enabled for this origin.'} : persisted === false ? {ok:false,warning:true,detail:'Persistent storage protection is not enabled. Browser cleanup policies may remove local data.'} : {ok:false,warning:true,detail:'This browser does not expose the persistent-storage status.'});
+    add('Persistent storage protection', persisted === true ? {ok:true,detail:persistRequestResult===true?'Persistent storage protection is enabled; the one-click maintenance request was granted or protection was already active.':'The browser reports persistent storage protection is enabled for this origin.'} : persisted === false ? {ok:false,warning:true,detail:persistRequestResult===false?'The browser declined the non-destructive persistent-storage request. Existing data was not changed; consider regular exports.':'Persistent storage is not enabled. The one-click request was unavailable, deferred or declined; browser cleanup policies may still remove local data.'} : {ok:false,warning:true,detail:'This browser does not expose persistent-storage status. Existing data was not changed.'});
     const localStorageResult = await (async()=>{try{return await probeWebStorage(window.localStorage,'localStorage');}catch(error){return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)};}})();
     const sessionStorageResult = await (async()=>{try{return await probeWebStorage(window.sessionStorage,'sessionStorage');}catch(error){return {ok:false,warning:true,detail:String(error?.message||error).slice(0,220)};}})();
     add('Local storage', localStorageResult);
     add('Session storage', sessionStorageResult);
-    const [idb,opfs,cacheProbe,workerProbe] = await Promise.all([probeTemporaryIndexedDB(),probeOpfs(),probeCacheStorage(),probeWorker()]);
-    add('IndexedDB read/write',idb); add('OPFS read/write',opfs); add('Cache Storage read/write',cacheProbe); add('Web Worker execution',workerProbe);
+    const [idb,opfs,cacheProbe,workerProbe,idbRollback,cryptoProbe,compressionProbe,broadcastProbe,wasmProbe] = await Promise.all([
+      probeTemporaryIndexedDB(),probeOpfs(),probeCacheStorage(),probeWorker(),probeIndexedDBRollback(),probeCryptoCanary(),probeCompressionCanary(),probeBroadcastChannel(),probeWasmExecution()
+    ]);
+    add('IndexedDB read/write',idb); add('OPFS staged write/read/remove',opfs); add('Cache Storage read/write',cacheProbe); add('Web Worker execution',workerProbe);
+    add('IndexedDB transaction rollback canary',idbRollback); add('Web Crypto known-answer test',cryptoProbe); add('Compression round-trip',compressionProbe); add('BroadcastChannel message round-trip',broadcastProbe); add('WebAssembly compile/instantiate',wasmProbe);
+    const storageInventory=await discoverStorageInventory();
+    window.__CURIOID_HEALTH_STORAGE_INVENTORY=storageInventory;
+    add('Origin storage inventory coverage',storageInventory.indexedDB.supported||storageInventory.opfs.supported
+      ? {ok:true,detail:`Read-only metadata inventory: ${storageInventory.indexedDB.databaseCount??'unknown'} IndexedDB database(s); ${storageInventory.opfs.fileCount} top-level OPFS file(s), ${storageInventory.opfs.directoryCount} directory(ies), ${formatStorageSize(storageInventory.opfs.totalBytes)}; localStorage ${storageInventory.webStorage.localStorageKeys??'unavailable'} key(s), sessionStorage ${storageInventory.webStorage.sessionStorageKeys??'unavailable'} key(s). User values and file contents were not read.`}
+      : {ok:false,warning:true,detail:'Browser does not expose read-only database or OPFS inventory APIs.'});
     const canvas = document.createElement('canvas');
     add('Canvas 2D rendering', canvas.getContext('2d') ? {ok:true,detail:'Canvas 2D context is available.'} : {ok:false,warning:true,detail:'Canvas 2D is unavailable.'});
     let webgl = false;
     try { const glCanvas=document.createElement('canvas'); const gl=glCanvas.getContext('webgl2')||glCanvas.getContext('webgl'); webgl=!!gl; gl?.getExtension('WEBGL_lose_context')?.loseContext(); } catch (_) {}
     add('WebGL graphics',webgl ? {ok:true,detail:'WebGL context creation succeeded.'} : {ok:false,warning:true,detail:'WebGL is unavailable or disabled. Some visual projects may use 2D fallbacks.'});
     add('Web Audio', (window.AudioContext||window.webkitAudioContext) ? {ok:true,detail:'Web Audio API is available; no audio context was started by this probe.'} : {ok:false,warning:true,detail:'Web Audio API is unavailable.'});
-    add('WebAssembly', typeof WebAssembly==='object' ? {ok:true,detail:'WebAssembly is available.'} : {ok:false,warning:true,detail:'WebAssembly is unavailable.'});
+    add('WebAssembly capability', typeof WebAssembly==='object' ? {ok:true,detail:'WebAssembly API is available; execution is validated separately by the minimal compile/instantiate canary.'} : {ok:false,warning:true,detail:'WebAssembly is unavailable.'});
     const csp = document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || '';
     add('Content Security Policy', csp && csp.includes("object-src 'none'") && csp.includes("base-uri 'none'") && csp.includes("script-src 'self'") && !csp.includes("'unsafe-eval'") ? {ok:true,detail:'A restrictive meta CSP is present; object-src, base-uri and script execution are constrained.'} : {ok:false,warning:true,detail:'The expected restrictive Content-Security-Policy was not found or has been weakened.'});
     const manifestResponse = await (async()=>{try{return await healthTimeout(fetch(new URL('manifest.webmanifest',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),6000,'PWA manifest');}catch(error){return {ok:false,error};}})();
@@ -681,7 +1164,8 @@
     const fcp = performanceSnapshot.paint.firstContentfulPaintMs;
     const lcp = performanceSnapshot.webVitalsSnapshot.largestContentfulPaintMs;
     const cls = performanceSnapshot.webVitalsSnapshot.cumulativeLayoutShift;
-    const vitalsParts = [`FCP ${fcp===null?'not exposed':`${fcp} ms`}`,`LCP ${lcp===null?'not exposed':`${lcp} ms`}`,`CLS ${cls===null?'not exposed':cls}`];
+    const lcpElement=performanceSnapshot.webVitalsSnapshot.largestContentfulPaintElement;
+    const vitalsParts = [`FCP ${fcp===null?'not exposed':`${fcp} ms`}`,`LCP ${lcp===null?'not exposed':`${lcp} ms`}`,`CLS ${cls===null?'not exposed':cls}`,...(lcpElement?.tag?[`LCP candidate ${lcpElement.tag}${lcpElement.size?` ${lcpElement.size.toLocaleString()} px²`:''}${lcpElement.url?` ${lcpElement.url}`:''}`]:[])];
     const lcpPoor = lcp!==null && lcp>4000;
     const clsPoor = cls!==null && cls>0.25;
     const lcpWatch = lcp!==null && lcp>2500;
@@ -689,7 +1173,7 @@
     const vitalsMissing = lcp===null || cls===null;
     add('Core Web Vitals snapshot',lcpPoor||clsPoor?{ok:false,detail:`${vitalsParts.join(' · ')}. Snapshot indicates a slow LCP or elevated layout shift.`}:lcpWatch||clsWatch?{ok:false,warning:true,detail:`${vitalsParts.join(' · ')}. One or more local snapshots are above the recommended good range.`}:vitalsMissing?{ok:false,warning:true,detail:`${vitalsParts.join(' · ')}. Some browsers do not expose every metric or may not have emitted an LCP/layout-shift entry yet.`}:{ok:true,detail:`${vitalsParts.join(' · ')}. Local navigation snapshot only, not field percentile data.`});
     const longTask = performanceSnapshot.longTasks;
-    add('Main-thread long tasks',longTask.supported?(longTask.count?{ok:false,warning:true,detail:`${longTask.count} long task(s) of 50 ms or more observed; longest ${longTask.longestDurationMs} ms; sampled total ${longTask.totalDurationMs} ms.`}:{ok:true,detail:'Long-task observation is supported; no long tasks of 50 ms or more were observed in the available timeline.'}):{ok:false,warning:true,detail:'This browser does not expose Long Task Timing. Absence of this API is not a failure.'});
+    add('Main-thread long tasks',longTask.supported?(longTask.count?{ok:false,warning:true,detail:`${longTask.count} long task(s) of 50 ms or more observed; longest ${longTask.longestDurationMs} ms; sampled total ${longTask.totalDurationMs} ms; blocking-time proxy ${longTask.totalBlockingTimeProxyMs} ms (sum of max(duration−50 ms, 0), not Lighthouse TBT).`}:{ok:true,detail:'Long-task observation is supported; no long tasks of 50 ms or more were observed in the available timeline.'}):{ok:false,warning:true,detail:'This browser does not expose Long Task Timing. Absence of this API is not a failure.'});
     const animationFrames=performanceSnapshot.longAnimationFrames;
     add('Long animation frame diagnostics',animationFrames.supported?(animationFrames.count?{ok:false,warning:true,detail:`${animationFrames.count} long animation frame(s); total blocking ${animationFrames.totalBlockingMs} ms; longest frames: ${animationFrames.longest.map(item=>`${item.durationMs} ms (${item.blockingDurationMs} ms blocking, ${item.scriptCount} script(s))`).join('; ')}.`}:{ok:true,detail:'Long Animation Frame Timing is supported; no long animation frames were recorded in the observation window.'}):{ok:false,warning:true,detail:'Long Animation Frame Timing is not exposed in this browser. The standard Long Task and Event Timing samples remain available where supported.'});
     const interactionTiming=performanceSnapshot.observedEventTiming;
@@ -713,10 +1197,41 @@
       } catch(error) { add('Per-tool storage inventory',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
     } else add('Per-tool storage inventory',{ok:false,warning:true,detail:'Open a CURIOID project once to load the project runtime, then run diagnostics again.'});
     try {
-      const backups=await healthTimeout(projects?.inspectBackupArtifacts?.()||Promise.resolve({}),12000,'backup inventory');
+      const backups=await healthTimeout(projects?.inspectBackupArtifacts?.()||Promise.resolve({}),20000,'backup inventory');
       add('Backup recoverability',backups?.verified>0&&!backups.warning?{ok:true,detail:backups.detail}:{ok:false,warning:true,detail:backups?.detail||'No verified backup was found in this browser.'});
     } catch(error) { add('Backup recoverability',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
-    add('Browser connectivity',navigator.onLine?{ok:true,detail:'The browser currently reports an online connection.'}:{ok:false,warning:true,detail:'The browser currently reports offline status.'});
+    const supervisorCanary = probeRuntimeSupervisor();
+    add('Runtime Supervisor disposal canary',supervisorCanary);
+    const lockCanary = await probeWebLocks();
+    add('Web Locks serialization canary',lockCanary);
+    const downloadCanary = await probeDownloadCanary();
+    add('Report/download preparation canary',downloadCanary);
+    const brokenImages = [...document.images].filter(image=>image.complete&&image.naturalWidth===0&&image.currentSrc);
+    const brokenStylesheets = [...document.querySelectorAll('link[rel="stylesheet"]')].filter(link=>link.href&&!link.sheet);
+    add('Live document resource health',brokenImages.length||brokenStylesheets.length
+      ? {ok:false,warning:true,detail:`${brokenImages.length} broken image(s), ${brokenStylesheets.length} unloaded linked stylesheet(s). A stylesheet inserted as a verified <style> node is checked separately.`}
+      : {ok:true,detail:`${document.images.length} image element(s) and ${document.querySelectorAll('link[rel="stylesheet"]').length} linked stylesheet(s) checked; no completed broken images or missing linked stylesheets.`});
+    const styleStatus = window.CurioidSiteDiagnostics?.getProjectStyleStatus?.() || null;
+    const activeProjectStyle = document.querySelector('[data-curioid-project-css][data-loaded="true"]');
+    add('Project stylesheet applied in the live document',activeProjectStyle?.sheet
+      ? {ok:true,detail:`Verified project style node is present${activeProjectStyle.sheet.cssRules?`; ${activeProjectStyle.sheet.cssRules.length.toLocaleString()} CSS rule(s) are active`:''}.`}
+      : {ok:false,warning:true,detail:styleStatus?.error||'The verified project stylesheet is not currently applied. Open a project or rerun the diagnostic after its style loader completes.'});
+    const cspEvents = diagnosticEvents.filter(item=>item.type==='csp-violation');
+    const resourceErrors = diagnosticEvents.filter(item=>item.type==='resource-error');
+    add('Observed CSP and resource-load failures',cspEvents.length||resourceErrors.length
+      ? {ok:false,warning:true,detail:`${cspEvents.length} CSP violation(s), ${resourceErrors.length} resource load error(s) observed since Health Check initialized. Recent events are included in the report.`}
+      : {ok:true,detail:'No CSP violations or captured resource-load errors have been observed since Health Check initialized. This is a session-local observation window.'});
+    const navigationEntry = performance.getEntriesByType('navigation')[0];
+    const notRestored = navigationEntry?.notRestoredReasons || null;
+    add('Back/forward cache and page lifecycle',notRestored
+      ? {ok:false,warning:true,detail:`The browser exposes notRestoredReasons for this navigation: ${safeJson(notRestored).slice(0,360)}.`}
+      : {ok:true,detail:'No browser-provided BFCache exclusion reasons are exposed for this navigation. Actual browser shutdown/restart and long-running tab behavior still require a real browser session.'});
+    const manualOnly = 'Now automated by this button: all seven category bundles through the production SRI loader; current worker update preflight; shell-cache completeness; release/SRI/CSP checks; disposable IndexedDB transaction rollback; OPFS staged commit/cleanup; storage/API canaries; runtime-scope cleanup; static HTML sink inventory; and temporary probe cleanup. Still owner-dependent: publish this ZIP to GitHub Pages; confirm physical iOS/Android and private-browser rendering; verify the OS save prompt/destination permissions; test true process termination and multi-hour restore/tab stability; decide about cloud sync/sign-in/analytics.';
+    add('Remaining owner-dependent verification',{ok:true,detail:manualOnly});
+    const cleanup = await cleanupOwnedHealthProbes();
+    maintenance.temporaryProbeCleanup = cleanup; maintenance.completedAt = new Date().toISOString();
+    add('Automatic safe probe cleanup',{ok:true,detail:`Removed ${cleanup.caches} abandoned diagnostic Cache Storage probe(s), ${cleanup.databases} abandoned diagnostic IndexedDB probe(s), and ${cleanup.opfsFiles} abandoned diagnostic OPFS probe file(s). Only reserved Health Check temporary names were eligible; user data was not touched.`});
+    add('Browser connectivity',navigator.onLine?{ok:true,detail:'The browser currently reports online status; this is not an end-to-end Internet reachability test.'}:{ok:false,warning:true,detail:'The browser currently reports offline status.'});
     const failed=rows.filter(row=>!row.ok&&!row.warning).length;
     const warnings=rows.filter(row=>row.warning).length;
     const passed=rows.filter(row=>row.ok).length;
@@ -730,11 +1245,11 @@
     return rows;
   }
       async function runSafe() {
-        try { return await runCurioidHealthCheck(); }
+        try { return await runCurioidHealthCheck(runOptions); }
         catch(error) {
           const message=String(error?.message||error).slice(0,260);
           paintHealthResults([{label:'Diagnostics execution',ok:false,detail:message}],'Diagnostics could not finish. Download the partial report and send it for investigation.','INCOMPLETE');
-          lastHealthReport={title:'CURIOID PARTIAL HEALTH REPORT',generatedAt:new Date().toISOString(),release:document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown',page:{url:location.origin+location.pathname,title:document.title},diagnosticSupport:{longTask:!!longTaskObserver,eventTiming:!!eventTimingObserver,lcp:!!lcpObserver,layoutShift:!!layoutShiftObserver,longAnimationFrame:!!longAnimationFrameObserver},checks:[{label:'Diagnostics execution',ok:false,detail:message}],lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE||null,recentErrors:diagnosticEvents.slice(-24),privacy:'No cookies, passwords, localStorage contents, database records, files or project content included.'};
+          lastHealthReport={title:'CURIOID PARTIAL HEALTH REPORT',generatedAt:new Date().toISOString(),release:document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown',page:{url:location.origin+location.pathname,title:document.title},diagnosticSupport:{longTask:!!longTaskObserver,eventTiming:!!eventTimingObserver,lcp:!!lcpObserver,layoutShift:!!layoutShiftObserver,longAnimationFrame:!!longAnimationFrameObserver},checks:[{label:'Diagnostics execution',ok:false,detail:message}],lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE||null,recentErrors:diagnosticEvents.slice(-40),privacy:'No cookies, passwords, localStorage contents, database records, files or project content included.'};
           if(healthDownloadButton) healthDownloadButton.disabled=false;
           if(healthDetailsSummary) healthDetailsSummary.textContent='View partial diagnostic results (1 check)';
           return [];
@@ -746,13 +1261,12 @@
         if(!navigator.serviceWorker){paintHealthResults([{label:'Service-worker registration',ok:false,warning:true,detail:'Service workers are not available in this browser context.'}],'The browser cannot refresh the offline shell here. Saved data was not changed.','UNAVAILABLE');return;}
         if(healthRepairButton){healthRepairButton.disabled=true;healthRepairButton.textContent='Refreshing…';}
         try {
-          let registration=await navigator.serviceWorker.getRegistration(deploymentBase.pathname).catch(()=>null);
-          if(!registration)registration=await navigator.serviceWorker.register(new URL('service-worker.js',deploymentBase).href,{scope:deploymentBase.pathname,updateViaCache:'none'});
+          const registration=await navigator.serviceWorker.register(new URL(`service-worker-current.js?release=${EXPECTED_RELEASE}`,deploymentBase).href,{scope:deploymentBase.pathname,updateViaCache:'none'});
           await healthTimeout(registration.update(),12000,'service-worker update check');
           if(registration.installing){const worker=registration.installing;await healthTimeout(new Promise(resolve=>{if(['installed','activated','redundant'].includes(worker.state))return resolve();const done=()=>{worker.removeEventListener('statechange',onState);resolve();};const onState=()=>{if(['installed','activated','redundant'].includes(worker.state))done();};worker.addEventListener('statechange',onState);}),12000,'new service-worker installation');}
-          if(registration.waiting&&navigator.serviceWorker.controller){
+          if(registration.waiting){
             const previous=navigator.serviceWorker.controller,waiting=registration.waiting;
-            const activated=await healthTimeout(new Promise(resolve=>{let finished=false;const finish=value=>{if(finished)return;finished=true;navigator.serviceWorker.removeEventListener('controllerchange',onChange);navigator.serviceWorker.removeEventListener('message',onMessage);resolve(value);};const onChange=()=>{if(navigator.serviceWorker.controller&&navigator.serviceWorker.controller!==previous)finish(true);};const onMessage=event=>{if(event.data?.type==='CURIOID_UPDATE_BLOCKED')finish({blocked:true,openTabs:event.data.openTabs});};navigator.serviceWorker.addEventListener('controllerchange',onChange);navigator.serviceWorker.addEventListener('message',onMessage);waiting.postMessage({type:'CURIOID_ACTIVATE_UPDATE'});}),12000,'service-worker activation');
+            const activated=await healthTimeout(new Promise(resolve=>{let finished=false;const finish=value=>{if(finished)return;finished=true;navigator.serviceWorker.removeEventListener('controllerchange',onChange);navigator.serviceWorker.removeEventListener('message',onMessage);waiting.removeEventListener('statechange',onState);resolve(value);};const onChange=()=>{if(navigator.serviceWorker.controller&&navigator.serviceWorker.controller!==previous)finish(true);};const onMessage=event=>{if(event.data?.type==='CURIOID_UPDATE_BLOCKED')finish({blocked:true,openTabs:event.data.openTabs});};const onState=()=>{if(waiting.state==='activated')finish(true);};navigator.serviceWorker.addEventListener('controllerchange',onChange);navigator.serviceWorker.addEventListener('message',onMessage);waiting.addEventListener('statechange',onState);waiting.postMessage({type:'CURIOID_ACTIVATE_UPDATE'});}),12000,'service-worker activation');
             if(activated===true){paintHealthResults([{label:'Service-worker registration',ok:true,detail:'The updated offline shell is active. Your local storage and saved project data were not cleared.'}],'The new offline shell is active. Reloading CURIOID so every stylesheet and project bundle comes from the same release.','UPDATED');setTimeout(()=>location.reload(),220);return;}
             if(activated?.blocked)throw new Error(`The update is ready but could not activate safely. Close ${activated.openTabs?Math.max(1,activated.openTabs-1):'other'} other CURIOID tab(s), then retry.`);
           }

@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex,nofollow" />
   <meta name="description" content="Curioids: a local full-body creature auto-battler and CURIOID website exploration game." />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/V8EtGGNHBq3i3PGNvWdeWaOOljm1fnIedA+BjRkbaw='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-  <meta name="curioids-build" content="v1.317" />
+  <meta name="curioids-build" content="v1.320" />
   <title>Curioids — The Oddity League</title>
   <style>
     :root {
@@ -2079,7 +2079,7 @@
         : event.kind === "poison" ? `${escapeGameText(target?.name)} is damaged by poison.`
         : event.kind === "block" ? `${escapeGameText(target?.name)} blocks the blow.`
         : `${escapeGameText(attacker?.name || "Field effect")} hits ${escapeGameText(target?.name)} for ${event.damage}.`;
-      return `<div class="battle-stage-head"><span>⚡ BATTLE REPLAY</span><span id="battle-stage-step">${Math.min(index + 1,total)} / ${total}</span></div><div class="battle-stage-duel">${battleReplayUnitMarkup(leftUnit,leftClass,isHit && target?.side === "player" ? badgeMarkup : "")}<div class="fx-versus">VS</div>${battleReplayUnitMarkup(rightUnit,rightClass,isHit && target?.side === "enemy" ? badgeMarkup : "")}</div><p class="fx-caption" aria-live="polite">${label}</p>`;
+      return `<div class="battle-stage-head"><span>⚡ BATTLE REPLAY</span><span class="battle-stage-step">${Math.min(index + 1,total)} / ${total}</span></div><div class="battle-stage-duel">${battleReplayUnitMarkup(leftUnit,leftClass,isHit && target?.side === "player" ? badgeMarkup : "")}<div class="fx-versus">VS</div>${battleReplayUnitMarkup(rightUnit,rightClass,isHit && target?.side === "enemy" ? badgeMarkup : "")}</div><p class="fx-caption" aria-live="polite">${label}</p>`;
     }
 
     async function animateBattleReplay(events, roundPlayed, outcome) {

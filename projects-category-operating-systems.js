@@ -1,4 +1,4 @@
-/* CURIOID v1.317 category bundle: operating-systems. */
+/* CURIOID v1.320 category bundle: operating-systems. */
 (() => {
   'use strict';
   const window = globalThis.window;

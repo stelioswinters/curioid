@@ -1,4 +1,4 @@
-/* CURIOID v1.317 category bundle: creative-tools. */
+/* CURIOID v1.320 category bundle: creative-tools. */
 (() => {
   'use strict';
   const window = globalThis.window;

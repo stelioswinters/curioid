@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.25 / CURIOID v1.317 — shared core */
+/* Build: 2026.11.25 / CURIOID v1.320 — shared core */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
@@ -14389,23 +14389,45 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   }
   async function curioidInspectBackupArtifacts(options={}){
     const items=await curioidVault.list();
-    const backups=items.filter(item=>String(item.name||'').toLowerCase().endsWith('.curioidbackup')).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
-    if(!backups.length)return{available:true,count:0,verified:0,warning:true,detail:'No full-system recovery backup is currently registered in Browser Vault.'};
-    const newest=backups[0];
-    if(newest.sessionOnly)return{available:true,count:backups.length,verified:0,warning:true,detail:'The newest system backup is session-only and is not a durable recovery copy.'};
+    // Individual OS exports and full-system backups share one extension. Detect
+    // their format before validation, and try the next newest complete backup
+    // if one candidate is damaged instead of aborting the whole Health Check.
+    const candidates=items.filter(item=>String(item.name||'').toLowerCase().endsWith('.curioidbackup'))
+      .sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+    if(!candidates.length)return{available:true,count:0,verified:0,warning:true,detail:'No .curioidbackup artifacts are registered in Browser Vault. Export a complete backup in System Center → Backup & Restore.'};
     const maxBytes=Number.isSafeInteger(options.maxBytes)?Math.max(1024*1024,Math.min(options.maxBytes,64*1024*1024)):24*1024*1024;
-    if(Number(newest.size)>maxBytes)return{available:true,count:backups.length,verified:0,warning:true,detail:`${backups.length} recovery backup(s) found. The newest is ${(newest.size/1048576).toFixed(1)} MB; deep verification was deferred to avoid a large diagnostic memory spike.`};
-    const record=await curioidVault.get(newest.id);
-    if(!record?.blob||record.blob.size!==Number(newest.size))throw new Error('The newest Browser Vault backup could not be read at its registered size.');
-    const parsed=JSON.parse(await osReadBackupFileText(record.blob,options));
-    const summary=await osValidateCompleteSystemBackupData(parsed,options);
-    return{available:true,count:backups.length,verified:1,warning:false,detail:`${backups.length} durable system backup(s) registered. The newest backup passed its full structure, schema and chunk-integrity checks (${(record.blob.size/1048576).toFixed(1)} MB; ${summary.databases} database(s)).`};
+    let individualCount=0,unknownCount=0,invalidSystemCount=0,fullSystem=null;
+    for(const item of candidates){
+      if(item.sessionOnly||Number(item.size)>maxBytes){unknownCount++;continue;}
+      let record;
+      try{record=await curioidVault.get(item.id);}catch(_){unknownCount++;continue;}
+      if(!record?.blob||record.blob.size!==Number(item.size)){unknownCount++;continue;}
+      let parsed;
+      try{parsed=JSON.parse(await osReadBackupFileText(record.blob,options));}catch(_){unknownCount++;continue;}
+      if(parsed?.format===CURIOID_OS_BACKUP_FORMAT){individualCount++;continue;}
+      if(parsed?.format!==OS_BACKUP_FORMAT){unknownCount++;continue;}
+      try{
+        const summary=await osValidateCompleteSystemBackupData(parsed,options);
+        fullSystem={item,record,summary};
+        break;
+      }catch(_){invalidSystemCount++;}
+    }
+    if(!fullSystem){
+      const notes=[];
+      if(individualCount)notes.push(`${individualCount} individual OS backup(s) found; these can restore their own OS but are not full-system backups`);
+      if(invalidSystemCount)notes.push(`${invalidSystemCount} full-system backup candidate(s) failed structure or integrity validation`);
+      if(unknownCount)notes.push(`${unknownCount} other or deferred backup artifact(s) could not be classified`);
+      return{available:true,count:candidates.length,verified:0,warning:true,detail:`No verified full-system recovery backup was found in Browser Vault. ${notes.join('; ')||'Export a complete backup in System Center → Backup & Restore.'}.`};
+    }
+    const {item,record,summary}=fullSystem;
+    return{available:true,count:candidates.length,verified:1,warning:false,detail:`Full-system backup verified (${(record.blob.size/1048576).toFixed(1)} MB; ${summary.databases} database(s); ${summary.attachments} Aether attachment(s)). ${individualCount} individual OS backup(s) were correctly classified separately.`};
   }
 
   window.CurioidProjects = {
     ids: CURIOID_ALL_MODULE_IDS.slice(),
     isCategoryLoaded(categoryId) { return curioidLoadedCategories.has(String(categoryId)); },
     getLoadedCategories() { return [...curioidLoadedCategories].sort(); },
+    getCategoryManifest() { return Object.freeze(Object.entries(CURIOID_EXPECTED_CATEGORY_MODULES).sort(([a],[b])=>a.localeCompare(b)).map(([category,ids])=>Object.freeze({category,ids:Object.freeze((ids||[]).slice())}))); },
     inspectRegistry() {
       const ids = CURIOID_ALL_MODULE_IDS.slice();
       const counts = values => values.reduce((map, value) => map.set(value, (map.get(value) || 0) + 1), new Map());
