@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.25 / CURIOID v1.323 — shared core */
+/* Build: 2026.11.25 / CURIOID v1.324 — shared core */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
@@ -14423,6 +14423,48 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     return{available:true,count:candidates.length,verified:1,warning:false,detail:`Full-system backup verified (${(record.blob.size/1048576).toFixed(1)} MB; ${summary.databases} database(s); ${summary.attachments} Aether attachment(s)). ${individualCount} individual OS backup(s) were correctly classified separately.`};
   }
 
+  // Category bundles are independently loaded classic scripts. They cannot see
+  // this IIFE's lexical bindings, so publish the small, explicit helper contract
+  // their binders consume. This is the missing bridge that caused project mounts
+  // (including Face Machine) to throw ReferenceError despite valid registration.
+  const CURIOID_CATEGORY_SHARED_GLOBALS = {
+    $, $$, action, artifacts, clamp,
+    CURIOID_BELLA_CREATURE_SVG, CURIOID_BELLA_ICON_DATA_URL, CURIOID_OS_SOURCE_LIMITS,
+    curioidClipboard, curioidDownloads, curioidNextStorageRevision,
+    curioidOsCssWithinComplexityLimits, curioidOsSafeCss, curioidOsSanitizeHTML,
+    curioidReadStorageRevision, curioidSecureToken, curioidVault,
+    kernelJsonClone, kernelSaveAdapterSafetyBackup,
+    createCurioidSpeechQueue, CurioidBellaDialogueEngine, CurioidKernel,
+    decodeLocalImage, downloadBlob, esc, fitCanvas, foodFusionRules, foodPairKey,
+    ideaActions, ideaDetails, ideaFormats, ideaLimits, ideaSubjects,
+    observeResize, palettes, panel, pick, projectFrame, rand, range, registerAudioMaster,
+    registerMountCleanup, saveCanvas, select, subscribeMotion, toast, uid,
+    watchAnimationActivity
+  };
+  for (const [name, value] of Object.entries(CURIOID_CATEGORY_SHARED_GLOBALS)) {
+    if (name in window) continue;
+    Object.defineProperty(window, name, { configurable: true, enumerable: false, writable: false, value });
+  }
+  // Mutable preference state must remain live when a category reads it later.
+  if (!('siteMotionEnabled' in window)) {
+    Object.defineProperty(window, 'siteMotionEnabled', { configurable: true, enumerable: false, get: () => siteMotionEnabled });
+  }
+
+  function curioidEnsureCategoryLoaded(categoryId) {
+    const category = String(categoryId || '');
+    const expected = CURIOID_EXPECTED_CATEGORY_MODULES[category];
+    if (!expected) return Promise.reject(new Error('Unknown CURIOID project category: ' + category));
+    if (curioidLoadedCategories.has(category)) return Promise.resolve(true);
+    if (curioidCategoryLoadPromises.has(category)) return curioidCategoryLoadPromises.get(category);
+    if (!curioidCategoryLoader) return Promise.reject(new Error('The category loader is not ready. Retry opening this project.'));
+    const pending = Promise.resolve().then(() => curioidCategoryLoader(category)).then(() => {
+      if (!curioidLoadedCategories.has(category)) throw new Error('The ' + category + ' bundle loaded without registering its expected modules.');
+      return true;
+    }).catch(error => { curioidCategoryLoadPromises.delete(category); throw error; });
+    curioidCategoryLoadPromises.set(category, pending);
+    return pending;
+  }
+
   window.CurioidProjects = {
     ids: CURIOID_ALL_MODULE_IDS.slice(),
     isCategoryLoaded(categoryId) { return curioidLoadedCategories.has(String(categoryId)); },
@@ -14465,20 +14507,13 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       try { window.dispatchEvent(new CustomEvent('curioid:category-loaded',{detail:{category,ids:keys.slice()}})); } catch (_) {}
       return true;
     },
+    loadCategory(categoryId) { return curioidEnsureCategoryLoaded(categoryId); },
     loadCategoryForId(id) {
-      const projectId=String(id||'');
+      const projectId = String(id || '');
       if (CURIOID_STANDALONE_IDS.has(projectId)) return Promise.resolve(true);
-      const category=CURIOID_MODULE_CATEGORY[projectId];
+      const category = CURIOID_MODULE_CATEGORY[projectId];
       if (!category) return Promise.reject(new Error('No runtime category is registered for project ' + projectId + '.'));
-      if (curioidLoadedCategories.has(category)) return Promise.resolve(true);
-      if (curioidCategoryLoadPromises.has(category)) return curioidCategoryLoadPromises.get(category);
-      if (!curioidCategoryLoader) return Promise.reject(new Error('The category loader is not ready. Retry opening this project.'));
-      const pending=Promise.resolve().then(()=>curioidCategoryLoader(category)).then(()=>{
-        if (!curioidLoadedCategories.has(category)) throw new Error('The ' + category + ' bundle loaded without registering its expected modules.');
-        return true;
-      }).catch(error=>{curioidCategoryLoadPromises.delete(category);throw error;});
-      curioidCategoryLoadPromises.set(category,pending);
-      return pending;
+      return curioidEnsureCategoryLoaded(category);
     },
 
     inspectLocalStorage: curioidInspectLocalStorage,
@@ -15556,7 +15591,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       ['Back up before major changes','Export the backups offered by each environment and keep a copy somewhere separate from this browser profile. Test that important exports can be opened before deleting the original data.']
     ];
     notes.forEach(([heading,body],index)=>{const article=document.createElement('article'),number=document.createElement('span'),text=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p');number.textContent=String(index+1).padStart(2,'0');h.textContent=heading;p.textContent=body;text.append(h,p);article.append(number,text);list.append(article);});
-    const footerActions=document.createElement('footer');const reminder=document.createElement('span');reminder.textContent='You can reopen these notes from the page footer at any time.';const close=document.createElement('button');close.type='button';close.className='curioid-notes-ack';close.textContent='Got it';close.addEventListener('click',()=>{try{localStorage.setItem('curioid-important-notes-seen-v1','1');}catch(_){}if(typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open');});footerActions.append(reminder,close);panel.append(header,list,footerActions);dialog.append(panel);document.body.append(dialog);footer.append(trigger);
+    const footerActions=document.createElement('footer');const reminder=document.createElement('span');reminder.textContent='You can reopen these notes from the page footer at any time.';const close=document.createElement('button');close.type='button';close.className='curioid-notes-ack';close.textContent='Got it';close.addEventListener('click',()=>{try{localStorage.setItem('curioid-important-notes-seen-v1','1');}catch(_){}if(typeof dialog.close==='function')dialog.close();else dialog.removeAttribute('open');});footerActions.append(reminder,close);panel.append(header,list,footerActions);dialog.append(panel);document.body.append(dialog);const footerMeta=footer.querySelector('.site-footer-meta')||footer;footerMeta.append(trigger);
     trigger.addEventListener('click',()=>{if(typeof dialog.showModal==='function'){if(!dialog.open)dialog.showModal();}else dialog.setAttribute('open','');});
     let seen=false;try{seen=localStorage.getItem('curioid-important-notes-seen-v1')==='1';}catch(_){}if(!seen){const show=()=>{if(!dialog.isConnected)return;if(typeof dialog.showModal==='function'){try{dialog.showModal();}catch(_){dialog.setAttribute('open','');}}else dialog.setAttribute('open','');};if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',show,{once:true});else window.setTimeout(show,0);}
   })();

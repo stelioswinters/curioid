@@ -7,9 +7,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="site-runtime-current.js?v=sha256-88557e9150b21f4fdf99c0e271af9c5d9f449f80afde07e3adc3f6502565b980" as="script" integrity="sha384-r3wKHjVN7JtU2taTb5UywX57zJzICtlwv9w214BJdiPNPWOTsHWY0H6QLt1AHl7o" crossorigin="anonymous" fetchpriority="high">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-e60a86e7ff7570d42cd60234a46e6a6b86fdd92d1dd5ea1640f06839782ecea9" as="script" integrity="sha384-Z0muXSXzjPH/QyrZx8/yDs/InbUAokygslcr7yCdRVJYaHgLw7ZN4mI+HwZ7G1xc" crossorigin="anonymous" fetchpriority="high">
   <meta name="description" content="Six operating systems, Sandbox OS and 58 browser-native project windows for experiments, games, digital art, sound and creative tools.">
-  <meta name="curioid-release" content="v1.323">
+  <meta name="curioid-release" content="v1.324">
   <meta name="curioid-project-count" content="58">
   <meta name="curioid-category-count" content="7">
   <meta name="curioid-os-count" content="6">
@@ -471,9 +471,6 @@
     .back-to-top svg { display:block; width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
     .back-to-top.is-visible { opacity:.96; }
     .site-footer-meta { display:inline-flex; align-items:center; justify-content:flex-end; gap:3px; }
-    .site-footer-info { display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:24px; padding:3px 7px; border:1px solid rgba(214,255,105,.24); border-radius:6px; background:rgba(214,255,105,.055); color:#cce98a; font:800 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.09em; cursor:pointer; }
-    .site-footer-info:hover,.site-footer-info:focus-visible { border-color:rgba(214,255,105,.65); background:rgba(214,255,105,.11); color:#e7ffad; }
-    .site-footer-info svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
     @media (max-width: 600px) {
       .back-to-top { right: 13px; bottom: 14px; }
       .personal-shortcuts-grid { grid-template-columns:1fr; gap:13px; }
@@ -891,7 +888,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.323</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span><button type="button" class="site-footer-info" id="openControlCenterFooter" aria-label="Open CURIOID information and settings" title="CURIOID information and settings"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="M10 9v5M10 6.1h.01"/></svg><span>INFO</span></button></span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.324</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
     </div>
   </main>
 
@@ -912,7 +909,7 @@
     </section>
     <section class="site-control-health" aria-labelledby="controlPanelHealthTitle">
       <div class="site-control-health-head"><div><h3 id="controlPanelHealthTitle">CURIOID HEALTH CHECK</h3><p>Run deep local checks for every project bundle, styling, offline delivery, storage transactions, lifecycle cleanup and browser capabilities. Safe maintenance runs automatically; saved work is never deleted and nothing is uploaded.</p></div><span data-health-state>NOT RUN</span></div>
-      <div class="site-control-health-actions"><button type="button" class="site-control-small-action" data-health-run>Run full diagnostics + safe fixes</button><button type="button" class="site-control-small-action" data-health-download disabled>Download report (.txt)</button><a class="site-control-small-action" data-health-download-fallback hidden rel="nofollow">Download report file</a><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
+      <div class="site-control-health-actions"><button type="button" class="site-control-small-action" data-health-run>Run full diagnostics + safe fixes</button><button type="button" class="site-control-small-action" data-health-download disabled>Download report (.txt)</button><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
       <p class="site-control-health-status" data-health-status role="status" aria-live="polite">Diagnostics run only when requested. The report contains technical status and error details, not saved project contents or passwords.</p>
       <details class="site-control-health-details" data-health-details>
         <summary data-health-details-summary>View detailed results</summary>
@@ -987,6 +984,6 @@
 
 
 
-  <script src="site-runtime-current.js?v=sha256-88557e9150b21f4fdf99c0e271af9c5d9f449f80afde07e3adc3f6502565b980" defer integrity="sha384-r3wKHjVN7JtU2taTb5UywX57zJzICtlwv9w214BJdiPNPWOTsHWY0H6QLt1AHl7o" crossorigin="anonymous" data-cfasync="false"></script>
+  <script src="site-runtime-current.js?v=sha256-e60a86e7ff7570d42cd60234a46e6a6b86fdd92d1dd5ea1640f06839782ecea9" defer integrity="sha384-Z0muXSXzjPH/QyrZx8/yDs/InbUAokygslcr7yCdRVJYaHgLw7ZN4mI+HwZ7G1xc" crossorigin="anonymous" data-cfasync="false"></script>
 </body>
 </html>

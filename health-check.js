@@ -1,7 +1,7 @@
-/* CURIOID v1.323 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.324 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.323';
+  const EXPECTED_RELEASE = 'v1.324';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -11,7 +11,6 @@
       state: healthState,
       results: healthResults,
       downloadButton: healthDownloadButton,
-      downloadFallback: healthDownloadFallback,
       details: healthDetails,
       detailsSummary: healthDetailsSummary,
       formatStorageSize,
@@ -614,7 +613,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.323',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.324',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -666,7 +665,7 @@
       const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid;
       const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
       const releaseAligned=publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE;
-      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.323; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
+      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.324; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
     }catch(error){return {ok:false,detail:String(error?.message||error).slice(0,240)}}
   }
   function safeJson(value) {
@@ -831,30 +830,21 @@
       if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} }
       lastReportObjectUrl = objectUrl;
       const filename = `CURIOID-Health-Report-${new Date().toISOString().replace(/[:.]/g,'-')}.txt`;
-      let anchor = healthDownloadFallback;
-      if (!anchor) {
-        anchor = document.createElement('a');
-        anchor.className = 'site-control-small-action';
-        anchor.textContent = 'Download report file';
-        anchor.hidden = true;
-        healthDownloadButton?.insertAdjacentElement('afterend', anchor);
-      }
+      const anchor = document.createElement('a');
       anchor.href = objectUrl;
       anchor.download = filename;
-      anchor.hidden = false;
-      anchor.setAttribute('aria-label', `Download ${filename}`);
-      anchor.removeAttribute('target');
-      anchor.setAttribute('rel', 'nofollow');
-      anchor.textContent = 'Download report file (.txt)';
-      // The button handler calls this synchronously inside the user's click.
-      // Keep the real link visible even if the browser blocks the scripted click.
-      if (navigator.userActivation?.isActive === true) anchor.click();
-      // Keep the visible fallback link usable for the entire page session.
-      // Revoke only when a newer report replaces it or this page is leaving.
-      if (healthStatus) healthStatus.textContent = 'Report prepared. The download should start; the “Download report file” link remains available if your browser blocks automatic downloads.';
+      anchor.style.cssText = 'position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;';
+      anchor.setAttribute('aria-hidden','true');
+      anchor.tabIndex = -1;
+      document.body.appendChild(anchor);
+      try { anchor.click(); }
+      finally { anchor.remove(); }
+      // The temporary link is removed immediately; the object URL stays alive
+      // until the next report or page exit so the browser can finish saving it.
+      if (healthStatus) healthStatus.textContent = `Downloading ${filename}.`;
       return true;
     } catch (error) {
-      if (healthStatus) healthStatus.textContent = `Could not prepare the report download: ${String(error?.message||error).slice(0,180)}. Try the visible download link or rerun diagnostics.`;
+      if (healthStatus) healthStatus.textContent = `Could not start the TXT report download: ${String(error?.message||error).slice(0,180)}. Press the download button again or rerun diagnostics.`;
       return false;
     }
   }
