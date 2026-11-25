@@ -1,7 +1,7 @@
-/* CURIOID v1.322 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.323 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.322';
+  const EXPECTED_RELEASE = 'v1.323';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -614,7 +614,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.322',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.323',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -666,7 +666,7 @@
       const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid;
       const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
       const releaseAligned=publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE;
-      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.322; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
+      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.323; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
     }catch(error){return {ok:false,detail:String(error?.message||error).slice(0,240)}}
   }
   function safeJson(value) {
@@ -795,7 +795,7 @@
       capabilities:{ fetch:typeof fetch==='function', webCrypto:!!crypto?.subtle, serviceWorker:!!navigator.serviceWorker, cacheStorage:!!window.caches, indexedDB:!!window.indexedDB, opfs:typeof navigator.storage?.getDirectory==='function', localStorage:(()=>{try{return !!window.localStorage;}catch(_){return false;}})(), sessionStorage:(()=>{try{return !!window.sessionStorage;}catch(_){return false;}})(), workers:typeof Worker==='function', sharedWorkers:typeof SharedWorker==='function', broadcastChannel:typeof BroadcastChannel==='function', webLocks:!!navigator.locks?.request, resizeObserver:typeof ResizeObserver==='function', intersectionObserver:typeof IntersectionObserver==='function', mutationObserver:typeof MutationObserver==='function', offscreenCanvas:typeof OffscreenCanvas==='function', compressionStream:typeof CompressionStream==='function', decompressionStream:typeof DecompressionStream==='function', fileSystemAccess:typeof showOpenFilePicker==='function', webShare:typeof navigator.share==='function', clipboard:!!navigator.clipboard?.writeText, webgpu:!!navigator.gpu, canvas:!!document.createElement('canvas').getContext('2d'), webgl:(()=>{try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(_){return false;}})(), webAudio:!!(window.AudioContext||window.webkitAudioContext), wasm:typeof WebAssembly==='object', webCodecs:typeof VideoDecoder==='function'||typeof AudioDecoder==='function' },
       runtime:{ projectCodeLoaded:!!projects, projectCount:projects?.ids?.length || projectCount || 0, osIds:projects?.ids?.filter(id=>['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'].includes(id)) || [], loadedCategories:projects?.getLoadedCategories?.()||[], activeWindows, supervisor:runtime, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null },
       serviceWorker:{ supported:!!navigator.serviceWorker, controller:navigator.serviceWorker?.controller?.scriptURL || null, registration:registration ? { scope:registration.scope, active:registration.active?.scriptURL || null, waiting:registration.waiting?.scriptURL || null, installing:registration.installing?.scriptURL || null, updateViaCache:registration.updateViaCache || null } : null },
-      delivery:{ csp:document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || null, baseUri:deploymentBase.href, referrerPolicy:document.querySelector('meta[name="referrer"]')?.content || null, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null, htmlInlineHandlerCount:document.querySelectorAll('*').reduce((count,node)=>count+[...node.attributes].filter(attribute=>/^on/i.test(attribute.name)).length,0), externalScriptOrigins:[...document.scripts].map(node=>{try{return new URL(node.src,location.href).origin;}catch(_){return null;}}).filter(origin=>origin&&origin!==location.origin) },
+      delivery:{ csp:document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || null, baseUri:deploymentBase.href, referrerPolicy:document.querySelector('meta[name="referrer"]')?.content || null, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null, htmlInlineHandlerCount:Array.from(document.querySelectorAll('*')).reduce((count,node)=>count+[...node.attributes].filter(attribute=>/^on/i.test(attribute.name)).length,0), externalScriptOrigins:[...document.scripts].map(node=>{try{return new URL(node.src,location.href).origin;}catch(_){return null;}}).filter(origin=>origin&&origin!==location.origin) },
       cacheStorage:{ names:cacheNames, totalCaches:cacheNames.length, inventory:cacheInventory || null },
       storage:{ estimate:estimate ? { usageBytes:estimate.usage ?? null, quotaBytes:estimate.quota ?? null, usageDetails:estimate.usageDetails || null, usageRatio:Number.isFinite(estimate.usage)&&Number.isFinite(estimate.quota)&&estimate.quota>0?rounded(estimate.usage/estimate.quota,4):null } : null, persistent:persisted ?? null },
       performance:performanceSnapshot || collectPerformanceSnapshot(),
@@ -843,8 +843,9 @@
       anchor.download = filename;
       anchor.hidden = false;
       anchor.setAttribute('aria-label', `Download ${filename}`);
-      anchor.setAttribute('target', '_self');
+      anchor.removeAttribute('target');
       anchor.setAttribute('rel', 'nofollow');
+      anchor.textContent = 'Download report file (.txt)';
       // The button handler calls this synchronously inside the user's click.
       // Keep the real link visible even if the browser blocks the scripted click.
       if (navigator.userActivation?.isActive === true) anchor.click();
@@ -929,6 +930,8 @@
       ? {ok:false,warning:true,detail:`Skipped to respect the browser's ${projectSmoke.reason}; use a normal connection and rerun for full category execution tests.`}
       : {ok:false,warning:true,detail:projectSmoke?.error||'The shared project runtime diagnostics API is unavailable in this release.'});
     window.__CURIOID_LAST_HEALTH_PROJECT_SMOKE = projectSmoke;
+    maintenance.categorySmokeResults = projectSmoke?.results?.map(item => ({category:item.category,ok:Boolean(item.ok),durationMs:item.durationMs||null,error:item.error||null})) || null;
+    maintenance.offlineAssetPrecache = projectSmoke?.precache || null;
     const projects = window.CurioidProjects;
     const roomCount = document.querySelectorAll('.room-window[data-room]').length;
     const osIds = ['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'];
@@ -1034,6 +1037,12 @@
     const shellCacheAudit = hasCurrentCache && releaseManifest ? await auditCurrentShellCache(expectedCacheName,releaseManifest.manifest) : null;
     maintenance.offlineShellCacheAudit = shellCacheAudit ? {ok:shellCacheAudit.ok,verified:shellCacheAudit.verified||[],missing:shellCacheAudit.missing||[],criticalOfflineAssets:shellCacheAudit.criticalOfflineAssets??null,criticalOfflineExpected:shellCacheAudit.criticalOfflineExpected??null} : {available:false};
     add('Offline shell cache completeness',shellCacheAudit ? (shellCacheAudit.ok?{ok:true,detail:shellCacheAudit.detail}:{ok:false,detail:shellCacheAudit.detail}) : {ok:false,warning:true,detail:'Shell cache verification is unavailable until the current cache and release manifest are present.'});
+    const precacheResult = projectSmoke?.precache || null;
+    add('Critical project asset pre-cache',precacheResult?.ok
+      ? {ok:true,detail:`The current service worker verified and cached ${precacheResult.cachedCount ?? (precacheResult.results||[]).filter(item=>item.ok).length} critical project assets. ${precacheResult.controlled ? 'This page is now controlled by the current worker.' : 'The worker cache was populated without taking control of this page.'}`}
+      : precacheResult?.available
+        ? {ok:false,warning:true,detail:`The current worker could not fully pre-cache the project assets: ${(precacheResult.results||[]).filter(item=>!item.ok).map(item=>`${item.file}: ${item.error}`).join('; ') || precacheResult.reason || 'no successful response was returned'}.`}
+        : {ok:false,warning:true,detail:precacheResult?.reason || 'No matching current-release worker accepted the pre-cache command. The browser can still load apps online, but offline readiness requires refreshing the service worker.'});
     const releaseAssets = releaseManifest ? Object.entries(releaseManifest.manifest)
       .filter(([file]) => file !== 'index.html')
       .sort(([a],[b]) => a.localeCompare(b))

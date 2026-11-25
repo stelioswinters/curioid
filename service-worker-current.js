@@ -1,34 +1,34 @@
-/* CURIOID v1.322 offline shell. CDN-tolerant document validation; strict hashes for executable assets. */
+/* CURIOID v1.323 offline shell. CDN-tolerant document validation; strict hashes for executable assets. */
 'use strict';
-const RELEASE_ID = 'v1.322';
+const RELEASE_ID = 'v1.323';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const EXPECTED_SHA256 = Object.freeze({
-  "applications-tools-apps.html": "1ec6e6b881a8b58594d91fe3448ac73a79261beb13b19c3a5b42e8bb0e65a379",
+  "applications-tools-apps.html": "081b15e39cfcb9cf9f9c20655e84d7637e141f362d12013d1b784d64a36d12b1",
   "curioid-icon-192.png": "32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887",
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
-  "curioids.html": "1d0368df115575c6ef753a8678d964f733bda070e8629f4b4df47cbf6a04ed84",
-  "health-check.js": "23094a55cef26501560a635c2df7f23be9fde33abe33af4302515eeb055c9395",
-  "index.html": "86c6582c8ce7cead72a467e1daa2c7c4d69c7df0ead77f7dd9fa279192f72f0d",
+  "curioids.html": "222b287453329e3f6fea45b308cfa29866f9ccd60ecb6ce57573147dd7b60f13",
+  "health-check.js": "856ca30abfb3518557bde3dadea4f345cd31e7758bac70fad2b3105f75c9b159",
+  "index.html": "13328bfe0531a9d85663f088f252d235868a36a688804972dfc45fa95abe7d5e",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
   "music-audio-apps.html": "ba0e5ac1043aaba39ac80515e4f26edb0f540860f516ab8458995f5092b7fc9d",
-  "projects-category-creative-tools.js": "022bd7ac8801bd282a6e5e213e86519c9e55f27aaea89dd2e207f807fe7168cb",
-  "projects-category-digital-art.js": "b54f9b1cebd0655404614c157cdbbb4725a78efc02f13323ed4c2de023b86df7",
-  "projects-category-operating-systems.js": "4d297b3904d22f75d49d5bacb70f2581956bedc1ed3e5f9a5ed951851bf492b2",
-  "projects-category-sound-motion.js": "6d691e0df4a4bd6367a178caeb6d130e993a5210436691e975a72967c89e828f",
-  "projects-category-strange-archives.js": "cf998bd7f5a7fd4d6b8e3bf8edcd89d690e2eb80506fd7c633e4e4b7e7e36062",
-  "projects-category-tiny-games.js": "1a93b1ebc30760721195671f31ad773bacd0cada99b8ee2cadb689bbabf15003",
-  "projects-category-web-experiments.js": "79feb9fb85ce57b37ea609fbd3fce9091da357dd5fe11fc531044dcba077765b",
-  "projects-core.js": "ea247195c2b757707cbe59d68e33afffec2cf31bf17bc2f54edb4786b1a75f0c",
+  "projects-category-creative-tools.js": "7a7aac242ec21861c4f7538ab3516035d9bf36b10b495e039b40ad78a4e81c7e",
+  "projects-category-digital-art.js": "f28f7b7b3b1c560819c9441d8cd6bef40cb039eaca41b0c55ca68695203f7359",
+  "projects-category-operating-systems.js": "fd1ff507be4e21803aed39c7b5c76b9753e7477385e8c5a3a5f055e10261f25f",
+  "projects-category-sound-motion.js": "fd42798a4518cd5f72ac93393e8103b1d370a70af605791c583eb69a5878a0eb",
+  "projects-category-strange-archives.js": "3651db00b5b2ea3aa8ccd5903abbe585553f80d89ad6bef2656d4fa45fdc732f",
+  "projects-category-tiny-games.js": "bebe9ab361e4830d53d0e23da411049e92a6316fced463ed365ed0cc3d224369",
+  "projects-category-web-experiments.js": "86d0d00776c8404a8659ec63aabda6ed1b38cbc426a73a7e79ff50fcdae463a2",
+  "projects-core.js": "28565ac06f927183b39363a2cf09473dbccf6aab80486c5fd905b087061857bc",
   "projects-styles.txt": "a847d1b34f8cbe820f4ae5479c8d17001d837e5648cb7a2e7dd8959a61835257",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "cde14241881e1789c5cd8de8584377c80c7095ed5d0615ef830ff5bd415bd536",
+  "site-runtime-current.js": "88557e9150b21f4fdf99c0e271af9c5d9f449f80afde07e3adc3f6502565b980",
   "sitemap.xml": "6983c2451814d79ea47ff138849bda8faabd386b3379dd089445e72476836a87",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
-  "vocal-lexicon.js": "1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a",
+  "vocal-lexicon.js": "1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a"
 });
 const RUNTIME_PATH = 'site-runtime-current.js';
 const RUNTIME_HASH = EXPECTED_SHA256[RUNTIME_PATH];
@@ -120,15 +120,64 @@ self.addEventListener('install', event => {
     // Wait for explicit visitor approval; do not interrupt active editors.
   })());
 });
+const DIAGNOSTIC_PRECACHE_PATHS = Object.freeze([
+  'projects-core.js', 'projects-styles.txt', 'health-check.js',
+  'projects-category-operating-systems.js', 'projects-category-strange-archives.js',
+  'projects-category-web-experiments.js', 'projects-category-tiny-games.js',
+  'projects-category-digital-art.js', 'projects-category-sound-motion.js',
+  'projects-category-creative-tools.js'
+]);
+function replyToMessage(event, data) {
+  try { if (event.ports?.[0]) event.ports[0].postMessage(data); else event.source?.postMessage(data); } catch (_) {}
+}
+async function precacheCurrentReleaseAssets() {
+  const cache = await caches.open(CACHE_NAME);
+  const results = [];
+  let cursor = 0;
+  const worker = async () => {
+    while (cursor < DIAGNOSTIC_PRECACHE_PATHS.length) {
+      const file = DIAGNOSTIC_PRECACHE_PATHS[cursor++];
+      const hash = EXPECTED_SHA256[file];
+      if (!hash) { results.push({file,ok:false,error:'No SHA-256 release declaration exists.'}); continue; }
+      const url = new URL(file, SCOPE_URL);
+      url.searchParams.set('v', `sha256-${hash}`);
+      try {
+        const response = await fetch(new Request(url.href, {method:'GET', cache:'no-store', credentials:'same-origin'}));
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!await responseMatchesRelease(file, response)) throw new Error('Downloaded bytes did not match the current release SHA-256.');
+        await cache.put(url.href, response.clone());
+        results.push({file,ok:true,bytes:Number(response.headers.get('content-length'))||null});
+      } catch (error) { results.push({file,ok:false,error:String(error?.message||error).slice(0,220)}); }
+    }
+  };
+  await Promise.all(Array.from({length:Math.min(3, DIAGNOSTIC_PRECACHE_PATHS.length)}, () => worker()));
+  results.sort((a,b)=>DIAGNOSTIC_PRECACHE_PATHS.indexOf(a.file)-DIAGNOSTIC_PRECACHE_PATHS.indexOf(b.file));
+  return {type:'CURIOID_PRECACHE_RESULT',release:RELEASE_ID,ok:results.length===DIAGNOSTIC_PRECACHE_PATHS.length&&results.every(item=>item.ok),cachedCount:results.filter(item=>item.ok).length,expectedCount:DIAGNOSTIC_PRECACHE_PATHS.length,results};
+}
 self.addEventListener('message', event => {
-  if (event.data?.type !== 'CURIOID_ACTIVATE_UPDATE') return;
+  const type = event.data?.type;
+  if (type === 'CURIOID_CLAIM_CONTROL') {
+    event.waitUntil((async () => {
+      try { await self.clients.claim(); replyToMessage(event,{type:'CURIOID_CONTROL_RESULT',release:RELEASE_ID,ok:true}); }
+      catch (error) { replyToMessage(event,{type:'CURIOID_CONTROL_RESULT',release:RELEASE_ID,ok:false,error:String(error?.message||error)}); }
+    })());
+    return;
+  }
+  if (type === 'CURIOID_PRECACHE_CURRENT_RELEASE') {
+    event.waitUntil((async () => {
+      try { replyToMessage(event,await precacheCurrentReleaseAssets()); }
+      catch (error) { replyToMessage(event,{type:'CURIOID_PRECACHE_RESULT',release:RELEASE_ID,ok:false,cachedCount:0,expectedCount:DIAGNOSTIC_PRECACHE_PATHS.length,results:[],error:String(error?.message||error).slice(0,220)}); }
+    })());
+    return;
+  }
+  if (type !== 'CURIOID_ACTIVATE_UPDATE') return;
   event.waitUntil((async () => {
     try {
       const clients = await self.clients.matchAll({type:'window', includeUncontrolled:true});
       const scoped = clients.filter(safeScopedClient);
-      if (scoped.length > 1) { event.source?.postMessage({type:'CURIOID_UPDATE_BLOCKED', openTabs:scoped.length}); return; }
+      if (scoped.length > 1) { replyToMessage(event,{type:'CURIOID_UPDATE_BLOCKED', openTabs:scoped.length}); return; }
       await self.skipWaiting();
-    } catch (_) { event.source?.postMessage({type:'CURIOID_UPDATE_BLOCKED', openTabs:null}); }
+    } catch (_) { replyToMessage(event,{type:'CURIOID_UPDATE_BLOCKED', openTabs:null}); }
   })());
 });
 self.addEventListener('activate', event => {

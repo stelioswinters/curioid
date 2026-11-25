@@ -1040,8 +1040,8 @@
       const healthDownloadFallback = $('[data-health-download-fallback]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = '23094a55cef26501560a635c2df7f23be9fde33abe33af4302515eeb055c9395';
-      const HEALTH_MODULE_SRI = 'sha384-0piBvVMSShbkPBaAWMsHCfjxlPeOn+mp6/lT39cPDvV5kXzdo3Hx+2dUMwzi7nfq';
+      const HEALTH_MODULE_HASH = '856ca30abfb3518557bde3dadea4f345cd31e7758bac70fad2b3105f75c9b159';
+      const HEALTH_MODULE_SRI = 'sha384-aGvjU+0s0i2Eums8ghUlSgIK39VbZNHKvNUnn9Gl60qRhYnAf7ns2dQzC2hKD+JE';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null;
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,downloadFallback:healthDownloadFallback,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -1054,7 +1054,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.322', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.323', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1086,7 +1086,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.322','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.323','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1098,7 +1098,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.322') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.323') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1656,13 +1656,13 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "4d297b3904d22f75d49d5bacb70f2581956bedc1ed3e5f9a5ed951851bf492b2", integrity: "sha384-0KMrsR4Kmzl39AB6FstG+C2akfDQRNDM1eO/WhoHx6e76hHHMDVMGpOruXOWJ9L5" },
-        "strange-archives": { file: "projects-category-strange-archives.js", hash: "cf998bd7f5a7fd4d6b8e3bf8edcd89d690e2eb80506fd7c633e4e4b7e7e36062", integrity: "sha384-cjgSUDfwSyYKvAzXROd08cTH7X9QDXGhz3ftsyDW89FGx4Z7i5gXlDXjZ1sLdZ8G" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "79feb9fb85ce57b37ea609fbd3fce9091da357dd5fe11fc531044dcba077765b", integrity: "sha384-oGc4oV6d/RlwoyA/eOopNKIxiPxPF+WM9Y+kA8Uby8ke+3Q5vs9BfgOR7E69b2WX" },
-        "tiny-games": { file: "projects-category-tiny-games.js", hash: "1a93b1ebc30760721195671f31ad773bacd0cada99b8ee2cadb689bbabf15003", integrity: "sha384-izwwk8zUhopiwVux8+9sLfpW4tqMG8qe+1h8BcWynLoQRMPmsoxi58zT/f/cMf/z" },
-        "digital-art": { file: "projects-category-digital-art.js", hash: "b54f9b1cebd0655404614c157cdbbb4725a78efc02f13323ed4c2de023b86df7", integrity: "sha384-z1UDaZ6ssnbQp1c4vZ8G3jL6hFxnyNc+LFyzBV5IqShROKlLDKF0HmO9v98PqXmG" },
-        "sound-motion": { file: "projects-category-sound-motion.js", hash: "6d691e0df4a4bd6367a178caeb6d130e993a5210436691e975a72967c89e828f", integrity: "sha384-k53dKJm2eMVMge6R1yKv0vbszpixeDvF9i/yB7rLTks2KWowVUVGTajrRo/eaOal" },
-        "creative-tools": { file: "projects-category-creative-tools.js", hash: "022bd7ac8801bd282a6e5e213e86519c9e55f27aaea89dd2e207f807fe7168cb", integrity: "sha384-vDh9cA0oXvC/qyvNs+wNpEW9fRKIDCq4weOROuqCmn/e7civH8VZ7XwdTiUN/gDk" }
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "fd1ff507be4e21803aed39c7b5c76b9753e7477385e8c5a3a5f055e10261f25f", integrity: "sha384-3Az+IxvAshe4QOpRklBanFxEp/Pio75cx81GLCOgFomNgiRCSY8IdJjAzxCccSaz" },
+        "strange-archives": { file: "projects-category-strange-archives.js", hash: "3651db00b5b2ea3aa8ccd5903abbe585553f80d89ad6bef2656d4fa45fdc732f", integrity: "sha384-/ZclGiKVY4BowmcmakT4vnS9Ons3SPWDSKni0EsvvLy80Ro2J4AR6ey8zN5Om0+b" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "86d0d00776c8404a8659ec63aabda6ed1b38cbc426a73a7e79ff50fcdae463a2", integrity: "sha384-5SSpZm1AjCJKMi9ldk9jCjRaCWn+H/GIGo7cbCEh1lUP50s5jyIJ2GFKUzrPvHJP" },
+        "tiny-games": { file: "projects-category-tiny-games.js", hash: "bebe9ab361e4830d53d0e23da411049e92a6316fced463ed365ed0cc3d224369", integrity: "sha384-i/JIYZ2Z/K6DjCXohAKlGuR9evR/U0+Nmd5nwv5OvftDJIJa98OpPyJXJ9O4ebBk" },
+        "digital-art": { file: "projects-category-digital-art.js", hash: "f28f7b7b3b1c560819c9441d8cd6bef40cb039eaca41b0c55ca68695203f7359", integrity: "sha384-VwYR5dqo11wcc2DRNmH2XqR/eGdBXnkim2/9KL3PyiOv5n2gEb89SUE9OnLy7s+e" },
+        "sound-motion": { file: "projects-category-sound-motion.js", hash: "fd42798a4518cd5f72ac93393e8103b1d370a70af605791c583eb69a5878a0eb", integrity: "sha384-PdhfxOZf1nqVqMHD6+ZQZLev6oATk/6JL0VCp7E/ZKvbV88tiP6+l3l0ZxoOrf0/" },
+        "creative-tools": { file: "projects-category-creative-tools.js", hash: "7a7aac242ec21861c4f7538ab3516035d9bf36b10b495e039b40ad78a4e81c7e", integrity: "sha384-i1B2H+FvI8W0aag8l4nD7cOMq6RKdUioShOdhc4jEsqjHzOr0R0jy8oqFu9VKvSY" }
       });
       function ensureProjectAssets() {
         // A file:// page has an opaque origin in modern browsers. Do not try to
@@ -1865,7 +1865,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "ea247195c2b757707cbe59d68e33afffec2cf31bf17bc2f54edb4786b1a75f0c", integrity: "sha384-wQ7uYgw/GDIL63J6GJkBxj1aGGyg6KeWbwVLiolEDR+ZyT4mjVRX0WM0lCEvVkq2",
+            file: "projects-core.js", hash: "28565ac06f927183b39363a2cf09473dbccf6aab80486c5fd905b087061857bc", integrity: "sha384-BadUw0WbUSn+VPJ+GF8ru5zgnkNtJ4HdG2wmw8bY5GPDQhp1OK4IJmuv9PTgFw40",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -1929,36 +1929,110 @@
         return projectAssetsPromise;
       }
 
-      // Explicit, on-demand deep diagnostics. These load category modules through
-      // the same verified SRI loader used by real project launches, but never mount
-      // apps or write project data. This lets Health Check prove all seven bundles
-      // can execute and register without opening or modifying a user's work.
+      // Ask the current release's waiting/active service worker to claim this
+      // client when safe, then precache every critical project asset by exact hash.
+      // This also works on a first page load before a worker controls the document.
+      async function sendCurrentWorkerCommand(type, timeoutMs = 60000) {
+        const serviceWorker = navigator.serviceWorker;
+        if (!serviceWorker || typeof MessageChannel !== "function") return { available:false, reason:"Service Worker messaging or MessageChannel is unavailable." };
+        const serviceRoot = new URL(".", location.href);
+        let registration = null;
+        try {
+          // Refresh the registration metadata without activating a waiting worker.
+          // This ensures the current release can receive the diagnostic pre-cache
+          // command even when the site was opened before its update finished.
+          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.323", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
+          await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Service-worker update check timed out")), Math.min(timeoutMs,15000)))]);
+        } catch (error) {
+          try { registration = await serviceWorker.getRegistration(serviceRoot.href); } catch (_) {}
+          if (!registration) return { available:false, reason:String(error?.message || error).slice(0,220) };
+        }
+        const isCurrent = worker => {
+          try {
+            const url = new URL(worker?.scriptURL || "");
+            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.323";
+          } catch (_) { return false; }
+        };
+        if (!isCurrent(registration?.waiting) && isCurrent(registration?.installing)) {
+          const installing = registration.installing;
+          try {
+            await new Promise(resolve => {
+              if (!installing || ["installed","activated","redundant"].includes(installing.state)) return resolve();
+              const finish = () => { installing.removeEventListener("statechange", onState); resolve(); };
+              const onState = () => { if (["installed","activated","redundant"].includes(installing.state)) finish(); };
+              installing.addEventListener("statechange", onState);
+              setTimeout(finish, Math.min(timeoutMs,15000));
+            });
+          } catch (_) {}
+          try { registration = await serviceWorker.getRegistration(serviceRoot.href) || registration; } catch (_) {}
+        }
+        const worker = isCurrent(registration?.waiting) ? registration.waiting : isCurrent(registration?.active) ? registration.active : null;
+        if (!worker) return { available:false, reason:"No current v1.323 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
+        const send = (command, limit) => new Promise((resolve, reject) => {
+          const channel = new MessageChannel();
+          let settled = false;
+          const finish = (error, value) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            channel.port1.onmessage = null;
+            try { channel.port1.close(); channel.port2.close(); } catch (_) {}
+            error ? reject(error) : resolve(value);
+          };
+          const timer = setTimeout(() => finish(new Error(`${command} timed out`)), limit);
+          channel.port1.onmessage = event => finish(null, event.data || { ok:false, reason:"Worker returned an empty response." });
+          channel.port1.onmessageerror = () => finish(new Error(`${command} response could not be decoded`));
+          try { worker.postMessage({ type:command, release:"v1.323" }, [channel.port2]); }
+          catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
+        });
+        if (worker === registration?.active && !serviceWorker.controller) {
+          try {
+            const claim = await send("CURIOID_CLAIM_CONTROL", Math.min(9000, timeoutMs));
+            if (!claim?.ok) return { available:true, controlled:false, claim, precache:null };
+          } catch (error) { return { available:true, controlled:false, reason:String(error?.message || error), precache:null }; }
+        }
+        if (type === "CURIOID_CLAIM_CONTROL") return send(type, timeoutMs);
+        const result = await send(type, timeoutMs);
+        return { ...result, available:true, controlled:Boolean(serviceWorker.controller), workerScript:worker.scriptURL };
+      }
+
+      // Explicit, on-demand deep diagnostics. Categories are loaded through the
+      // public projects.loadCategoryForId() entry point, which is exactly what an
+      // app launch uses. The private SRI loader remains private by design.
+      // No project is mounted and no project data is written.
       window.CurioidSiteDiagnostics = Object.freeze({
         async loadAllProjectCategories() {
           const projects = await ensureProjectAssets();
+          const manifest = projects.getCategoryManifest?.();
+          if (!Array.isArray(manifest) || manifest.length !== Object.keys(PROJECT_CATEGORY_ASSETS).length) {
+            throw new Error(`Project category manifest is unavailable or incomplete (${Array.isArray(manifest) ? manifest.length : 0} categories).`);
+          }
           const results = [];
-          for (const [category, asset] of Object.entries(PROJECT_CATEGORY_ASSETS)) {
+          for (const entry of manifest) {
+            const category = String(entry.category || "");
+            const asset = PROJECT_CATEGORY_ASSETS[category];
+            const ids = Array.isArray(entry.ids) ? entry.ids : [];
             const startedAt = performance.now();
             try {
-              if (!projects.isCategoryLoaded(category)) {
-                await loadAssetWithFallback({
-                  type: "script", file: asset.file, hash: asset.hash, integrity: asset.integrity,
-                  expected: `${category} project modules`,
-                  isReady: () => projects.isCategoryLoaded(category)
-                });
-              }
-              results.push({ category, file: asset.file, ok: projects.isCategoryLoaded(category),
-                moduleCount: projects.getCategoryManifest?.().find(item => item.category === category)?.ids.length ?? null,
-                durationMs: Math.round(performance.now() - startedAt) });
+              if (!asset) throw new Error(`No verified asset descriptor exists for ${category || "unknown category"}.`);
+              if (!ids.length) throw new Error(`The ${category} category has no project IDs to use for its smoke test.`);
+              if (!projects.isCategoryLoaded(category)) await projects.loadCategoryForId(ids[0]);
+              const loaded = projects.isCategoryLoaded(category);
+              results.push({ category, file:asset.file, ok:loaded,
+                moduleCount:ids.length, durationMs:Math.round(performance.now() - startedAt) });
             } catch (error) {
-              results.push({ category, file: asset.file, ok: false, error: String(error?.message || error).slice(0, 320),
-                durationMs: Math.round(performance.now() - startedAt) });
+              results.push({ category, file:asset?.file || null, ok:false, error:String(error?.message || error).slice(0,320),
+                durationMs:Math.round(performance.now() - startedAt) });
             }
           }
-          return { results, registry: projects.inspectRegistry?.() || null,
-            projectCount: projects.ids?.length || 0, loadedCategories: projects.getLoadedCategories?.() || [],
-            stylesLoaded: Boolean(document.querySelector('[data-curioid-project-css][data-loaded="true"]')) };
+          let precache = null;
+          try { precache = await sendCurrentWorkerCommand("CURIOID_PRECACHE_CURRENT_RELEASE", 60000); }
+          catch (error) { precache = { available:false, ok:false, reason:String(error?.message || error).slice(0,240) }; }
+          return { results, registry:projects.inspectRegistry?.() || null,
+            projectCount:projects.ids?.length || 0, loadedCategories:projects.getLoadedCategories?.() || [],
+            stylesLoaded:Boolean(document.querySelector('[data-curioid-project-css][data-loaded="true"]')), precache };
         },
+        async precacheCurrentReleaseAssets() { return sendCurrentWorkerCommand("CURIOID_PRECACHE_CURRENT_RELEASE", 60000); },
         retryProjectStyles() { return retryProjectCss ? retryProjectCss() : Promise.resolve(false); },
         getProjectStyleStatus() {
           return { loaded: Boolean(document.querySelector('[data-curioid-project-css][data-loaded="true"]')),
@@ -1976,7 +2050,7 @@
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "ea247195c2b757707cbe59d68e33afffec2cf31bf17bc2f54edb4786b1a75f0c", as: "script" },
+        { file: "projects-core.js", hash: "28565ac06f927183b39363a2cf09473dbccf6aab80486c5fd905b087061857bc", as: "script" },
         { file: "projects-styles.txt", hash: "a847d1b34f8cbe820f4ae5479c8d17001d837e5648cb7a2e7dd8959a61835257", as: "fetch" }
       ]);
       let projectPrefetchScheduled = false;
@@ -3068,7 +3142,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.322", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.323", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {
