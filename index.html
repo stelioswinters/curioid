@@ -7,9 +7,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="site-runtime.js?v=sha256-658c9d0d1d218dd012fc3f6c9723ba7bf45e6fafc93f5faa7cd4a70db65b9e21" as="script" integrity="sha384-1s1Mrci0rVLFO+l4ykp84OgUOnx8fN2ec4RFq4VZ+QWJZdof1zpdAx7QrV8C7zTm" crossorigin="anonymous" fetchpriority="high">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-e773cb7c2bff052df0957735ca0640bbd08486b88fd771976dca1fa61bfd2640" as="script" integrity="sha384-R0rb5Qyc+mu5XqEpUaujCa56DHowY/tW7IvnI5Dn46SZO/RpJ7wNR5WrxzrgiSHZ" crossorigin="anonymous" fetchpriority="high">
   <meta name="description" content="Six operating systems, Sandbox OS and 58 browser-native project windows for experiments, games, digital art, sound and creative tools.">
-  <meta name="curioid-release" content="v1.316">
+  <meta name="curioid-release" content="v1.317">
   <meta name="curioid-project-count" content="58">
   <meta name="curioid-category-count" content="7">
   <meta name="curioid-os-count" content="6">
@@ -429,8 +429,9 @@
       .room-description { max-width: 200px; }
       .room-state { display: inline-flex; align-items: center; justify-content: center; min-width: 47px; font-size:9px; padding: 4px 5px; }
       .room-body { padding: 9px; }
-      .site-footer { display: block; line-height: 1.8; }
-      .site-footer span { display: block; }
+      .site-footer { display: grid; justify-content: start; gap:7px; line-height:1.8; }
+      .site-footer > span { display:block; }
+      .site-footer .site-footer-meta { display:inline-flex; align-items:center; justify-content:flex-start; gap:7px; flex-wrap:wrap; }
     }
     /* Motion is enabled by default because the interactive projects rely on it.
        Visitors can pause it explicitly with the Motion button in the top bar. */
@@ -465,6 +466,14 @@
     .back-to-top.is-visible { opacity: .86; transform: translateY(0); pointer-events: auto; }
     .back-to-top:hover { opacity: .96; background: rgba(42,42,52,.68); color: var(--acid); border-color: rgba(214,255,105,.42); }
     .back-to-top:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; }
+    .back-to-top[hidden] { display:none !important; }
+    .back-to-top:not([hidden]) { display:inline-flex; align-items:center; justify-content:center; width:auto; min-width:68px; height:40px; gap:7px; padding:0 12px; border-color:rgba(214,255,105,.38); background:rgba(17,19,22,.94); color:#d6ff69; font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.08em; opacity:0; }
+    .back-to-top svg { display:block; width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .back-to-top.is-visible { opacity:.96; }
+    .site-footer-meta { display:inline-flex; align-items:center; justify-content:flex-end; gap:3px; }
+    .site-footer-info { display:inline-flex; align-items:center; justify-content:center; gap:5px; min-height:24px; padding:3px 7px; border:1px solid rgba(214,255,105,.24); border-radius:6px; background:rgba(214,255,105,.055); color:#cce98a; font:800 8px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.09em; cursor:pointer; }
+    .site-footer-info:hover,.site-footer-info:focus-visible { border-color:rgba(214,255,105,.65); background:rgba(214,255,105,.11); color:#e7ffad; }
+    .site-footer-info svg { width:13px; height:13px; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
     @media (max-width: 600px) {
       .back-to-top { right: 13px; bottom: 14px; }
       .personal-shortcuts-grid { grid-template-columns:1fr; gap:13px; }
@@ -846,7 +855,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.316</small></span><span>© Stelios Winters. All Rights Reserved.</span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.317</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span><button type="button" class="site-footer-info" id="openControlCenterFooter" aria-label="Open CURIOID information and settings" title="CURIOID information and settings"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8"/><path d="M10 9v5M10 6.1h.01"/></svg><span>INFO</span></button></span></footer>
     </div>
   </main>
 
@@ -873,7 +882,7 @@
         <summary data-health-details-summary>View detailed results</summary>
         <div class="site-control-health-results-scroll"><ul class="site-control-health-results" data-health-results aria-label="CURIOID health check results"></ul></div>
       </details>
-      <small class="site-control-storage-note">Refresh only checks the service-worker registration. It does not clear saved projects, OS packages, Browser Vault artifacts or backups. The report is generated locally and downloaded only when you press its button.</small>
+      <small class="site-control-storage-note">Refresh checks for a current offline shell. If an older cached release is blocking project assets, it can activate the waiting update and reload CURIOID. It never clears saved projects, OS packages, Browser Vault artifacts or backups. The report is generated locally and downloaded only when you press its button.</small>
     </section>
     <section class="site-control-tool-section" aria-labelledby="controlPanelCreateTitle">
       <h3 id="controlPanelCreateTitle">CREATE &amp; BUILD</h3>
@@ -938,10 +947,10 @@
     </div>
     <p class="site-shortcuts-foot">Global shortcuts are paused while you type in a field. Individual worlds may have their own additional controls.</p>
   </dialog>
-  <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top" title="Back to top" hidden>↑</button>
+  <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top" title="Back to top" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M4.5 9.5 10 4l5.5 5.5"/></svg><span>TOP</span></button>
 
 
 
-  <script src="site-runtime.js?v=sha256-658c9d0d1d218dd012fc3f6c9723ba7bf45e6fafc93f5faa7cd4a70db65b9e21" defer integrity="sha384-1s1Mrci0rVLFO+l4ykp84OgUOnx8fN2ec4RFq4VZ+QWJZdof1zpdAx7QrV8C7zTm" crossorigin="anonymous" data-cfasync="false"></script>
+  <script src="site-runtime-current.js?v=sha256-e773cb7c2bff052df0957735ca0640bbd08486b88fd771976dca1fa61bfd2640" defer integrity="sha384-R0rb5Qyc+mu5XqEpUaujCa56DHowY/tW7IvnI5Dn46SZO/RpJ7wNR5WrxzrgiSHZ" crossorigin="anonymous" data-cfasync="false"></script>
 </body>
 </html>

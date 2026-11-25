@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.25 / CURIOID v1.315 — shared core */
+/* Build: 2026.11.25 / CURIOID v1.317 — shared core */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */

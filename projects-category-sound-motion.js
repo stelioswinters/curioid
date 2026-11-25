@@ -1,4 +1,4 @@
-/* CURIOID v1.315 category bundle: sound-motion. */
+/* CURIOID v1.317 category bundle: sound-motion. */
 (() => {
   'use strict';
   const window = globalThis.window;

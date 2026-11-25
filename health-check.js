@@ -1,4 +1,4 @@
-/* CURIOID v1.316 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.317 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
   function create(options) {
@@ -518,15 +518,29 @@
     add('Secure context', isSecureContext ? {ok:true,detail:'The page is running in a secure context.'} : {ok:false,detail:'HTTPS is required for service workers and several storage APIs.'});
     add('Page and catalogue', roomCount ? {ok:true,detail:`${roomCount} project room(s) are present in the page.`} : {ok:false,detail:'No project rooms were found in the page.'});
     add('Project runtime state', projects ? {ok:true,detail:`Project code initialized with ${projects.ids?.length||0} catalogue ID(s).`} : {ok:false,warning:true,detail:`Project code is not initialized in this tab. ${window.__CURIOID_LAST_ASSET_LOAD_FAILURE ? 'A previous runtime asset load failure is recorded below.' : 'This is normal until a project is opened; asset delivery is tested independently below.'}`});
-    const siteRuntimeTag=[...document.scripts].find(node=>{try{return new URL(node.src).pathname.endsWith('/site-runtime.js');}catch(_){return false;}});
-    const siteRuntimePreload=[...document.querySelectorAll('link[rel="preload"][as="script"]')].find(node=>{try{return new URL(node.href).pathname.endsWith('/site-runtime.js');}catch(_){return false;}});
-    const expectedSiteRuntimeSri='sha384-1s1Mrci0rVLFO+l4ykp84OgUOnx8fN2ec4RFq4VZ+QWJZdof1zpdAx7QrV8C7zTm'
-    const siteRuntimeSriConfigured=Boolean(siteRuntimeTag&&siteRuntimeTag.integrity===expectedSiteRuntimeSri&&siteRuntimeTag.crossOrigin==='anonymous'&&siteRuntimePreload&&siteRuntimePreload.integrity===expectedSiteRuntimeSri&&siteRuntimePreload.crossOrigin==='anonymous');
-    const siteRuntimeSource=await (async()=>{try{const response=await healthTimeout(fetch(siteRuntimeTag?.src||new URL('site-runtime.js',deploymentBase).href,{cache:'force-cache',credentials:'same-origin'}),8000,'Site runtime source check');return response.ok?await response.text():'';}catch(_){return '';}})();
+    const siteRuntimeTag=[...document.scripts].find(node=>{try{return new URL(node.src).pathname.endsWith('/site-runtime-current.js');}catch(_){return false;}});
+    const siteRuntimePreload=[...document.querySelectorAll('link[rel="preload"][as="script"]')].find(node=>{try{return new URL(node.href).pathname.endsWith('/site-runtime-current.js');}catch(_){return false;}});
+    let siteRuntimeSource='',siteRuntimeBytes=null,siteRuntimeDigest='',siteRuntimeHash='';
+    try {
+      const runtimeUrl=siteRuntimeTag?.src||new URL('site-runtime-current.js',deploymentBase).href;
+      const response=await healthTimeout(fetch(runtimeUrl,{cache:'no-store',credentials:'same-origin'}),8000,'Site runtime source check');
+      if(response.ok){siteRuntimeBytes=await response.arrayBuffer();siteRuntimeSource=new TextDecoder().decode(siteRuntimeBytes);
+        if(window.crypto?.subtle?.digest){
+          const sha384=await crypto.subtle.digest('SHA-384',siteRuntimeBytes);
+          siteRuntimeDigest='sha384-'+btoa(String.fromCharCode(...new Uint8Array(sha384)));
+          const sha256=await crypto.subtle.digest('SHA-256',siteRuntimeBytes);
+          siteRuntimeHash=[...new Uint8Array(sha256)].map(value=>value.toString(16).padStart(2,'0')).join('');
+        }
+      }
+    }catch(_){}
+    const siteRuntimeUrl=(()=>{try{return new URL(siteRuntimeTag?.src||'site-runtime-current.js',deploymentBase);}catch(_){return null;}})();
+    const declaredRuntimeHash=siteRuntimeUrl?.searchParams.get('v')?.replace(/^sha256-/,'')||'';
+    const sriValue=siteRuntimeTag?.integrity||'';
+    const siteRuntimeSriConfigured=Boolean(siteRuntimeTag&&/^sha384-[A-Za-z0-9+/]+=*$/.test(sriValue)&&sriValue===siteRuntimeDigest&&siteRuntimeTag.crossOrigin==='anonymous'&&siteRuntimePreload&&siteRuntimePreload.integrity===sriValue&&siteRuntimePreload.crossOrigin==='anonymous'&&declaredRuntimeHash===siteRuntimeHash);
     const runtimeAssetDeclaration=siteRuntimeSource.match(/file:\s*["']projects-core\.js["'][^}]*integrity:\s*["'](sha384-[^"']+)["']/);
-    const expectedProjectRuntimeSri='sha384-trBDj7CA0Te0c8FvR/12IDXJh3D9tOqDJRepMp+JZJbQr/nHG/001cuRVVXM9kvF';
+    const expectedProjectRuntimeSri='sha384-6I7hY2X7ZxZ+KD9h2rwRuRuvIGSj8+1BvzRnz4QZZJPxIftPc1psjbQ42a1y9h+f';
     const sriConfigured=siteRuntimeSriConfigured&&siteRuntimeSource.includes('element.integrity = integrity')&&siteRuntimeSource.includes('element.crossOrigin = "anonymous"')&&runtimeAssetDeclaration?.[1]===expectedProjectRuntimeSri;
-    add('Site and project runtime SRI policy',sriConfigured?{ok:true,detail:'The cached site runtime has a matching SHA-384 script integrity attribute, and its project loader applies the expected release SRI and anonymous CORS mode.'}:{ok:false,detail:'The site runtime script or project-loader SRI/CORS contract is missing or mismatched.'});
+    add('Site and project runtime SRI policy',sriConfigured?{ok:true,detail:'The published runtime bytes match both their SHA-384 script integrity and SHA-256 cache-busting URL; the project loader also applies release SRI and anonymous CORS.'}:{ok:false,detail:`The site runtime integrity contract is missing or mismatched. Tag SHA-384: ${sriValue||'missing'}; downloaded SHA-384: ${siteRuntimeDigest||'unavailable'}; URL SHA-256: ${declaredRuntimeHash||'missing'}; actual SHA-256: ${siteRuntimeHash||'unavailable'}.`});
     add('OS boot contracts', projects ? (osBootReady ? {ok:true,detail:'All six OS project IDs are catalogued; their category modules load on demand.'} : {ok:false,detail:`One or more expected OS modules are missing. Found: ${(projects.ids||[]).filter(id=>osIds.includes(id)).join(', ')||'none'}.`}) : {ok:false,warning:true,detail:'Not evaluated because the shared project core has not initialized in this tab.'});
     let registryAudit = null;
     try { registryAudit = projects?.inspectRegistry?.() || null; } catch (error) { registryAudit = { ok:false, detail:String(error?.message||error).slice(0,220) }; }
@@ -553,20 +567,19 @@
     add('Offline cache presence', hasCache ? {ok:true,detail:`${cacheNames.filter(name=>name.includes('curioid-shell')).length} CURIOID shell cache(s) found: ${cacheNames.filter(name=>name.includes('curioid-shell')).join(', ')}.`} : {ok:false,warning:true,detail:'No CURIOID shell cache found yet. It is created after the service worker installs successfully.'});
     add('Offline cache inventory',cacheInventory.available?{ok:true,detail:`${cacheInventory.totalCaches} browser cache(s), ${cacheInventory.totalEntries} cached request(s) inventoried. Names and counts only; no cached content was opened or changed.`}:{ok:false,warning:true,detail:'Cache Storage inventory is unavailable.'});
     const releaseAssets = [
-      ['Main site runtime','site-runtime.js','658c9d0d1d218dd012fc3f6c9723ba7bf45e6fafc93f5faa7cd4a70db65b9e21','js'],
-      ['Shared project core','projects-core.js','2f70ee579db07ebd0a577833c9c092c6108f8c490fba3a3098fb628cd133abe6','js'],
+      ['Shared project core','projects-core.js','6d329993525c76ab76efb063d4785ad3942fcb37d3893e53a538719555780cb8','js'],
       ['Project stylesheet','projects.css','bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89','css'],
-      ['Operating Systems category bundle','projects-category-operating-systems.js','7ee9480c2c0f08b4a2ea0bd6df14c7cd571bd18f124f14f6c048e21ffa52198d','js'],
-      ['Strange Archives category bundle','projects-category-strange-archives.js','64036451348e2bdd5f44561406169f25c2e596c005e2524be8342f7a852fc3a4','js'],
-      ['Web Experiments category bundle','projects-category-web-experiments.js','fc86bffa5a0f9099c884bf15d92c1ca333f8a7c6fd2624cdb0ea7ee0caa7b01e','js'],
-      ['Tiny Games category bundle','projects-category-tiny-games.js','2f0bfe48fc5addda431a9cacc3248347874a0d35242a794595b6ac93f8851e9b','js'],
-      ['Digital Art category bundle','projects-category-digital-art.js','b17c028c30ea65bc0f88d1538e5d6b80debc0242094ecdd2fae8b9958224c502','js'],
-      ['Sound Motion category bundle','projects-category-sound-motion.js','93c02bd7d8559ff79cc8c7fe9f7a154a78b6aaf0235680ecf635263262e63c86','js'],
-      ['Creative Tools category bundle','projects-category-creative-tools.js','222b923b12b03ce5acb17efafcd35ca7768e1a1c3445915a3fd8b58ed1573587','js'],
+      ['Operating Systems category bundle','projects-category-operating-systems.js','907e64ad559cdc473d55adf80ab136d72cd40198c9f39878334d7e5485f4e368','js'],
+      ['Strange Archives category bundle','projects-category-strange-archives.js','0952c44a86591986a0743eea295fbbd5cc84a4564208aa4246ade1ea230e52e9','js'],
+      ['Web Experiments category bundle','projects-category-web-experiments.js','f266fc8b3cd40802f1dc0fa3c1aef706611cbe03571ea2d62deef81110b04d9f','js'],
+      ['Tiny Games category bundle','projects-category-tiny-games.js','3d26c8aad4bf8d3b31253ef06d05f6afa5e941b08d2c1b2fc66a99ccb399d59e','js'],
+      ['Digital Art category bundle','projects-category-digital-art.js','5664e5f0f2b600c7ee7457dd58aca3366f458cf8ac3c059971c23bf93a161dd0','js'],
+      ['Sound Motion category bundle','projects-category-sound-motion.js','39ce4863c12e0cd56e3fa1355c7f0830b1ee04a8bf9ac7650fa2d40077951bf2','js'],
+      ['Creative Tools category bundle','projects-category-creative-tools.js','8eba29d095469c2b98b95b2d144fd553a1aa05c1dc70f61c23fd2c077dd634a5','js'],
       ['Music & Audio apps page','music-audio-apps.html','0bb0dcec33dbed8b6f15072a4a9cf586a7a141b61a6a6e68bbe16904a7761faa','html'],
-      ['Applications & Tools apps page','applications-tools-apps.html','8013dfd67f16c17a294f0b53eae51bdbb46068e41c494873efabac768b643b82','html'],
+      ['Applications & Tools apps page','applications-tools-apps.html','87fb4e2477a8380aa728e21b0b034995dc558da8e4f7aeb8f31a64bf64bb4105','html'],
       ['Vocal Lexicon asset','vocal-lexicon.js','1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a','js'],
-      ['Curioids page','curioids.html','75fb135faaf274514c972c9b1bf9bc80db0b54d5d3bdf20c048ce807badab592','html'],
+      ['Curioids page','curioids.html','a27c77fe230698927dedcc49d6d3fc530d8171c38c8931fd5bef2a644bd3b3d3','html'],
       ['PWA manifest','manifest.webmanifest','92b55c1c8faa99121bd4ff79919d52cd48adb2c17353154abf428016f184846f','manifest'],
       ['Brand SVG icon','curioid-icon.svg','d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78','svg'],
       ['192px app icon','curioid-icon-192.png','32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887','png'],
@@ -584,8 +597,8 @@
       const swUrl = new URL('service-worker.js', deploymentBase);
       const swResponse = await healthTimeout(fetch(swUrl.href, {cache:'no-store',credentials:'same-origin'}), 8000, 'Service-worker file request');
       const swText = swResponse.ok ? await swResponse.text() : '';
-      const swValid = swResponse.ok && swText.includes('CURIOID v1.316 offline shell') && swText.includes('CACHE_NAME');
-      add('Service-worker file delivery', swValid ? {ok:true,detail:`HTTP ${swResponse.status}; release marker v1.316 found; ${swText.length.toLocaleString()} characters.`} : {ok:false,detail:`HTTP ${swResponse.status}; release marker missing or response was not a valid v1.316 service worker; ${swResponse.headers.get('content-type')||'content type not supplied'}.`});
+      const swValid = swResponse.ok && swText.includes('CURIOID v1.317 offline shell') && swText.includes('CACHE_NAME');
+      add('Service-worker file delivery', swValid ? {ok:true,detail:`HTTP ${swResponse.status}; release marker v1.317 found; ${swText.length.toLocaleString()} characters.`} : {ok:false,detail:`HTTP ${swResponse.status}; release marker missing or response was not a valid v1.317 service worker; ${swResponse.headers.get('content-type')||'content type not supplied'}.`});
     } catch(error) { add('Service-worker file delivery',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
     const shellIntegrity=await probePublishedShell();
     if(shellIntegrity.meta)assetMeta.push(shellIntegrity.meta);
@@ -711,7 +724,7 @@
     paintHealthResults(rows,statusText,failed?'ISSUES FOUND':warnings?'CHECKED WITH WARNINGS':'HEALTHY');
     if(healthDetailsSummary) healthDetailsSummary.textContent=`View detailed results (${rows.length} checks)`;
     if(healthRunButton){healthRunButton.disabled=false;healthRunButton.textContent='Run again';}
-    if(healthRepairButton) healthRepairButton.disabled=!registration;
+    if(healthRepairButton) healthRepairButton.disabled=!navigator.serviceWorker;
     lastHealthReport=makeHealthReport(rows,assetMeta,registration,cacheNames,estimate,persisted,performanceSnapshot,cacheInventory,publishedSiteSnapshot,performance.now()-diagnosticsStartedAt);
     if(healthDownloadButton) healthDownloadButton.disabled=false;
     return rows;
@@ -730,15 +743,23 @@
         }
       }
       async function refreshServiceWorkerRegistration() {
-        const registration = await navigator.serviceWorker?.getRegistration?.().catch(() => null);
-        if (!registration) { paintHealthResults([], 'No service-worker registration exists to refresh. Open CURIOID over HTTPS, then run diagnostics again.', 'UNAVAILABLE'); return; }
-        healthRepairButton.disabled = true; healthRepairButton.textContent = 'Refreshing…';
+        if(!navigator.serviceWorker){paintHealthResults([{label:'Service-worker registration',ok:false,warning:true,detail:'Service workers are not available in this browser context.'}],'The browser cannot refresh the offline shell here. Saved data was not changed.','UNAVAILABLE');return;}
+        if(healthRepairButton){healthRepairButton.disabled=true;healthRepairButton.textContent='Refreshing…';}
         try {
-          await healthTimeout(registration.update(), 10000, 'Service-worker update check');
-          paintHealthResults([{ label:'Service-worker registration', ok:true, detail:`Update check completed. Active: ${Boolean(registration.active)}; waiting: ${Boolean(registration.waiting)}. No saved data or caches were deleted.` }], 'Only the service-worker registration was refreshed. Any new version still follows the normal update-ready prompt.', 'CHECKED');
+          let registration=await navigator.serviceWorker.getRegistration(deploymentBase.pathname).catch(()=>null);
+          if(!registration)registration=await navigator.serviceWorker.register(new URL('service-worker.js',deploymentBase).href,{scope:deploymentBase.pathname,updateViaCache:'none'});
+          await healthTimeout(registration.update(),12000,'service-worker update check');
+          if(registration.installing){const worker=registration.installing;await healthTimeout(new Promise(resolve=>{if(['installed','activated','redundant'].includes(worker.state))return resolve();const done=()=>{worker.removeEventListener('statechange',onState);resolve();};const onState=()=>{if(['installed','activated','redundant'].includes(worker.state))done();};worker.addEventListener('statechange',onState);}),12000,'new service-worker installation');}
+          if(registration.waiting&&navigator.serviceWorker.controller){
+            const previous=navigator.serviceWorker.controller,waiting=registration.waiting;
+            const activated=await healthTimeout(new Promise(resolve=>{let finished=false;const finish=value=>{if(finished)return;finished=true;navigator.serviceWorker.removeEventListener('controllerchange',onChange);navigator.serviceWorker.removeEventListener('message',onMessage);resolve(value);};const onChange=()=>{if(navigator.serviceWorker.controller&&navigator.serviceWorker.controller!==previous)finish(true);};const onMessage=event=>{if(event.data?.type==='CURIOID_UPDATE_BLOCKED')finish({blocked:true,openTabs:event.data.openTabs});};navigator.serviceWorker.addEventListener('controllerchange',onChange);navigator.serviceWorker.addEventListener('message',onMessage);waiting.postMessage({type:'CURIOID_ACTIVATE_UPDATE'});}),12000,'service-worker activation');
+            if(activated===true){paintHealthResults([{label:'Service-worker registration',ok:true,detail:'The updated offline shell is active. Your local storage and saved project data were not cleared.'}],'The new offline shell is active. Reloading CURIOID so every stylesheet and project bundle comes from the same release.','UPDATED');setTimeout(()=>location.reload(),220);return;}
+            if(activated?.blocked)throw new Error(`The update is ready but could not activate safely. Close ${activated.openTabs?Math.max(1,activated.openTabs-1):'other'} other CURIOID tab(s), then retry.`);
+          }
+          paintHealthResults([{label:'Service-worker registration',ok:true,detail:`Update check completed. Active: ${Boolean(registration.active)}; waiting: ${Boolean(registration.waiting)}; controller: ${Boolean(navigator.serviceWorker.controller)}. No saved data or caches were deleted.`}],'The service-worker registration was refreshed. No update was waiting, or the page is not currently controlled by an older worker.','CHECKED');
         } catch (error) {
-          paintHealthResults([{ label:'Service-worker registration', ok:false, warning:true, detail:String(error?.message||error).slice(0,180) }], 'The browser could not refresh the service-worker registration. Your saved data was not changed.', 'UNAVAILABLE');
-        } finally { healthRepairButton.disabled = false; healthRepairButton.textContent = 'Refresh service-worker registration'; }
+          paintHealthResults([{label:'Service-worker registration',ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}],'The browser could not complete the update/refresh. Saved projects and browser storage were not changed.','UNAVAILABLE');
+        } finally { if(healthRepairButton&&healthRepairButton.isConnected){healthRepairButton.disabled=false;healthRepairButton.textContent='Refresh service-worker registration';} }
       }
       return Object.freeze({ run:runSafe, download:downloadHealthReport, refresh:refreshServiceWorkerRegistration });
     }

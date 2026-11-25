@@ -1,43 +1,43 @@
-/* CURIOID v1.316 offline shell. Minimal install; larger assets cache on first use. */
+/* CURIOID v1.317 offline shell. Minimal install; larger assets cache on first use. */
 'use strict';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
-const CACHE_NAME = `${CACHE_PREFIX}v1.316`;
+const CACHE_NAME = `${CACHE_PREFIX}v1.317`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 // Generated from the exact production files by scripts/refresh_release_assets.py.
 const EXPECTED_SHA256 = Object.freeze({
                               /* CURIOID_ASSET_HASHES_START */
-  'index.html': '00d8668c8f065d3a8760e70980e6522e3adaac19c5c23c82fb5839b6343ab5e5',
-  'site-runtime.js': '658c9d0d1d218dd012fc3f6c9723ba7bf45e6fafc93f5faa7cd4a70db65b9e21',
-  'projects-core.js': '2f70ee579db07ebd0a577833c9c092c6108f8c490fba3a3098fb628cd133abe6',
-  'projects-category-operating-systems.js': '7ee9480c2c0f08b4a2ea0bd6df14c7cd571bd18f124f14f6c048e21ffa52198d',
-  'projects-category-strange-archives.js': '64036451348e2bdd5f44561406169f25c2e596c005e2524be8342f7a852fc3a4',
-  'projects-category-web-experiments.js': 'fc86bffa5a0f9099c884bf15d92c1ca333f8a7c6fd2624cdb0ea7ee0caa7b01e',
-  'projects-category-tiny-games.js': '2f0bfe48fc5addda431a9cacc3248347874a0d35242a794595b6ac93f8851e9b',
-  'projects-category-digital-art.js': 'b17c028c30ea65bc0f88d1538e5d6b80debc0242094ecdd2fae8b9958224c502',
-  'projects-category-sound-motion.js': '93c02bd7d8559ff79cc8c7fe9f7a154a78b6aaf0235680ecf635263262e63c86',
-  'projects-category-creative-tools.js': '222b923b12b03ce5acb17efafcd35ca7768e1a1c3445915a3fd8b58ed1573587',
-  'projects.css': 'bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89',
-  'health-check.js': '6695437ce46c0047e5571e53c479e11e32ee6699ca7442d3768081e10b434452',
-  'music-audio-apps.html': '0bb0dcec33dbed8b6f15072a4a9cf586a7a141b61a6a6e68bbe16904a7761faa',
-  'applications-tools-apps.html': '8013dfd67f16c17a294f0b53eae51bdbb46068e41c494873efabac768b643b82',
-  'vocal-lexicon.js': '1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a',
-  'curioids.html': '75fb135faaf274514c972c9b1bf9bc80db0b54d5d3bdf20c048ce807badab592',
-  'manifest.webmanifest': '92b55c1c8faa99121bd4ff79919d52cd48adb2c17353154abf428016f184846f',
-  'robots.txt': '23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4',
-  'sitemap.xml': '6983c2451814d79ea47ff138849bda8faabd386b3379dd089445e72476836a87',
-  'social-preview.png': '562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809',
-  'curioid-icon.svg': 'd2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78',
+  'applications-tools-apps.html': '87fb4e2477a8380aa728e21b0b034995dc558da8e4f7aeb8f31a64bf64bb4105',
   'curioid-icon-192.png': '32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887',
   'curioid-icon-512.png': 'f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086',
+  'curioid-icon.svg': 'd2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78',
+  'curioids.html': 'a27c77fe230698927dedcc49d6d3fc530d8171c38c8931fd5bef2a644bd3b3d3',
+  'health-check.js': '47d6302fef26d800fb02fb30edcda7bb976dc1a026086fa9f9e33276f3608a36',
+  'index.html': '8dc3ef1cc50eff90114be733ec021a1b7aa88aac4a1baba9666c9acb986f701d',
+  'manifest.webmanifest': '92b55c1c8faa99121bd4ff79919d52cd48adb2c17353154abf428016f184846f',
+  'music-audio-apps.html': '0bb0dcec33dbed8b6f15072a4a9cf586a7a141b61a6a6e68bbe16904a7761faa',
+  'projects-category-creative-tools.js': '8eba29d095469c2b98b95b2d144fd553a1aa05c1dc70f61c23fd2c077dd634a5',
+  'projects-category-digital-art.js': '5664e5f0f2b600c7ee7457dd58aca3366f458cf8ac3c059971c23bf93a161dd0',
+  'projects-category-operating-systems.js': '907e64ad559cdc473d55adf80ab136d72cd40198c9f39878334d7e5485f4e368',
+  'projects-category-sound-motion.js': '39ce4863c12e0cd56e3fa1355c7f0830b1ee04a8bf9ac7650fa2d40077951bf2',
+  'projects-category-strange-archives.js': '0952c44a86591986a0743eea295fbbd5cc84a4564208aa4246ade1ea230e52e9',
+  'projects-category-tiny-games.js': '3d26c8aad4bf8d3b31253ef06d05f6afa5e941b08d2c1b2fc66a99ccb399d59e',
+  'projects-category-web-experiments.js': 'f266fc8b3cd40802f1dc0fa3c1aef706611cbe03571ea2d62deef81110b04d9f',
+  'projects-core.js': '6d329993525c76ab76efb063d4785ad3942fcb37d3893e53a538719555780cb8',
+  'projects.css': 'bcb29f1ddc36038da4e4aaa03db21e0e43ac6bb6e25b64d78fe309e7fa0d7e89',
+  'robots.txt': '23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4',
+  'site-runtime-current.js': 'e773cb7c2bff052df0957735ca0640bbd08486b88fd771976dca1fa61bfd2640',
+  'sitemap.xml': '6983c2451814d79ea47ff138849bda8faabd386b3379dd089445e72476836a87',
+  'social-preview.png': '562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809',
+  'vocal-lexicon.js': '1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a',
   /* CURIOID_ASSET_HASHES_END */
 });
 // Install only the small shell required to reopen CURIOID offline.
-const SHELL_PATHS = ['index.html', 'site-runtime.js', 'manifest.webmanifest', 'curioid-icon.svg', 'curioid-icon-192.png', 'curioid-icon-512.png'];
+const SHELL_PATHS = ['index.html', 'site-runtime-current.js?v=sha256-e773cb7c2bff052df0957735ca0640bbd08486b88fd771976dca1fa61bfd2640', 'manifest.webmanifest', 'curioid-icon.svg', 'curioid-icon-192.png', 'curioid-icon-512.png'];
 // Larger resources are cached on first request, not during PWA installation.
 const ON_DEMAND_CACHEABLE = new Set(['projects-core.js','projects-category-operating-systems.js','projects-category-strange-archives.js','projects-category-web-experiments.js','projects-category-tiny-games.js','projects-category-digital-art.js','projects-category-sound-motion.js','projects-category-creative-tools.js','projects.css','health-check.js','music-audio-apps.html','applications-tools-apps.html','vocal-lexicon.js','curioids.html','robots.txt','sitemap.xml','social-preview.png']);
 const CACHEABLE_DOCUMENTS = new Set(['index.html','curioids.html','music-audio-apps.html','applications-tools-apps.html']);
-const CACHEABLE = new Set([...SHELL_PATHS.filter(Boolean), ...ON_DEMAND_CACHEABLE]);
+const CACHEABLE = new Set([...SHELL_PATHS.map(path=>relativePathFor(new URL(path,SCOPE_URL))).filter(Boolean), ...ON_DEMAND_CACHEABLE]);
 const absolute = path => new URL(path || './', SCOPE_URL).href;
 function relativePathFor(url) {
   const raw = url.pathname.slice(SCOPE_URL.pathname.length).replace(/^\/+/, '');
@@ -48,7 +48,7 @@ function relativePathFor(url) {
   return decoded;
 }
 async function openCacheSafely() { try { return await caches.open(CACHE_NAME); } catch (_) { return null; } }
-function expectedHash(path) { return EXPECTED_SHA256[path || 'index.html'] || ''; }
+function expectedHash(path) { let key=path||'index.html'; try { key=relativePathFor(new URL(key,SCOPE_URL))||key.split('?')[0]; } catch (_) { key=String(key).split('?')[0]; } return EXPECTED_SHA256[key] || ''; }
 async function responseMatchesRelease(path, response) {
   const expected = expectedHash(path);
   const subtle = self.crypto?.subtle;
@@ -67,7 +67,7 @@ self.addEventListener('install', event => {
       await cache.addAll(SHELL_PATHS.map(absolute));
       for (const path of SHELL_PATHS) {
         const response = await cache.match(absolute(path));
-        if (!await responseMatchesRelease(path || 'index.html', response)) {
+        if (!await responseMatchesRelease(relativePathFor(new URL(path,SCOPE_URL)) || path || 'index.html', response)) {
           throw new Error(`The installed shell asset failed its release hash check: ${path || 'index.html'}`);
         }
       }
@@ -125,10 +125,12 @@ self.addEventListener('fetch', event => {
   if(!CACHEABLE.has(relativePath))return;
   event.respondWith((async()=>{
     const cache=await openCacheSafely();
-    if(cache)try{const hit=await cache.match(request,{ignoreSearch:true});if(hit&&await responseMatchesRelease(relativePath,hit))return hit;if(hit)await cache.delete(absolute(relativePath));}catch(_){ }
+    const releaseQuery=/^sha256-[a-f0-9]{64}$/i.test(url.searchParams.get('v')||'');
+    const cacheKey=releaseQuery?request:absolute(relativePath);
+    if(cache)try{const hit=await cache.match(cacheKey,{ignoreSearch:!releaseQuery});if(hit&&await responseMatchesRelease(relativePath,hit))return hit;if(hit)await cache.delete(cacheKey);}catch(_){ }
     try{
       const response=await fetch(request);
-      if(cache && response?.ok && response.type==='basic' && await responseMatchesRelease(relativePath,response))try{await cache.put(absolute(relativePath),response.clone());}catch(_){ }
+      if(cache && response?.ok && response.type==='basic' && await responseMatchesRelease(relativePath,response))try{await cache.put(cacheKey,response.clone());}catch(_){ }
       return response;
     } catch(_){return new Response('CURIOID is offline and this resource has not been cached or failed its release integrity check.',{status:503,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});}
   })());
