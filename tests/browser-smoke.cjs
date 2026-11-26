@@ -88,12 +88,16 @@ const assert = require('node:assert/strict');
     // Small viewport: no horizontal page overflow and key controls remain reachable.
     await page.setViewportSize({ width: 360, height: 800 });
     await page.reload({ waitUntil: 'networkidle', timeout: 60000 });
-    const dimensions = await page.evaluate(() => ({
-      viewport: document.documentElement.clientWidth,
-      document: document.documentElement.scrollWidth
-    }));
-    assert.ok(dimensions.document <= dimensions.viewport + 2,
-      'Horizontal overflow at 360px: ' + JSON.stringify(dimensions));
+    for (const width of [320, 360, 375, 414, 560, 768, 900, 1024, 1365]) {
+      await page.setViewportSize({ width, height: 800 });
+      const dimensions = await page.evaluate(() => ({
+        viewport: document.documentElement.clientWidth,
+        document: document.documentElement.scrollWidth
+      }));
+      assert.ok(dimensions.document <= dimensions.viewport + 2,
+        'Horizontal overflow at ' + width + 'px: ' + JSON.stringify(dimensions));
+    }
+    await page.setViewportSize({ width: 360, height: 800 });
     const menuToggle = page.locator('#menuToggle');
     if (await menuToggle.getAttribute('aria-expanded') !== 'true') await menuToggle.click();
     assert.equal(await menuToggle.getAttribute('aria-expanded'), 'true');
