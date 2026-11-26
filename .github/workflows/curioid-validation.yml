@@ -156,6 +156,8 @@ jobs:
           const cssSri = runtime.match(/const PROJECT_STYLES_SRI\s*=\s*["'](sha384-[^"']+)["']/)?.[1];
           if (cssHash && cssSri && fs.existsSync('projects-styles.css')) {
             const css = fs.readFileSync('projects-styles.css');
+            console.log('Computed projects-styles.css SHA-256: ' + crypto.createHash('sha256').update(css).digest('hex'));
+            console.log('Computed projects-styles.css SRI: sha384-' + crypto.createHash('sha384').update(css).digest('base64'));
             assert(crypto.createHash('sha256').update(css).digest('hex') === cssHash, 'Project stylesheet SHA-256 descriptor is stale.');
             assert('sha384-' + crypto.createHash('sha384').update(css).digest('base64') === cssSri, 'Project stylesheet SRI descriptor is stale.');
           } else fail('Project stylesheet integrity descriptors or file are missing.');
