@@ -40,6 +40,29 @@ const assert = require('node:assert/strict');
 
     const unlabeledProjectControls = [];
     const windowLayoutFindings = [];
+    const inspectRoomLayout = async room => room.evaluate(root => {
+      const mount = root.querySelector('.room-mount');
+      if (!mount) return [];
+      const mountRect = mount.getBoundingClientRect();
+      const selector = '[class*="window"],[role="dialog"],[class*="dialog"],[data-eno-window]';
+      return [...mount.querySelectorAll(selector)].filter(node => {
+        const rect = node.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && getComputedStyle(node).display !== 'none';
+      }).map(node => {
+        const rect = node.getBoundingClientRect();
+        const style = getComputedStyle(node);
+        const delta = node.scrollWidth - node.clientWidth;
+        const outside = rect.left < mountRect.left - 2 || rect.right > mountRect.right + 2;
+        const unscrollableOverflow = delta > 6 && !['auto','scroll'].includes(style.overflowX);
+        return {
+          selector: node.tagName.toLowerCase() + (node.id ? '#' + node.id : '') +
+            (typeof node.className === 'string' && node.className.trim() ? '.' + node.className.trim().split(/\\s+/).slice(0,3).join('.') : ''),
+          text: (node.innerText || '').trim().replace(/\\s+/g,' ').slice(0,90),
+          clientWidth: node.clientWidth, scrollWidth: node.scrollWidth, overflowX: style.overflowX,
+          outsideMount: outside, unscrollableOverflow
+        };
+      }).filter(item => item.outsideMount || item.unscrollableOverflow);
+    });
     const buttonSweep = { clicked: 0, skipped: 0, failures: [], capped: false };
     const sweepButtons = async (scope, sweepPage, projectLabel) => {
       const visited = new Set();
@@ -108,30 +131,13 @@ const assert = require('node:assert/strict');
           buttonSweep.failures.push({ project, button: 'standalone iframe bootstrap', reason: String(error?.message || error).slice(0,220) });
         }
       }
-      const layoutIssues = await room.evaluate(root => {
-        const mount = root.querySelector('.room-mount');
-        if (!mount) return [];
-        const mountRect = mount.getBoundingClientRect();
-        const selector = '[class*="window"],[role="dialog"],[class*="dialog"],[data-eno-window]';
-        return [...mount.querySelectorAll(selector)].filter(node => {
-          const rect = node.getBoundingClientRect();
-          return rect.width > 0 && rect.height > 0 && getComputedStyle(node).display !== 'none';
-        }).map(node => {
-          const rect = node.getBoundingClientRect();
-          const style = getComputedStyle(node);
-          const delta = node.scrollWidth - node.clientWidth;
-          const outside = rect.left < mountRect.left - 2 || rect.right > mountRect.right + 2;
-          const unscrollableOverflow = delta > 6 && !['auto','scroll'].includes(style.overflowX);
-          return {
-            selector: node.tagName.toLowerCase() + (node.id ? '#' + node.id : '') +
-              (typeof node.className === 'string' && node.className.trim() ? '.' + node.className.trim().split(/\\s+/).slice(0,3).join('.') : ''),
-            text: (node.innerText || '').trim().replace(/\\s+/g,' ').slice(0,90),
-            clientWidth: node.clientWidth, scrollWidth: node.scrollWidth, overflowX: style.overflowX,
-            outsideMount: outside, unscrollableOverflow
-          };
-        }).filter(item => item.outsideMount || item.unscrollableOverflow);
-      });
-      if (layoutIssues.length) windowLayoutFindings.push({ project, issues: layoutIssues.slice(0,12) });
+      for (const width of [320, 360, 375, 414, 560, 768, 1024, 1365]) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.waitForTimeout(45);
+        const layoutIssues = await inspectRoomLayout(room);
+        if (layoutIssues.length) windowLayoutFindings.push({ project, width, issues: layoutIssues.slice(0,12) });
+      }
+      await page.setViewportSize({ width: 360, height: 800 });
       const projectLabels = await room.locator('.room-mount').evaluate(root => {
         const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
         return Array.from(root.querySelectorAll(selector)).filter(node => node.getClientRects().length && !node.closest('[aria-hidden="true"]')).filter(node => {
