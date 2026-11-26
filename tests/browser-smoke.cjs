@@ -27,6 +27,35 @@ const assert = require('node:assert/strict');
       assert.ok(await page.locator('#categorySections .category-section:not([hidden])').count() >= 1, category + ' did not render');
     }
 
+    // Exercise every lazy category bundle and each independent desktop at least once.
+    const projectsToOpen = [
+      ['operating-systems', 'dead-interface'],
+      ['operating-systems', 'food-alchemy'],
+      ['operating-systems', 'echonoise-os'],
+      ['operating-systems', 'umbra-os'],
+      ['operating-systems', 'aura-synthesis'],
+      ['operating-systems', 'aether-os'],
+      ['operating-systems', 'sandbox-os'],
+      ['strange-archives', 'museum-almost'],
+      ['web-experiments', 'kineta-hyperion'],
+      ['tiny-games', 'curioids'],
+      ['digital-art', 'chroma-loom'],
+      ['sound-motion', 'dark-looper'],
+      ['creative-tools', 'vanta-deck']
+    ];
+    for (const [category, project] of projectsToOpen) {
+      await page.locator('[data-category="' + category + '"]').click();
+      const room = page.locator('#room-' + project);
+      await room.locator('.room-heading').click();
+      await page.waitForFunction(id => {
+        const node = document.getElementById('room-' + id);
+        return node?.dataset.loaded === 'true' || Boolean(node?.querySelector('.project-load-error'));
+      }, project, { timeout: 90000 });
+      assert.equal(await room.getAttribute('data-loaded'), 'true', project + ' failed to mount');
+      await room.locator('.room-heading').click();
+      await page.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'false', project);
+    }
+
     // Search should filter the catalogue and clear should restore it.
     const search = page.locator('#projectSearch');
     await search.fill('music');
