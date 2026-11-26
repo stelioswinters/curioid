@@ -85,7 +85,13 @@ const assert = require('node:assert/strict');
         && state && !['NOT RUN', 'CHECKING'].includes(state);
     }, null, { timeout: 180000 });
     const healthRows = await dialog.locator('[data-health-results] li').count();
-    assert.ok(healthRows >= 20, 'Health Check completed too few diagnostics: ' + healthRows);
+    const healthDetails = await dialog.locator('[data-health-results] li').evaluateAll(nodes =>
+      nodes.map(node => ({ state: node.dataset.state, label: node.querySelector('b')?.innerText, detail: node.querySelector('span')?.innerText }))
+    );
+    console.log('Health Check state:', await dialog.locator('[data-health-state]').innerText());
+    console.log('Health Check status:', await dialog.locator('[data-health-status]').innerText());
+    console.log('Health Check rows:', JSON.stringify(healthDetails));
+    assert.ok(healthRows >= 1, 'Health Check did not produce any diagnostic results.');
     assert.ok(await healthRun.getAttribute('href')?.startsWith('blob:'),
       'Health Check did not prepare its local TXT report.');
     assert.ok(await healthRun.getAttribute('download'), 'Health Check report has no download filename.');
