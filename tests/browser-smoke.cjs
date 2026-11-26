@@ -91,7 +91,7 @@ const assert = require('node:assert/strict');
     console.log('Health Check state:', await dialog.locator('[data-health-state]').innerText());
     console.log('Health Check status:', await dialog.locator('[data-health-status]').innerText());
     console.log('Health Check rows:', JSON.stringify(healthDetails));
-    assert.ok(healthRows >= 1, 'Health Check did not produce any diagnostic results.');
+    assert.ok(healthRows >= 20, 'Health Check completed too few diagnostics: ' + healthRows + '; see diagnostic rows above.');
     assert.ok(await healthRun.getAttribute('href')?.startsWith('blob:'),
       'Health Check did not prepare its local TXT report.');
     assert.ok(await healthRun.getAttribute('download'), 'Health Check report has no download filename.');
