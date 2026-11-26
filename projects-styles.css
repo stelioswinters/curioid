@@ -477,3 +477,7 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
   .room-window .room-mount :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.cos-actions,.os-system-center-actions,.window-toolbar) { flex-wrap:wrap; }
   .room-window .room-mount :where(.grid,.form-grid,.editor-grid,.workspace-grid) { min-width:0; }
 }
+
+
+/* v1.345: Echonoise launch icons must remain above the overlapping studio window. */
+.echonoise-os .eno-desktop-icons{z-index:3!important;pointer-events:auto!important;}
