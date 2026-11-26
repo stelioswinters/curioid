@@ -112,6 +112,245 @@ const assert = require('node:assert/strict');
     const remainingUnnamed = unlabeledProjectControls.length + standaloneAndLiveLabels.live.length + standaloneAndLiveLabels.standalone.length;
     assert.equal(remainingUnnamed, 0, 'Accessible-name audit found exposed controls without names: ' + JSON.stringify({ projects: unlabeledProjectControls, live: standaloneAndLiveLabels.live, standalone: standaloneAndLiveLabels.standalone }));
 
+    // Three isolated browser workers exercise the failure-prone apps independently.
+    const agentFailures = [];
+    const installAudioProbe = async agentPage => {
+      await agentPage.addInitScript(() => {
+        const probe = window.__curioidAudioProbe = { context: null, oscillatorStarts: 0, bufferStarts: 0, analyser: null, routed: false };
+        const NativeAudioContext = window.AudioContext || window.webkitAudioContext;
+        if (NativeAudioContext) {
+          const WrappedAudioContext = class extends NativeAudioContext {
+            constructor(...args) {
+              super(...args);
+              probe.context = this;
+            }
+          };
+          try { window.AudioContext = WrappedAudioContext; } catch (_) {}
+          try { if (window.webkitAudioContext) window.webkitAudioContext = WrappedAudioContext; } catch (_) {}
+        }
+        const oscillatorStart = window.OscillatorNode?.prototype?.start;
+        if (oscillatorStart) window.OscillatorNode.prototype.start = function (...args) {
+          probe.oscillatorStarts++;
+          return oscillatorStart.apply(this, args);
+        };
+        const bufferStart = window.AudioBufferSourceNode?.prototype?.start;
+        if (bufferStart) window.AudioBufferSourceNode.prototype.start = function (...args) {
+          probe.bufferStarts++;
+          return bufferStart.apply(this, args);
+        };
+        const connect = window.AudioNode?.prototype?.connect;
+        if (connect) window.AudioNode.prototype.connect = function (destination, ...args) {
+          const context = probe.context;
+          if (!probe.routed && context && destination === context.destination && this !== probe.analyser) {
+            try {
+              const analyser = context.createAnalyser();
+              analyser.fftSize = 2048;
+              probe.analyser = analyser;
+              probe.routed = true;
+              connect.call(this, analyser);
+              connect.call(analyser, destination);
+              return analyser;
+            } catch (_) {}
+          }
+          return connect.call(this, destination, ...args);
+        };
+      });
+    };
+    const prepareAgent = async (agentName, viewport) => {
+      const context = await browser.newContext({ viewport });
+      const agentPage = await context.newPage();
+      await installAudioProbe(agentPage);
+      agentPage.on('pageerror', error => agentFailures.push(agentName + ' pageerror: ' + error.message));
+      agentPage.on('console', message => { if (message.type() === 'error') agentFailures.push(agentName + ' console: ' + message.text()); });
+      agentPage.on('requestfailed', request => agentFailures.push(agentName + ' request failed: ' + request.url() + ' (' + request.failure()?.errorText + ')'));
+      await agentPage.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 60000 });
+      await agentPage.locator('#browseCollections > summary').click();
+      return { context, page: agentPage };
+    };
+    const openAgentRoom = async (agentPage, category, project) => {
+      await agentPage.locator('[data-category="' + category + '"]').click();
+      const room = agentPage.locator('#room-' + project);
+      await room.locator('.room-heading').click();
+      await agentPage.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'true',
+        project, { timeout: 90000 });
+      const notes = agentPage.locator('#curioid-important-notes');
+      if (await notes.count() && await notes.evaluate(node => node.open)) {
+        const acknowledge = notes.getByText(/got it/i).last();
+        if (await acknowledge.count()) await acknowledge.click();
+        else await notes.locator('button').last().click();
+        await notes.waitFor({ state: 'hidden', timeout: 10000 });
+      }
+      return room;
+    };
+    const audioOutputReport = async frame => frame.evaluate(async () => {
+      const probe = window.__curioidAudioProbe || {};
+      await new Promise(resolve => setTimeout(resolve, 180));
+      if (!probe.analyser) return { context: probe.context?.state || 'missing', oscillators: probe.oscillatorStarts || 0, buffers: probe.bufferStarts || 0, rms: 0, peak: 0 };
+      const samples = new Float32Array(probe.analyser.fftSize);
+      probe.analyser.getFloatTimeDomainData(samples);
+      let square = 0, peak = 0;
+      for (const sample of samples) { square += sample * sample; peak = Math.max(peak, Math.abs(sample)); }
+      return {
+        context: probe.context?.state || 'missing',
+        oscillators: probe.oscillatorStarts || 0,
+        buffers: probe.bufferStarts || 0,
+        rms: Math.sqrt(square / samples.length),
+        peak
+      };
+    });
+
+    const runDarkLooperAgent = async () => {
+      const agent = await prepareAgent('D4RK L00PER agent', { width: 1365, height: 900 });
+      try {
+        const room = await openAgentRoom(agent.page, 'sound-motion', 'dark-looper');
+        const iframe = room.locator('iframe[data-curioid-embedded-frame]');
+        await iframe.waitFor({ state: 'attached', timeout: 30000 });
+        const frameHandle = await iframe.elementHandle();
+        const frame = await frameHandle.contentFrame();
+        assert.ok(frame, 'D4RK L00PER iframe did not create a browser frame.');
+        await frame.waitForLoadState('domcontentloaded', { timeout: 30000 });
+        await frame.locator('body[data-app="dark-looper"]').waitFor({ state: 'attached', timeout: 30000 });
+        await frame.locator('#studio-looper:not([hidden])').waitFor({ state: 'visible', timeout: 30000 });
+        await frame.locator('#padsGrid .pad').first().waitFor({ state: 'visible' });
+        const iframeStatus = await frame.locator('#mpcStatus').innerText();
+        assert.ok(iframeStatus.includes('READY'), 'D4RK L00PER did not finish its initialization: ' + iframeStatus);
+        await frame.locator('.pad[data-index="0"]').click();
+        await frame.waitForFunction(() => document.getElementById('mpcStatus')?.textContent.includes('PAD HIT: KICK'), null, { timeout: 10000 });
+        const padAudio = await audioOutputReport(frame);
+        assert.equal(padAudio.context, 'running', 'D4RK L00PER Web Audio did not enter the running state: ' + JSON.stringify(padAudio));
+        assert.ok(padAudio.oscillators + padAudio.buffers > 0, 'D4RK L00PER did not schedule any sound nodes: ' + JSON.stringify(padAudio));
+        assert.ok(padAudio.rms > 0.00001 || padAudio.peak > 0.0001, 'D4RK L00PER audio output was silent at the analyser: ' + JSON.stringify(padAudio));
+
+        await frame.locator('#loopToggle').click();
+        await frame.waitForFunction(() => document.getElementById('mpcStatus')?.textContent.includes('PLAYING LOOP'), null, { timeout: 10000 });
+        assert.equal(await frame.locator('#loopToggle').getAttribute('aria-pressed'), 'true');
+        await frame.locator('#loopToggle').click();
+        await frame.waitForFunction(() => document.getElementById('mpcStatus')?.textContent.includes('LOOP STOPPED'), null, { timeout: 10000 });
+
+        await frame.locator('#editModeToggle').click();
+        await frame.locator('.pad[data-index="1"]').click();
+        await frame.locator('#soundModal.is-open').waitFor({ state: 'visible' });
+        await frame.locator('#soundSearch').fill('Deep 909');
+        await frame.locator('.sound-item-row').first().click();
+        await frame.locator('#modalSelectBtn').click();
+        assert.match(await frame.locator('.pad[data-index="1"]').innerText(), /DEEP 909/i);
+        await frame.locator('#editModeToggle').click();
+        await frame.locator('#clearBtn').click();
+        assert.ok((await frame.locator('#mpcStatus').innerText()).includes('ALL MUSIC CLEARED'));
+
+        const liveRecordSupported = await frame.evaluate(() => typeof MediaRecorder === 'function');
+        await frame.locator('#liveRecordBtn').click();
+        if (liveRecordSupported) {
+          await frame.waitForFunction(() => {
+            const status = document.getElementById('mpcStatus')?.textContent || '';
+            return status.includes('LIVE RECORDING ACTIVE') || status.includes('LIVE RECORDING NOT SUPPORTED');
+          }, null, { timeout: 10000 });
+          if ((await frame.locator('#mpcStatus').innerText()).includes('LIVE RECORDING ACTIVE')) {
+            await frame.locator('#liveRecordBtn').click();
+            await frame.locator('#recPopup.is-open').waitFor({ state: 'visible', timeout: 10000 });
+            await frame.locator('#recDiscardBtn').click();
+            assert.ok((await frame.locator('#mpcStatus').innerText()).includes('RECORDING DISCARDED'));
+          }
+        }
+        console.log('D4RK L00PER agent: embedded page, verified script UI, pad, loop, stop, sound assignment, clear and recording path passed. Audio: ' + JSON.stringify(padAudio));
+      } finally { await agent.context.close(); }
+    };
+
+    const runAdvancedVocalAgent = async () => {
+      const agent = await prepareAgent('Advanced Phoneme Singer agent', { width: 1365, height: 900 });
+      try {
+        const room = await openAgentRoom(agent.page, 'operating-systems', 'echonoise-os');
+        const eno = room.locator('.echonoise-os');
+        await eno.waitFor({ state: 'visible' });
+        await eno.locator('.eno-desktop-icons [data-eno-launch="vocal"]').click();
+        const vocal = eno.locator('.eno-window[data-eno-window="vocal"]');
+        await vocal.waitFor({ state: 'visible', timeout: 15000 });
+        await vocal.locator('[data-eno-vocal-mode="singer"]').click();
+        await vocal.locator('[data-eno-singer-panel]').waitFor({ state: 'visible' });
+        const dictionaryStatus = vocal.locator('[data-eno-dict-status]');
+        await agent.page.waitForFunction(() => {
+          const node = document.querySelector('.echonoise-os [data-eno-window="vocal"] [data-eno-dict-status]');
+          return node && /headwords|unavailable/i.test(node.textContent || '');
+        }, null, { timeout: 30000 });
+        const dictionaryResult = await dictionaryStatus.innerText();
+        assert.match(dictionaryResult, /headwords/i, 'Advanced Phoneme Singer pronunciation dictionary failed: ' + dictionaryResult);
+        await vocal.locator('[data-eno-lyrics]').fill('Hello, my little world.');
+        await vocal.locator('[data-eno-action="generate-vocal"]').click();
+        await agent.page.waitForFunction(() => {
+          const editor = document.querySelector('.echonoise-os [data-eno-window="vocal"] [data-eno-phoneme-editor]');
+          return Boolean(editor && editor.value.trim());
+        }, null, { timeout: 30000 });
+        const phonemes = await vocal.locator('[data-eno-phoneme-editor]').inputValue();
+        assert.match(phonemes, /[A-Z]{1,3}[012]?/, 'Generated vocal line did not contain phonemes.');
+        const pronunciationReport = await vocal.locator('[data-eno-pronunciation-report]').innerText();
+        assert.match(pronunciationReport, /dictionary|custom phonemes/i,
+          'Advanced singer fell back to estimated/unavailable pronunciations: ' + pronunciationReport);
+
+        await vocal.locator('[data-eno-action="sing-vocal"]').click();
+        await agent.page.waitForFunction(() =>
+          (document.querySelector('.echonoise-os [data-eno-feedback]')?.textContent || '').includes('Phoneme Singer is playing'),
+          null, { timeout: 15000 });
+        const audio = await audioOutputReport(agent.page.mainFrame());
+        assert.equal(audio.context, 'running', 'Advanced Phoneme Singer AudioContext is not running: ' + JSON.stringify(audio));
+        assert.ok(audio.oscillators + audio.buffers > 0, 'Advanced Phoneme Singer scheduled no sound nodes: ' + JSON.stringify(audio));
+        assert.ok(audio.rms > 0.00001 || audio.peak > 0.0001, 'Advanced Phoneme Singer produced no measurable audio signal: ' + JSON.stringify(audio));
+        await vocal.locator('[data-eno-action="stop"]').click();
+
+        const [phonemeExport] = await Promise.all([
+          agent.page.waitForEvent('download'),
+          vocal.locator('[data-eno-action="export-phonemes"]').click()
+        ]);
+        assert.match(phonemeExport.suggestedFilename(), /phoneme-sheet\.json$/i);
+        const [midiExport] = await Promise.all([
+          agent.page.waitForEvent('download'),
+          vocal.locator('[data-eno-action="export-vocal-midi"]').click()
+        ]);
+        assert.match(midiExport.suggestedFilename(), /\.mid$/i);
+
+        await vocal.locator('[data-eno-launch="voicebank"]').click();
+        const voicebank = eno.locator('.eno-window[data-eno-window="voicebank"]');
+        await voicebank.waitFor({ state: 'visible' });
+        await voicebank.locator('[data-eno-alias-overrides]').fill('AA = aa\nK AE = k ae\nL IY = lee\nS = s');
+        await voicebank.locator('[data-eno-action="save-aliases"]').click();
+        assert.match(await eno.locator('[data-eno-feedback]').innerText(), /alias map saved/i);
+        await voicebank.locator('[data-eno-action="clear-voicebank"]').click();
+        console.log('Advanced Phoneme Singer agent: dictionary, generated phonemes, live audio signal, Stop, MIDI/phoneme exports and voicebank controls passed. Audio: ' + JSON.stringify(audio) + '; pronunciation: ' + dictionaryResult + '; line: ' + phonemes);
+      } finally { await agent.context.close(); }
+    };
+
+    const runWindowLayoutAgent = async () => {
+      const agent = await prepareAgent('Window layout agent', { width: 360, height: 800 });
+      try {
+        const room = await openAgentRoom(agent.page, 'operating-systems', 'echonoise-os');
+        const eno = room.locator('.echonoise-os');
+        await eno.locator('.eno-desktop-icons [data-eno-launch="vocal"]').click();
+        const vocal = eno.locator('.eno-window[data-eno-window="vocal"]');
+        await vocal.waitFor({ state: 'visible' });
+        const bounds = await vocal.evaluate(node => {
+          const layer = node.closest('.eno-window-layer');
+          const a = node.getBoundingClientRect(), b = layer.getBoundingClientRect();
+          return { window: { x: a.x, right: a.right, width: a.width }, layer: { x: b.x, right: b.right, width: b.width }, scrollWidth: node.scrollWidth, clientWidth: node.clientWidth };
+        });
+        console.log('360px Echonoise window geometry:', JSON.stringify(bounds));
+        assert.ok(bounds.window.x >= bounds.layer.x - 1 && bounds.window.right <= bounds.layer.right + 1,
+          'Echonoise Vocal Synth window extends beyond its containing desktop at 360px: ' + JSON.stringify(bounds));
+      } finally { await agent.context.close(); }
+    };
+
+    const agentResults = await Promise.allSettled([
+      runDarkLooperAgent(),
+      runAdvancedVocalAgent(),
+      runWindowLayoutAgent()
+    ]);
+    const agentErrors = agentResults.filter(result => result.status === 'rejected').map(result => String(result.reason?.stack || result.reason));
+    console.log('Simulated test-agent results:', JSON.stringify(agentResults.map((result, index) => ({
+      agent: ['D4RK L00PER', 'Advanced Phoneme Singer', 'Window layout'][index],
+      status: result.status,
+      error: result.status === 'rejected' ? String(result.reason?.message || result.reason) : null
+    }))));
+    assert.deepEqual(agentErrors, [], 'Simulated test agents found failures:\n' + agentErrors.join('\n'));
+    if (agentFailures.length) throw new Error('Simulated agent browser errors:\n' + agentFailures.join('\n'));
+
     // Search should filter the catalogue and clear should restore it.
     const search = page.locator('#projectSearch');
     await search.fill('music');
