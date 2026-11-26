@@ -145,10 +145,25 @@ const assert = require('node:assert/strict');
           probe.analyser = analyser;
           return analyser;
         };
+        // D4RK L00PER has no in-app analyser. Tap its first final output node
+        // without changing the app's gain or its actual destination.
+        const nativeConnect = window.AudioNode?.prototype?.connect;
+        if (nativeConnect) window.AudioNode.prototype.connect = function (destination, ...args) {
+          const context = probe.context;
+          if (!probe.analyser && context && destination === context.destination) {
+            const analyser = context.createAnalyser();
+            analyser.fftSize = 2048;
+            probe.analyser = analyser;
+            nativeConnect.call(this, analyser);
+            nativeConnect.call(analyser, destination);
+            return analyser;
+          }
+          return nativeConnect.call(this, destination, ...args);
+        };
       });
     };
     const prepareAgent = async (agentName, viewport) => {
-      const context = await browser.newContext({ viewport });
+      const context = await browser.newContext({ viewport, acceptDownloads: true });
       const agentPage = await context.newPage();
       await installAudioProbe(agentPage);
       agentPage.on('pageerror', error => agentFailures.push(agentName + ' pageerror: ' + error.message));
