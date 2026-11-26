@@ -942,7 +942,7 @@
       window.__CURIOID_HEALTH_UI_CENSUS = uiCensus || null;
       const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
       const inspectDocumentControls = doc => {
-        const controls=[...doc.querySelectorAll(selector)];
+        const controls=[...doc.querySelectorAll(selector)].filter(node=>!node.hidden&&!node.closest('[aria-hidden="true"]'));
         const counts={controls:controls.length,buttons:0,inputs:0,selects:0,textareas:0,links:0,options:0,forms:doc.querySelectorAll('form').length,summaries:0,contenteditables:0,disabledControls:0,requiredControls:0,positiveTabindex:0,customRoleWithoutTabindex:0,invalidButtonTypes:0,duplicateAccessKeys:0,emptyOptionGroupLabels:0,
           unlabeled:0,duplicateIds:0,inlineHandlers:0,javascriptUrls:0,unsafeBlankLinks:0,
           formButtonsWithoutType:0,duplicateOptionValues:0,emptyOptionLabels:0,brokenAriaReferences:0,
@@ -985,7 +985,7 @@
           if(labelledBy.some(id=>!doc.getElementById(id)))counts.brokenAriaReferences++;
           const labelledByText=labelledBy.map(id=>doc.getElementById(id)?.textContent||'').join(' ').trim();
           const named=Boolean((node.getAttribute('aria-label')||'').trim()||labelledByText||
-            (['button','a'].includes(tag)&&node.textContent?.trim())||node.getAttribute('title')?.trim()||
+            (['button','a','summary'].includes(tag)&&node.textContent?.trim())||node.getAttribute('title')?.trim()||
             node.labels?.length||node.closest('label')||(['button','submit','reset','image'].includes(String(node.type||'').toLowerCase())&&node.value));
           if(!named)counts.unlabeled++;
           for(const relation of ['aria-controls','aria-owns','aria-describedby']) {

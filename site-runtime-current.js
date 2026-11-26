@@ -1118,8 +1118,8 @@
       const healthDownloadButton = $('[data-health-download]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = '2c1b903e00daad6bd0b77a23ad3eb952107dab44c6a88e746c51b3275074dc23';
-      const HEALTH_MODULE_SRI = 'sha384-NpAsEIea+HQVZt2nQye5xa4XXB6R5vM2zSpbRctOEBi9oA7tvesG2RyBR+L6nkyV';
+      const HEALTH_MODULE_HASH = '58854069af5b9d288b72370e2df5925e25f417f0f3f6c5fb77516e900093c47d';
+      const HEALTH_MODULE_SRI = 'sha384-h0gAQAUMy2+XMmnUsyiR+Fzr+Sf0MoTpTyYWcumZEj+1AxW20ygy82jiLQFArc8x';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null, healthFailureReportFilename = ''; 
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -2035,7 +2035,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438", integrity: "sha384-KwXs4mic5LINPb1ytkmfViadChJXmeSfjbs2hPvUesVkNL+tOryLQGuEEQhHpgPL",
+            file: "projects-core.js", hash: "af961b333e3633aab2bc7aecf2551a87aab9de222c9c056f7f21bf83a15fdf6f", integrity: "sha384-V4ug3MJY4erTsrQYu49YlktgBg3gDnYi8um/3+jTCl6n1FsusKsD1Z1WI30mDHs1",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -2227,7 +2227,7 @@
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438", as: "script" },
+        { file: "projects-core.js", hash: "af961b333e3633aab2bc7aecf2551a87aab9de222c9c056f7f21bf83a15fdf6f", as: "script" },
         { file: "projects-styles.css", hash: "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e", as: "style" }
       ]);
       let projectPrefetchScheduled = false;

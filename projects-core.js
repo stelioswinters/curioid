@@ -15032,7 +15032,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
           const template = document.createElement('template');
           template.innerHTML = markup;
           const fragment = template.content;
-          const controls = [...fragment.querySelectorAll('button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]')];
+          const controls = [...fragment.querySelectorAll('button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]')].filter(control => !control.hidden && !control.closest('[aria-hidden="true"]'));
           const idCounts = new Map();
           for (const node of fragment.querySelectorAll('[id]')) {
             idCounts.set(node.id,(idCounts.get(node.id)||0)+1);
