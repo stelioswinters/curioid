@@ -96,6 +96,18 @@ jobs:
             catch { return false; }
           })(), 'Offline manifest runtime hash does not match runtime bytes.');
 
+          const healthBytes = fs.readFileSync('health-check.js');
+          const healthHash = crypto.createHash('sha256').update(healthBytes).digest('hex');
+          const healthSri = 'sha384-' + crypto.createHash('sha384').update(healthBytes).digest('base64');
+          const healthHashDescriptor = runtime.match(/const HEALTH_MODULE_HASH\s*=\s*['"]([a-f0-9]{64})['"]/)?.[1];
+          const healthSriDescriptor = runtime.match(/const HEALTH_MODULE_SRI\s*=\s*['"](sha384-[^'"]+)['"]/)?.[1];
+          assert(healthHashDescriptor === healthHash, 'Health Check lazy-loader SHA-256 descriptor does not match health-check.js.');
+          assert(healthSriDescriptor === healthSri, 'Health Check lazy-loader SRI does not match health-check.js.');
+          assert(manifestMatch && (() => {
+            try { const manifest = JSON.parse(manifestMatch[1].replace(/,\s*}/g, '}')); return manifest['health-check.js'] === healthHash; }
+            catch { return false; }
+          })(), 'Offline manifest Health Check hash does not match health-check.js.');
+
           const categoryDescriptors = [...runtime.matchAll(/"([^"]+)": \{ file: "([^"]+)", hash: "([a-f0-9]{64})", integrity: "(sha384-[^"]+)" \}/g)];
           assert(categoryDescriptors.length === 7, `Expected 7 category integrity descriptors, found ${categoryDescriptors.length}.`);
           for (const [, category, file, expectedHash, expectedSri] of categoryDescriptors) {
