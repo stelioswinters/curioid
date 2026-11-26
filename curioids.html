@@ -932,7 +932,7 @@
         <button id="btn-clear-log">🧹 Clear Log</button>
         <button id="btn-export-save" type="button" title="Download a backup of this arena save">⬇️ Export Save</button>
         <button id="btn-import-save" type="button" title="Restore an arena save backup">⬆️ Import Save</button>
-        <input id="save-import-file" type="file" accept="application/json,.json" hidden>
+        <input id="save-import-file" aria-label="Choose a Curioids arena save to import" type="file" accept="application/json,.json" hidden>
         <span class="muted" id="shop-tier-info">Market tiers unlock as you earn trophies (T1 → T4).</span>
         </div>
       </div>
@@ -957,15 +957,15 @@
       </div>
 
       <div class="row" style="margin-top:12px;">
-        <input type="search" id="roster-search" class="filter-input" placeholder="Search weird name, icon, or tag..." style="flex:1; min-width:180px;" />
-        <select id="roster-tier" class="filter-select">
+        <input type="search" id="roster-search" aria-label="Search Curioids by name, icon, or tag" class="filter-input" placeholder="Search weird name, icon, or tag..." style="flex:1; min-width:180px;" />
+        <select id="roster-tier" aria-label="Filter Curioids by tier" class="filter-select">
           <option value="all">All Tiers</option>
           <option value="1">Tier 1</option>
           <option value="2">Tier 2</option>
           <option value="3">Tier 3</option>
           <option value="4">Tier 4</option>
         </select>
-        <select id="roster-status" class="filter-select">
+        <select id="roster-status" aria-label="Filter Curioids by status" class="filter-select">
           <option value="all">All Curioids</option>
           <option value="unlocked">Unlocked Only</option>
           <option value="in-pool">In 20-Pool</option>
@@ -1012,9 +1012,9 @@
         <div class="card">
           <h3 style="margin-top:0;">🧮 Math Widget</h3>
           <form id="calc-form" class="row">
-            <input type="number" id="calc-a" value="8" style="width:70px; padding:6px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
+            <input type="number" id="calc-a" aria-label="First factor" value="8" style="width:70px; padding:6px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
             <span>×</span>
-            <input type="number" id="calc-b" value="9" style="width:70px; padding:6px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
+            <input type="number" id="calc-b" aria-label="Second factor" value="9" style="width:70px; padding:6px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
             <button type="submit" class="btn-primary">Run</button>
           </form>
           <div id="calc-result" class="muted" style="margin-top:8px;">Result: 72</div>
@@ -1023,7 +1023,7 @@
         <div class="card">
           <h3 style="margin-top:0;">📣 Note Stream</h3>
           <form id="note-form" class="row">
-            <input type="text" id="note-input" placeholder="Write a weird note..." style="flex:1; min-width:120px; padding:6px 10px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
+            <input type="text" id="note-input" aria-label="Write a weird note" placeholder="Write a weird note..." style="flex:1; min-width:120px; padding:6px 10px; border-radius:8px; background:var(--bg); border:1px solid var(--border);" />
             <button type="submit">Post</button>
           </form>
           <div id="note-output" class="muted" style="margin-top:8px;">No messages yet.</div>

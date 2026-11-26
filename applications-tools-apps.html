@@ -834,14 +834,14 @@ body {
 <span>3. Current energy level</span>
 <span class="zt-mono" id="zt-val-energy" style="color:var(--zt-cyan);font-variant-numeric:tabular-nums;">5 / 10</span>
 </div>
-<input class="zt-range" id="zt-q-energy" max="10" min="1" type="range" value="5"/>
+<input class="zt-range" id="zt-q-energy" aria-label="Current energy level, 1 to 10" max="10" min="1" type="range" value="5"/>
 </div>
 <div class="zt-q">
 <div class="zt-q-head">
 <span>4. Stress &amp; screen load</span>
 <span class="zt-mono" id="zt-val-load" style="color:var(--zt-cyan);font-variant-numeric:tabular-nums;">5 / 10</span>
 </div>
-<input class="zt-range" id="zt-q-load" max="10" min="1" type="range" value="5"/>
+<input class="zt-range" id="zt-q-load" aria-label="Stress and screen load, 1 to 10" max="10" min="1" type="range" value="5"/>
 </div>
 <div class="zt-q">
 <div class="zt-q-head"><span>5. Available reset window</span></div>
@@ -902,28 +902,28 @@ body {
 <p class="zt-metric-sub" style="margin-top:0;">
               Strip tracking query parameters (<code>utm_*</code>, <code>fbclid</code>, <code>gclid</code>, <code>ref</code>) or encode/decode Base64 locally.
             </p>
-<textarea class="zt-textarea" id="zt-url-input" placeholder="Paste URLs (one per line) or text for Base64..."></textarea>
+<textarea class="zt-textarea" id="zt-url-input" aria-label="URLs or text to clean or encode" placeholder="Paste URLs (one per line) or text for Base64..."></textarea>
 <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
 <button class="zt-btn" data-zt-action="clean-urls" type="button">Clean Links</button>
 <button class="zt-btn" data-zt-action="b64-enc" type="button">Base64 Encode</button>
 <button class="zt-btn" data-zt-action="b64-dec" type="button">Base64 Decode</button>
 <button class="zt-btn" data-zt-copy="zt-url-output" type="button">Copy</button>
 </div>
-<textarea class="zt-textarea" id="zt-url-output" placeholder="Output appears here..." readonly="" style="margin-top:10px;"></textarea>
+<textarea class="zt-textarea" id="zt-url-output" aria-label="Cleaned or encoded URL output" placeholder="Output appears here..." readonly="" style="margin-top:10px;"></textarea>
 </div>
 <div class="zt-card">
 <h3 style="margin-top:0;margin-bottom:6px;">Text Inspector, JSON &amp; SHA-256</h3>
 <p class="zt-metric-sub" style="margin-top:0;">
               Count words and reading time, clean extra spaces, format JSON, or compute a local SHA-256 hash.
             </p>
-<textarea class="zt-textarea" id="zt-text-input" maxlength="2000000" placeholder="Paste text or JSON here..." spellcheck="false"></textarea>
+<textarea class="zt-textarea" id="zt-text-input" aria-label="Text or JSON to inspect" maxlength="2000000" placeholder="Paste text or JSON here..." spellcheck="false"></textarea>
 <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
 <button class="zt-btn" data-zt-action="text-stats" type="button">Stats &amp; Clean</button>
 <button class="zt-btn" data-zt-action="fmt-json" type="button">Format JSON</button>
 <button class="zt-btn" data-zt-action="sha256" type="button">SHA-256</button>
 <button class="zt-btn" data-zt-copy="zt-text-output" type="button">Copy</button>
 </div>
-<textarea class="zt-textarea" id="zt-text-output" placeholder="Result appears here..." readonly="" style="margin-top:10px;"></textarea>
+<textarea class="zt-textarea" id="zt-text-output" aria-label="Text inspection and JSON formatting output" placeholder="Result appears here..." readonly="" style="margin-top:10px;"></textarea>
 </div>
 </div>
 <div class="zt-two-col">
@@ -938,28 +938,28 @@ body {
 <button class="zt-btn" data-zt-action="passphrase" type="button">4-Word Passphrase</button>
 <button class="zt-btn" data-zt-copy="zt-pw-output" type="button">Copy</button>
 </div>
-<input class="zt-input zt-mono" id="zt-pw-output" placeholder="Generated password or passphrase..." readonly="" style="margin-top:12px;" type="text"/>
+<input class="zt-input zt-mono" id="zt-pw-output" aria-label="Generated password or passphrase" placeholder="Generated password or passphrase..." readonly="" style="margin-top:12px;" type="text"/>
 </div>
 <div class="zt-card">
 <h3 style="margin-top:0;margin-bottom:10px;">2-Option Trade-Off Scorer</h3>
 <div class="zt-two-col" style="gap:10px;">
 <div>
-<input class="zt-input" id="zt-opt-a-name" style="margin-bottom:8px;" type="text" value="Option A"/>
+<input class="zt-input" id="zt-opt-a-name" aria-label="Option A name" style="margin-bottom:8px;" type="text" value="Option A"/>
 <label class="zt-metric-sub">Upside (1-10): <strong id="zt-a-up-lbl">7</strong></label>
-<input class="zt-range" id="zt-a-up" max="10" min="1" type="range" value="7"/>
+<input class="zt-range" id="zt-a-up" aria-label="Option A upside, 1 to 10" max="10" min="1" type="range" value="7"/>
 <label class="zt-metric-sub">Ease (1-10): <strong id="zt-a-ea-lbl">6</strong></label>
-<input class="zt-range" id="zt-a-ea" max="10" min="1" type="range" value="6"/>
+<input class="zt-range" id="zt-a-ea" aria-label="Option A ease, 1 to 10" max="10" min="1" type="range" value="6"/>
 <label class="zt-metric-sub">Low Risk/Cost (1-10): <strong id="zt-a-co-lbl">6</strong></label>
-<input class="zt-range" id="zt-a-co" max="10" min="1" type="range" value="6"/>
+<input class="zt-range" id="zt-a-co" aria-label="Option A low risk or cost, 1 to 10" max="10" min="1" type="range" value="6"/>
 </div>
 <div>
-<input class="zt-input" id="zt-opt-b-name" style="margin-bottom:8px;" type="text" value="Option B"/>
+<input class="zt-input" id="zt-opt-b-name" aria-label="Option B name" style="margin-bottom:8px;" type="text" value="Option B"/>
 <label class="zt-metric-sub">Upside (1-10): <strong id="zt-b-up-lbl">6</strong></label>
-<input class="zt-range" id="zt-b-up" max="10" min="1" type="range" value="6"/>
+<input class="zt-range" id="zt-b-up" aria-label="Option B upside, 1 to 10" max="10" min="1" type="range" value="6"/>
 <label class="zt-metric-sub">Ease (1-10): <strong id="zt-b-ea-lbl">8</strong></label>
-<input class="zt-range" id="zt-b-ea" max="10" min="1" type="range" value="8"/>
+<input class="zt-range" id="zt-b-ea" aria-label="Option B ease, 1 to 10" max="10" min="1" type="range" value="8"/>
 <label class="zt-metric-sub">Low Risk/Cost (1-10): <strong id="zt-b-co-lbl">7</strong></label>
-<input class="zt-range" id="zt-b-co" max="10" min="1" type="range" value="7"/>
+<input class="zt-range" id="zt-b-co" aria-label="Option B low risk or cost, 1 to 10" max="10" min="1" type="range" value="7"/>
 </div>
 </div>
 <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">

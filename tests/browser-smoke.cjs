@@ -49,11 +49,11 @@ const assert = require('node:assert/strict');
       assert.equal(await room.getAttribute('data-loaded'), 'true', project + ' failed to mount');
       const projectLabels = await room.locator('.room-mount').evaluate(root => {
         const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
-        return Array.from(root.querySelectorAll(selector)).filter(node => {
+        return Array.from(root.querySelectorAll(selector)).filter(node => node.getClientRects().length && !node.closest('[aria-hidden="true"]')).filter(node => {
           const labelledBy = (node.getAttribute('aria-labelledby') || '').trim().split(/\\s+/).filter(Boolean);
           const labelledByText = labelledBy.map(id => root.ownerDocument.getElementById(id)?.textContent || '').join(' ').trim();
           return !((node.getAttribute('aria-label') || '').trim() || labelledByText ||
-            (['button', 'a'].includes(node.tagName.toLowerCase()) && node.textContent?.trim()) ||
+            (['button', 'a', 'summary'].includes(node.tagName.toLowerCase()) && node.textContent?.trim()) ||
             node.getAttribute('title')?.trim() || node.labels?.length || node.closest('label') ||
             (['button', 'submit', 'reset', 'image'].includes(String(node.type || '').toLowerCase()) && node.value));
         }).map(node => ({
@@ -88,11 +88,11 @@ const assert = require('node:assert/strict');
     console.log('Unlabeled project input context:', JSON.stringify(unlabeledProjectInputs));
     const standaloneAndLiveLabels = await page.evaluate(async () => {
       const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
-      const findUnlabeled = (root, source) => Array.from(root.querySelectorAll(selector)).filter(node => {
+      const findUnlabeled = (root, source) => Array.from(root.querySelectorAll(selector)).filter(node => !node.hidden && !node.closest('[aria-hidden="true"]')).filter(node => {
         const labelledBy = (node.getAttribute('aria-labelledby') || '').trim().split(/\\s+/).filter(Boolean);
         const labelledByText = labelledBy.map(id => root.getElementById?.(id)?.textContent || root.querySelector?.('#' + CSS.escape(id))?.textContent || '').join(' ').trim();
         return !((node.getAttribute('aria-label') || '').trim() || labelledByText ||
-          (['button', 'a'].includes(node.tagName.toLowerCase()) && node.textContent?.trim()) ||
+          (['button', 'a', 'summary'].includes(node.tagName.toLowerCase()) && node.textContent?.trim()) ||
           node.getAttribute('title')?.trim() || node.labels?.length || node.closest('label') ||
           (['button', 'submit', 'reset', 'image'].includes(String(node.type || '').toLowerCase()) && node.value));
       }).map(node => ({ source, tag: node.tagName.toLowerCase(), type: node.getAttribute('type') || '',
@@ -109,6 +109,8 @@ const assert = require('node:assert/strict');
       return { live, standalone };
     });
     console.log('Live/standalone controls without an explicit accessible name:', JSON.stringify(standaloneAndLiveLabels));
+    const remainingUnnamed = unlabeledProjectControls.length + standaloneAndLiveLabels.live.length + standaloneAndLiveLabels.standalone.length;
+    assert.equal(remainingUnnamed, 0, 'Accessible-name audit found exposed controls without names: ' + JSON.stringify({ projects: unlabeledProjectControls, live: standaloneAndLiveLabels.live, standalone: standaloneAndLiveLabels.standalone }));
 
     // Search should filter the catalogue and clear should restore it.
     const search = page.locator('#projectSearch');

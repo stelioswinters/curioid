@@ -6,18 +6,18 @@ const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const EXPECTED_SHA256 = Object.freeze({
-  "applications-tools-apps.html": "81a895888113c9d056c1d628efa722332355afd8e04b918e051fd5e48f9a3234",
-  "chroma-loom.html": "fa02c8a891a610ce2da7a70dd4e8d9e84a99bf2e8ea1359d781a2f0b34ed7e8d",
+  "applications-tools-apps.html": "27e8bf944a4ab4c66f3101ac64879565743090e82b49297133ad0b8686271108",
+  "chroma-loom.html": "e564f0d169985807b4ac87099c336c4928cbf959ef40d744942879df139fc348",
   "curioid-icon-192.png": "32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887",
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
-  "curioids.html": "df08280dca7c9509971f26917aba9607ac5460ed68c80e43a83e158f2e558e49",
+  "curioids.html": "8108bf964fa813592a213f1500b10ccaadff4e6daaa5444737cc6870a1b63fad",
   "dark-looper-app.js": "d5b1969d36162f8e019c618f67d56dba2ac2d034e3b6d1b91c1f9f11ce2656dd",
   "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
   "health-check.js": "58854069af5b9d288b72370e2df5925e25f417f0f3f6c5fb77516e900093c47d",
   "index.html": "8dd5104edb44562dec2ac75aa4bf675412163a89957745b47b87b2ed7838f8e5",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
-  "music-audio-apps.html": "0711844de6cde112b5e7d8e60d303142351ce858f52a5d390e76aedded4b2e1e",
+  "music-audio-apps.html": "683337b7874cfb3d1decfd39ee19a7390dbed50827991648f8173fceb625ee17",
   "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
   "projects-category-digital-art.js": "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3",
   "projects-category-operating-systems.js": "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946",
