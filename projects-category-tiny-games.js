@@ -1,4 +1,4 @@
-/* CURIOID v1.333 category bundle: tiny-games. */
+/* CURIOID v1.342 category bundle: tiny-games. */
 (() => {
   'use strict';
   const window = globalThis.window;
@@ -177,17 +177,25 @@ function bindCurioids(root){
     const fullscreen=$('[data-curioids-fullscreen]',root);
     if(!frame||!wrap)return()=>{};
     const detach=window.CurioidSiteActivity?.attachFrame(frame)||(()=>{});
-    const toggleFullscreen=()=>{
+    frame.setAttribute('allow','fullscreen');frame.setAttribute('allowfullscreen','');
+    const toggleFullscreen=async()=>{
       try{
-        if(document.fullscreenElement){document.exitFullscreen?.();return;}
-        const request=wrap.requestFullscreen||wrap.webkitRequestFullscreen;
-        if(request)request.call(wrap);
-      }catch(error){console.warn('Curioids fullscreen is unavailable in this browser:',error);}
+        if(document.fullscreenElement){await document.exitFullscreen();return;}
+        const request=frame.requestFullscreen||frame.webkitRequestFullscreen||wrap.requestFullscreen||wrap.webkitRequestFullscreen;
+        if(!request)throw new Error('This browser does not expose the Fullscreen API.');
+        await request.call(frame.requestFullscreen||frame.webkitRequestFullscreen?frame:wrap);
+      }catch(error){
+        console.warn('Curioids fullscreen is unavailable in this browser:',error);
+        const notice=root.querySelector('[data-curioids-fullscreen-status]');
+        if(notice){notice.textContent='Fullscreen is unavailable here. Try the browser fullscreen control.';notice.hidden=false;}
+      }
+      syncFullscreen();
     };
-    const syncFullscreen=()=>{if(fullscreen)fullscreen.textContent=document.fullscreenElement===wrap?'✕ Exit fullscreen':'⛶ Fullscreen';};
+    const syncFullscreen=()=>{if(fullscreen)fullscreen.textContent=(document.fullscreenElement===wrap||document.fullscreenElement===frame)?'✕ Exit fullscreen':'⛶ Fullscreen';};
     fullscreen?.addEventListener('click',toggleFullscreen);
+    frame.addEventListener('fullscreenchange',syncFullscreen);
     document.addEventListener('fullscreenchange',syncFullscreen);
-    return()=>{try{detach();}catch(_){};fullscreen?.removeEventListener('click',toggleFullscreen);document.removeEventListener('fullscreenchange',syncFullscreen);try{frame.src='about:blank';}catch(_){};};
+    return()=>{try{detach();}catch(_){};fullscreen?.removeEventListener('click',toggleFullscreen);frame.removeEventListener('fullscreenchange',syncFullscreen);document.removeEventListener('fullscreenchange',syncFullscreen);try{frame.src='about:blank';}catch(_){};};
   }
 
 function showTinyGameCongratulations(root,message,next){

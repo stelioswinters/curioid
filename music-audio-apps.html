@@ -6,17 +6,96 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="#10131a" name="theme-color"/>
 <meta content="noindex,nofollow" name="robots"/>
-<meta content="default-src 'self';script-src 'self' 'strict-dynamic' 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-nl8xuUJz9P0Hz3kduozBLm7FOCcaTSUvigqJhx5XNqU='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'" http-equiv="Content-Security-Policy"/>
+<meta content="default-src 'self';script-src 'self' 'strict-dynamic' 'sha256-7tfxcDo611s8f1N/TKYkAvXToalij/ienMXq0vocHw8=' 'sha256-18rjyMegnBXhMB+TfNbj1TaTcX75drh1S9Z5L0flGgY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
   <script id="curioid-frame-guard">
 (() => {
-  let blocked = false;
-  try {
-    blocked = window.top !== window.self && window.top.location.origin !== window.location.origin;
-  } catch (_) {
-    blocked = true;
+  const embedded = window.top !== window.self;
+  let parentOrigin = '';
+  if (embedded) {
+    try {
+      const ownOrigin = new URL(window.location.href).origin;
+      const referrerOrigin = new URL(document.referrer).origin;
+      if (ownOrigin === referrerOrigin) parentOrigin = referrerOrigin;
+    } catch (_) {}
   }
-  if (!blocked) return;
+  const blocked = embedded && !parentOrigin;
+  if (!embedded) return;
 
+  if (!blocked) {
+    let stopped = false;
+    let lastHeight = 0;
+    let frameRequest = 0;
+    let resizeObserver = null;
+    let mutationObserver = null;
+    let observing = false;
+    const reportHeight = () => {
+      frameRequest = 0;
+      if (stopped) return;
+      const body = document.body;
+      const doc = document.documentElement;
+      if (!body || !doc) return;
+      const height = Math.max(1, Math.ceil(Math.max(body.scrollHeight, doc.scrollHeight, body.offsetHeight, doc.offsetHeight)));
+      if (Math.abs(height - lastHeight) < 2) return;
+      lastHeight = height;
+      try { window.parent.postMessage({ type: 'CURIOID_APP_HEIGHT', height }, parentOrigin); } catch (_) {}
+    };
+    const scheduleHeight = () => {
+      if (stopped || frameRequest) return;
+      frameRequest = requestAnimationFrame(reportHeight);
+    };
+    const suspendObservers = () => {
+      if (frameRequest) cancelAnimationFrame(frameRequest);
+      frameRequest = 0;
+      resizeObserver?.disconnect();
+      mutationObserver?.disconnect();
+      resizeObserver = null;
+      mutationObserver = null;
+      window.removeEventListener('resize', scheduleHeight);
+      observing = false;
+    };
+    const stopObservers = () => {
+      if (stopped) return;
+      suspendObservers();
+      stopped = true;
+      try { window.__curioidAppDisposed = true; } catch (_) {}
+      document.removeEventListener('DOMContentLoaded', startObservers);
+      window.removeEventListener('load', scheduleHeight);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('message', onParentMessage);
+    };
+    function startObservers() {
+      if (stopped || observing) return;
+      observing = true;
+      scheduleHeight();
+      window.addEventListener('resize', scheduleHeight, { passive: true });
+      if (typeof ResizeObserver === 'function') {
+        resizeObserver = new ResizeObserver(scheduleHeight);
+        if (document.documentElement) resizeObserver.observe(document.documentElement);
+        if (document.body) resizeObserver.observe(document.body);
+      }
+      if (typeof MutationObserver === 'function' && document.documentElement) {
+        mutationObserver = new MutationObserver(scheduleHeight);
+        mutationObserver.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+      }
+    }
+    const onPageHide = event => { if (event?.persisted === true) suspendObservers(); else stopObservers(); };
+    const onPageShow = event => { if (event?.persisted === true) startObservers(); };
+    const onParentMessage = event => {
+      if (stopped || event.source !== window.parent || event.origin !== parentOrigin || event.data?.type !== 'CURIOID_APP_DISPOSE') return;
+      stopObservers();
+      try { window.dispatchEvent(new Event('curioid-app-dispose')); } catch (_) {}
+    };
+    window.addEventListener('load', scheduleHeight, { once: true });
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('message', onParentMessage);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startObservers, { once: true });
+    else startObservers();
+    Object.defineProperty(window, '__curioidTrustedParentOrigin', { value: parentOrigin, configurable: false, enumerable: false, writable: false });
+  }
+
+  if (!blocked) return;
   const cancelInteraction = event => {
     if (event.cancelable) event.preventDefault();
     event.stopImmediatePropagation();
@@ -27,10 +106,7 @@
     'pointerdown', 'pointerup', 'pointermove', 'mousedown', 'mouseup',
     'touchstart', 'touchend', 'dragstart', 'drop'
   ];
-  for (const type of blockedEvents) {
-    window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
-  }
-
+  for (const type of blockedEvents) window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
   const showFrameWarning = () => {
     if (document.body) document.body.inert = true;
     if (document.getElementById('curioid-frame-warning')) return;
@@ -48,12 +124,8 @@
     panel.append(heading, message);
     document.documentElement.append(panel);
   };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
-  } else {
-    showFrameWarning();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
+  else showFrameWarning();
 })();
   </script>
 <title>CURIOID</title>
@@ -261,6 +333,21 @@ body {
 .glitchyard-loader>span:not(.glitchyard-loader-mark){color:var(--muted,#91a0a8);font-size:12px}
 .glitchyard-loader-error>p{max-width:560px;color:var(--muted,#91a0a8);font-size:12px;line-height:1.6;overflow-wrap:anywhere}
 </style>
+<meta name="referrer" content="strict-origin"/>
+
+<style id="curioid-v1-342-layout-guard">
+  :where(main,section,article,aside,header,footer,form,fieldset,nav,div,label,details,summary,
+    .container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; }
+  :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,figcaption) { overflow-wrap:anywhere; word-break:normal; }
+  :where(button,[role="button"],input,select,textarea,output) { min-width:0; max-width:100%; white-space:normal; }
+  :where(img,svg,video,canvas,iframe) { max-width:100%; }
+  :where(pre,pre code,table,textarea,.code-output,.console-output) { max-width:100%; }
+  @media(max-width:680px) {
+    :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.dt-actions,.header-actions,.footer-actions) { min-width:0; flex-wrap:wrap; }
+    :where(.container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; max-width:100%; }
+  }
+</style>
+
 </head>
 <body>
 <section class="studio-app" data-studio-app="dark-looper" hidden="" id="studio-looper">
@@ -338,7 +425,7 @@ body {
 <script id="curioid-music-audio-bootstrap">(()=>{
   'use strict';
   const file='dark-looper-app.js';
-  const integrity='sha384-gS3p1pQxuZtLobkG/rnzZtTZ6kqjMtGXSvU9vsUaJTpCbWFaITcK9THGqUn6a4Zp';
+  const integrity='sha384-nUlm9uY8665itoPJW0hWgPW1jy7kaCtxfbS0pgwd4WvWEsqbvFJrJ7Qt9xxQLrsY';
   document.body.dataset.app='dark-looper';
   document.title='CURIOID';
   const section=document.querySelector('[data-studio-app="dark-looper"]');
@@ -346,7 +433,7 @@ body {
   const script=document.createElement('script');script.src=new URL(file,location.href).href;script.async=false;script.integrity=integrity;script.crossOrigin='anonymous';script.referrerPolicy='no-referrer';
   script.onerror=()=>{const box=document.createElement('div');box.setAttribute('role','alert');box.style.cssText='margin:24px;padding:18px;border:1px solid #b45309;border-radius:12px;background:#241b13;color:#ffdfad;font:14px/1.55 system-ui';box.textContent='D4RK L00PER could not start. Its verified local script failed to load. Check the deployment file set and release hashes.';(section||document.body).appendChild(box);};
   document.head.appendChild(script);
-  window.addEventListener('message',event=>{if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='CURIOID_APP_DISPOSE')return;try{window.dispatchEvent(new Event('curioid-app-dispose'));}catch(_){}});
+  /* Disposal is handled by the trusted opaque-origin parent bridge installed in the frame guard. */
 })();</script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* CURIOID v1.333 category bundle: web-experiments. */
+/* CURIOID v1.342 category bundle: web-experiments. */
 (() => {
   'use strict';
   const window = globalThis.window;
@@ -1564,7 +1564,23 @@ function bindKineta(root, api = {}) {
   const particleState = { items: [], matrix: [], species: 4, steps: 0 };
   const particleBuckets = new Map();
   let hudFrameCounter = 0;
-  const ecoState = { agents: [], food: [], births: 0, extinctions: 0, season: 'SPRING', foodAccumulator: 0, populationPeak: 0, tick: 0 };
+  const ecoState = { agents: [], food: [], births: 0, extinctions: 0, grazers: 0, hunters: 0, season: 'SPRING', foodAccumulator: 0, populationPeak: 0, tick: 0 };
+  // The ecosystem uses a reusable uniform grid. Its largest sensing radius is
+  // 150 px, so a 3 x 3 cell neighbourhood contains every possible target.
+  // Agent buckets are updated as each animal moves to preserve sequential
+  // simulation semantics within a tick.
+  const ECO_GRID_CELL_SIZE = 150;
+  const ECO_GRID_FOOD_CAP = 220;
+  const ECO_SEASONS = ['SPRING', 'SUMMER', 'AUTUMN', 'WINTER'];
+  const ECO_CLIMATE = [1.55, 1.15, .72, .42];
+  let ecoGridCols = 0, ecoGridRows = 0;
+  let ecoFoodGrid = [], ecoAgentGrid = [];
+  let ecoGridProbeMarks = new Uint32Array(0), ecoGridProbeToken = 0;
+  const ecoAgentCellIndex = new Int32Array(ecoCap + 1);
+  const ecoAgentCellOffset = new Int32Array(ecoCap + 1);
+  const ecoRemovedAgents = new Uint8Array(ecoCap + 1);
+  const ecoRemovedFood = new Uint8Array(ECO_GRID_FOOD_CAP);
+  const ecoPendingBabies = [];
   const lifeRules = {
     life: { birth: [3], survive: [2,3], label: 'Conway B3/S23' },
     highlife: { birth: [3,6], survive: [2,3], label: 'HighLife B36/S23' },
@@ -1990,60 +2006,321 @@ function bindKineta(root, api = {}) {
     for(const p of particleState.items){ctx.fillStyle=palette[p.type%palette.length];ctx.globalAlpha=.88;ctx.beginPath();ctx.arc(p.x,p.y,2.6,0,TAU);ctx.fill();}
     ctx.globalAlpha=1;ctx.fillStyle='rgba(148,163,184,.3)';ctx.font='10px ui-monospace,monospace';ctx.fillText(`${particleState.items.length} PARTICLES · ${particleState.species} SPECIES · STEP ${particleState.steps}`,12,height-12);
   }
+  function ecoGridHasUsefulSpread(food, agents) {
+    let token = ++ecoGridProbeToken;
+    if (token >= 0xffffffff) {
+      ecoGridProbeMarks.fill(0);
+      token = ecoGridProbeToken = 1;
+    }
+    let uniqueCells = 0;
+    const sampleGroups = 2;
+    for (let group = 0; group < sampleGroups; group++) {
+      const items = group === 0 ? food : agents;
+      const sampleCount = Math.min(12, items.length);
+      for (let sample = 0; sample < sampleCount; sample++) {
+        const itemIndex = sampleCount === 1 ? 0 : Math.round(sample * (items.length - 1) / (sampleCount - 1));
+        const item = items[itemIndex];
+        const cellX = clampK(Math.floor(item.x / ECO_GRID_CELL_SIZE), 0, ecoGridCols - 1);
+        const cellY = clampK(Math.floor(item.y / ECO_GRID_CELL_SIZE), 0, ecoGridRows - 1);
+        const cellIndex = cellY * ecoGridCols + cellX;
+        if (ecoGridProbeMarks[cellIndex] !== token) {
+          ecoGridProbeMarks[cellIndex] = token;
+          uniqueCells++;
+          if (uniqueCells >= 8) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function prepareEcoSpatialGrid(food, agents) {
+    const cols = Math.max(1, Math.ceil(width / ECO_GRID_CELL_SIZE));
+    const rows = Math.max(1, Math.ceil(height / ECO_GRID_CELL_SIZE));
+    const bucketCount = cols * rows;
+    if (cols !== ecoGridCols || rows !== ecoGridRows) {
+      ecoGridCols = cols;
+      ecoGridRows = rows;
+      ecoGridProbeMarks = new Uint32Array(bucketCount);
+      ecoGridProbeToken = 0;
+      ecoFoodGrid = [];
+      ecoAgentGrid = [];
+    }
+    // A tiny sample rejects tightly clustered scenes before allocating or
+    // clearing any per-cell arrays. Those scenes are faster with direct scans.
+    if (!ecoGridHasUsefulSpread(food, agents)) return false;
+    if (ecoFoodGrid.length !== bucketCount || ecoAgentGrid.length !== bucketCount) {
+      ecoFoodGrid = Array.from({ length: bucketCount }, () => []);
+      ecoAgentGrid = Array.from({ length: bucketCount }, () => []);
+    } else {
+      for (let i = 0; i < bucketCount; i++) {
+        ecoFoodGrid[i].length = 0;
+        ecoAgentGrid[i].length = 0;
+      }
+    }
+    for (let i = 0; i < food.length; i++) {
+      const item = food[i];
+      const cellX = clampK(Math.floor(item.x / ECO_GRID_CELL_SIZE), 0, ecoGridCols - 1);
+      const cellY = clampK(Math.floor(item.y / ECO_GRID_CELL_SIZE), 0, ecoGridRows - 1);
+      const bucket = ecoFoodGrid[cellY * ecoGridCols + cellX];
+      bucket.push(i);
+      if (bucket.length > 40) return false;
+    }
+    for (let i = 0; i < agents.length; i++) {
+      const agent = agents[i];
+      const cellX = clampK(Math.floor(agent.x / ECO_GRID_CELL_SIZE), 0, ecoGridCols - 1);
+      const cellY = clampK(Math.floor(agent.y / ECO_GRID_CELL_SIZE), 0, ecoGridRows - 1);
+      const cellIndex = cellY * ecoGridCols + cellX;
+      const bucket = ecoAgentGrid[cellIndex];
+      ecoAgentCellIndex[i] = cellIndex;
+      ecoAgentCellOffset[i] = bucket.length;
+      bucket.push(i);
+      if (bucket.length > 16) return false;
+    }
+    // Dense clusters are cheaper to scan directly. The grid is reserved for
+    // large, spatially distributed populations where it actually cuts work.
+    return true;
+  }
+
+  function moveEcoAgentBucket(index, x, y) {
+    const cellX = clampK(Math.floor(x / ECO_GRID_CELL_SIZE), 0, ecoGridCols - 1);
+    const cellY = clampK(Math.floor(y / ECO_GRID_CELL_SIZE), 0, ecoGridRows - 1);
+    const nextCell = cellY * ecoGridCols + cellX;
+    const currentCell = ecoAgentCellIndex[index];
+    if (nextCell === currentCell) return;
+    const currentBucket = ecoAgentGrid[currentCell];
+    const offset = ecoAgentCellOffset[index];
+    const movedIndex = currentBucket.pop();
+    if (offset < currentBucket.length) {
+      currentBucket[offset] = movedIndex;
+      ecoAgentCellOffset[movedIndex] = offset;
+    }
+    const nextBucket = ecoAgentGrid[nextCell];
+    ecoAgentCellIndex[index] = nextCell;
+    ecoAgentCellOffset[index] = nextBucket.length;
+    nextBucket.push(index);
+  }
+
+  function findKinetaLeader() {
+    let leader = null;
+    for (const creature of creatures) {
+      if (!leader || creature.fitness > leader.fitness) leader = creature;
+    }
+    return leader;
+  }
+
   function ecoSpawn(type,x=randK(20,width-20),y=randK(40,height-25),parent=null) {
     if(ecoState.agents.length>=Math.min(settings.ecoCapacity,ecoCap)){toast(api,'The biosphere reached its population ceiling. Increase capacity or wait for natural turnover.');return false;}
     const g=parent?{speed:clampK(parent.genes.speed+randK(-.08,.08),.35,1.6),sense:clampK(parent.genes.sense+randK(-9,9),45,150),metabolism:clampK(parent.genes.metabolism+randK(-.012,.012),.012,.065),color:(parent.genes.color+randK(-18,18)+360)%360}:{speed:randK(.65,1.25),sense:randK(60,125),metabolism:randK(.018,.045),color:type==='hunter'?randK(0,25):randK(95,155)};
-    ecoState.agents.push({type,x,y,vx:randK(-12,12),vy:randK(-12,12),energy:parent?42:randK(45,76),age:0,genes:g,phase:randK(0,TAU),cooldown:randK(2,8)});return true;
+    ecoState.agents.push({type,x,y,vx:randK(-12,12),vy:randK(-12,12),energy:parent?42:randK(45,76),age:0,genes:g,phase:randK(0,TAU),cooldown:randK(2,8)});if(type==='hunter')ecoState.hunters++;else ecoState.grazers++;return true;
   }
   function ecoDropFood(x=randK(15,width-15),y=randK(height*.25,height*.82)) {if(ecoState.food.length>=220)return;ecoState.food.push({x,y,r:randK(2.3,4.1),energy:22,phase:randK(0,TAU)});}
   function resetEco() {
-    ecoState.agents=[];ecoState.food=[];ecoState.births=0;ecoState.extinctions=0;ecoState.foodAccumulator=0;ecoState.tick=0;
+    ecoState.agents.length=0;ecoState.food.length=0;ecoState.births=0;ecoState.extinctions=0;ecoState.grazers=0;ecoState.hunters=0;ecoState.foodAccumulator=0;ecoState.tick=0;
     for(let i=0;i<9;i++)ecoSpawn('grazer',randK(30,width-30),randK(height*.3,height*.78));
     for(let i=0;i<2;i++)ecoSpawn('hunter',randK(width*.25,width*.75),randK(height*.25,height*.65));
     for(let i=0;i<75;i++)ecoDropFood();ecoState.populationPeak=ecoState.agents.length;
   }
   function ecoStep(dt) {
-    ecoState.tick++;const seasonIndex=Math.floor(simulationTime/settings.seasonLength)%4;ecoState.season=['SPRING','SUMMER','AUTUMN','WINTER'][seasonIndex];
-    const climate=[1.55,1.15,.72,.42][seasonIndex],foodRate=settings.plantRate*climate;
-    ecoState.foodAccumulator+=dt*(.85*foodRate);while(ecoState.foodAccumulator>=1&&ecoState.food.length<220){ecoState.foodAccumulator-=1;ecoDropFood();}
-    const agents=ecoState.agents,food=ecoState.food;const removeAgents=new Set(),removeFood=new Set(),babies=[];
-    for(let i=0;i<agents.length;i++) {
-      const a=agents[i];a.age+=dt;a.cooldown=Math.max(0,a.cooldown-dt);
-      let target=null,targetD=a.genes.sense*a.genes.sense,threat=null,threatD=targetD;
-      if(a.type==='grazer') {
-        for(let j=0;j<food.length;j++){if(removeFood.has(j))continue;const f=food[j],dx=f.x-a.x,dy=f.y-a.y,d=dx*dx+dy*dy;if(d<targetD){targetD=d;target=f;}}
-        for(let j=0;j<agents.length;j++){const h=agents[j];if(h.type!=='hunter')continue;const dx=h.x-a.x,dy=h.y-a.y,d=dx*dx+dy*dy;if(d<threatD){threatD=d;threat=h;}}
-      } else {
-        for(let j=0;j<agents.length;j++){const prey=agents[j];if(prey.type!=='grazer'||removeAgents.has(j))continue;const dx=prey.x-a.x,dy=prey.y-a.y,d=dx*dx+dy*dy;if(d<targetD){targetD=d;target=prey;}}
-      }
-      let dx=target?target.x-a.x:Math.sin(simulationTime*.7+a.phase)*22,dy=target?target.y-a.y:Math.cos(simulationTime*.63+a.phase)*22;
-      if(threat){const d=Math.max(1,Math.sqrt(threatD));dx-=((threat.x-a.x)/d)*120;dy-=((threat.y-a.y)/d)*120;}
-      const d=Math.max(1,Math.hypot(dx,dy)),desiredX=dx/d*a.genes.speed*36,desiredY=dy/d*a.genes.speed*36;
-      a.vx+=(desiredX-a.vx)*Math.min(1,dt*2.7);a.vy+=(desiredY-a.vy)*Math.min(1,dt*2.7);
-      a.x+=a.vx*dt;a.y+=a.vy*dt;a.x=clampK(a.x,8,width-8);a.y=clampK(a.y,18,height-16);
-      a.energy-=a.genes.metabolism*dt*(a.type==='hunter'?1.45:1)*(seasonIndex===3?1.22:1);
-      if(target&&targetD<=(a.type==='hunter'?14*14:12*12)) {
-        if(a.type==='grazer'){const idx=food.indexOf(target);if(idx>=0){removeFood.add(idx);a.energy=Math.min(125,a.energy+target.energy);}}
-        else {const idx=agents.indexOf(target);if(idx>=0){removeAgents.add(idx);a.energy=Math.min(140,a.energy+55);}}
-      }
-      if(a.energy>92&&a.age>5&&a.cooldown<=0&&Math.random()<dt*.22&&agents.length+babies.length<Math.min(settings.ecoCapacity,ecoCap)) {
-        babies.push({type:a.type,x:a.x+randK(-10,10),y:a.y+randK(-10,10),vx:-a.vx*.3,vy:-a.vy*.3,energy:43,age:0,genes:{speed:clampK(a.genes.speed+randK(-.07,.07),.35,1.6),sense:clampK(a.genes.sense+randK(-8,8),45,150),metabolism:clampK(a.genes.metabolism+randK(-.008,.008),.012,.065),color:(a.genes.color+randK(-16,16)+360)%360},phase:randK(0,TAU),cooldown:5});
-        a.energy-=42;a.cooldown=7;ecoState.births++;
-      }
-      if(a.energy<=0||a.age>90){removeAgents.add(i);ecoState.extinctions++;}
+    ecoState.tick++;
+    const seasonIndex = Math.floor(simulationTime / settings.seasonLength) % 4;
+    ecoState.season = ECO_SEASONS[seasonIndex];
+    const foodRate = settings.plantRate * ECO_CLIMATE[seasonIndex];
+    ecoState.foodAccumulator += dt * (.85 * foodRate);
+    while (ecoState.foodAccumulator >= 1 && ecoState.food.length < ECO_GRID_FOOD_CAP) {
+      ecoState.foodAccumulator -= 1;
+      ecoDropFood();
     }
-    if(removeFood.size){const keep=[];for(let i=0;i<food.length;i++)if(!removeFood.has(i))keep.push(food[i]);ecoState.food=keep;}
-    if(removeAgents.size){const keep=[];for(let i=0;i<agents.length;i++)if(!removeAgents.has(i))keep.push(agents[i]);ecoState.agents=keep;}
-    if(babies.length)ecoState.agents.push(...babies);
-    ecoState.populationPeak=Math.max(ecoState.populationPeak,ecoState.agents.length);
+
+    const agents = ecoState.agents;
+    const food = ecoState.food;
+    const babies = ecoPendingBabies;
+    babies.length = 0;
+    ecoRemovedAgents.fill(0);
+    ecoRemovedFood.fill(0);
+    const useEcoSpatialGrid = agents.length >= 80 && food.length >= 180 && prepareEcoSpatialGrid(food, agents);
+
+    for (let i = 0; i < agents.length; i++) {
+      const a = agents[i];
+      a.age += dt;
+      a.cooldown = Math.max(0, a.cooldown - dt);
+      let target = null;
+      let targetIndex = -1;
+      let targetD = a.genes.sense * a.genes.sense;
+      let threat = null;
+      let threatIndex = -1;
+      let threatD = targetD;
+      const cellX = clampK(Math.floor(a.x / ECO_GRID_CELL_SIZE), 0, ecoGridCols - 1);
+      const cellY = clampK(Math.floor(a.y / ECO_GRID_CELL_SIZE), 0, ecoGridRows - 1);
+      const minCellX = Math.max(0, cellX - 1);
+      const maxCellX = Math.min(ecoGridCols - 1, cellX + 1);
+      const minCellY = Math.max(0, cellY - 1);
+      const maxCellY = Math.min(ecoGridRows - 1, cellY + 1);
+
+      if (a.type === 'grazer') {
+        if (useEcoSpatialGrid) {
+        // Find the nearest uneaten food inside the maximum sensing radius.
+        for (let gy = minCellY; gy <= maxCellY; gy++) {
+          const rowOffset = gy * ecoGridCols;
+          for (let gx = minCellX; gx <= maxCellX; gx++) {
+            const bucket = ecoFoodGrid[rowOffset + gx];
+            for (let k = 0; k < bucket.length; k++) {
+              const j = bucket[k];
+              if (ecoRemovedFood[j]) continue;
+              const f = food[j];
+              const dx = f.x - a.x, dy = f.y - a.y;
+              const distanceSquared = dx * dx + dy * dy;
+              if (distanceSquared < targetD || (distanceSquared === targetD && targetIndex >= 0 && j < targetIndex)) {
+                targetD = distanceSquared;
+                target = f;
+                targetIndex = j;
+              }
+            }
+          }
+        }
+        // Threat selection uses the same live grid as prey selection.
+        for (let gy = minCellY; gy <= maxCellY; gy++) {
+          const rowOffset = gy * ecoGridCols;
+          for (let gx = minCellX; gx <= maxCellX; gx++) {
+            const bucket = ecoAgentGrid[rowOffset + gx];
+            for (let k = 0; k < bucket.length; k++) {
+              const j = bucket[k];
+              const h = agents[j];
+              if (h.type !== 'hunter') continue;
+              const dx = h.x - a.x, dy = h.y - a.y;
+              const distanceSquared = dx * dx + dy * dy;
+              if (distanceSquared < threatD || (distanceSquared === threatD && threatIndex >= 0 && j < threatIndex)) {
+                threatD = distanceSquared;
+                threat = h;
+                threatIndex = j;
+              }
+            }
+          }
+        }
+        } else {
+          for (let j = 0; j < food.length; j++) {
+            if (ecoRemovedFood[j]) continue;
+            const f = food[j], dx = f.x - a.x, dy = f.y - a.y;
+            const distanceSquared = dx * dx + dy * dy;
+            if (distanceSquared < targetD) { targetD = distanceSquared; target = f; targetIndex = j; }
+          }
+          for (let j = 0; j < agents.length; j++) {
+            const h = agents[j];
+            if (h.type !== 'hunter') continue;
+            const dx = h.x - a.x, dy = h.y - a.y;
+            const distanceSquared = dx * dx + dy * dy;
+            if (distanceSquared < threatD) { threatD = distanceSquared; threat = h; threatIndex = j; }
+          }
+        }
+      } else if (useEcoSpatialGrid) {
+        for (let gy = minCellY; gy <= maxCellY; gy++) {
+          const rowOffset = gy * ecoGridCols;
+          for (let gx = minCellX; gx <= maxCellX; gx++) {
+            const bucket = ecoAgentGrid[rowOffset + gx];
+            for (let k = 0; k < bucket.length; k++) {
+              const j = bucket[k];
+              if (j === i || ecoRemovedAgents[j]) continue;
+              const prey = agents[j];
+              if (prey.type !== 'grazer') continue;
+              const dx = prey.x - a.x, dy = prey.y - a.y;
+              const distanceSquared = dx * dx + dy * dy;
+              if (distanceSquared < targetD || (distanceSquared === targetD && targetIndex >= 0 && j < targetIndex)) {
+                targetD = distanceSquared;
+                target = prey;
+                targetIndex = j;
+              }
+            }
+          }
+        }
+      } else {
+        for (let j = 0; j < agents.length; j++) {
+          if (j === i || ecoRemovedAgents[j]) continue;
+          const prey = agents[j];
+          if (prey.type !== 'grazer') continue;
+          const dx = prey.x - a.x, dy = prey.y - a.y;
+          const distanceSquared = dx * dx + dy * dy;
+          if (distanceSquared < targetD) { targetD = distanceSquared; target = prey; targetIndex = j; }
+        }
+      }
+
+      let dx = target ? target.x - a.x : Math.sin(simulationTime * .7 + a.phase) * 22;
+      let dy = target ? target.y - a.y : Math.cos(simulationTime * .63 + a.phase) * 22;
+      if (threat) {
+        const distance = Math.max(1, Math.sqrt(threatD));
+        dx -= ((threat.x - a.x) / distance) * 120;
+        dy -= ((threat.y - a.y) / distance) * 120;
+      }
+      const distance = Math.max(1, Math.hypot(dx, dy));
+      const desiredX = dx / distance * a.genes.speed * 36;
+      const desiredY = dy / distance * a.genes.speed * 36;
+      a.vx += (desiredX - a.vx) * Math.min(1, dt * 2.7);
+      a.vy += (desiredY - a.vy) * Math.min(1, dt * 2.7);
+      a.x += a.vx * dt;
+      a.y += a.vy * dt;
+      a.x = clampK(a.x, 8, width - 8);
+      a.y = clampK(a.y, 18, height - 16);
+      if (useEcoSpatialGrid) moveEcoAgentBucket(i, a.x, a.y);
+
+      a.energy -= a.genes.metabolism * dt * (a.type === 'hunter' ? 1.45 : 1) * (seasonIndex === 3 ? 1.22 : 1);
+      if (target && targetD <= (a.type === 'hunter' ? 14 * 14 : 12 * 12)) {
+        if (a.type === 'grazer') {
+          if (targetIndex >= 0 && !ecoRemovedFood[targetIndex]) {
+            ecoRemovedFood[targetIndex] = 1;
+            a.energy = Math.min(125, a.energy + target.energy);
+          }
+        } else if (targetIndex >= 0 && !ecoRemovedAgents[targetIndex]) {
+          ecoRemovedAgents[targetIndex] = 1;
+          a.energy = Math.min(140, a.energy + 55);
+        }
+      }
+      if (a.energy > 92 && a.age > 5 && a.cooldown <= 0 && Math.random() < dt * .22 && agents.length + babies.length < Math.min(settings.ecoCapacity, ecoCap)) {
+        babies.push({type:a.type,x:a.x+randK(-10,10),y:a.y+randK(-10,10),vx:-a.vx*.3,vy:-a.vy*.3,energy:43,age:0,genes:{speed:clampK(a.genes.speed+randK(-.07,.07),.35,1.6),sense:clampK(a.genes.sense+randK(-8,8),45,150),metabolism:clampK(a.genes.metabolism+randK(-.008,.008),.012,.065),color:(a.genes.color+randK(-16,16)+360)%360},phase:randK(0,TAU),cooldown:5});
+        a.energy -= 42;
+        a.cooldown = 7;
+        ecoState.births++;
+      }
+      if (a.energy <= 0 || a.age > 90) {
+        ecoRemovedAgents[i] = 1;
+        ecoState.extinctions++;
+      }
+    }
+
+    // Compact arrays in place to avoid allocating replacement arrays every tick.
+    let foodWrite = 0;
+    for (let i = 0; i < food.length; i++) {
+      if (ecoRemovedFood[i]) continue;
+      if (foodWrite !== i) food[foodWrite] = food[i];
+      foodWrite++;
+    }
+    food.length = foodWrite;
+
+    let agentWrite = 0;
+    for (let i = 0; i < agents.length; i++) {
+      const agent = agents[i];
+      if (ecoRemovedAgents[i]) {
+        if (agent.type === 'hunter') ecoState.hunters = Math.max(0, ecoState.hunters - 1);
+        else ecoState.grazers = Math.max(0, ecoState.grazers - 1);
+        continue;
+      }
+      if (agentWrite !== i) agents[agentWrite] = agent;
+      agentWrite++;
+    }
+    agents.length = agentWrite;
+    for (let i = 0; i < babies.length; i++) {
+      const baby = babies[i];
+      agents.push(baby);
+      if (baby.type === 'hunter') ecoState.hunters++;
+      else ecoState.grazers++;
+    }
+    ecoState.populationPeak = Math.max(ecoState.populationPeak, agents.length);
   }
+
   function renderEco() {
     ctx.fillStyle='#07131d';ctx.fillRect(0,0,width,height);
     // Faint habitat bands hint at a shallow, bounded biosphere.
     for(let i=0;i<5;i++){ctx.fillStyle=`rgba(45,212,191,${.018+i*.006})`;ctx.fillRect(0,height*(.18+i*.13),width,height*.12);}
     for(const f of ecoState.food){ctx.fillStyle='#86efac';ctx.beginPath();ctx.arc(f.x,f.y,f.r+Math.sin(simulationTime*2+f.phase)*.5,0,TAU);ctx.fill();}
-    for(const a of ecoState.agents){const hue=a.type==='hunter'?a.genes.color:a.genes.color;const radius=a.type==='hunter'?6.8:5.3;ctx.save();ctx.translate(a.x,a.y);ctx.rotate(Math.atan2(a.vy,a.vx));ctx.fillStyle=`hsl(${hue},82%,${a.type==='hunter'?62:58}%)`;ctx.beginPath();ctx.ellipse(0,0,radius*1.45,radius,0,0,TAU);ctx.fill();ctx.fillStyle='#07111d';ctx.beginPath();ctx.arc(radius*.55,-2,1.3,0,TAU);ctx.fill();ctx.restore();}
-    ctx.fillStyle='rgba(148,163,184,.36)';ctx.font='10px ui-monospace,monospace';ctx.fillText(`${ecoState.season} · ${ecoState.agents.filter(a=>a.type==='grazer').length} GRAZERS · ${ecoState.agents.filter(a=>a.type==='hunter').length} HUNTERS`,12,height-12);
+    for(const a of ecoState.agents){const hue=a.genes.color;const hunter=a.type==='hunter';const radius=hunter?6.8:5.3;ctx.save();ctx.translate(a.x,a.y);ctx.rotate(Math.atan2(a.vy,a.vx));ctx.fillStyle=`hsl(${hue},82%,${hunter?62:58}%)`;ctx.beginPath();ctx.ellipse(0,0,radius*1.45,radius,0,0,TAU);ctx.fill();ctx.fillStyle='#07111d';ctx.beginPath();ctx.arc(radius*.55,-2,1.3,0,TAU);ctx.fill();ctx.restore();}
+    ctx.fillStyle='rgba(148,163,184,.36)';ctx.font='10px ui-monospace,monospace';ctx.fillText(`${ecoState.season} · ${ecoState.grazers} GRAZERS · ${ecoState.hunters} HUNTERS`,12,height-12);
   }
 
   function syncPopulation(count, fresh = false) {
@@ -2328,7 +2605,7 @@ function bindKineta(root, api = {}) {
   function updateHud() {
     let primary = '', secondary = '', tertiary = '', quaternary = '';
     if (mode === 'evolve') {
-      const leader = [...creatures].sort((a, b) => b.fitness - a.fitness)[0];
+      const leader = findKinetaLeader();
       const metres = leader ? Math.max(0, (leader.maxX - leader.startX) / 12) : 0;
       primary = `G${String(generation).padStart(2, '0')}`;
       secondary = `${Math.max(bestDistance, metres).toFixed(1)}m`;
@@ -2337,7 +2614,7 @@ function bindKineta(root, api = {}) {
       statLabels.primary.textContent = 'Generation'; statLabels.secondary.textContent = 'Best distance'; statLabels.tertiary.textContent = 'Population'; statLabels.quaternary.textContent = 'Gen timer';
       genProgress.style.transform = `scaleX(${clampK(generationLeft / Math.max(1, settings.generation), 0, 1)})`;
     } else if (mode === 'sandbox') {
-      const leader = [...creatures].sort((a, b) => b.fitness - a.fitness)[0];
+      const leader = findKinetaLeader();
       primary = `${creatures.length}`; secondary = `${(leader ? Math.max(0, (leader.maxX - leader.startX) / 12) : 0).toFixed(1)}m`;
       tertiary = `${orbs.length} / 60`; quaternary = paused ? 'PAUSED' : 'LIVE';
       statLabels.primary.textContent = 'Creatures'; statLabels.secondary.textContent = 'Lead distance'; statLabels.tertiary.textContent = 'Energy orbs'; statLabels.quaternary.textContent = 'Physics';
@@ -2355,8 +2632,7 @@ function bindKineta(root, api = {}) {
       primary = String(particleState.items.length); secondary = `${particleState.species} species`; tertiary = String(particleState.steps); quaternary = `${settings.particleRadius}px`;
       statLabels.primary.textContent='Particles';statLabels.secondary.textContent='Species';statLabels.tertiary.textContent='Steps';statLabels.quaternary.textContent='Force radius';genProgress.style.transform='scaleX(1)';
     } else {
-      const grazers=ecoState.agents.filter(a=>a.type==='grazer').length,hunters=ecoState.agents.length-grazers;
-      primary = String(ecoState.agents.length);secondary = `${grazers} / ${hunters}`;tertiary = String(ecoState.food.length);quaternary = ecoState.season;
+      primary = String(ecoState.agents.length);secondary = `${ecoState.grazers} / ${ecoState.hunters}`;tertiary = String(ecoState.food.length);quaternary = ecoState.season;
       statLabels.primary.textContent='Population';statLabels.secondary.textContent='Grazers / hunters';statLabels.tertiary.textContent='Food';statLabels.quaternary.textContent='Season';genProgress.style.transform=`scaleX(${clampK(ecoState.agents.length/Math.max(1,settings.ecoCapacity),0,1)})`;
       const lineage=$k('[data-keco-lineage]');if(lineage)lineage.textContent=`Births ${ecoState.births} · Extinctions ${ecoState.extinctions}`;
     }
@@ -2400,7 +2676,7 @@ function bindKineta(root, api = {}) {
     if (key === 'particleCount') { const desired=clampK(Math.round(value),40,particleCap);while(particleState.items.length<desired)particleState.items.push({x:randK(0,width),y:randK(0,height),vx:randK(-15,15),vy:randK(-15,15),type:Math.floor(randK(0,particleState.species))});if(particleState.items.length>desired)particleState.items.length=desired;settings.particleCount=desired; }
     if (key === 'particleSpecies') { particleState.species=clampK(Math.round(value),2,5);particleState.items.forEach(p=>p.type%=particleState.species);particleState.matrix=makeParticleRules(settings.particlePreset,particleState.species);renderParticleMatrix(); }
     if (key === 'particlePreset') { particleState.matrix=makeParticleRules(value,particleState.species);renderParticleMatrix(); }
-    if (key === 'ecoCapacity') { settings.ecoCapacity=clampK(Math.round(value),12,ecoCap);ecoState.agents=ecoState.agents.slice(0,settings.ecoCapacity); }
+    if (key === 'ecoCapacity') { settings.ecoCapacity=clampK(Math.round(value),12,ecoCap);if(ecoState.agents.length>settings.ecoCapacity)ecoState.agents.length=settings.ecoCapacity;ecoState.grazers=0;ecoState.hunters=0;for(const agent of ecoState.agents){if(agent.type==='hunter')ecoState.hunters++;else ecoState.grazers++;} }
     updateControls(); updateHud();
   }
 
@@ -2576,7 +2852,8 @@ function bindKineta(root, api = {}) {
 
   function getChampion() {
     if (!creatures.length) return makeGenome();
-    return cloneGenome([...creatures].sort((a, b) => b.fitness - a.fitness)[0].genome);
+    const champion = findKinetaLeader();
+    return champion ? cloneGenome(champion.genome) : null;
   }
   function saveChampion() {
     const genome = getChampion();
@@ -2706,7 +2983,9 @@ function bindKineta(root, api = {}) {
       let collected = false;
       for (const creature of creatures) {
         for (const point of creature.points) {
-          if (Math.hypot(point.x - orb.x, point.y - orb.y) < point.r + orb.r + 4) {
+          const dx = point.x - orb.x, dy = point.y - orb.y;
+          const reach = point.r + orb.r + 4;
+          if (dx * dx + dy * dy < reach * reach) {
             creature.orbs++; createParticles(orb.x, orb.y, '#34d399', 8, .75); collected = true; break;
           }
         }
@@ -2723,7 +3002,7 @@ function bindKineta(root, api = {}) {
       collectOrbs();
       generationLeft -= dt;
       if (generationLeft <= 0) evolveGeneration();
-      const leader = [...creatures].sort((a, b) => b.fitness - a.fitness)[0];
+      const leader = findKinetaLeader();
       if (leader) {
         const metres = Math.max(0, (leader.maxX - leader.startX) / 12);
         bestDistance = Math.max(bestDistance, metres); topFitness = Math.max(topFitness, leader.fitness);
@@ -2778,7 +3057,8 @@ function bindKineta(root, api = {}) {
     // Keep simulation fixed at 60 Hz, but avoid painting on every callback of
     // high-refresh displays. Reduce render pressure on weaker devices while
     // preserving the simulation timestep and input handling.
-    const renderInterval = frameTimeEma > 34 ? 40 : (coarseDevice || frameTimeEma > 23.5) ? 25 : 16.7;
+    const targetFps = Math.max(30, Math.min(60, Number(window.CurioidMotion?.frameRate) || 60));
+    const renderInterval = 1000 / targetFps;
     if (!lastRenderAt || now - lastRenderAt >= renderInterval) {
       render();
       lastRenderAt = now;

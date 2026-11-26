@@ -3,14 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-snKrmA3/x7ip8bO0fgCmgIfzjLEF9Y3LOzq7tXzHGqI='; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'self' 'sha256-P/38yGAfRlPMxJs3DQUfV7R6jVihNOKZI8YbqELEvHg=' 'sha256-snKrmA3/x7ip8bO0fgCmgIfzjLEF9Y3LOzq7tXzHGqI='; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
   <script id="curioid-frame-guard">
 (() => {
   let blocked = false;
-  try {
-    blocked = window.top !== window.self && window.top.location.origin !== window.location.origin;
-  } catch (_) {
-    blocked = true;
+  const requestsCurioidEmbed = new URLSearchParams(window.location.search).get('curioid-embed') === '1';
+  let approvedCurioidParent = false;
+  let curioidParentOrigin = '';
+  if (requestsCurioidEmbed && document.referrer) {
+    try {
+      const parentUrl = new URL(document.referrer);
+      const ownDirectory = new URL('.', window.location.href);
+      approvedCurioidParent = parentUrl.origin === window.location.origin &&
+        parentUrl.pathname.startsWith(ownDirectory.pathname);
+      if (approvedCurioidParent) curioidParentOrigin = parentUrl.origin;
+    } catch (_) {}
+  }
+  if (window.top !== window.self && !approvedCurioidParent) {
+    try { blocked = window.top.location.origin !== window.location.origin; }
+    catch (_) { blocked = true; }
   }
   if (!blocked) return;
 
@@ -143,6 +154,21 @@
     .summary small { font-size: 10px; color: var(--muted); text-transform: uppercase; }
     .row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
   </style>
+<meta name="referrer" content="strict-origin"/>
+
+<style id="curioid-v1-342-layout-guard">
+  :where(main,section,article,aside,header,footer,form,fieldset,nav,div,label,details,summary,
+    .container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; }
+  :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,figcaption) { overflow-wrap:anywhere; word-break:normal; }
+  :where(button,[role="button"],input,select,textarea,output) { min-width:0; max-width:100%; white-space:normal; }
+  :where(img,svg,video,canvas,iframe) { max-width:100%; }
+  :where(pre,pre code,table,textarea,.code-output,.console-output) { max-width:100%; }
+  @media(max-width:680px) {
+    :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.dt-actions,.header-actions,.footer-actions) { min-width:0; flex-wrap:wrap; }
+    :where(.container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; max-width:100%; }
+  }
+</style>
+
 </head>
 <body>
 <div id="app">

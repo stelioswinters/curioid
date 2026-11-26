@@ -1,5 +1,5 @@
 /* CURIOID project modules. Everything runs locally in the visitor's browser. */
-/* Build: 2026.11.26 / CURIOID v1.333 - shared core */
+/* Build: 2026.11.26 / CURIOID v1.342 - shared core */
 (() => {
   'use strict';
   /** @type {Window & Record<string, any>} */
@@ -4071,14 +4071,14 @@
   const CurioidConnect = Object.freeze({
     protocol: CURIOID_CONNECT_PROTOCOL,
     version: CURIOID_CONNECT_VERSION,
-    getProtocolSpec() { return kernelJsonClone({ protocol:CURIOID_CONNECT_PROTOCOL, version:CURIOID_CONNECT_VERSION, manifestFormat:CURIOID_CONNECT_MANIFEST_FORMAT, manifestSchemaVersion:CURIOID_CONNECT_MANIFEST_SCHEMA, kernelVersion:CURIOID_KERNEL_VERSION, componentKinds:['os','app','extension','service','adapter','theme','content','workflow','experience'], accessLevels:['private','granted','public'], schemaKeywords:['type','enum','required','properties','additionalProperties','items','minLength','maxLength','minimum','maximum','minItems','maxItems','pattern'], artifactLimitBytes:CURIOID_KERNEL_ARTIFACT_LIMIT, eventLimitBytes:CURIOID_KERNEL_EVENT_LIMIT, transport:'internal-local-only', dependencies:['capabilities','artifactTypes','events','messages'], security:{ defaultAccess:'private', typedEventSubscribersRequireIdentity:true, grantsOwnedByProvider:true, networkDiscovery:false, hostDeviceAccess:false } },16384,'Connect protocol specification'); },
+    getProtocolSpec() { return kernelJsonClone({ protocol:CURIOID_CONNECT_PROTOCOL, version:CURIOID_CONNECT_VERSION, appSdkVersion:CURIOID_APP_SDK_VERSION, manifestFormat:CURIOID_CONNECT_MANIFEST_FORMAT, manifestSchemaVersion:CURIOID_CONNECT_MANIFEST_SCHEMA, kernelVersion:CURIOID_KERNEL_VERSION, componentKinds:['os','app','extension','service','adapter','theme','content','workflow','experience'], accessLevels:['private','granted','public'], schemaKeywords:['type','enum','required','properties','additionalProperties','items','minLength','maxLength','minimum','maximum','minItems','maxItems','pattern'], artifactLimitBytes:CURIOID_KERNEL_ARTIFACT_LIMIT, eventLimitBytes:CURIOID_KERNEL_EVENT_LIMIT, transport:'internal-local-only', dependencies:['capabilities','artifactTypes','events','messages'], security:{ defaultAccess:'private', typedEventSubscribersRequireIdentity:true, grantsOwnedByProvider:true, networkDiscovery:false, hostDeviceAccess:false } },16384,'Connect protocol specification'); },
     manifestFormat: CURIOID_CONNECT_MANIFEST_FORMAT,
     manifestSchemaVersion: CURIOID_CONNECT_MANIFEST_SCHEMA,
     getStatus() {
-      return Object.freeze({ protocol: CURIOID_CONNECT_PROTOCOL, version: CURIOID_CONNECT_VERSION, kernelVersion: CURIOID_KERNEL_VERSION,
+      return Object.freeze({ protocol: CURIOID_CONNECT_PROTOCOL, version: CURIOID_CONNECT_VERSION, appSdkVersion: CURIOID_APP_SDK_VERSION, kernelVersion: CURIOID_KERNEL_VERSION,
         manifestCount: kernelConnectManifests.size, activeExperienceCount: kernelExperiences.size, capabilityCount: kernelCapabilities.size,
         artifactTypeCount: kernelArtifactTypes.size, eventTypeCount: kernelEventTypes.size, messageTypeCount: kernelMessageTypes.size,
-        adapterCount: kernelAdapters.size, transport: 'internal-local-only', externalNetwork: false });
+        adapterCount: kernelAdapters.size, appSdkStatus:window.CurioidAppSDK?.getStatus?.() || null, transport: 'internal-local-only', externalNetwork: false });
     },
     validateSchema(schema) { const errors = kernelConnectValidateSchemaDefinition(schema); return { valid: errors.length === 0, errors }; },
     validateManifest(raw) {
@@ -4217,6 +4217,19 @@
       return kernelJsonClone(record,32768,'Artifact type record');
     },
     getArtifactTypes(options = {}) { return [...kernelArtifactTypes.values()].filter(item => !options.ownerExperienceId || item.ownerExperienceId === options.ownerExperienceId).map(item => kernelJsonClone(item,32768,'Artifact type record')); },
+    unregisterArtifactType(ownerExperienceId, type) {
+      const owner = kernelValidId(ownerExperienceId,'Artifact type owner'), id = String(type || '').trim();
+      if (!/^[a-z0-9][a-z0-9.+/_-]{0,127}$/i.test(id)) throw new Error('Artifact type must be a namespaced identifier.');
+      const record = kernelArtifactTypes.get(id);
+      if (!record) return false;
+      if (record.ownerExperienceId !== owner) throw new Error(`Artifact type ${id} is owned by ${record.ownerExperienceId}, not ${owner}.`);
+      const nextManifest = kernelConnectPrepareManifestUpdate(owner,manifest=>{manifest.provides.artifactTypes=manifest.provides.artifactTypes.filter(item=>item.id!==id);return manifest;});
+      if (!nextManifest) throw new Error('The artifact type owner is no longer active. The registry was left unchanged.');
+      kernelArtifactTypes.delete(id);
+      kernelConnectManifests.set(owner,nextManifest);
+      CurioidKernel.publishEvent('connect:artifact-type-unregistered',{id,ownerExperienceId:owner},{sourceExperienceId:owner});
+      return true;
+    },
     registerEventType(definition) {
       const ownerExperienceId = kernelValidId(definition?.ownerExperienceId || definition?.owner, 'Event owner');
       if (!kernelExperiences.has(ownerExperienceId)) throw new Error('Register the event owner first.');
@@ -4521,6 +4534,7 @@
         publishEvent: (type,detail) => invoke(() => CurioidConnect.publishEvent(owner,type,detail || {})),
         subscribeEvent: (sourceOwner,type,callback) => invoke(() => CurioidConnect.subscribeEvent(type,callback,{ownerExperienceId:sourceOwner,fromExperienceId:owner})),
         registerEventType: definition => invoke(() => CurioidConnect.registerEventType({ ...(definition || {}), ownerExperienceId: owner })),
+        unregisterEventType: type => invoke(() => CurioidConnect.unregisterEventType(owner,type)),
         grantEvent: (type,requesterId) => invoke(() => CurioidConnect.grantEvent(owner,type,requesterId)),
         revokeEvent: (type,requesterId) => invoke(() => CurioidConnect.revokeEvent(owner,type,requesterId)),
         getEventGrants: type => invoke(() => CurioidConnect.getEventGrants(owner,type)),
@@ -4530,11 +4544,277 @@
         revokeMessage: (type,requesterId) => invoke(() => CurioidConnect.revokeMessage(owner,type,requesterId)),
         getMessageGrants: type => invoke(() => CurioidConnect.getMessageGrants(owner,type)),
         registerArtifactType: definition => invoke(() => CurioidConnect.registerArtifactType({ ...(definition || {}), ownerExperienceId:owner })),
+        unregisterArtifactType: type => invoke(() => CurioidConnect.unregisterArtifactType(owner,type)),
         createArtifact: definition => invoke(() => CurioidKernel.createArtifact({ ...(definition || {}), sourceExperienceId: owner })),
         sendMessage: (to,type,payload) => invoke(() => CurioidConnect.sendMessage({fromExperienceId:owner,toExperienceId:to,type,payload}))
       });
     }
   });
+  const CURIOID_APP_SDK_VERSION = '1.0.0';
+  function createCurioidAppSDK({ connect, satisfies, validId, kernelVersion = CURIOID_KERNEL_VERSION, connectVersion = CURIOID_CONNECT_VERSION } = {}) {
+    if (!connect || typeof connect.forExperience !== 'function' || typeof satisfies !== 'function' || typeof validId !== 'function') {
+      throw new Error('CurioidAppSDK requires the active CURIOID Connect runtime.');
+    }
+    const MAX_TRACKED_RESOURCES = 256;
+    const MAX_TIMER_DELAY = 2147483647;
+    const activeSessions = new Set();
+    const APP_SDK_SPEC = Object.freeze({
+      protocol: 'curioid-app-sdk', version: CURIOID_APP_SDK_VERSION,
+      kernelVersion, connectVersion, manifestFormat: CURIOID_CONNECT_MANIFEST_FORMAT,
+      security: Object.freeze({
+        capabilityCallsRequireManifestDeclaration: true,
+        eventOperationsRequireManifestDeclaration: true,
+        messageOperationsRequireManifestDeclaration: true,
+        artifactOperationsRequireManifestDeclaration: true,
+        ownerIdentityBoundToRuntimeLifecycle: true,
+        sdkFacadeExposesRawKernelOrConnect: false,
+        sameRealmGlobalAccessRestricted: false,
+        manifestGatingAppliesOnlyToSdkOperations: true,
+        disposalIsIdempotent: true,
+        resourceLimit: MAX_TRACKED_RESOURCES
+      }),
+      surfaces: Object.freeze(['capabilities.discover','capabilities.call','events.publish','events.subscribe','events.register',
+        'messages.register','messages.unregister','messages.send','artifacts.registerType','artifacts.create',
+        'lifecycle.track','lifecycle.listen','lifecycle.timeout','lifecycle.interval','lifecycle.onDispose','lifecycle.status','lifecycle.dispose'])
+    });
+    const spec = () => ({ ...APP_SDK_SPEC, security: { ...APP_SDK_SPEC.security }, surfaces: [...APP_SDK_SPEC.surfaces] });
+    function forExperience(experienceId) {
+      const owner = validId(experienceId, 'App SDK owner');
+      const client = connect.forExperience(owner);
+      let disposed = false;
+      const resources = [];
+      const sessionRecord = { owner, createdAt:new Date().toISOString(), get trackedResources(){return resources.filter(item=>item.active).length;} };
+      activeSessions.add(sessionRecord);
+      const assertActive = () => {
+        if (disposed) throw new Error(`The CurioidAppSDK session for ${owner} has been disposed.`);
+        // Connect's client is bound to the exact experience lifecycle/version.
+        // Fetching the manifest performs that stale-session assertion.
+        const current = client.manifest();
+        if (!current) throw new Error(`The active manifest for ${owner} is unavailable.`);
+        return current;
+      };
+      const run = action => {
+        assertActive();
+        const result = action();
+        return result && typeof result.then === 'function'
+          ? Promise.resolve(result).then(value => { assertActive(); return value; })
+          : result;
+      };
+      const declaration = (direction, collection, id, label) => {
+        const current = assertActive();
+        const records = current?.[direction]?.[collection];
+        const found = Array.isArray(records) ? records.find(item => item.id === id) : null;
+        if (!found) throw new Error(`${label || id} is not declared in ${owner}'s ${direction}.${collection} manifest.`);
+        return found;
+      };
+      const checkProvider = (declaration, providerId, providerVersion, label) => {
+        if (declaration.ownerExperienceId && declaration.ownerExperienceId !== providerId) {
+          throw new Error(`${label} is declared for ${declaration.ownerExperienceId}, not ${providerId}.`);
+        }
+        if (declaration.version && providerVersion && !satisfies(providerVersion, declaration.version)) {
+          throw new Error(`${label} version ${providerVersion} does not satisfy the declared range ${declaration.version}.`);
+        }
+      };
+      const addResource = (disposer, label = 'resource') => {
+        assertActive();
+        if (typeof disposer !== 'function') throw new TypeError('A resource disposer must be a function.');
+        // Released entries remain in the disposal stack to preserve reverse-order
+        // cleanup. Compact only when approaching the cap so the limit applies to
+        // live resources, not the total number ever created by a long-lived app.
+        if (resources.length >= MAX_TRACKED_RESOURCES) {
+          for (let index = resources.length - 1; index >= 0; index--) {
+            if (!resources[index].active) resources.splice(index, 1);
+          }
+        }
+        if (resources.length >= MAX_TRACKED_RESOURCES) throw new Error(`The app has reached its ${MAX_TRACKED_RESOURCES}-resource lifecycle limit.`);
+        const record = { label: String(label || 'resource').slice(0,80), active: true, disposer };
+        resources.push(record);
+        return () => {
+          if (!record.active) return false;
+          record.active = false;
+          try { record.disposer(); } finally { record.disposer = null; }
+          return true;
+        };
+      };
+      const dispose = () => {
+        if (disposed) return { disposed: true, released: 0, errors: [] };
+        disposed = true;
+        let released = 0;
+        const errors = [];
+        for (let index = resources.length - 1; index >= 0; index--) {
+          const record = resources[index];
+          if (!record.active) continue;
+          record.active = false;
+          try { record.disposer?.(); released++; }
+          catch (error) { errors.push({ label: record.label, message: String(error?.message || error).slice(0,240) }); }
+          finally { record.disposer = null; }
+        }
+        resources.length = 0;
+        activeSessions.delete(sessionRecord);
+        return { disposed: true, released, errors };
+      };
+      const lifecycle = Object.freeze({
+        track: addResource,
+        onDispose: disposer => addResource(disposer, 'onDispose'),
+        listen(target, type, listener, options) {
+          assertActive();
+          if (!target || typeof target.addEventListener !== 'function' || typeof target.removeEventListener !== 'function') throw new TypeError('listen() requires an EventTarget-like object.');
+          if (typeof listener !== 'function') throw new TypeError('listen() requires an event listener function.');
+          const release = addResource(() => target.removeEventListener(type, listener, options), `event:${String(type).slice(0,48)}`);
+          try { target.addEventListener(type, listener, options); }
+          catch (error) { release(); throw error; }
+          return release;
+        },
+        timeout(callback, delay = 0) {
+          assertActive();
+          if (typeof callback !== 'function') throw new TypeError('timeout() requires a callback.');
+          const ms = Number(delay);
+          if (!Number.isFinite(ms) || ms < 0) throw new RangeError('Timer delay must be a finite non-negative number.');
+          let timer = null;
+          const release = addResource(() => { if (timer !== null) clearTimeout(timer); }, 'timeout');
+          try {
+            timer = setTimeout(() => {
+              release();
+              if (disposed) return;
+              try { assertActive(); callback(); } catch (error) { console.error('CURIOID app SDK timeout callback failed:', error); }
+            }, Math.min(MAX_TIMER_DELAY, ms));
+          } catch (error) { release(); throw error; }
+          return release;
+        },
+        interval(callback, delay = 1000) {
+          assertActive();
+          if (typeof callback !== 'function') throw new TypeError('interval() requires a callback.');
+          const ms = Number(delay);
+          if (!Number.isFinite(ms) || ms < 16) throw new RangeError('Interval delay must be a finite number of at least 16 ms.');
+          let timer = null;
+          const release = addResource(() => { if (timer !== null) clearInterval(timer); }, 'interval');
+          try {
+            timer = setInterval(() => {
+              if (disposed) return;
+              try { assertActive(); callback(); }
+              catch (error) {
+                // A stale runtime must not leave a repeating timer alive forever.
+                release();
+                console.error('CURIOID app SDK interval callback failed:', error);
+              }
+            }, Math.min(MAX_TIMER_DELAY, ms));
+          } catch (error) { release(); throw error; }
+          return release;
+        },
+        status() { return Object.freeze({ disposed, tracked: resources.filter(item => item.active).length, limit: MAX_TRACKED_RESOURCES }); },
+        dispose
+      });
+      const capabilities = Object.freeze({
+        discover(query = '') {
+          const declared = assertActive().consumes.capabilities;
+          const queryText = String(query || '').trim().toLowerCase();
+          return run(() => client.discoverCapabilities({ query: queryText })).filter(item => declared.some(dep => {
+            if (dep.id !== item.id) return false;
+            if (dep.ownerExperienceId && dep.ownerExperienceId !== item.ownerExperienceId) return false;
+            return !dep.version || !item.version || satisfies(item.version, dep.version);
+          }));
+        },
+        call(id, input = {}) {
+          const dep = declaration('consumes','capabilities',String(id));
+          return run(() => {
+            const available = client.discoverCapabilities({ query: String(id) }).find(item => item.id === id &&
+              (!dep.ownerExperienceId || dep.ownerExperienceId === item.ownerExperienceId) &&
+              (!dep.version || !item.version || satisfies(item.version, dep.version)));
+            if (!available) throw new Error(`Declared capability ${id} is not currently available from its declared provider/version.`);
+            checkProvider(dep, available.ownerExperienceId, available.version, `Capability ${id}`);
+            return client.callCapability(id, input);
+          });
+        }
+      });
+      const events = Object.freeze({
+        publish(type, detail = {}) {
+          declaration('provides','events',String(type));
+          return run(() => client.publishEvent(type, detail));
+        },
+        register(type, definition = {}) {
+          declaration('provides','events',String(type));
+          return run(() => {
+            const record = client.registerEventType({ ...definition, id:type });
+            try { addResource(() => client.unregisterEventType(type), `event-type:${String(type).slice(0,48)}`); }
+            catch (error) { try { client.unregisterEventType(type); } catch (_) {} throw error; }
+            return record;
+          });
+        },
+        async subscribe(providerExperienceId, type, callback) {
+          const dep = declaration('consumes','events',String(type));
+          const provider = validId(providerExperienceId, 'Event provider');
+          const contract = connect.getEventTypes({ ownerExperienceId:provider }).find(item => item.id === type);
+          if (!contract) throw new Error(`Event ${type} is not registered by ${provider}.`);
+          checkProvider(dep, provider, contract.version, `Event ${type}`);
+          if (typeof callback !== 'function') throw new TypeError('An event callback is required.');
+          assertActive();
+          const stop = await client.subscribeEvent(type, event => { if (!disposed) callback(event); }, { ownerExperienceId:provider, onRevoked:reason => { if (!disposed) { /* lifecycle owner may observe revocation via its callback */ } } });
+          if (disposed) { try { stop(); } catch (_) {} throw new Error(`The CurioidAppSDK session for ${owner} was disposed while subscribing.`); }
+          try { return addResource(stop, `event-subscription:${String(type).slice(0,48)}`); }
+          catch (error) { try { stop(); } catch (_) {} throw error; }
+        }
+      });
+      const messages = Object.freeze({
+        register(type, definition = {}, handler) {
+          declaration('provides','messages',String(type));
+          if (typeof handler !== 'function') throw new TypeError('A message handler is required.');
+          return run(() => {
+            const record = client.registerMessageType(type, definition, handler);
+            try { addResource(() => client.unregisterMessageType(type), `message-type:${String(type).slice(0,48)}`); }
+            catch (error) { try { client.unregisterMessageType(type); } catch (_) {} throw error; }
+            return record;
+          });
+        },
+        unregister(type) {
+          declaration('provides','messages',String(type));
+          return run(() => client.unregisterMessageType(type));
+        },
+        send(toExperienceId, type, payload = {}) {
+          const dep = declaration('consumes','messages',String(type));
+          const target = validId(toExperienceId, 'Message recipient');
+          const contract = connect.getMessageTypes({ ownerExperienceId:target }).find(item => item.id === type);
+          if (!contract) throw new Error(`Message ${type} is not registered by ${target}.`);
+          checkProvider(dep, target, contract.version, `Message ${type}`);
+          return run(() => client.sendMessage(target, type, payload));
+        }
+      });
+      const artifacts = Object.freeze({
+        registerType(definition = {}) {
+          const id = String(definition.id || definition.type || '');
+          const dep = declaration('provides','artifactTypes',id);
+          if (definition.version && dep.version && !satisfies(String(definition.version), dep.version)) throw new Error(`Artifact type ${id} version ${definition.version} does not match the manifest version ${dep.version}.`);
+          return run(() => {
+            const record = client.registerArtifactType(definition);
+            try { addResource(() => client.unregisterArtifactType(id), `artifact-type:${id.slice(0,48)}`); }
+            catch (error) { try { client.unregisterArtifactType(id); } catch (_) {} throw error; }
+            return record;
+          });
+        },
+        create(definition = {}) {
+          declaration('provides','artifactTypes',String(definition.type || ''));
+          return run(() => client.createArtifact(definition));
+        }
+      });
+      return Object.freeze({
+        id: owner, version: CURIOID_APP_SDK_VERSION,
+        manifest: () => assertActive(),
+        capabilities, events, messages, artifacts,
+        lifecycle,
+        dispose
+      });
+    }
+    return Object.freeze({
+      version: CURIOID_APP_SDK_VERSION,
+      getSpec: spec,
+      getStatus() {
+        const sessions = [...activeSessions].map(item => ({ ownerExperienceId:item.owner, createdAt:item.createdAt, trackedResources:item.trackedResources }));
+        return Object.freeze({ version:CURIOID_APP_SDK_VERSION, activeSessions:sessions.length, trackedResources:sessions.reduce((sum,item)=>sum+item.trackedResources,0), sessions });
+      },
+      forExperience
+    });
+  }
+  const CurioidAppSDK = createCurioidAppSDK({ connect:CurioidConnect, satisfies:kernelConnectSatisfies, validId:kernelValidId });
+  window.CurioidAppSDK = CurioidAppSDK;
   window.CurioidConnect = CurioidConnect;
   if (window.CurioidCatalogue) {
     try { CurioidConnect.syncCatalogue(window.CurioidCatalogue); }
@@ -4545,7 +4825,7 @@
     if (document.querySelector('.curioid-connect-console')) return;
     if (window.CurioidCatalogue) CurioidConnect.syncCatalogue(window.CurioidCatalogue);
     const root = document.createElement('div'); root.className = 'curioid-connect-console';
-    root.innerHTML = `<div class="ccc-backdrop" data-ccc-close></div><section class="ccc-panel" role="dialog" aria-modal="true" aria-label="CURIOID Connect Console"><header class="ccc-header"><div><small>CURIOID / CONNECT + STAGE 03</small><h2>Connect Console</h2><p>Inspect the local protocol that lets independent worlds cooperate.</p></div><button type="button" data-ccc-close aria-label="Close Connect Console">×</button></header><nav class="ccc-tabs" aria-label="Connect Console sections"><button type="button" data-ccc-tab="overview" aria-selected="true">Overview</button><button type="button" data-ccc-tab="kernel-health">Kernel Health</button><button type="button" data-ccc-tab="library">App Library</button><button type="button" data-ccc-tab="worlds">Components</button><button type="button" data-ccc-tab="capabilities">Capabilities</button><button type="button" data-ccc-tab="permissions">Permissions</button><button type="button" data-ccc-tab="contracts">Contracts</button><button type="button" data-ccc-tab="events">Event log</button><button type="button" data-ccc-tab="developer">Developer</button></nav><div class="ccc-body"><section data-ccc-panel="library" hidden><div class="ccc-panel-heading"><div><h3>Universal Application Library</h3><p>Browse every bundled CURIOID project, keep a personal shortlist and launch projects without merging their private storage or identities.</p></div><input type="search" data-ccc-library-search placeholder="Search applications and tools"></div><div class="ccc-library-toolbar"><select data-ccc-library-category aria-label="Filter by category"><option value="all">All categories</option></select><select data-ccc-library-view aria-label="Library view"><option value="all">Entire catalogue</option><option value="saved">My Library</option><option value="favorites">Favorites</option><option value="recent">Recently opened</option></select><select data-ccc-library-sort aria-label="Sort applications"><option value="recent">Recently opened</option><option value="name">Name A to Z</option><option value="category">Category</option><option value="popular">Most opened</option></select><button type="button" data-library-export>Export My Library</button><button type="button" data-library-recovery-export hidden>Export raw recovery copy</button><span data-ccc-library-count></span></div><div class="ccc-library-warning" data-ccc-library-storage-warning role="alert" hidden></div><div class="ccc-library-grid" data-ccc-library-grid></div><section class="ccc-library-detail" data-ccc-library-detail hidden></section><div class="ccc-package-install"><div class="ccc-package-install-copy"><b>Install a local app package</b><p>Install portable .curioidapp files built from safe forms and private records. Packages contain data definitions, never executable scripts.</p></div><div class="ccc-package-install-actions"><select data-ccc-template-select aria-label="Choose a built-in app template"><option value="reading-log">Reading Log</option><option value="task-board">Task Board</option><option value="idea-vault">Idea Vault</option><option value="asset-catalog">Asset Catalog</option><option value="habit-tracker">Habit Tracker</option><option value="content-calendar">Content Calendar</option><option value="project-tracker">Project Tracker</option><option value="bug-tracker">Bug Tracker</option></select><button type="button" data-library-install-template>Install template</button><button type="button" data-library-package-template>Save starter package to Vault</button><label class="ccc-file-pick">Install .curioidapp<input type="file" data-ccc-app-package-import accept=".curioidapp,.json,application/json"></label></div><span data-ccc-app-package-status role="status">No app package selected.</span></div><details class="ccc-app-composer"><summary>Build your own local app</summary><div class="ccc-app-composer-intro"><b>A custom app, without writing code</b><p>Choose a name and create a safe form. Your app and its records stay local. No imported scripts or external services.</p></div><div class="ccc-app-composer-meta"><label>App name<input data-app-compose-name maxlength="64" value="My Custom App"></label><label>App ID<input data-app-compose-id maxlength="40" value="my-custom-app" spellcheck="false"></label><label>Category<input data-app-compose-category maxlength="40" value="Personal"></label><label>Icon<input data-app-compose-icon maxlength="8" value="▦"></label><label>Record label<input data-app-compose-record maxlength="40" value="Entry"></label><label>Description<input data-app-compose-description maxlength="500" value="A private app made in CURIOID."></label></div><div class="ccc-app-composer-fields-head"><b>Form fields</b><span>1 to 12 fields</span><button type="button" data-app-compose-add-field>Add field</button></div><div class="ccc-app-composer-fields" data-app-compose-fields><div class="ccc-app-composer-field" data-app-compose-field-row><label>Field ID<input data-app-compose-field-id value="title" maxlength="30" spellcheck="false"></label><label>Label<input data-app-compose-field-label value="Title" maxlength="60"></label><label>Type<select data-app-compose-field-type><option value="text">Text</option><option value="textarea">Long text</option><option value="number">Number</option><option value="date">Date</option><option value="datetime-local">Date and time</option><option value="time">Time</option><option value="url">Web link</option><option value="email">Email</option><option value="tel">Telephone</option><option value="checkbox">Checkbox</option><option value="color">Color</option><option value="select">Dropdown</option></select></label><label class="ccc-app-compose-options" hidden>Dropdown choices<input data-app-compose-field-options placeholder="Draft, In progress, Complete"></label><label class="ccc-app-compose-required"><input type="checkbox" data-app-compose-field-required checked> Required</label><button type="button" data-app-compose-remove-field aria-label="Remove field">Remove</button></div></div><div class="ccc-app-composer-actions"><button type="button" data-app-compose-install>Create and install app</button><button type="button" data-app-compose-download>Save app package to Vault</button><span data-app-compose-status role="status">Your form definition is validated before saving.</span></div></details><section class="ccc-installed-packages" data-ccc-installed-packages></section><div class="ccc-package-transfer"><div><b>Move records between installed apps</b><p>Import a reviewed data-transfer file into another app. Only matching field types are mapped, duplicate rows are skipped, and the destination app is never overwritten.</p></div><div class="ccc-package-transfer-controls"><select data-ccc-transfer-target aria-label="Destination app"><option value="">Install a destination app first</option></select><label class="ccc-file-pick">Import data transfer<input type="file" data-ccc-app-transfer-import accept=".curioid-transfer.json,.json,application/json"></label></div><span data-ccc-transfer-status role="status">No transfer selected. Export a transfer from an installed app to begin.</span></div><div class="ccc-library-import"><div><b>Connect manifest metadata</b><p>Import a Connect component manifest for reference and compatibility review. It is not an installable app package and never runs code.</p></div><label class="ccc-file-pick">Inspect manifest<input type="file" data-ccc-library-import accept=".json,.curioid-connect.json,application/json"></label><span data-ccc-library-import-status role="status">No manifest selected.</span></div><div class="ccc-library-import ccc-library-backup"><div><b>Personal library backup</b><p>Move your saved apps, favorites, notes and tags between CURIOID copies. Only your collection metadata is imported.</p></div><label class="ccc-file-pick">Import library backup<input type="file" data-ccc-library-backup-import accept=".json,.curioid-library.json,application/json"></label><span data-ccc-library-backup-status role="status">Your collection stays in this browser unless exported.</span></div><div class="ccc-imported-manifests" data-ccc-imported-manifests></div></section><section data-ccc-panel="overview"><div class="ccc-stats" data-ccc-stats></div><div class="ccc-callout"><b>Internal local communication</b><p>Connect runs inside this CURIOID instance. It does not discover devices, open network connections or contact external services. Worlds can publish capabilities, validate data contracts, send approved messages and exchange typed artifacts.</p></div><div class="ccc-two"><article><h3>Protocol guarantees</h3><ul><li>Versioned component manifests</li><li>Kernel and Connect compatibility checks</li><li>Declared capability and artifact contracts</li><li>Typed events and permission-controlled messages</li><li>Private storage remains owned by each world</li></ul></article><article><h3>Current session</h3><div data-ccc-health class="ccc-health"></div><button type="button" data-ccc-refresh>Refresh status</button></article></div></section><section data-ccc-panel="worlds" hidden><div class="ccc-panel-heading"><div><h3>Registered components</h3><p>Catalogue components are discoverable even when not open. Runtime state tells you which ones are active now.</p></div><input type="search" data-ccc-component-search placeholder="Search worlds, apps and services"></div><div data-ccc-components class="ccc-list"></div></section><section data-ccc-panel="capabilities" hidden><div class="ccc-panel-heading"><div><h3>Capability discovery</h3><p>Find reusable services by name, description or capability ID.</p></div><input type="search" data-ccc-capability-search placeholder="Search capabilities"></div><div data-ccc-capabilities class="ccc-list"></div></section><section data-ccc-panel="permissions" hidden><div class="ccc-panel-heading"><div><h3>Capability permissions</h3><p>Only the provider can grant access to a grant-controlled capability. Grants are stored locally.</p></div></div><div class="ccc-grant-tools"><label>Provider capability<select data-ccc-grant-capability></select></label><label>Allow requester<select data-ccc-grant-requester></select></label><div class="ccc-actions"><button type="button" data-ccc-grant>Grant capability</button><button type="button" data-ccc-revoke>Revoke capability</button></div></div><div data-ccc-grants class="ccc-list"></div><h3>Event subscriptions</h3><div class="ccc-grant-tools"><label>Grant-controlled event<select data-ccc-grant-event-type></select></label><label>Event requester<select data-ccc-event-requester></select></label><div class="ccc-actions"><button type="button" data-ccc-grant-event>Grant event</button><button type="button" data-ccc-revoke-event>Revoke event</button></div></div><div data-ccc-event-grants class="ccc-list"></div><h3>Internal messages</h3><div class="ccc-grant-tools"><label>Grant-controlled message<select data-ccc-grant-message-type></select></label><label>Message requester<select data-ccc-message-requester></select></label><div class="ccc-actions"><button type="button" data-ccc-grant-message>Grant message</button><button type="button" data-ccc-revoke-message>Revoke message</button></div></div><div data-ccc-message-grants class="ccc-list"></div><p class="ccc-note">Only active experiences can receive grants. Open the requesting world first. Permissions belong to the provider and are stored locally.</p></section><section data-ccc-panel="contracts" hidden><div class="ccc-panel-heading"><div><h3>Manifest and compatibility lab</h3><p>Validate a component manifest before registering or packaging it.</p></div></div><label class="ccc-manifest-label">Manifest JSON<textarea data-ccc-manifest spellcheck="false" rows="16"></textarea></label><div class="ccc-actions"><button type="button" data-ccc-validate>Validate manifest</button><button type="button" data-ccc-export>Download manifest</button><button type="button" data-ccc-template>Load template</button></div><div data-ccc-validation class="ccc-validation" aria-live="polite">Load the template or paste a manifest to inspect it.</div></section><section data-ccc-panel="events" hidden><div class="ccc-panel-heading"><div><h3>Live event log</h3><p>Events from the current page session. Payloads are not retained after this panel closes.</p></div><button type="button" data-ccc-clear-events>Clear log</button></div><div data-ccc-events class="ccc-list"></div></section><section data-ccc-panel="kernel-health" hidden><div class="ccc-panel-heading"><div><h3>Kernel integrity and recovery</h3><p>Read-only structural checks for the runtime, local database, artifact index, permissions and private service records. Audits do not alter Kernel records, grants, manifests or private OS data. Optional local history stores metadata-only summaries.</p></div><span class="ccc-state">KERNEL ${CURIOID_KERNEL_VERSION} / CONNECT ${CURIOID_CONNECT_VERSION} / POLICY ${CURIOID_INSTRUCTION_KERNEL_VERSION}</span></div><div class="ccc-actions"><button type="button" data-ccc-run-compatibility-matrix>Map Connect dependencies</button><button type="button" data-ccc-export-compatibility-matrix disabled>Export dependency map</button><button type="button" data-ccc-run-full-diagnostics>Run full diagnostic suite</button><button type="button" data-ccc-export-full-diagnostics disabled>Export diagnostic bundle</button><button type="button" data-ccc-run-kernel-self-test>Run platform self-test</button><button type="button" data-ccc-export-kernel-self-test disabled>Export self-test</button><button type="button" data-ccc-run-instruction-kernel-test>Run instruction-policy tests</button><button type="button" data-ccc-export-instruction-kernel-test disabled>Export policy tests</button><button type="button" data-ccc-run-kernel-audit>Run full integrity audit</button><button type="button" data-ccc-export-kernel-audit disabled>Export latest report</button><button type="button" data-ccc-repair-artifact-index disabled>Rebuild artifact index</button><button type="button" data-ccc-clear-audit-history>Clear audit history</button></div><div data-ccc-compatibility-matrix-summary class="ccc-list"><p class="ccc-empty">The dependency map shows which local components provide each capability, artifact type, event and message contract. It does not grant access or execute transfers.</p></div><div data-ccc-full-diagnostic-summary class="ccc-list"><p class="ccc-empty">The combined diagnostic bundle checks runtime contracts and local storage without exporting artifact contents or private records.</p></div><div data-ccc-kernel-self-test-report class="ccc-list"><p class="ccc-empty">Platform self-tests have not been run in this session. They exercise pure validation and runtime ownership checks without changing storage or registrations.</p></div><h3>Instruction-policy kernel</h3><p class="ccc-note">CURIOID agents in this build are deterministic local rule engines, not generative AI models. This policy layer classifies requests, documents trust boundaries and prevents broad destructive commands from being run through chat. It does not replace capability-level authorization or user confirmation in individual interfaces.</p><div data-ccc-instruction-kernel-report class="ccc-list"><p class="ccc-empty">Instruction-policy tests have not been run in this session.</p></div><div class="ccc-kernel-verify"><label>Verify one artifact by ID<input type="text" data-ccc-artifact-id maxlength="120" placeholder="Paste a CURIOID artifact ID"></label><div class="ccc-actions"><button type="button" data-ccc-verify-artifact>Verify artifact</button><button type="button" data-ccc-export-artifact-verification disabled>Export verification</button></div><p class="ccc-note" data-ccc-artifact-verification-status>Verification reads metadata and index state only. It never displays or modifies the artifact content.</p><div data-ccc-artifact-verification class="ccc-list"><p class="ccc-empty">No artifact has been verified in this session.</p></div></div><p class="ccc-note" data-ccc-kernel-audit-status>Run an audit to inspect this CURIOID session. Audits never rewrite Kernel records, grants, manifests or OS data. Optional history saves metadata-only summaries. Index repair is a separate, explicit action that rebuilds only the derived index from source artifact records.</p><div data-ccc-kernel-audit-report class="ccc-kernel-audit-report"><div class="ccc-empty">No Kernel integrity audit has been run in this session.</div></div><h3>Recent audit history</h3><div data-ccc-kernel-audit-history class="ccc-list"></div><p class="ccc-note">Reports include structural metadata and issue details, not artifact contents, private notes, passwords or raw local records. Rebuild never edits source artifacts.</p></section><section data-ccc-panel="developer" hidden><div class="ccc-developer"><h3>Connect and App Library quick start</h3><p>Discover and launch bundled applications from any independent CURIOID world. Library collection details remain in the user local browser storage and do not merge world data.</p><pre>// Universal App Library: available to every mounted CURIOID world.
+    root.innerHTML = `<div class="ccc-backdrop" data-ccc-close></div><section class="ccc-panel" role="dialog" aria-modal="true" aria-label="CURIOID Connect Console"><header class="ccc-header"><div><small>CURIOID / CONNECT + STAGE 03</small><h2>Connect Console</h2><p>Inspect the local protocol that lets independent worlds cooperate.</p></div><button type="button" data-ccc-close aria-label="Close Connect Console">×</button></header><nav class="ccc-tabs" aria-label="Connect Console sections"><button type="button" data-ccc-tab="overview" aria-selected="true">Overview</button><button type="button" data-ccc-tab="kernel-health">Kernel Health</button><button type="button" data-ccc-tab="library">App Library</button><button type="button" data-ccc-tab="worlds">Components</button><button type="button" data-ccc-tab="capabilities">Capabilities</button><button type="button" data-ccc-tab="permissions">Permissions</button><button type="button" data-ccc-tab="contracts">Contracts</button><button type="button" data-ccc-tab="events">Event log</button><button type="button" data-ccc-tab="developer">Developer</button></nav><div class="ccc-body"><section data-ccc-panel="library" hidden><div class="ccc-panel-heading"><div><h3>Universal Application Library</h3><p>Browse every bundled CURIOID project, keep a personal shortlist and launch projects without merging their private storage or identities.</p></div><input type="search" data-ccc-library-search placeholder="Search applications and tools"></div><div class="ccc-library-toolbar"><select data-ccc-library-category aria-label="Filter by category"><option value="all">All categories</option></select><select data-ccc-library-view aria-label="Library view"><option value="all">Entire catalogue</option><option value="saved">My Library</option><option value="favorites">Favorites</option><option value="recent">Recently opened</option></select><select data-ccc-library-sort aria-label="Sort applications"><option value="recent">Recently opened</option><option value="name">Name A to Z</option><option value="category">Category</option><option value="popular">Most opened</option></select><button type="button" data-library-export>Export My Library</button><button type="button" data-library-recovery-export hidden>Export raw recovery copy</button><span data-ccc-library-count></span></div><div class="ccc-library-warning" data-ccc-library-storage-warning role="alert" hidden></div><div class="ccc-library-grid" data-ccc-library-grid></div><section class="ccc-library-detail" data-ccc-library-detail hidden></section><div class="ccc-package-install"><div class="ccc-package-install-copy"><b>Install a local app package</b><p>Install portable .curioidapp files built from safe forms and private records. Packages contain data definitions, never executable scripts.</p></div><div class="ccc-package-install-actions"><select data-ccc-template-select aria-label="Choose a built-in app template"><option value="reading-log">Reading Log</option><option value="task-board">Task Board</option><option value="idea-vault">Idea Vault</option><option value="asset-catalog">Asset Catalog</option><option value="habit-tracker">Habit Tracker</option><option value="content-calendar">Content Calendar</option><option value="project-tracker">Project Tracker</option><option value="bug-tracker">Bug Tracker</option></select><button type="button" data-library-install-template>Install template</button><button type="button" data-library-package-template>Save starter package to Vault</button><label class="ccc-file-pick">Install .curioidapp<input type="file" data-ccc-app-package-import accept=".curioidapp,.json,application/json"></label></div><span data-ccc-app-package-status role="status">No app package selected.</span></div><details class="ccc-app-composer"><summary>Build your own local app</summary><div class="ccc-app-composer-intro"><b>A custom app, without writing code</b><p>Choose a name and create a safe form. Your app and its records stay local. No imported scripts or external services.</p></div><div class="ccc-app-composer-meta"><label>App name<input data-app-compose-name maxlength="64" value="My Custom App"></label><label>App ID<input data-app-compose-id maxlength="40" value="my-custom-app" spellcheck="false"></label><label>Category<input data-app-compose-category maxlength="40" value="Personal"></label><label>Icon<input data-app-compose-icon maxlength="8" value="▦"></label><label>Record label<input data-app-compose-record maxlength="40" value="Entry"></label><label>Description<input data-app-compose-description maxlength="500" value="A private app made in CURIOID."></label></div><div class="ccc-app-composer-fields-head"><b>Form fields</b><span>1 to 12 fields</span><button type="button" data-app-compose-add-field>Add field</button></div><div class="ccc-app-composer-fields" data-app-compose-fields><div class="ccc-app-composer-field" data-app-compose-field-row><label>Field ID<input data-app-compose-field-id value="title" maxlength="30" spellcheck="false"></label><label>Label<input data-app-compose-field-label value="Title" maxlength="60"></label><label>Type<select data-app-compose-field-type><option value="text">Text</option><option value="textarea">Long text</option><option value="number">Number</option><option value="date">Date</option><option value="datetime-local">Date and time</option><option value="time">Time</option><option value="url">Web link</option><option value="email">Email</option><option value="tel">Telephone</option><option value="checkbox">Checkbox</option><option value="color">Color</option><option value="select">Dropdown</option></select></label><label class="ccc-app-compose-options" hidden>Dropdown choices<input data-app-compose-field-options placeholder="Draft, In progress, Complete"></label><label class="ccc-app-compose-required"><input type="checkbox" data-app-compose-field-required checked> Required</label><button type="button" data-app-compose-remove-field aria-label="Remove field">Remove</button></div></div><div class="ccc-app-composer-actions"><button type="button" data-app-compose-install>Create and install app</button><button type="button" data-app-compose-download>Save app package to Vault</button><span data-app-compose-status role="status">Your form definition is validated before saving.</span></div></details><section class="ccc-installed-packages" data-ccc-installed-packages></section><div class="ccc-package-transfer"><div><b>Move records between installed apps</b><p>Import a reviewed data-transfer file into another app. Only matching field types are mapped, duplicate rows are skipped, and the destination app is never overwritten.</p></div><div class="ccc-package-transfer-controls"><select data-ccc-transfer-target aria-label="Destination app"><option value="">Install a destination app first</option></select><label class="ccc-file-pick">Import data transfer<input type="file" data-ccc-app-transfer-import accept=".curioid-transfer.json,.json,application/json"></label></div><span data-ccc-transfer-status role="status">No transfer selected. Export a transfer from an installed app to begin.</span></div><div class="ccc-library-import"><div><b>Connect manifest metadata</b><p>Import a Connect component manifest for reference and compatibility review. It is not an installable app package and never runs code.</p></div><label class="ccc-file-pick">Inspect manifest<input type="file" data-ccc-library-import accept=".json,.curioid-connect.json,application/json"></label><span data-ccc-library-import-status role="status">No manifest selected.</span></div><div class="ccc-library-import ccc-library-backup"><div><b>Personal library backup</b><p>Move your saved apps, favorites, notes and tags between CURIOID copies. Only your collection metadata is imported.</p></div><label class="ccc-file-pick">Import library backup<input type="file" data-ccc-library-backup-import accept=".json,.curioid-library.json,application/json"></label><span data-ccc-library-backup-status role="status">Your collection stays in this browser unless exported.</span></div><div class="ccc-imported-manifests" data-ccc-imported-manifests></div></section><section data-ccc-panel="overview"><div class="ccc-stats" data-ccc-stats></div><h3>App SDK sessions</h3><p class="ccc-note">Live app sessions owned by the current runtime. Resource counts update when you refresh status.</p><div data-ccc-sdk-sessions class="ccc-list" aria-live="polite"><p class="ccc-empty">No active App SDK sessions.</p></div><div class="ccc-callout"><b>App SDK trust boundary</b><p>The SDK enforces declarations for operations made through its API and tracks app resources. Built-in apps still share the page JavaScript realm, so this is not a sandbox for third-party or untrusted code.</p></div><div class="ccc-callout"><b>Internal local communication</b><p>Connect runs inside this CURIOID instance. It does not discover devices, open network connections or contact external services. Worlds can publish capabilities, validate data contracts, send approved messages and exchange typed artifacts.</p></div><div class="ccc-two"><article><h3>Protocol guarantees</h3><ul><li>Versioned component manifests</li><li>Kernel and Connect compatibility checks</li><li>Declared capability and artifact contracts</li><li>Typed events and permission-controlled messages</li><li>Private storage remains owned by each world</li></ul></article><article><h3>Current session</h3><div data-ccc-health class="ccc-health"></div><button type="button" data-ccc-refresh>Refresh status</button></article></div></section><section data-ccc-panel="worlds" hidden><div class="ccc-panel-heading"><div><h3>Registered components</h3><p>Catalogue components are discoverable even when not open. Runtime state tells you which ones are active now.</p></div><input type="search" data-ccc-component-search placeholder="Search worlds, apps and services"></div><div data-ccc-components class="ccc-list"></div></section><section data-ccc-panel="capabilities" hidden><div class="ccc-panel-heading"><div><h3>Capability discovery</h3><p>Find reusable services by name, description or capability ID.</p></div><input type="search" data-ccc-capability-search placeholder="Search capabilities"></div><div data-ccc-capabilities class="ccc-list"></div></section><section data-ccc-panel="permissions" hidden><div class="ccc-panel-heading"><div><h3>Capability permissions</h3><p>Only the provider can grant access to a grant-controlled capability. Grants are stored locally.</p></div></div><div class="ccc-grant-tools"><label>Provider capability<select data-ccc-grant-capability></select></label><label>Allow requester<select data-ccc-grant-requester></select></label><div class="ccc-actions"><button type="button" data-ccc-grant>Grant capability</button><button type="button" data-ccc-revoke>Revoke capability</button></div></div><div data-ccc-grants class="ccc-list"></div><h3>Event subscriptions</h3><div class="ccc-grant-tools"><label>Grant-controlled event<select data-ccc-grant-event-type></select></label><label>Event requester<select data-ccc-event-requester></select></label><div class="ccc-actions"><button type="button" data-ccc-grant-event>Grant event</button><button type="button" data-ccc-revoke-event>Revoke event</button></div></div><div data-ccc-event-grants class="ccc-list"></div><h3>Internal messages</h3><div class="ccc-grant-tools"><label>Grant-controlled message<select data-ccc-grant-message-type></select></label><label>Message requester<select data-ccc-message-requester></select></label><div class="ccc-actions"><button type="button" data-ccc-grant-message>Grant message</button><button type="button" data-ccc-revoke-message>Revoke message</button></div></div><div data-ccc-message-grants class="ccc-list"></div><p class="ccc-note">Only active experiences can receive grants. Open the requesting world first. Permissions belong to the provider and are stored locally.</p></section><section data-ccc-panel="contracts" hidden><div class="ccc-panel-heading"><div><h3>Manifest and compatibility lab</h3><p>Validate a component manifest before registering or packaging it.</p></div></div><label class="ccc-manifest-label">Manifest JSON<textarea data-ccc-manifest spellcheck="false" rows="16"></textarea></label><div class="ccc-actions"><button type="button" data-ccc-validate>Validate manifest</button><button type="button" data-ccc-export>Download manifest</button><button type="button" data-ccc-template>Load template</button></div><div data-ccc-validation class="ccc-validation" aria-live="polite">Load the template or paste a manifest to inspect it.</div></section><section data-ccc-panel="events" hidden><div class="ccc-panel-heading"><div><h3>Live event log</h3><p>Events from the current page session. Payloads are not retained after this panel closes.</p></div><button type="button" data-ccc-clear-events>Clear log</button></div><div data-ccc-events class="ccc-list"></div></section><section data-ccc-panel="kernel-health" hidden><div class="ccc-panel-heading"><div><h3>Kernel integrity and recovery</h3><p>Read-only structural checks for the runtime, local database, artifact index, permissions and private service records. Audits do not alter Kernel records, grants, manifests or private OS data. Optional local history stores metadata-only summaries.</p></div><span class="ccc-state">KERNEL ${CURIOID_KERNEL_VERSION} / CONNECT ${CURIOID_CONNECT_VERSION} / POLICY ${CURIOID_INSTRUCTION_KERNEL_VERSION}</span></div><div class="ccc-actions"><button type="button" data-ccc-run-compatibility-matrix>Map Connect dependencies</button><button type="button" data-ccc-export-compatibility-matrix disabled>Export dependency map</button><button type="button" data-ccc-run-full-diagnostics>Run full diagnostic suite</button><button type="button" data-ccc-export-full-diagnostics disabled>Export diagnostic bundle</button><button type="button" data-ccc-run-kernel-self-test>Run platform self-test</button><button type="button" data-ccc-export-kernel-self-test disabled>Export self-test</button><button type="button" data-ccc-run-instruction-kernel-test>Run instruction-policy tests</button><button type="button" data-ccc-export-instruction-kernel-test disabled>Export policy tests</button><button type="button" data-ccc-run-kernel-audit>Run full integrity audit</button><button type="button" data-ccc-export-kernel-audit disabled>Export latest report</button><button type="button" data-ccc-repair-artifact-index disabled>Rebuild artifact index</button><button type="button" data-ccc-clear-audit-history>Clear audit history</button></div><div data-ccc-compatibility-matrix-summary class="ccc-list"><p class="ccc-empty">The dependency map shows which local components provide each capability, artifact type, event and message contract. It does not grant access or execute transfers.</p></div><div data-ccc-full-diagnostic-summary class="ccc-list"><p class="ccc-empty">The combined diagnostic bundle checks runtime contracts and local storage without exporting artifact contents or private records.</p></div><div data-ccc-kernel-self-test-report class="ccc-list"><p class="ccc-empty">Platform self-tests have not been run in this session. They exercise pure validation and runtime ownership checks without changing storage or registrations.</p></div><h3>Instruction-policy kernel</h3><p class="ccc-note">CURIOID agents in this build are deterministic local rule engines, not generative AI models. This policy layer classifies requests, documents trust boundaries and prevents broad destructive commands from being run through chat. It does not replace capability-level authorization or user confirmation in individual interfaces.</p><div data-ccc-instruction-kernel-report class="ccc-list"><p class="ccc-empty">Instruction-policy tests have not been run in this session.</p></div><div class="ccc-kernel-verify"><label>Verify one artifact by ID<input type="text" data-ccc-artifact-id maxlength="120" placeholder="Paste a CURIOID artifact ID"></label><div class="ccc-actions"><button type="button" data-ccc-verify-artifact>Verify artifact</button><button type="button" data-ccc-export-artifact-verification disabled>Export verification</button></div><p class="ccc-note" data-ccc-artifact-verification-status>Verification reads metadata and index state only. It never displays or modifies the artifact content.</p><div data-ccc-artifact-verification class="ccc-list"><p class="ccc-empty">No artifact has been verified in this session.</p></div></div><p class="ccc-note" data-ccc-kernel-audit-status>Run an audit to inspect this CURIOID session. Audits never rewrite Kernel records, grants, manifests or OS data. Optional history saves metadata-only summaries. Index repair is a separate, explicit action that rebuilds only the derived index from source artifact records.</p><div data-ccc-kernel-audit-report class="ccc-kernel-audit-report"><div class="ccc-empty">No Kernel integrity audit has been run in this session.</div></div><h3>Recent audit history</h3><div data-ccc-kernel-audit-history class="ccc-list"></div><p class="ccc-note">Reports include structural metadata and issue details, not artifact contents, private notes, passwords or raw local records. Rebuild never edits source artifacts.</p></section><section data-ccc-panel="developer" hidden><div class="ccc-developer"><h3>Connect and App Library quick start</h3><p>Discover and launch bundled applications from any independent CURIOID world. Library collection details remain in the user local browser storage and do not merge world data.</p><pre>// Universal App Library: available to every mounted CURIOID world.
 const apps = CurioidAppLibrary.list({ query: 'image' });
 const saved = CurioidAppLibrary.getPersonalLibrary();
 CurioidAppLibrary.favorite('palette-extractor');
@@ -4642,8 +4922,28 @@ connect.registerMessageType('create-summary', {
     };
     const refresh = async () => {
       const status = CurioidConnect.getStatus();
-      q('[data-ccc-stats]').innerHTML = [['Protocol',status.version],['Kernel',status.kernelVersion],['Components',status.manifestCount],['Active worlds',status.activeExperienceCount],['Capabilities',status.capabilityCount],['Artifact types',status.artifactTypeCount],['Events',status.eventTypeCount],['Messages',status.messageTypeCount]].map(([label,value])=>`<article><small>${escHtml(label)}</small><b>${escHtml(value)}</b></article>`).join('');
-      q('[data-ccc-health]').innerHTML = `<p><b>Transport:</b> Internal local</p><p><b>External network:</b> Disabled</p><p><b>Artifact limit:</b> 25 MB</p><p><b>Event payload limit:</b> 256 KB</p>`;
+      const appSdkStatus=status.appSdkStatus||{version:status.appSdkVersion||'Unavailable',activeSessions:0,trackedResources:0};
+      q('[data-ccc-stats]').innerHTML = [['Protocol',status.version],['Kernel',status.kernelVersion],['App SDK',appSdkStatus.version||status.appSdkVersion||'Unavailable'],['SDK sessions',appSdkStatus.activeSessions??0],['Tracked resources',appSdkStatus.trackedResources??0],['Components',status.manifestCount],['Active worlds',status.activeExperienceCount],['Capabilities',status.capabilityCount],['Artifact types',status.artifactTypeCount],['Events',status.eventTypeCount],['Messages',status.messageTypeCount]].map(([label,value])=>`<article><small>${escHtml(label)}</small><b>${escHtml(value)}</b></article>`).join('');
+      const sdkSessionHost=q('[data-ccc-sdk-sessions]');
+      if(sdkSessionHost){
+        const sessions=Array.isArray(appSdkStatus.sessions)?appSdkStatus.sessions.slice(0,100):[];
+        if(!sessions.length) cccEmpty(sdkSessionHost,'No active App SDK sessions. Open an app to see its runtime here.');
+        else {
+          const fragment=document.createDocumentFragment();
+          for(const session of sessions){
+            const item=cccNode('article','ccc-item');
+            const detail=cccNode('div');
+            const owner=String(session?.ownerExperienceId||'unknown app').slice(0,80);
+            const tracked=cccCount(session?.trackedResources);
+            const started=Number.isFinite(Date.parse(session?.createdAt||''))?new Date(session.createdAt).toLocaleTimeString():'time unavailable';
+            detail.append(cccNode('b','',owner),cccNode('small','',`${tracked} / 256 tracked resources · started ${started}`));
+            item.append(detail,cccNode('span','ccc-state is-active','ACTIVE'));
+            fragment.appendChild(item);
+          }
+          sdkSessionHost.replaceChildren(fragment);
+        }
+      }
+      q('[data-ccc-health]').innerHTML = `<p><b>Transport:</b> Internal local</p><p><b>External network:</b> Disabled</p><p><b>App SDK:</b> ${escHtml(appSdkStatus.version||'Unavailable')} · owner-bound sessions</p><p><b>Tracked app resources:</b> ${escHtml(appSdkStatus.trackedResources??0)}</p><p><b>Artifact limit:</b> 25 MB</p><p><b>Event payload limit:</b> 256 KB</p>`;
       const manifests = CurioidConnect.listManifests(),manifestHost=q('[data-ccc-components]'),manifestRows=Array.isArray(manifests)?manifests.slice(0,300):[],manifestFragment=document.createDocumentFragment();
       manifestRows.forEach(item=>{const article=cccNode('article','ccc-item'),body=cccNode('div'),name=cccNode('b','',String(item?.name||'Unnamed component').slice(0,180)),meta=cccNode('small','',`${String(item?.id||'').slice(0,100)} · ${String(item?.kind||'').slice(0,40)} · v${String(item?.version||'').slice(0,40)}`),description=cccNode('p','',String(item?.description||'No description provided.').slice(0,800)),active=item?.runtimeState==='active',state=cccNode('span',`ccc-state${active?' is-active':''}`,active?'ACTIVE':'AVAILABLE');body.append(name,meta,description);article.append(body,state);manifestFragment.appendChild(article);});
       if(!manifestRows.length)cccEmpty(manifestHost,'No components are registered yet.');else{if(Array.isArray(manifests)&&manifests.length>manifestRows.length)manifestFragment.appendChild(cccNode('p','ccc-empty',`Showing first ${manifestRows.length} of ${manifests.length} components.`));manifestHost.replaceChildren(manifestFragment);}
@@ -7636,7 +7936,7 @@ const startWorker=()=>{
     sessionWorker.addEventListener('error',event=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;workerBootFailure('Worker stopped after a script error: '+String(event.message||'unknown error').slice(0,300));stopWorker();});sessionWorker.addEventListener('messageerror',()=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;workerBootFailure('Worker sent a message that could not be decoded.');stopWorker();});
     const forwardUiEvent=event=>{if(workerGeneration!==sessionGeneration||workerInstance!==sessionWorker)return;if(event.type==='submit')event.preventDefault();const target=event.target?.closest?.('[data-os-id]');if(!target)return;const id=String(target.getAttribute('data-os-id')||'');if(!/^[A-Za-z][A-Za-z0-9_:-]{0,79}$/.test(id))return;if(event.type==='change'&&target instanceof HTMLInputElement&&target.type==='file'){const file=target.files?.[0];if(!file)return;if(file.size>2*1024*1024){workerStatus('Selected data backup exceeds the 2 MB import limit.');target.value='';return;}const targetWorker=sessionWorker;file.text().then(value=>{if(workerGeneration===sessionGeneration&&workerInstance===targetWorker)targetWorker.postMessage({__curioidWorkerBridge:1,type:'ui-event',eventType:'file',id,value,filename:String(file.name||'').slice(0,160)});}).catch(error=>workerStatus('Could not read the selected file: '+String(error?.message||error).slice(0,120)));return;}let value=null;try{if('value'in target)value=String(target.value).slice(0,12000);}catch(_){}try{sessionWorker.postMessage({__curioidWorkerBridge:1,type:'ui-event',eventType:event.type,id,value,checked:Boolean(target.checked),action:String(target.getAttribute('data-os-action')||'').slice(0,80)});}catch(_){}};
     ['click','input','change','submit'].forEach(type=>{document.addEventListener(type,forwardUiEvent,true);workerUiListeners.push({type,handler:forwardUiEvent});});
-    window.addEventListener('pagehide',stopWorker,{once:true});
+    window.addEventListener('pagehide',event=>{if(!event||event.persisted!==true)stopWorker();});window.addEventListener('pageshow',event=>{if(event?.persisted===true&&workerInstance){workerLastBeat=Date.now();workerVisibilityHandler();}});
     document.addEventListener('visibilitychange',workerVisibilityHandler);
     workerWatchdog=setInterval(()=>{if(!workerInstance)return;if(document.visibilityState==='hidden')return;if(Date.now()-workerLastBeat>15000){workerStatus('Worker has not responded for 15 seconds and was terminated. The desktop remains open; check the Worker code and restart it when ready.');stopWorker();}},1000);
   }catch(error){workerBootFailure('Could not start isolated Worker: '+String(error?.message||error).slice(0,300));stopWorker();}
@@ -12577,6 +12877,12 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     } catch (_) {}
     return !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   })();
+  let siteMotionFrameRate = (() => {
+    try {
+      const saved = Number(localStorage.getItem('curioid-motion-fps-v1'));
+      return saved === 30 ? 30 : 60;
+    } catch (_) { return 60; }
+  })();
   const motionChangeListeners = new Set();
   const canvasAnimators = new Set();
   let sharedCanvasRaf = 0;
@@ -12723,6 +13029,16 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     document.dispatchEvent(new CustomEvent('curioid:motionchange', { detail: { enabled: siteMotionEnabled } }));
     return siteMotionEnabled;
   }
+  function setSiteMotionFrameRate(value) {
+    const next = Number(value) === 30 ? 30 : 60;
+    if (next === siteMotionFrameRate) return siteMotionFrameRate;
+    siteMotionFrameRate = next;
+    try { localStorage.setItem('curioid-motion-fps-v1', String(next)); } catch (_) {}
+    for (const animator of canvasAnimators) animator.resetClock();
+    scheduleCanvasFrame();
+    document.dispatchEvent(new CustomEvent('curioid:motionfpschange', { detail: { fps: next } }));
+    return siteMotionFrameRate;
+  }
   function subscribeMotion(listener) {
     if (typeof listener !== 'function') return () => {};
     motionChangeListeners.add(listener);
@@ -12786,9 +13102,12 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     setEnabled: setSiteMotionEnabled,
     toggle() { return setSiteMotionEnabled(!siteMotionEnabled); },
     subscribe: subscribeMotion,
+    get frameRate() { return siteMotionFrameRate; },
+    setFrameRate: setSiteMotionFrameRate,
     get diagnostics() {
       return {
         enabled: siteMotionEnabled,
+        targetFps: siteMotionFrameRate,
         listeners: motionChangeListeners.size,
         activeCanvases: canvasAnimators.size,
         sharedFrameScheduled: Boolean(sharedCanvasRaf),
@@ -12944,7 +13263,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true });
     if (!ctx) throw new Error('Canvas rendering is unavailable in this browser.');
     let w = 1, h = 1, dpr = 1, stopped = false, failed = false, last = 0, inView = true;
-    const frameInterval = 1000 / 40;
+    let frameInterval = 1000 / siteMotionFrameRate;
     let unobserveVisibility = () => {}, unobserveResize = () => {};
 
     function safePaint(now, dt, initial = false) {
@@ -12975,8 +13294,9 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     const animator = {
       frame(now) {
         if (stopped || failed || !animate || !inView || !siteMotionEnabled || document.hidden) return;
-        if (last && now - last < frameInterval) return;
-        const dt = Math.min(.04, last ? (now - last) / 1000 : frameInterval / 1000);
+        frameInterval = 1000 / siteMotionFrameRate;
+        if (last && now - last + .25 < frameInterval) return;
+        const dt = Math.min(.05, last ? (now - last) / 1000 : frameInterval / 1000);
         last = now;
         safePaint(now, dt, false);
       },
@@ -14129,8 +14449,11 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   let curioidEggHuntEnabled=false;
   try{curioidEggHuntEnabled=localStorage.getItem('curioid-egg-hunt-enabled-v1')==='1';}catch(_){}
   const curioidEggHuntToggle=document.getElementById('curioidEggHuntToggle');
+  function curioidEggHuntUnlocked(){try{return localStorage.getItem('curioid-egghunt-unlocked-v1')==='1';}catch(_){return false;}}
+  function curioidUnlockEggHunt(){try{localStorage.setItem('curioid-egghunt-unlocked-v1','1');}catch(_){}curioidSyncEggHuntToggle();}
   function curioidSyncEggHuntToggle(){
     if(!curioidEggHuntToggle)return;
+    curioidEggHuntToggle.hidden=!curioidEggHuntUnlocked();
     curioidEggHuntToggle.dataset.enabled=String(curioidEggHuntEnabled);
     curioidEggHuntToggle.setAttribute('aria-pressed',String(curioidEggHuntEnabled));
     curioidEggHuntToggle.setAttribute('aria-label',curioidEggHuntEnabled?'Turn Egg Hunt off':'Turn Egg Hunt on');
@@ -14274,6 +14597,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   }
   function curioidRecordProject(id){
     const item=CURIOID_ACTIVITY_PROJECTS.get(id);if(!item)return false;
+    if(id==='curioids')curioidUnlockEggHunt();
     return curioidWithStorageLock('CURIOID:site-activity:v1',()=>{
       if(!curioidRefreshActivityState())return false;
       const previous=curioidActivitySnapshot();let changed=false;
@@ -14340,8 +14664,8 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   function glitchyardMarkup(){return embeddedAppMarkup('GLITCHYARD');}
   function bindGlitchyard(host,api={}){return bindEmbeddedApp(host,'applications-tools-apps.html#devtoys','GLITCHYARD',api);}
 
-  function embeddedAppMarkup(title){return `<section class="curioid-embedded-app" data-curioid-embedded-shell><div class="curioid-embedded-loading" role="status">Preparing ${title}…</div><iframe title="${title}" loading="lazy" referrerpolicy="no-referrer" allow="autoplay; clipboard-read; clipboard-write" data-curioid-embedded-frame></iframe></section>`;}
-  function bindEmbeddedApp(host,file,title,api={}){const frame=host.querySelector('[data-curioid-embedded-frame]');if(!frame)return()=>{};let disposed=false,observer;const resize=()=>{if(disposed)return;try{const d=frame.contentDocument,b=d?.body,r=d?.documentElement;if(!b||!r)return;frame.style.height=`${Math.max(760,Math.min(1900,Math.max(b.scrollHeight,r.scrollHeight)+16))}px`;if(!observer&&typeof ResizeObserver==='function'){observer=new ResizeObserver(resize);observer.observe(r);observer.observe(b);}}catch(_){}};frame.addEventListener('load',resize);frame.src=new URL(file,window.CURIOID_PROJECT_ASSET_BASE_URL||new URL('.',location.href).href).href;const cleanup=()=>{if(disposed)return;disposed=true;observer?.disconnect();frame.removeEventListener('load',resize);try{frame.contentWindow?.postMessage({type:'CURIOID_APP_DISPOSE'},location.origin);}catch(_){}frame.src='about:blank';};api.registerCleanup?.(cleanup,`${title.toLowerCase().replace(/\s+/g,'-')}-iframe`);return cleanup;}
+  function embeddedAppMarkup(title){return `<section class="curioid-embedded-app" data-curioid-embedded-shell><div class="curioid-embedded-loading" role="status">Preparing ${title}…</div><iframe title="${title}" loading="lazy" sandbox="allow-scripts allow-downloads" referrerpolicy="strict-origin" allow="autoplay; clipboard-write" data-curioid-embedded-frame></iframe></section>`;}
+  function bindEmbeddedApp(host,file,title,api={}){const frame=host.querySelector('[data-curioid-embedded-frame]');if(!frame)return()=>{};let disposed=false;const onMessage=event=>{if(disposed||event.source!==frame.contentWindow||event.origin!=='null'||event.data?.type!=='CURIOID_APP_HEIGHT')return;const height=Number(event.data.height);if(!Number.isFinite(height)||height<1||height>100000)return;frame.style.height=`${Math.max(760,Math.min(1900,Math.ceil(height+16)))}px`;};window.addEventListener('message',onMessage);frame.style.height='860px';frame.src=new URL(file,window.CURIOID_PROJECT_ASSET_BASE_URL||new URL('.',location.href).href).href;const cleanup=()=>{if(disposed)return;disposed=true;window.removeEventListener('message',onMessage);try{frame.contentWindow?.postMessage({type:'CURIOID_APP_DISPOSE'},'*');}catch(_){}frame.src='about:blank';};api.registerCleanup?.(cleanup,`${title.toLowerCase().replace(/\s+/g,'-')}-iframe`);return cleanup;}
   const vantaDeckMarkup=()=>embeddedAppMarkup('VANTA DECK');
   const bindVantaDeck=(host,api={})=>bindEmbeddedApp(host,'applications-tools-apps.html#vanta-deck','VANTA DECK',api);
   const darkLooperMarkup=()=>embeddedAppMarkup('D4RK L00P3R');
@@ -14553,7 +14877,37 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   // identity hints are retained in memory; text, field values, keys, and payloads
   // are deliberately never collected. Listeners are disposed with each app mount.
   const curioidInteractionHistory = new Map();
+  const curioidSiteInteractionHistory = new Map();
   const curioidObservedEventTypes = ['click','change','input','submit','keydown','pointerdown'];
+  const curioidSiteControlSelector = 'button,input,select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
+  // Observe trusted actions across the complete site, not only mounted projects.
+  // This stores only control identity hints and event counts; never values, text,
+  // keystrokes, clipboard contents, filenames or form payloads.
+  for (const type of ['click','change','input','submit','keydown']) {
+    document.addEventListener(type, event => {
+      if (event.isTrusted !== true) return;
+      const target = event.target instanceof Element ? event.target.closest(curioidSiteControlSelector) : null;
+      if (!target) return;
+      const room = target.closest('.room-window[data-room]');
+      const owner = String(room?.dataset.room || 'website').slice(0,80);
+      const tag = String(target.tagName || 'control').toLowerCase();
+      const identity = target.id ? `#${String(target.id).slice(0,80)}`
+        : [...target.attributes].find(attribute => /^data-(?:action|command|control-launch|control-action|browse-category|dt-tool|cos-|os-)/i.test(attribute.name))?.name
+        || [...target.classList].slice(0,1).map(name=>'.'+String(name).slice(0,60))[0]
+        || tag;
+      const key = `${owner}:${tag}:${identity}`.slice(0,180);
+      let entry = curioidSiteInteractionHistory.get(key);
+      if (!entry) {
+        if (curioidSiteInteractionHistory.size >= 500) curioidSiteInteractionHistory.delete(curioidSiteInteractionHistory.keys().next().value);
+        entry = { owner, target:key, counts:Object.create(null), firstEventAt:null, lastEventAt:null };
+        curioidSiteInteractionHistory.set(key, entry);
+      }
+      entry.counts[type] = (entry.counts[type] || 0) + 1;
+      const now = Date.now();
+      if (!entry.firstEventAt) entry.firstEventAt = now;
+      entry.lastEventAt = now;
+    }, true);
+  }
   window.CurioidInteractionDiagnostics = Object.freeze({
     attach(projectId, root) {
       if (!root?.addEventListener) return () => {};
@@ -14593,11 +14947,24 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       };
     },
     snapshot() {
-      return [...curioidInteractionHistory.values()].map(entry => ({
+      const projects = [...curioidInteractionHistory.values()].map(entry => ({
         projectId:entry.projectId, mounts:entry.mounts, activeMounts:entry.activeMounts,
         counts:{...entry.counts}, targets:{...entry.targets}, firstEventAt:entry.firstEventAt, lastEventAt:entry.lastEventAt,
         totalEvents:Object.values(entry.counts).reduce((sum,value)=>sum+value,0)
-      })).sort((a,b)=>a.projectId.localeCompare(b.projectId));
+      }));
+      if (curioidSiteInteractionHistory.size) {
+        const counts=Object.create(null),targets=Object.create(null);
+        let firstEventAt=null,lastEventAt=null;
+        for (const entry of curioidSiteInteractionHistory.values()) {
+          const token=entry.target.slice(0,160);
+          targets[token]=Object.values(entry.counts).reduce((sum,value)=>sum+value,0);
+          for (const [type,value] of Object.entries(entry.counts)) counts[type]=(counts[type]||0)+value;
+          if (!firstEventAt || entry.firstEventAt<firstEventAt) firstEventAt=entry.firstEventAt;
+          if (!lastEventAt || entry.lastEventAt>lastEventAt) lastEventAt=entry.lastEventAt;
+        }
+        projects.push({projectId:'@whole-site',mounts:1,activeMounts:1,counts,targets,firstEventAt,lastEventAt,totalEvents:Object.values(counts).reduce((sum,value)=>sum+value,0),observedControls:curioidSiteInteractionHistory.size});
+      }
+      return projects.sort((a,b)=>a.projectId.localeCompare(b.projectId));
     }
   });
 
@@ -14635,15 +15002,18 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       const ids = CURIOID_ALL_MODULE_IDS.slice();
       const apps = [];
       const projectIdOwners = new Map();
-      const totals = { controls:0, buttons:0, links:0, inputs:0, selects:0, textareas:0, options:0,
+      const totals = { controls:0, buttons:0, links:0, inputs:0, selects:0, textareas:0, options:0, forms:0, summaries:0, contenteditables:0, disabledControls:0, requiredControls:0, positiveTabindex:0, customRoleWithoutTabindex:0, invalidButtonTypes:0, duplicateAccessKeys:0, emptyOptionGroupLabels:0, brokenFragmentLinks:0,
         unlabeled:0, duplicateIds:0, inlineHandlers:0, javascriptUrls:0, unsafeBlankLinks:0,
         formButtonsWithoutType:0, duplicateOptionValues:0, emptyOptionLabels:0, controlsWithoutBindingHint:0, iframes:0, unsandboxedFrames:0, trustedFirstPartyFrames:0, sameOriginRelaxationFrames:0, brokenAriaReferences:0, crossProjectDuplicateIds:0, selectorHints:0, controlsWithBindingHint:0, bindersWithEventEvidence:0, bindersWithoutEventEvidence:0, renderFailures:0 };
       const eventPattern = /addEventListener\s*\(|\.on(?:click|input|change|submit|keydown|keyup|pointerdown|pointerup|pointermove|wheel)\s*=|\.onclick\s*=|\.onchange\s*=/i;
       const cleanText = value => String(value || '').replace(/\s+/g,' ').trim();
-      const isNamed = control => {
-        if (cleanText(control.getAttribute('aria-label')) || cleanText(control.getAttribute('aria-labelledby')) || cleanText(control.getAttribute('title'))) return true;
+      const isNamed = (control, container) => {
+        if (cleanText(control.getAttribute('aria-label')) || cleanText(control.getAttribute('title'))) return true;
         const tag = control.tagName?.toLowerCase();
-        if (tag === 'button' || ['button','tab','switch','checkbox'].includes(control.getAttribute('role'))) return Boolean(cleanText(control.textContent) || cleanText(control.getAttribute('aria-label')));
+        const labelledBy = cleanText(control.getAttribute('aria-labelledby')).split(/\s+/).filter(Boolean);
+        if (labelledBy.some(id => cleanText(container?.getElementById?.(id)?.textContent))) return true;
+        const role = String(control.getAttribute('role') || '').toLowerCase();
+        if (tag === 'button' || tag === 'summary' || ['button','tab','switch','checkbox','radio','menuitem','menuitemcheckbox','menuitemradio','option','link'].includes(role)) return Boolean(cleanText(control.textContent) || cleanText(control.getAttribute('aria-label')));
         if (tag === 'a') return Boolean(cleanText(control.textContent) || control.querySelector('img[alt],svg[aria-label]'));
         if (tag === 'input' && ['button','submit','reset','image'].includes(String(control.type).toLowerCase())) return Boolean(cleanText(control.value) || cleanText(control.getAttribute('aria-label')) || cleanText(control.getAttribute('alt')));
         if (control.labels?.length) return true;
@@ -14662,7 +15032,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
           const template = document.createElement('template');
           template.innerHTML = markup;
           const fragment = template.content;
-          const controls = [...fragment.querySelectorAll('button,input:not([type="hidden"]),select,textarea,a[href],[role="button"],[role="switch"],[role="tab"],[role="checkbox"]')];
+          const controls = [...fragment.querySelectorAll('button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]')];
           const idCounts = new Map();
           for (const node of fragment.querySelectorAll('[id]')) {
             idCounts.set(node.id,(idCounts.get(node.id)||0)+1);
@@ -14671,15 +15041,17 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
           const duplicateIds = [...idCounts.values()].filter(count=>count>1).reduce((sum,count)=>sum+count-1,0);
           const binderSource = Function.prototype.toString.call(pair[1]);
           const binderHasEvents = eventPattern.test(binderSource);
-          const app = {id, ok:true, controls:controls.length, buttons:0, links:0, inputs:0, selects:0, textareas:0, options:0,
+          const app = {id, ok:true, controls:controls.length, buttons:0, links:0, inputs:0, selects:0, textareas:0, options:0, forms:fragment.querySelectorAll('form').length, summaries:0, contenteditables:0, disabledControls:0, requiredControls:0, positiveTabindex:0, customRoleWithoutTabindex:0, invalidButtonTypes:0, duplicateAccessKeys:0, emptyOptionGroupLabels:0, brokenFragmentLinks:0,
             unlabeled:0, duplicateIds, inlineHandlers:0, javascriptUrls:0, unsafeBlankLinks:0, formButtonsWithoutType:0,
             duplicateOptionValues:0, emptyOptionLabels:0, controlsWithoutBindingHint:0, iframes:0, unsandboxedFrames:0, trustedFirstPartyFrames:0, sameOriginRelaxationFrames:0, brokenAriaReferences:0, controlsWithBindingHint:0,
             binderHasEvents, selectorHints:0};
           const binderTokens = new Set();
+          const accessKeys = new Set();
           for (const node of fragment.querySelectorAll('*')) {
             if (node.id) binderTokens.add('#'+node.id);
             for (const attribute of [...node.attributes]) {
               if (/^on[a-z]+$/i.test(attribute.name)) app.inlineHandlers++;
+              if (attribute.name.toLowerCase()==='accesskey' && String(attribute.value||'').trim()) { const key=String(attribute.value).trim().toLowerCase(); if(accessKeys.has(key)) app.duplicateAccessKeys++; else accessKeys.add(key); }
               if (attribute.name.startsWith('data-')) {
                 binderTokens.add('['+attribute.name+']');
                 const camel = attribute.name.slice(5).replace(/-([a-z])/g,(_,letter)=>letter.toUpperCase());
@@ -14687,6 +15059,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
               }
               if (['href','src','action','formaction','xlink:href'].includes(attribute.name) && /^\s*javascript:/i.test(attribute.value||'')) app.javascriptUrls++;
             }
+            if (node.tagName === 'OPTGROUP' && !cleanText(node.getAttribute('label'))) app.emptyOptionGroupLabels++;
             if (node.tagName === 'IFRAME') {
               app.iframes++;
               if (!node.hasAttribute('sandbox')) {
@@ -14704,12 +15077,19 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
           for (const token of binderTokens) if (binderSource.includes(token)) app.selectorHints++;
           for (const control of controls) {
             const tag = control.tagName.toLowerCase();
-            if (tag==='button') { app.buttons++; if (control.closest('form') && !control.hasAttribute('type')) app.formButtonsWithoutType++; }
+            const role = String(control.getAttribute('role')||'').toLowerCase();
+            if (tag==='button') { app.buttons++; if (control.closest('form') && !control.hasAttribute('type')) app.formButtonsWithoutType++; if(control.hasAttribute('type')&&!['button','submit','reset'].includes(String(control.getAttribute('type')).toLowerCase()))app.invalidButtonTypes++; }
             else if (tag==='a') { app.links++; if (control.target==='_blank' && !/(^|\s)(noopener|noreferrer)(\s|$)/i.test(control.rel||'')) app.unsafeBlankLinks++; }
             else if (tag==='input') app.inputs++;
             else if (tag==='select') { app.selects++; const opts=[...control.querySelectorAll('option')]; app.options+=opts.length; app.emptyOptionLabels+=(opts.filter(option=>!cleanText(option.label||option.textContent)).length); const values=opts.map(option=>option.value); if(new Set(values).size!==values.length) app.duplicateOptionValues=(app.duplicateOptionValues||0)+1; }
             else if (tag==='textarea') app.textareas++;
-            if (!isNamed(control)) app.unlabeled++;
+            if (tag==='summary') app.summaries++;
+            if (control.isContentEditable || control.getAttribute('contenteditable')==='true') app.contenteditables++;
+            if (control.disabled || control.hasAttribute('disabled')) app.disabledControls++;
+            if (control.required || control.hasAttribute('required')) app.requiredControls++;
+            if (Number(control.getAttribute('tabindex'))>0) app.positiveTabindex++;
+            if (['button','switch','checkbox','radio','menuitem','menuitemcheckbox','menuitemradio','link','slider','spinbutton'].includes(role) && !['button','a','input','select','textarea','summary'].includes(tag) && (!control.hasAttribute('tabindex') || Number(control.getAttribute('tabindex'))<0)) app.customRoleWithoutTabindex++;
+            if (!isNamed(control, fragment)) app.unlabeled++;
             const controlTokens=[];
             if(control.id)controlTokens.push('#'+control.id);
             for(const attribute of [...control.attributes])if(attribute.name.startsWith('data-')){
@@ -14724,9 +15104,10 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
               const refs=cleanText(control.getAttribute(relation)).split(/\s+/).filter(Boolean);
               if (refs.some(ref=>!fragment.getElementById(ref))) app.brokenAriaReferences++;
             }
+            if (tag==='a') { const href=control.getAttribute('href')||''; if(href.startsWith('#')&&href.length>1){let id=href.slice(1);try{id=decodeURIComponent(id);}catch(_){}if(!fragment.getElementById(id))app.brokenFragmentLinks++;} }
           }
           totals.controls += app.controls; totals.buttons += app.buttons; totals.links += app.links; totals.inputs += app.inputs;
-          totals.selects += app.selects; totals.textareas += app.textareas; totals.options += app.options; totals.unlabeled += app.unlabeled;
+          totals.selects += app.selects; totals.textareas += app.textareas; totals.options += app.options; totals.forms += app.forms; totals.summaries += app.summaries; totals.contenteditables += app.contenteditables; totals.disabledControls += app.disabledControls; totals.requiredControls += app.requiredControls; totals.positiveTabindex += app.positiveTabindex; totals.customRoleWithoutTabindex += app.customRoleWithoutTabindex; totals.invalidButtonTypes += app.invalidButtonTypes; totals.duplicateAccessKeys += app.duplicateAccessKeys; totals.emptyOptionGroupLabels += app.emptyOptionGroupLabels; totals.brokenFragmentLinks += app.brokenFragmentLinks; totals.unlabeled += app.unlabeled;
           totals.duplicateIds += app.duplicateIds; totals.inlineHandlers += app.inlineHandlers; totals.javascriptUrls += app.javascriptUrls;
           totals.unsafeBlankLinks += app.unsafeBlankLinks; totals.formButtonsWithoutType += app.formButtonsWithoutType; totals.duplicateOptionValues += app.duplicateOptionValues;
           totals.controlsWithoutBindingHint += app.controlsWithoutBindingHint; totals.emptyOptionLabels += app.emptyOptionLabels;
@@ -14741,11 +15122,11 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
       }
       const crossProjectIds=[...projectIdOwners].filter(([,owners])=>owners.size>1).map(([id,owners])=>({id,projects:[...owners].sort()}));
       totals.crossProjectDuplicateIds=crossProjectIds.length;
-      const reviewApps=apps.filter(app=>!app.ok||app.unlabeled||app.duplicateIds||app.formButtonsWithoutType||app.duplicateOptionValues||app.emptyOptionLabels||app.brokenAriaReferences||app.unsandboxedFrames||app.inlineHandlers||app.javascriptUrls||app.unsafeBlankLinks||app.controlsWithoutBindingHint===app.controls&&app.controls>0).map(app=>({id:app.id,ok:app.ok,controls:app.controls||0,unlabeled:app.unlabeled||0,unmatchedBindingHints:app.controlsWithoutBindingHint||0,emptyOptionLabels:app.emptyOptionLabels||0,duplicateIds:app.duplicateIds||0,brokenAriaReferences:app.brokenAriaReferences||0,inlineHandlers:app.inlineHandlers||0,javascriptUrls:app.javascriptUrls||0,unsandboxedFrames:app.unsandboxedFrames||0,error:app.error||null})).slice(0,30);
+      const reviewApps=apps.filter(app=>!app.ok||app.unlabeled||app.duplicateIds||app.formButtonsWithoutType||app.duplicateOptionValues||app.emptyOptionLabels||app.brokenAriaReferences||app.brokenFragmentLinks||app.emptyOptionGroupLabels||app.customRoleWithoutTabindex||app.positiveTabindex||app.invalidButtonTypes||app.duplicateAccessKeys||app.unsandboxedFrames||app.inlineHandlers||app.javascriptUrls||app.unsafeBlankLinks||app.controlsWithoutBindingHint===app.controls&&app.controls>0).map(app=>({id:app.id,ok:app.ok,controls:app.controls||0,unlabeled:app.unlabeled||0,unmatchedBindingHints:app.controlsWithoutBindingHint||0,emptyOptionLabels:app.emptyOptionLabels||0,duplicateIds:app.duplicateIds||0,brokenAriaReferences:app.brokenAriaReferences||0,brokenFragmentLinks:app.brokenFragmentLinks||0,emptyOptionGroupLabels:app.emptyOptionGroupLabels||0,customRoleWithoutTabindex:app.customRoleWithoutTabindex||0,inlineHandlers:app.inlineHandlers||0,javascriptUrls:app.javascriptUrls||0,unsandboxedFrames:app.unsandboxedFrames||0,error:app.error||null})).slice(0,30);
       const unsafe = totals.inlineHandlers + totals.javascriptUrls + totals.unsafeBlankLinks + totals.unsandboxedFrames + totals.sameOriginRelaxationFrames;
       const failed = totals.renderFailures > 0 || unsafe > 0;
       return Object.freeze({ok:!failed, projectCount:ids.length, checked:apps.filter(app=>app.ok).length, totals:Object.freeze(totals), apps:Object.freeze(apps), crossProjectIds:Object.freeze(crossProjectIds), reviewApps:Object.freeze(reviewApps),
-        detail:`Read-only template audit: ${apps.filter(app=>app.ok).length}/${ids.length} project templates rendered in inert fragments; ${totals.controls} controls inspected (${totals.buttons} buttons, ${totals.inputs} inputs, ${totals.selects} selects, ${totals.textareas} textareas, ${totals.links} links); ${totals.options} select options inspected. ${totals.unlabeled} control(s) may need accessible names; ${totals.duplicateIds} per-app duplicate ID(s), ${totals.crossProjectDuplicateIds} ID value(s) reused across projects, ${totals.duplicateOptionValues} select(s) with duplicate option values, ${totals.formButtonsWithoutType} form button(s) without an explicit type; ${totals.iframes} iframe(s), ${totals.unsandboxedFrames} untrusted iframe(s) without sandbox, ${totals.trustedFirstPartyFrames} fixed first-party studio frame(s) separately verified by CSP/SRI, ${totals.sameOriginRelaxationFrames} allowing same-origin; ${totals.brokenAriaReferences} broken ARIA reference(s), ${totals.emptyOptionLabels} empty select-option label(s), ${totals.controlsWithBindingHint}/${totals.controls} controls with a matching binder-selector hint (${totals.controlsWithoutBindingHint} without a matching static hint; delegated handlers can still be valid; ${totals.selectorHints} total selector hints);  ${totals.bindersWithEventEvidence}/${ids.length} binders contain recognizable event-wiring code. No project was mounted and no control was clicked. ${reviewApps.length?`Review candidates: ${reviewApps.map(app=>app.id).join(', ')}.`:'No project-level review candidates were found.'} `,
+        detail:`Read-only template audit: ${apps.filter(app=>app.ok).length}/${ids.length} project templates rendered in inert fragments; ${totals.controls} controls inspected (${totals.buttons} buttons, ${totals.inputs} inputs, ${totals.selects} selects, ${totals.textareas} textareas, ${totals.links} links); ${totals.options} select options inspected across ${totals.forms} forms; ${totals.summaries} disclosure summaries and ${totals.contenteditables} editable surfaces included. ${totals.disabledControls} disabled and ${totals.requiredControls} required controls counted. ${totals.unlabeled} control(s) may need accessible names; ${totals.duplicateIds} per-app duplicate ID(s), ${totals.crossProjectDuplicateIds} ID value(s) reused across projects, ${totals.duplicateOptionValues} select(s) with duplicate option values, ${totals.formButtonsWithoutType} form button(s) without an explicit type; ${totals.iframes} iframe(s), ${totals.unsandboxedFrames} untrusted iframe(s) without sandbox, ${totals.trustedFirstPartyFrames} fixed first-party studio frame(s) separately verified by CSP/SRI, ${totals.sameOriginRelaxationFrames} allowing same-origin; ${totals.brokenAriaReferences} broken ARIA reference(s), ${totals.brokenFragmentLinks} broken fragment link(s), ${totals.emptyOptionLabels} empty select-option label(s), ${totals.emptyOptionGroupLabels} unlabeled option group(s), ${totals.customRoleWithoutTabindex} custom-role control(s) without keyboard focus, ${totals.positiveTabindex} positive tabindex value(s), ${totals.invalidButtonTypes} invalid button type(s), ${totals.duplicateAccessKeys} duplicate access key(s), ${totals.controlsWithBindingHint}/${totals.controls} controls with a matching binder-selector hint (${totals.controlsWithoutBindingHint} without a matching static hint; delegated handlers can still be valid; ${totals.selectorHints} total selector hints);  ${totals.bindersWithEventEvidence}/${ids.length} binders contain recognizable event-wiring code. No project was mounted and no control was clicked. ${reviewApps.length?`Review candidates: ${reviewApps.map(app=>app.id).join(', ')}.`:'No project-level review candidates were found.'} `,
         issues:Object.freeze({renderFailures:totals.renderFailures,unlabeled:totals.unlabeled,inlineHandlers:totals.inlineHandlers,javascriptUrls:totals.javascriptUrls,unsafeBlankLinks:totals.unsafeBlankLinks,formButtonsWithoutType:totals.formButtonsWithoutType,duplicateOptionValues:totals.duplicateOptionValues,emptyOptionLabels:totals.emptyOptionLabels,controlsWithoutBindingHint:totals.controlsWithoutBindingHint,unsandboxedFrames:totals.unsandboxedFrames,trustedFirstPartyFrames:totals.trustedFirstPartyFrames,sameOriginRelaxationFrames:totals.sameOriginRelaxationFrames,brokenAriaReferences:totals.brokenAriaReferences,crossProjectDuplicateIds:totals.crossProjectDuplicateIds,controlsWithBindingHint:totals.controlsWithBindingHint})});
     },
     setCategoryLoader(loader) { if (typeof loader !== 'function') throw new TypeError('Category loader must be a function.'); curioidCategoryLoader = loader; },

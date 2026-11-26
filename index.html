@@ -7,9 +7,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="site-runtime-current.js?v=sha256-7b98431ac8a0fb450e8640f36e4adeff227ab5db41a52df739eed86c737a2701" as="script" integrity="sha384-hDslyYH1DGN9rLW+Y6m/AxHoPa/vQkOGkks+GIZnqEcIsHa4nuR57DxrP5PatiuZ" crossorigin="anonymous" fetchpriority="high">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-c12025b62d2348a35d3514fabf126590aba584f8d7cf36971623b876db8159a7" as="script" integrity="sha384-0VVt9GgulO+lKqJIQwYmutrQ7NLHkdgB431Darst2ZMX5/+I66YMdZwO7tV862dY" crossorigin="anonymous" fetchpriority="high">
   <meta name="description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
-  <meta name="curioid-release" content="v1.335">
+  <meta name="curioid-release" content="v1.342">
   <meta name="curioid-project-count" content="59">
   <meta name="curioid-category-count" content="7">
   <meta name="curioid-os-count" content="6">
@@ -18,7 +18,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' blob: 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' blob: 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-EYaU18cY35Vqri1gISVu7yLr2PBA7MLTrsrSeAp/KU4='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests">
   <script id="curioid-frame-guard">
 (() => {
   let blocked = false;
@@ -89,6 +89,10 @@
   <link rel="icon" type="image/png" sizes="192x192" href="curioid-icon-192.png">
   <link rel="apple-touch-icon" href="curioid-icon-192.png">
   <style>
+    html{--curioid-app-display-scale:1;}
+    .room-window.open .room-mount>:not(.project-style-warning){zoom:var(--curioid-app-display-scale,1);}
+    .room-window.open .room-mount{overflow:auto!important;}
+    #curioidEggHuntToggle[hidden]{display:none!important;}
     .noscript-notice { margin: 16px; padding: 14px 16px; border: 1px solid #596b3c; border-radius: 10px; background: #22291b; color: #eff8df; font-size:14px; line-height: 1.6; }
     :root {
       color-scheme: dark;
@@ -392,6 +396,11 @@
     .sidebar-notification-button>span:first-child{flex-basis:25px;width:25px;height:25px;}
     .sidebar-notification-button .notification-count{top:-4px;right:-4px;}
     .site-control-preferences{display:grid;gap:11px;margin:0 18px 14px;padding:12px;border:1px solid #343642;border-radius:10px;background:#20212a;}
+    .site-control-display-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+    .site-control-display-grid>label{display:grid;gap:7px;min-width:0;color:#c7c6d0;font:700 9px ui-monospace,monospace;letter-spacing:.08em;}
+    .site-control-display-grid select{width:100%;min-height:36px;padding:7px 9px;border:1px solid #41434e;border-radius:6px;background:#171922;color:#f1f1f5;font:11px system-ui,sans-serif;}
+    .site-control-display-grid small{color:#8c8e9b;font:10px/1.5 system-ui,sans-serif;letter-spacing:0;}
+    @media(max-width:560px){.site-control-display-grid{grid-template-columns:minmax(0,1fr)}}
     .global-volume-control{display:grid;grid-template-columns:105px minmax(70px,1fr) 42px;align-items:center;gap:10px;color:#aaa8b5;font:9px ui-monospace,monospace;letter-spacing:.08em;}
     .global-volume-control input{width:100%;min-width:0;accent-color:var(--acid);}
     .global-volume-control output{color:#e9e7ef;text-align:right;font-size:10px;}
@@ -830,9 +839,8 @@
   .site-control-personal .personal-shortcuts-summary{min-height:52px;padding:10px 12px}
   .site-control-personal .personal-shortcuts-content{max-height:min(34dvh,300px);overflow:auto}
   .site-control-personal .personal-shortcuts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .site-control-about{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.7fr);gap:10px;align-items:stretch}
+  .site-control-about{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:stretch}
   .site-control-about .sidebar-note{margin:0;min-height:100%;}
-  .site-control-about .portfolio-link{align-self:stretch;min-height:60px}
   .site-control-preferences{padding:13px 18px 15px;border-top:1px solid #30313b}
   .site-control-preferences>h3{margin:0 0 10px}
   .site-control-preferences .global-volume-control{width:100%;margin-bottom:10px}
@@ -954,6 +962,33 @@
   :where(.sidebar,.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(input,select,textarea,button){min-width:0;max-width:100%;box-sizing:border-box;}
   @media(max-width:480px){:where(.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list){min-width:0;max-width:100%;padding-inline:clamp(6px,2vw,12px);} :where(.site-control-panel,.site-modal,.dialog,.modal){max-width:calc(100vw - 12px);}}
 </style>
+
+<style id="curioid-v1-342-layout-guard">
+  /* Additive content-fit guards. Keep every control and content block available. */
+  :where(.main,.page-wrap,.topbar,.topbar-left,.topbar-right,.site-control-panel,
+    .site-control-actions,.site-control-tool-section,.site-control-health,.site-control-health-details,
+    .site-control-health-results-scroll,.personal-shortcuts-content,.site-shortcuts-dialog,
+    .site-notification-panel,.discovery-section,.discovery-grid) { min-width:0; max-width:100%; }
+  :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,
+    .discovery-description,.discovery-meta,.site-control-storage-note,.site-control-footnote) {
+    overflow-wrap:anywhere; word-break:normal;
+  }
+  :where(button,[role="button"],input,select,textarea,output) { min-width:0; max-width:100%; }
+  :where(img,svg,video,canvas,iframe) { max-width:100%; }
+  :where(pre,pre code,table,.site-control-health-results) { max-width:100%; }
+  @media (max-width:760px) {
+    .topbar { flex-wrap:wrap; height:auto; min-height:56px; }
+    .topbar-right { min-width:0; max-width:100%; flex-wrap:wrap; white-space:normal; }
+    .topbar-left { min-width:0; flex-wrap:wrap; }
+    .site-control-actions,.site-control-preference-actions,.site-control-health-actions { min-width:0; flex-wrap:wrap; }
+    .site-control-display-grid { grid-template-columns:minmax(0,1fr); }
+  }
+  @media (max-width:420px) {
+    .site-control-panel,.site-shortcuts-dialog,.site-notification-panel { max-width:calc(100vw - 12px); }
+    .site-control-tool-section,.site-control-preferences,.personal-shortcuts-content { min-width:0; }
+  }
+</style>
+
 </head>
 <body>
   <noscript><div class="noscript-notice">CURIOID needs JavaScript enabled to open its interactive projects. No account or remote AI service is required.</div></noscript>
@@ -1031,7 +1066,7 @@
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
       <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">59 Projects</span></div>
       <div class="topbar-right">
-        <button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" data-enabled="false" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button>
+        <button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" hidden data-enabled="false" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button>
         <label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label>
         <button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button>
         <button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button>
@@ -1039,11 +1074,15 @@
           <header><div><b>Notifications</b><small>Updates when you choose to look</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header>
           <div class="notification-tabs" role="tablist" aria-label="Notification sections">
             <button type="button" id="notificationActivityTab" role="tab" data-notification-tab="activity" aria-selected="true" aria-controls="notificationActivityView">Activity</button>
-            <button type="button" id="notificationUpdatesTab" role="tab" data-notification-tab="updates" aria-selected="false" aria-controls="notificationUpdatesView" tabindex="-1">New &amp; Updated <span>5</span></button>
+            <button type="button" id="notificationUpdatesTab" role="tab" data-notification-tab="updates" aria-selected="false" aria-controls="notificationUpdatesView" tabindex="-1">New &amp; Updated <span>8</span></button>
           </div>
           <div class="site-notification-list" id="notificationActivityView" role="tabpanel" aria-labelledby="notificationActivityTab" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div>
           <div class="site-notification-updates" id="notificationUpdatesView" role="tabpanel" aria-labelledby="notificationUpdatesTab" hidden>
-            <article><small>v1.335 · NOV 26, 2026</small><b>A more compact first look</b><p>The oversized introduction is gone. The tagline now leads straight into the collection buttons.</p></article>
+            <article><small>v1.342 · NOV 26, 2026</small><b>Whole-site health audit and responsive care</b><p>Health Check now combines live site controls, all project templates and standalone tools in one privacy-safe interaction audit. Added live overflow and host-header checks, exact-origin app-frame messages and additive small-screen text-fit guards.</p></article>
+            <article><small>v1.341 · NOV 26, 2026</small><b>Hardened App SDK resource lifecycles</b><p>Fixed long-session resource accounting so released listeners, timers and registrations free capacity. Resource-limit failures now avoid leaving behind untracked timers or partially registered Connect contracts.</p></article>
+            <article><small>v1.340 · NOV 26, 2026</small><b>App SDK foundation, lifecycle controls and expanded MIME support</b><p>Introduced CurioidAppSDK v1 with manifest-gated capabilities, typed contracts and automatic app resource cleanup. UMBRA now uses the SDK for Echonoise integration, and GLITCHYARD MIME lookup covers more than 1,500 file extensions. Connect Console now reports SDK sessions and tracked resources.</p></article>
+            <article><small>v1.339 · NOV 26, 2026</small><b>Cleaner Control Panel and expanded conversion tools</b><p>Removed the creator-site button from Control Panel and expanded GLITCHYARD unit conversions to 13 categories. Release integrity references refreshed.</p></article>
+            <article><small>v1.338 · NOV 26, 2026</small><b>Stronger isolation and safer app lifecycles</b><p>Studio app isolation, stricter offline integrity checks, safer file processing and more reliable Back navigation.</p></article>
             <article><small>DISCOVERY</small><b>Search where you browse</b><p>Project search now lives in the sidebar, ready whenever you need it.</p></article>
             <article><small>COLLECTIONS</small><b>Stories, not Archives</b><p>The former Archives collection is now called Stories, with its unusual archives kept front and center.</p></article>
             <article><small>ACCESSIBILITY</small><b>One tap back to categories</b><p>Category views now include a CATEGORIES button, and All expands the sidebar collection list.</p></article>
@@ -1087,7 +1126,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word or tag.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections" hidden></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.335</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.342</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
     </div>
   </main>
 
@@ -1156,14 +1195,20 @@
             </div>
           </div>
         </details>    </section>
+    <section class="site-control-tool-section site-control-display" aria-labelledby="siteDisplaySettingsTitle">
+      <h3 id="siteDisplaySettingsTitle">APP DISPLAY &amp; ANIMATION</h3>
+      <div class="site-control-display-grid">
+        <label><span>APP INTERFACE SIZE</span><select data-app-display-scale aria-label="App interface size"><option value="0.8">80% · Compact</option><option value="0.9">90% · Smaller</option><option value="1" selected>100% · Standard</option><option value="1.1">110% · Larger</option><option value="1.2">120% · Large</option><option value="1.3">130% · Extra large</option></select><small>Scales project interfaces inside their windows. It does not change your monitor resolution.</small></label>
+        <label><span>ANIMATION TARGET</span><select data-motion-frame-rate aria-label="Animation frame rate"><option value="60" selected>60 FPS · Smooth (maximum)</option><option value="30">30 FPS · Lower workload</option></select><small>Targets 30 or 60 frames per second. Actual performance depends on your device and browser.</small></label>
+      </div>
+    </section>
     <section class="site-control-preferences" aria-label="Site-wide preferences and shortcuts">
       <h3>WEBSITE PREFERENCES</h3>
       <label class="global-volume-control" title="Master volume"><span>MASTER VOLUME</span><input data-global-volume-mirror type="range" min="0" max="100" value="70" aria-label="Master volume"><output data-global-volume-mirror-value>70%</output></label>
       <div class="site-control-preference-actions"><button type="button" class="site-control-small-action" data-motion-toggle-mirror aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button type="button" class="site-control-small-action" id="commandPaletteOpen" aria-label="Open command palette" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">Command palette · Ctrl+K</button><button type="button" class="site-control-small-action" id="openShortcutsHelp" title="Show keyboard shortcuts (?)" aria-keyshortcuts="Shift+Slash">Keyboard shortcuts · ?</button><button type="button" class="site-control-small-action" data-close-all-mirror hidden>Close all open projects</button></div><span class="status-live" data-open-status-mirror aria-live="polite">0 experiences open</span>
     </section>
-    <section class="site-control-about" aria-label="About CURIOID and creator">
+    <section class="site-control-about" aria-label="About CURIOID">
       <div class="sidebar-note"><div class="sidebar-note-title">THE CURIOID UNIVERSE</div><p>Six independent worlds plus Sandbox OS, where you build your own. Your work stays in this browser. Connect Downloads only when you approve it.</p></div>
-      <a class="portfolio-link" href="https://stelioswinters.com/" target="_blank" rel="noopener noreferrer"><span>Visit the creator's website</span><span aria-hidden="true">↗</span></a>
     </section>
     <p class="site-control-footnote">No cloud account or background upload. Browser storage can still be cleared, so export a backup before clearing site data or changing devices. Notifications remain on the top-bar bell.</p>
   </dialog>
@@ -1183,6 +1228,6 @@
 
 
 
-  <script src="site-runtime-current.js?v=sha256-7b98431ac8a0fb450e8640f36e4adeff227ab5db41a52df739eed86c737a2701" defer integrity="sha384-hDslyYH1DGN9rLW+Y6m/AxHoPa/vQkOGkks+GIZnqEcIsHa4nuR57DxrP5PatiuZ" crossorigin="anonymous" data-cfasync="false"></script>
+  <script src="site-runtime-current.js?v=sha256-c12025b62d2348a35d3514fabf126590aba584f8d7cf36971623b876db8159a7" defer integrity="sha384-0VVt9GgulO+lKqJIQwYmutrQ7NLHkdgB431Darst2ZMX5/+I66YMdZwO7tV862dY" crossorigin="anonymous" data-cfasync="false"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="description" content="Curioids: a local full-body creature auto-battler and CURIOID website exploration game." />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-Y6qIa7UhFfidtGe1HC+Coz5skwjPDfT/+UToQ76Xa+I='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-CF8oieghpL2ULoXhATpAQ/thMF0coFomx/BQUzfwZ1s='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests" />
   <script id="curioid-frame-guard">
 (() => {
   let blocked = false;
@@ -55,7 +55,7 @@
   }
 })();
   </script>
-  <meta name="curioids-build" content="v1.335" />
+  <meta name="curioids-build" content="v1.342" />
   <title>CURIOID</title>
   <style>
     :root {
@@ -759,6 +759,18 @@
     @media(max-width:390px){.shop-shelf-grid,.shop-shelf.food-shelf .shop-shelf-grid{grid-template-columns:1fr}.shop-card{min-height:220px}.shop-card-art{height:82px}}
     @media(prefers-reduced-motion:reduce){.shop-card,.slot,.arena-phase-card,.round-outcome{transition:none!important}.shop-card:hover,.slot.occupied:hover{transform:none!important}}
 
+
+    .egg-hunt-guide{width:min(520px,calc(100% - 28px));max-width:520px;margin:auto;padding:0;border:1px solid rgba(132,235,222,.32);border-radius:20px;background:#111a25;color:#f4f8ff;box-shadow:0 24px 90px rgba(0,0,0,.65)}
+    .egg-hunt-guide::backdrop{background:rgba(3,7,13,.78);backdrop-filter:blur(7px)}
+    .egg-hunt-guide-card{padding:clamp(20px,4vw,30px);font:inherit}
+    .egg-hunt-guide-kicker{display:block;color:#8de9d8;font-size:11px;font-weight:800;letter-spacing:.16em}
+    .egg-hunt-guide h2{margin:10px 0 8px;font-size:clamp(22px,4vw,30px);line-height:1.1}
+    .egg-hunt-guide p{color:#c6d1df;line-height:1.6;margin:10px 0}
+    .egg-hunt-guide ol{padding-left:22px;color:#e4edf6;line-height:1.65}
+    .egg-hunt-guide li+li{margin-top:6px}
+    .egg-hunt-guide button{display:block;width:100%;margin-top:18px;padding:13px 16px;border:0;border-radius:12px;background:#86ead5;color:#07131a;font:800 13px/1 system-ui,sans-serif;letter-spacing:.08em;cursor:pointer}
+    .egg-hunt-guide-note{font-size:12px;color:#9cabbc!important}
+    #fullscreen-status{font-size:12px;color:#ffcf83;align-self:center}
   </style>
 
 <style id="curioids-v1295-layout-guard">
@@ -783,6 +795,21 @@
     .panel { min-width: 0; }
   }
 </style>
+<meta name="referrer" content="strict-origin"/>
+
+<style id="curioid-v1-342-layout-guard">
+  :where(main,section,article,aside,header,footer,form,fieldset,nav,div,label,details,summary,
+    .container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; }
+  :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,figcaption) { overflow-wrap:anywhere; word-break:normal; }
+  :where(button,[role="button"],input,select,textarea,output) { min-width:0; max-width:100%; white-space:normal; }
+  :where(img,svg,video,canvas,iframe) { max-width:100%; }
+  :where(pre,pre code,table,textarea,.code-output,.console-output) { max-width:100%; }
+  @media(max-width:680px) {
+    :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.dt-actions,.header-actions,.footer-actions) { min-width:0; flex-wrap:wrap; }
+    :where(.container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; max-width:100%; }
+  }
+</style>
+
 </head>
 <body>
   <header class="hud">
@@ -823,6 +850,17 @@
   </header>
 
   <div class="toast-container" id="toast-container"></div>
+  <dialog class="egg-hunt-guide" id="egg-hunt-guide" aria-labelledby="egg-hunt-guide-title" aria-describedby="egg-hunt-guide-copy">
+    <div class="egg-hunt-guide-card">
+      <span class="egg-hunt-guide-kicker">A LITTLE SECRET IS HIDING IN CURIOID</span>
+      <h2 id="egg-hunt-guide-title">Go on an egg hunt!</h2>
+      <p id="egg-hunt-guide-copy">Tiny eggs can appear as you explore CURIOID. Find one, click it before it disappears, and add a new creature to your Curioids collection.</p>
+      <ol><li>Explore projects and categories around the website.</li><li>When you are ready, turn <b>EGG HUNT ON</b> using the egg button in the top bar.</li><li>Click a discovered egg to collect its creature. Turn Egg Hunt OFF whenever you want a quiet visit.</li></ol>
+      <p class="egg-hunt-guide-note">Egg Hunt starts OFF. Nothing appears until you choose to turn it ON.</p>
+      <button type="button" id="egg-hunt-guide-close">LET'S EXPLORE</button>
+    </div>
+  </dialog>
+
   <div class="corner-badge" id="corner-zone">🛰️ Radar Zone (Hover 3s)</div>
 
   <main class="container">
@@ -3231,18 +3269,43 @@
       }
     });
 
+    const eggGuide=document.getElementById('egg-hunt-guide');
+    const eggGuideClose=document.getElementById('egg-hunt-guide-close');
+    try{
+      if(localStorage.getItem('curioids-egg-hunt-guide-seen-v1')!=='1'){
+        localStorage.setItem('curioids-egg-hunt-guide-seen-v1','1');
+        requestAnimationFrame(()=>{if(eggGuide?.showModal)eggGuide.showModal();else if(eggGuide)eggGuide.setAttribute('open','');});
+      }
+    }catch(_){requestAnimationFrame(()=>{if(eggGuide?.showModal)eggGuide.showModal();});}
+    eggGuideClose?.addEventListener('click',()=>{if(eggGuide?.open){if(eggGuide.close)eggGuide.close();else eggGuide.removeAttribute('open');}});
+
     const fullscreenButton = document.getElementById("fullscreen-toggle");
+    const getEmbeddingFrame = () => {
+      try { return window.parent !== window ? window.frameElement : null; }
+      catch (_) { return null; }
+    };
+    const isEmbeddingFrameFullscreen = () => {
+      try {
+        const frame = getEmbeddingFrame();
+        return Boolean(frame && window.parent.document.fullscreenElement === frame);
+      } catch (_) { return false; }
+    };
     function syncGameFullscreenButton() {
-      if (fullscreenButton) fullscreenButton.textContent = document.fullscreenElement ? "✕ Exit Fullscreen" : "⛶ Fullscreen";
+      if (fullscreenButton) fullscreenButton.textContent = (Boolean(document.fullscreenElement) || isEmbeddingFrameFullscreen()) ? "✕ Exit Fullscreen" : "⛶ Fullscreen";
     }
     fullscreenButton?.addEventListener("click", async () => {
       try {
-        if (document.fullscreenElement) await document.exitFullscreen();
+        const frame = getEmbeddingFrame();
+        if (isEmbeddingFrameFullscreen()) await window.parent.document.exitFullscreen();
+        else if (document.fullscreenElement) await document.exitFullscreen();
+        else if (frame && typeof frame.requestFullscreen === "function") await frame.requestFullscreen();
+        else if (frame && typeof frame.webkitRequestFullscreen === "function") frame.webkitRequestFullscreen();
         else await document.documentElement.requestFullscreen();
-      } catch { toast("Fullscreen is not available in this browser or frame."); }
+      } catch (error) { toast(`Fullscreen is not available here: ${error?.message||"use the browser fullscreen control"}`); }
       syncGameFullscreenButton();
     });
     document.addEventListener("fullscreenchange", syncGameFullscreenButton);
+    try { window.parent.document.addEventListener("fullscreenchange", syncGameFullscreenButton); } catch (_) {}
 
     document.querySelectorAll(".tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {

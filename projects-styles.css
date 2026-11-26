@@ -409,3 +409,71 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
   .room-window.open .room-mount :where(button,a,input,select,textarea){max-width:100%}
   .room-window.open .room-mount :where(table){display:block;max-width:100%;overflow-x:auto}
 }
+
+/* v1.336: compact Doors98 popup workspace. Keep its desktop/taskbar model, but give the active window room to breathe. */
+.room-window.open[data-room="dead-interface"] .room-body{padding:10px!important;overflow:hidden!important}
+.room-window.open[data-room="dead-interface"] .room-mount{display:flex!important;align-items:stretch!important;justify-content:stretch!important;min-height:0!important;overflow:hidden!important}
+.room-window.open[data-room="dead-interface"] .retro-desktop{position:relative!important;display:block!important;width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;overflow:hidden!important;border-radius:12px!important}
+.room-window.open[data-room="dead-interface"] .retro-window{position:absolute!important;top:clamp(38px,8%,72px)!important;left:50%!important;transform:translateX(-50%)!important;width:min(760px,calc(100% - 28px))!important;max-width:calc(100% - 28px)!important;min-height:210px!important;max-height:calc(100% - 112px)!important;overflow:hidden!important}
+.room-window.open[data-room="dead-interface"] .retro-content{min-width:0!important;max-height:calc(100% - 44px)!important;overflow:auto!important;overscroll-behavior:contain!important}
+.room-window.open[data-room="dead-interface"] .retro-taskbar{left:0!important;right:0!important;bottom:0!important;width:100%!important;max-width:none!important;overflow-x:auto!important;}
+/* UMBRA: make every implemented tool directly visible instead of hiding tools in hover/click flyouts. */
+.umbra-editor-layout{grid-template-columns:104px minmax(0,1fr) minmax(210px,260px)!important}
+.umbra-editor-layout>.umbra-toolrail{width:104px!important;min-width:104px!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:5px!important;padding:7px!important;overflow:auto!important;overscroll-behavior:contain!important}
+.umbra-toolrail .umbra-tool-group{display:contents!important}
+.umbra-toolrail .umbra-tool-group>[data-u-tool-primary],.umbra-toolrail .umbra-tool-group-toggle{display:none!important}
+.umbra-toolrail .umbra-tool-flyout,.umbra-toolrail .umbra-tool-flyout[hidden]{position:static!important;inset:auto!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:4px!important;width:100%!important;max-width:none!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important;opacity:1!important;visibility:visible!important;transform:none!important}
+.umbra-toolrail [data-u-tool-option]{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;min-width:0!important;min-height:45px!important;padding:4px 2px!important;overflow:hidden!important;text-align:center!important;white-space:normal!important;font-size:9px!important;line-height:1.1!important}
+.umbra-toolrail [data-u-tool-option] svg{width:17px!important;height:17px!important;flex:0 0 auto!important}
+.umbra-toolrail .umbra-toolrail-rule{display:none!important}
+@media(max-width:760px){.umbra-editor-layout{grid-template-columns:84px minmax(0,1fr)!important}.umbra-editor-layout>.umbra-toolrail{width:84px!important;min-width:84px!important}.umbra-toolrail [data-u-tool-option]{min-height:42px!important;font-size:8px!important}}
+@media(max-width:520px){.umbra-editor-layout{grid-template-columns:72px minmax(0,1fr)!important}.umbra-editor-layout>.umbra-toolrail{width:72px!important;min-width:72px!important;padding:4px!important}.umbra-toolrail [data-u-tool-option]{min-height:38px!important;font-size:7px!important}}
+
+/* v1.336: Cognitive Field toolbar hierarchy and small-window usability. */
+.aether-os .aether-header{flex-wrap:wrap;gap:9px 14px;padding:8px 12px;}
+.aether-os .aether-brand{flex:0 0 auto;min-width:175px;}
+.aether-os .aether-project-switch{flex:1 1 190px;min-width:180px;}
+.aether-os .aether-header-actions{display:flex;flex:1 1 270px;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:6px;min-width:0;}
+.aether-os .aether-tools{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;min-height:0;padding:7px 10px;}
+.aether-os .aether-tool-group{display:flex;align-items:center;flex-wrap:wrap;gap:3px;padding:3px;border:1px solid rgba(155,181,215,.12);border-radius:7px;background:rgba(20,30,45,.56);}
+.aether-os .aether-tool-group button{min-height:31px;padding:0 8px;white-space:nowrap;}
+.aether-os .aether-tool-divider{display:none;}
+.aether-os .aether-history-tools{margin-left:auto;}
+.aether-os .aether-search{flex:1 1 165px;min-width:145px;max-width:260px;margin-left:auto;}
+.aether-os .aether-icon-button{flex:0 0 34px;justify-content:center;}
+.aether-os .aether-main{min-height:420px;}
+.aether-os .aether-stage{min-height:420px;}
+.aether-os .aether-empty{max-width:460px;padding:18px;}
+.aether-os .aether-empty p{max-width:390px;font-size:11px;}
+.aether-os .aether-empty>div button{min-height:34px;padding:7px 11px;}
+@media(max-width:760px){
+ .aether-os{min-height:650px;}
+ .aether-os .aether-header{align-items:flex-start;}
+ .aether-os .aether-header-actions{justify-content:flex-start;}
+ .aether-os .aether-tools{max-height:160px;overflow:auto;align-content:flex-start;}
+ .aether-os .aether-history-tools{margin-left:0;}
+ .aether-os .aether-search{flex:1 1 100%;max-width:none;margin-left:0;}
+ .aether-os .aether-main,.aether-os .aether-stage{min-height:380px;}
+}
+@media(max-width:430px){
+ .aether-os .aether-brand{min-width:0;}
+ .aether-os .aether-brand small{font-size:6px;}
+ .aether-os .aether-project-switch{flex-basis:100%;}
+ .aether-os .aether-tools{max-height:185px;padding:5px;}
+ .aether-os .aether-tool-group{gap:2px;}
+ .aether-os .aether-tool-group button{min-height:29px;padding:0 6px;font-size:8px;}
+ .aether-os .aether-main,.aether-os .aether-stage{min-height:350px;}
+}
+
+
+/* CURIOID v1.342 universal content-fit and overflow diagnostics guard. */
+:where(.room-window,.room-body,.room-mount,.room-mount :is(section,article,aside,main,header,footer,form,fieldset,nav,div,label,details,summary)) { min-width:0; }
+.room-window .room-mount :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,figcaption,dt,dd) { overflow-wrap:anywhere; word-break:normal; }
+.room-window .room-mount :where(button,[role="button"],input:not([type="range"]),select,textarea,output) { min-width:0; max-width:100%; }
+.room-window .room-mount :where(img,svg,video,canvas,iframe) { max-width:100%; }
+.room-window .room-mount :where(pre,pre code,table,.code-output,.console-output,.log-output) { max-width:100%; }
+.room-window .room-mount :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.cos-actions,.os-system-center-actions,.window-toolbar) { min-width:0; flex-wrap:wrap; }
+@media (max-width:760px) {
+  .room-window .room-mount :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.cos-actions,.os-system-center-actions,.window-toolbar) { flex-wrap:wrap; }
+  .room-window .room-mount :where(.grid,.form-grid,.editor-grid,.workspace-grid) { min-width:0; }
+}

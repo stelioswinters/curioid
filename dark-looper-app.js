@@ -1,5 +1,6 @@
 (() => {
   'use strict';
+  if (window.__curioidAppDisposed) return;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
@@ -649,11 +650,10 @@
   syncTransportUI();
   updateTempoUI();
 
-  window.addEventListener('message', event => {
-    if (event.source !== window.parent || event.data?.type !== 'CURIOID_APP_DISPOSE') return;
+  window.addEventListener('curioid-app-dispose', () => {
     try { stopLoop(); } catch (_) {}
     try { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); } catch (_) {}
     try { mediaStreamDestination?.stream?.getTracks?.().forEach(track => track.stop()); } catch (_) {}
     try { audioContext?.close?.(); } catch (_) {}
-  });
+  }, { once: true });
 })();

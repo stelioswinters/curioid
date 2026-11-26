@@ -1,40 +1,40 @@
-/* CURIOID v1.335 offline shell. CDN-tolerant document validation; strict hashes for executable assets. */
+/* CURIOID v1.342 offline shell. Exact release hashes for every cached deployment asset. */
 'use strict';
-const RELEASE_ID = 'v1.335';
+const RELEASE_ID = 'v1.342';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const EXPECTED_SHA256 = Object.freeze({
-  "applications-tools-apps.html": "a7d67b5c57924c79b8b4fedad80f30c7bd4263b965d330e3dd791f67ac5bbd89",
-  "chroma-loom.html": "2e20261cad01a46b28e0e075faf33287b961a390fe242949c5a05377c077b979",
+  "applications-tools-apps.html": "81a895888113c9d056c1d628efa722332355afd8e04b918e051fd5e48f9a3234",
+  "chroma-loom.html": "fa02c8a891a610ce2da7a70dd4e8d9e84a99bf2e8ea1359d781a2f0b34ed7e8d",
   "curioid-icon-192.png": "32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887",
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
-  "curioids.html": "0271f11bdf94f703045b6f0415be8e64d190dbe363c418f8054a8810d2962e29",
-  "dark-looper-app.js": "cc2240fc2dd99051804782fc8291f97a69996ac19465f5c0c980a78969b96933",
-  "glitchyard-app.js": "371375ae6bf88be7dc462a38597f4942cf19ccee72467b7da16a04bf61d34d16",
-  "health-check.js": "3c222ddb8e6c4c95b97c09261530c82e82c1c42c92c46d33e7cb5b44003fb755",
-  "index.html": "ccf99a5a7c772adda9b70e7842d4f356719d7a489fdd3d945ae834d9d76dea42",
+  "curioids.html": "df08280dca7c9509971f26917aba9607ac5460ed68c80e43a83e158f2e558e49",
+  "dark-looper-app.js": "c177c25fb85fcc5bf15348d7a64cf4ef69055df9ecdfa61a3018252bbd2984e6",
+  "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
+  "health-check.js": "a970dcf954fe555160d7f99527c8334c26fd75012cd28852360982049078a211",
+  "index.html": "6d44d4ba61f71219d40080e4e09d515778bcaab69dde7ce76194a3364d2ec6dd",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
-  "music-audio-apps.html": "0dea881184ea38bfb9b7c5dce2de43e7a23d8f085090b21abcb897e0457e9c3e",
-  "projects-category-creative-tools.js": "0843d957f364080ccc9330219d8b00f2bcc95e8c00844b68b57e4b4936e2270b",
-  "projects-category-digital-art.js": "402f924741e5d6a62194e24f205498057c5969aed4dd494461d31cdf8fa99304",
-  "projects-category-operating-systems.js": "bc97768da95b20e956d2b7f83ac5b7c40643871dcf58e72f6b2f0e3486e218a1",
-  "projects-category-sound-motion.js": "129173b387660f7bd81847c172d0ca34989bca88fe7d2504a618107e4b3a8e7a",
-  "projects-category-strange-archives.js": "c436fc2d70528c6f969139ad5ca3d827395aef1161e30bdee10e58574f2ae00e",
-  "projects-category-tiny-games.js": "8851ac598b44544de56eaf4d6984b88d5d0a4c0b16c8afe94c5d9389ccee18b1",
-  "projects-category-web-experiments.js": "df3762fce2cf5c7fb60ebd589f91fa8e95bc217aa0aaa69482813ce0a2fca194",
-  "projects-core.js": "e1c173133987e4ed8ec4bd0f9b81d92b09baf3409af68e407159e8705ce8995e",
-  "projects-styles.css": "bc8ac7707980d58095a6aa4c45c106da06ac0809a568b57ece16ab74b96b8cfe",
+  "music-audio-apps.html": "cc667b8b6ac77f628464cfa31b30a837098149546ddb3d6df796de8f99b033fc",
+  "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
+  "projects-category-digital-art.js": "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3",
+  "projects-category-operating-systems.js": "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946",
+  "projects-category-sound-motion.js": "6bfbeeb6658f8909003c4c740019ae1e6668237709cf2c24649e4a95a358e58b",
+  "projects-category-strange-archives.js": "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9",
+  "projects-category-tiny-games.js": "8e36510e5f598b2246243c69ac879cdea642f2886bcf4b1fbe435d221777eb20",
+  "projects-category-web-experiments.js": "497be3e77f20adadeb03025662be9d4871439b026b079d3546ee2c3c49fbd5fc",
+  "projects-core.js": "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438",
+  "projects-styles.css": "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "7b98431ac8a0fb450e8640f36e4adeff227ab5db41a52df739eed86c737a2701",
+  "site-runtime-current.js": "c12025b62d2348a35d3514fabf126590aba584f8d7cf36971623b876db8159a7",
   "sitemap.xml": "e2635e23146209aa3ea5c9bb84e7edabd9ecca73a18c7f3c5ade6199153bf63a",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
-  "vanta-deck-app.js": "78d5d2e980d04116f67ca4138091f103f944deb83b6d368566004eb2616ca19b",
+  "vanta-deck-app.js": "47b25c2ec7e4d05028579eee4111d647817a3004ddb1092089df767276fd7705",
   "vocal-lexicon-data.json": "0a9c758a0ca06a83ca318d8bb38e8703518a5a4b705a449be45be0914bfeb5ee",
   "vocal-lexicon.js": "7d9f5ed6e4edbf0abd4251560c757f006ba3dd8a8ee3390b302a38382c587ab6",
-});;;;;;;;
+});
 const RUNTIME_PATH = 'site-runtime-current.js';
 const RUNTIME_HASH = EXPECTED_SHA256[RUNTIME_PATH];
 const SHELL_PATHS = [
@@ -53,7 +53,10 @@ const ON_DEMAND_CACHEABLE = new Set([
   'curioids.html', 'robots.txt', 'sitemap.xml', 'social-preview.png', 'chroma-loom.html', 'dark-looper-app.js', 'glitchyard-app.js', 'vanta-deck-app.js'
 ]);
 const CACHEABLE_DOCUMENTS = new Set(['index.html', 'curioids.html', 'music-audio-apps.html', 'applications-tools-apps.html', 'chroma-loom.html']);
-const STRICT_HASHED_ASSETS = new Set(Object.keys(EXPECTED_SHA256).filter(name => /\.js$/i.test(name) || name === 'projects-styles.css' || name === 'vocal-lexicon-data.json'));
+const STRICT_HASHED_ASSETS = new Set(Object.keys(EXPECTED_SHA256));
+const VERIFIED_CACHE_KEYS = new Set();
+const PRECACHE_LAST_REQUEST = new Map();
+let precachePromise = null;
 const CACHEABLE = new Set([...SHELL_PATHS.map(path => relativePathFor(new URL(path, SCOPE_URL))).filter(Boolean), ...ON_DEMAND_CACHEABLE]);
 const absolute = path => new URL(path || './', SCOPE_URL).href;
 function relativePathFor(url) {
@@ -95,17 +98,20 @@ async function responseLooksLikeImage(response, mime) {
 }
 async function installShellIsValid(cache) {
   const page = await cache.match(absolute('index.html'));
-  if (!await responseHasCurrentPageIdentity(page)) throw new Error('The homepage is missing the current release marker or runtime URL.');
+  if (!await responseMatchesRelease('index.html', page) || !await responseHasCurrentPageIdentity(page)) throw new Error('The homepage failed its exact release hash, release marker or runtime URL check.');
   const runtimeRequest = new URL(SHELL_PATHS[1], SCOPE_URL);
   const runtime = await cache.match(runtimeRequest.href);
   if (!await responseMatchesRelease(RUNTIME_PATH, runtime)) throw new Error('The main runtime failed its exact release hash check.');
   const manifest = await cache.match(absolute('manifest.webmanifest'));
-  if (!manifest?.ok) throw new Error('The PWA manifest could not be cached.');
+  if (!await responseMatchesRelease('manifest.webmanifest', manifest)) throw new Error('The PWA manifest failed its exact release hash check.');
   try { const parsed = await manifest.clone().json(); if (!parsed?.name || !parsed?.start_url) throw new Error('Manifest identity is incomplete.'); }
   catch (_) { throw new Error('The PWA manifest is not valid JSON.'); }
-  if (!await responseLooksLikeImage(await cache.match(absolute('curioid-icon.svg')), 'image/svg+xml')) throw new Error('The SVG brand icon could not be cached.');
-  if (!await responseLooksLikeImage(await cache.match(absolute('curioid-icon-192.png')), 'image/png')) throw new Error('The 192px PWA icon could not be cached.');
-  if (!await responseLooksLikeImage(await cache.match(absolute('curioid-icon-512.png')), 'image/png')) throw new Error('The 512px PWA icon could not be cached.');
+  const svgIcon = await cache.match(absolute('curioid-icon.svg'));
+  const icon192 = await cache.match(absolute('curioid-icon-192.png'));
+  const icon512 = await cache.match(absolute('curioid-icon-512.png'));
+  if (!await responseMatchesRelease('curioid-icon.svg', svgIcon) || !await responseLooksLikeImage(svgIcon, 'image/svg+xml')) throw new Error('The SVG brand icon failed its release integrity check.');
+  if (!await responseMatchesRelease('curioid-icon-192.png', icon192) || !await responseLooksLikeImage(icon192, 'image/png')) throw new Error('The 192px PWA icon failed its release integrity check.');
+  if (!await responseMatchesRelease('curioid-icon-512.png', icon512) || !await responseLooksLikeImage(icon512, 'image/png')) throw new Error('The 512px PWA icon failed its release integrity check.');
 }
 async function openCacheSafely() { try { return await caches.open(CACHE_NAME); } catch (_) { return null; } }
 function safeScopedClient(client) {
@@ -137,6 +143,8 @@ function replyToMessage(event, data) {
   try { if (event.ports?.[0]) event.ports[0].postMessage(data); else event.source?.postMessage(data); } catch (_) {}
 }
 async function precacheCurrentReleaseAssets() {
+  if (precachePromise) return precachePromise;
+  precachePromise = (async () => {
   const cache = await caches.open(CACHE_NAME);
   const results = [];
   let cursor = 0;
@@ -167,8 +175,11 @@ async function precacheCurrentReleaseAssets() {
   await Promise.all(Array.from({length:Math.min(concurrency, DIAGNOSTIC_PRECACHE_PATHS.length)}, () => worker()));
   results.sort((a,b)=>DIAGNOSTIC_PRECACHE_PATHS.indexOf(a.file)-DIAGNOSTIC_PRECACHE_PATHS.indexOf(b.file));
   return {type:'CURIOID_PRECACHE_RESULT',release:RELEASE_ID,ok:results.length===DIAGNOSTIC_PRECACHE_PATHS.length&&results.every(item=>item.ok),cachedCount:results.filter(item=>item.ok).length,expectedCount:DIAGNOSTIC_PRECACHE_PATHS.length,concurrency,results};
+  })();
+  try { return await precachePromise; } finally { precachePromise = null; }
 }
 self.addEventListener('message', event => {
+  if (!safeScopedClient(event.source)) return;
   const type = event.data?.type;
   if (type === 'CURIOID_CLAIM_CONTROL') {
     event.waitUntil((async () => {
@@ -178,6 +189,14 @@ self.addEventListener('message', event => {
     return;
   }
   if (type === 'CURIOID_PRECACHE_CURRENT_RELEASE') {
+    if (!precachePromise) {
+      const clientId = String(event.source.id || '');
+      const now = Date.now();
+      const last = PRECACHE_LAST_REQUEST.get(clientId) || 0;
+      if (now - last < 3000) { replyToMessage(event,{type:'CURIOID_PRECACHE_RESULT',release:RELEASE_ID,ok:false,cachedCount:0,expectedCount:DIAGNOSTIC_PRECACHE_PATHS.length,results:[],error:'A release precache was run recently. Wait a few seconds before retrying.'}); return; }
+      PRECACHE_LAST_REQUEST.set(clientId,now);
+      if (PRECACHE_LAST_REQUEST.size > 64) { for (const [id,at] of PRECACHE_LAST_REQUEST) if (now-at > 60000) PRECACHE_LAST_REQUEST.delete(id); while (PRECACHE_LAST_REQUEST.size > 64) { const oldest = PRECACHE_LAST_REQUEST.keys().next().value; if (oldest === undefined) break; PRECACHE_LAST_REQUEST.delete(oldest); } }
+    }
     event.waitUntil((async () => {
       try { replyToMessage(event,await precacheCurrentReleaseAssets()); }
       catch (error) { replyToMessage(event,{type:'CURIOID_PRECACHE_RESULT',release:RELEASE_ID,ok:false,cachedCount:0,expectedCount:DIAGNOSTIC_PRECACHE_PATHS.length,results:[],error:String(error?.message||error).slice(0,220)}); }
@@ -225,20 +244,23 @@ self.addEventListener('fetch', event => {
       const cache = await openCacheSafely();
       try {
         const response = await fetch(request);
-        if (response?.ok && response.type === 'basic' && cache && CACHEABLE_DOCUMENTS.has(key)) {
-          const valid = key === 'index.html' ? await responseHasCurrentPageIdentity(response) : true;
-          if (valid) { try { await cache.put(absolute(key), response.clone()); } catch (_) {} }
+        if (response?.ok && response.type === 'basic' && CACHEABLE_DOCUMENTS.has(key)) {
+          const hashValid = await responseMatchesRelease(key,response);
+          const identityValid = key !== 'index.html' || await responseHasCurrentPageIdentity(response);
+          if (!hashValid || !identityValid) return new Response('This CURIOID document failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
+          if (cache) { try { await cache.put(absolute(key), response.clone()); } catch (_) {} }
         }
         return response;
       } catch (_) {
         if (cache) {
           try {
             const exact = await cache.match(absolute(key), {ignoreSearch:true});
-            if (exact?.ok && (key !== 'index.html' || await responseHasCurrentPageIdentity(exact))) return exact;
+            const documentValid = !CACHEABLE_DOCUMENTS.has(key) || (await responseMatchesRelease(key,exact) && (key !== 'index.html' || await responseHasCurrentPageIdentity(exact)));
+            if (exact?.ok && documentValid) return exact;
             if (exact) await cache.delete(absolute(key));
             if (!key.includes('.') || key === 'index.html') {
               const shell = await cache.match(absolute('index.html'));
-              if (shell && await responseHasCurrentPageIdentity(shell)) return shell;
+              if (shell && await responseMatchesRelease('index.html', shell) && await responseHasCurrentPageIdentity(shell)) return shell;
             }
           } catch (_) {}
         }
@@ -256,21 +278,21 @@ self.addEventListener('fetch', event => {
     if (cache) {
       try {
         const hit = await cache.match(cacheKey, {ignoreSearch: !releaseQuery});
-        // Strict assets enter this release-scoped cache only after their bytes
-        // pass responseMatchesRelease() on the network or in the explicit
-        // integrity-checked precache action. The cache key is release-specific,
-        // and the consuming page independently enforces SRI (or Fetch integrity
-        // for the JSON lexicon). Re-hashing multi-megabyte cache hits on every
-        // navigation would waste CPU and allocate another full response buffer.
-        if (hit?.ok) return hit;
-        if (hit) await cache.delete(cacheKey);
+        // Verify each strict cache entry on its first use after this worker
+        // starts. This detects corrupted or externally modified persistent cache
+        // bytes without re-hashing multi-megabyte assets on every later request.
+        const verifiedKey = cacheKey.url;
+        if (hit?.ok && (!strict || VERIFIED_CACHE_KEYS.has(verifiedKey))) return hit;
+        if (hit?.ok && strict && await responseMatchesRelease(relativePath, hit)) { VERIFIED_CACHE_KEYS.add(verifiedKey); return hit; }
+        if (hit) { await cache.delete(cacheKey); VERIFIED_CACHE_KEYS.delete(verifiedKey); }
       } catch (_) {}
     }
     try {
       const response = await fetch(request);
-      if (cache && response?.ok && response.type === 'basic') {
+      if (response?.ok && response.type === 'basic') {
         const valid = !strict || await responseMatchesRelease(relativePath, response);
-        if (valid) { try { await cache.put(cacheKey, response.clone()); } catch (_) {} }
+        if (!valid && strict) return new Response('This CURIOID asset failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
+        if (valid && cache) { try { await cache.put(cacheKey, response.clone()); if(strict)VERIFIED_CACHE_KEYS.add(cacheKey.url); } catch (_) {} }
       }
       return response;
     } catch (_) {

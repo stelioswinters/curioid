@@ -1,7 +1,7 @@
-/* CURIOID v1.335 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.342 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.335';
+  const EXPECTED_RELEASE = 'v1.342';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -616,7 +616,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.335',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.342',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -934,32 +934,126 @@
     maintenance.categorySmokeResults = projectSmoke?.results?.map(item => ({category:item.category,ok:Boolean(item.ok),durationMs:item.durationMs||null,error:item.error||null})) || null;
     maintenance.offlineAssetPrecache = projectSmoke?.precache || null;
     const projects = window.CurioidProjects;
-    // Inspect every registered application template without mounting or activating it.
-    // This includes every generated button, option, input, link and binder contract.
+    // One consolidated whole-site control audit: live homepage/Management DOM,
+    // every registered project template, and every standalone HTML app document.
+    // Parsing is inert; the check never clicks, submits, uploads, deletes or saves.
     try {
       const uiCensus = projects?.inspectProjectInterfaces?.();
       window.__CURIOID_HEALTH_UI_CENSUS = uiCensus || null;
-      if (!uiCensus) throw new Error('The project runtime does not expose the read-only interface inspector.');
-      const issues = uiCensus.issues || {};
-      const hardIssues = Number(issues.renderFailures||0)+Number(issues.inlineHandlers||0)+Number(issues.javascriptUrls||0)+Number(issues.unsafeBlankLinks||0)+Number(issues.unsandboxedFrames||0)+Number(issues.sameOriginRelaxationFrames||0);
-      const softIssues = Number(issues.unlabeled||0)+Number(uiCensus.totals?.duplicateIds||0)+Number(uiCensus.totals?.duplicateOptionValues||0)+Number(uiCensus.totals?.emptyOptionLabels||0)+Number(uiCensus.totals?.formButtonsWithoutType||0)+Number(issues.brokenAriaReferences||0)+Number(issues.crossProjectDuplicateIds||0);
+      const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
+      const inspectDocumentControls = doc => {
+        const controls=[...doc.querySelectorAll(selector)];
+        const counts={controls:controls.length,buttons:0,inputs:0,selects:0,textareas:0,links:0,options:0,forms:doc.querySelectorAll('form').length,summaries:0,contenteditables:0,disabledControls:0,requiredControls:0,positiveTabindex:0,customRoleWithoutTabindex:0,invalidButtonTypes:0,duplicateAccessKeys:0,emptyOptionGroupLabels:0,
+          unlabeled:0,duplicateIds:0,inlineHandlers:0,javascriptUrls:0,unsafeBlankLinks:0,
+          formButtonsWithoutType:0,duplicateOptionValues:0,emptyOptionLabels:0,brokenAriaReferences:0,
+          brokenFragmentLinks:0,unsandboxedFrames:0};
+        const ids=[...doc.querySelectorAll('[id]')].map(node=>node.id).filter(Boolean);
+        counts.duplicateIds=ids.length-new Set(ids).size;
+        const accessKeys=new Set();
+        for(const node of doc.querySelectorAll('*')) for(const attr of [...node.attributes]) {
+          if(/^on[a-z]+$/i.test(attr.name)) counts.inlineHandlers++;
+          if(attr.name.toLowerCase()==='accesskey'&&String(attr.value||'').trim()){const key=String(attr.value).trim().toLowerCase();if(accessKeys.has(key))counts.duplicateAccessKeys++;else accessKeys.add(key);}
+                    if(['href','src','action','formaction','xlink:href'].includes(attr.name)&&/^\s*javascript:/i.test(attr.value||'')) counts.javascriptUrls++;
+        }
+        for(const group of doc.querySelectorAll('optgroup'))if(!String(group.getAttribute('label')||'').trim())counts.emptyOptionGroupLabels++;
+        for(const node of controls) {
+          const tag=node.tagName.toLowerCase();
+          if(tag==='button'){counts.buttons++;if(node.closest('form')&&!node.hasAttribute('type'))counts.formButtonsWithoutType++;if(node.hasAttribute('type')&&!['button','submit','reset'].includes(String(node.getAttribute('type')).toLowerCase()))counts.invalidButtonTypes++;}
+          else if(tag==='input')counts.inputs++;
+          else if(tag==='select'){
+            counts.selects++;
+            const options=[...node.querySelectorAll('option')];
+            counts.options+=options.length;
+            counts.emptyOptionLabels+=options.filter(option=>!String(option.label||option.textContent||'').trim()).length;
+            const values=options.map(option=>option.value);
+            if(new Set(values).size!==values.length)counts.duplicateOptionValues++;
+          } else if(tag==='textarea')counts.textareas++;
+          if(tag==='summary')counts.summaries++;
+          if(node.isContentEditable||node.getAttribute('contenteditable')==='true')counts.contenteditables++;
+          if(node.disabled||node.hasAttribute('disabled'))counts.disabledControls++;
+          if(node.required||node.hasAttribute('required'))counts.requiredControls++;
+          if(Number(node.getAttribute('tabindex'))>0)counts.positiveTabindex++;
+          const role=String(node.getAttribute('role')||'').toLowerCase();
+          if(['button','switch','checkbox','radio','menuitem','menuitemcheckbox','menuitemradio','link','slider','spinbutton'].includes(role)&&!['button','a','input','select','textarea','summary'].includes(tag)&&(!node.hasAttribute('tabindex')||Number(node.getAttribute('tabindex'))<0))counts.customRoleWithoutTabindex++;
+          else if(tag==='a'){
+            counts.links++;
+            if(node.target==='_blank'&&!/(^|\s)(noopener|noreferrer)(\s|$)/i.test(node.rel||''))counts.unsafeBlankLinks++;
+            const href=node.getAttribute('href')||'';
+            if(href.startsWith('#')&&href.length>1){let fragmentId=href.slice(1);try{fragmentId=decodeURIComponent(fragmentId);}catch(_){}if(!doc.getElementById(fragmentId))counts.brokenFragmentLinks++;}
+          }
+          const labelledBy=(node.getAttribute('aria-labelledby')||'').trim().split(/\s+/).filter(Boolean);
+          if(labelledBy.some(id=>!doc.getElementById(id)))counts.brokenAriaReferences++;
+          const labelledByText=labelledBy.map(id=>doc.getElementById(id)?.textContent||'').join(' ').trim();
+          const named=Boolean((node.getAttribute('aria-label')||'').trim()||labelledByText||
+            (['button','a'].includes(tag)&&node.textContent?.trim())||node.getAttribute('title')?.trim()||
+            node.labels?.length||node.closest('label')||(['button','submit','reset','image'].includes(String(node.type||'').toLowerCase())&&node.value));
+          if(!named)counts.unlabeled++;
+          for(const relation of ['aria-controls','aria-owns','aria-describedby']) {
+            for(const ref of (node.getAttribute(relation)||'').trim().split(/\s+/).filter(Boolean))if(!doc.getElementById(ref))counts.brokenAriaReferences++;
+          }
+        }
+        counts.unsandboxedFrames=[...doc.querySelectorAll('iframe:not([sandbox])')].filter(frame=>!frame.hasAttribute('data-curioid-embedded-frame')).length;
+        return counts;
+      };
+      const live=inspectDocumentControls(document);
+      const standalonePages=['applications-tools-apps.html','music-audio-apps.html','chroma-loom.html','curioids.html'];
+      const standaloneAudit=await Promise.all(standalonePages.map(async file=>{
+        const response=await healthTimeout(fetch(new URL(file,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${file} control inventory`);
+        if(!response.ok)throw new Error(`${file} returned HTTP ${response.status}`);
+        const doc=new DOMParser().parseFromString(await response.text(),'text/html');
+        return {file,counts:inspectDocumentControls(doc),frames:doc.querySelectorAll('iframe').length};
+      }));
+      const zero=()=>({controls:0,buttons:0,inputs:0,selects:0,textareas:0,links:0,options:0,forms:0,summaries:0,contenteditables:0,disabledControls:0,requiredControls:0,positiveTabindex:0,customRoleWithoutTabindex:0,invalidButtonTypes:0,duplicateAccessKeys:0,emptyOptionGroupLabels:0,unlabeled:0,duplicateIds:0,inlineHandlers:0,javascriptUrls:0,unsafeBlankLinks:0,formButtonsWithoutType:0,duplicateOptionValues:0,emptyOptionLabels:0,brokenAriaReferences:0,brokenFragmentLinks:0,unsandboxedFrames:0});
+      const standaloneTotal=standaloneAudit.reduce((total,item)=>{for(const key of Object.keys(total))total[key]+=Number(item.counts[key]||0);return total;},zero());
+      const project=uiCensus?.totals||zero();
+      const total=zero();
+      for(const source of [live,standaloneTotal,project])for(const key of Object.keys(total))total[key]+=Number(source[key]||0);
+      const projectChecked=uiCensus?.checked||0,projectExpected=uiCensus?.projectCount||0;
+      const projectIssues=uiCensus?.issues||{};
+      const hardIssues=Number(projectIssues.renderFailures||0)+Number(projectIssues.inlineHandlers||0)+Number(projectIssues.javascriptUrls||0)+Number(projectIssues.unsafeBlankLinks||0)+Number(projectIssues.unsandboxedFrames||0)+Number(projectIssues.sameOriginRelaxationFrames||0)+
+        live.duplicateIds+live.inlineHandlers+live.javascriptUrls+live.unsafeBlankLinks+live.unsandboxedFrames+
+        standaloneTotal.duplicateIds+standaloneTotal.inlineHandlers+standaloneTotal.javascriptUrls+standaloneTotal.unsafeBlankLinks+standaloneTotal.unsandboxedFrames;
+      const softIssues=total.unlabeled+total.formButtonsWithoutType+total.duplicateOptionValues+total.emptyOptionLabels+total.emptyOptionGroupLabels+total.brokenAriaReferences+total.brokenFragmentLinks+total.duplicateIds+total.customRoleWithoutTabindex+total.positiveTabindex+total.invalidButtonTypes+total.duplicateAccessKeys+Number(projectIssues.crossProjectDuplicateIds||0);
       const interactionHistory=window.CurioidInteractionDiagnostics?.snapshot?.()||[];
-      const interactionProjects=interactionHistory.filter(item=>item.totalEvents>0);
-      const interactionEvents=interactionHistory.reduce((sum,item)=>sum+item.totalEvents,0);
-      const interactionSummary=interactionProjects.length
-        ?` Privacy-safe real-interaction observer has seen ${interactionEvents} trusted event(s) across ${interactionProjects.length} project(s): ${interactionProjects.map(item=>`${item.projectId} (${item.totalEvents})`).slice(0,12).join(', ')}. It records event types and element IDs only - never text, keys or field values.`
-        :' No real project-control interaction has been observed in this tab yet; opening and using projects will populate privacy-safe counters.';
-      add('All project buttons, options & interaction wiring - read-only audit',hardIssues===0&&uiCensus.checked===uiCensus.projectCount
-        ?{ok:true,warning:softIssues>0,detail:`${uiCensus.detail} ${softIssues?`${softIssues} accessibility/consistency item(s) are candidates for review.`:'No structural UI/security issues were detected.'} Event handlers are inspected as source contracts; destructive controls are intentionally never clicked. Dynamically generated controls are separately reported as source hints and should be verified when their project is opened.${interactionSummary}`}
-        :{ok:false,detail:`${uiCensus.detail} ${hardIssues} unsafe/render issue(s) detected; inspect the per-project census stored in window.__CURIOID_HEALTH_UI_CENSUS.${interactionSummary}`});
+      const siteInteractions=interactionHistory.find(item=>item.projectId==='@whole-site');
+      const projectInteractions=interactionHistory.filter(item=>item.projectId!=='@whole-site'&&item.totalEvents>0);
+      const observedEvents=interactionHistory.reduce((sum,item)=>sum+Number(item.totalEvents||0),0);
+      const observedTargets=Number(siteInteractions?.observedControls||0)+projectInteractions.reduce((sum,item)=>sum+Object.keys(item.targets||{}).length,0);
+      const detail=`Whole-site read-only census: ${live.controls} live website/Management controls; ${project.controls||0} controls across ${projectChecked}/${projectExpected||'?' } project templates; ${standaloneTotal.controls} controls across ${standaloneAudit.length} standalone documents (${standalonePages.join(', ')}). Combined: ${total.controls} interactive controls, including ${total.buttons} buttons, ${total.inputs} inputs, ${total.selects} selects, ${total.textareas} textareas, ${total.links} links, ${total.options} select options, ${total.forms} forms, ${total.summaries} disclosure summaries and ${total.contenteditables} editable surfaces. ${total.disabledControls} disabled controls and ${total.requiredControls} required controls were counted. ${total.unlabeled} controls may need accessible names, ${total.formButtonsWithoutType} form buttons lack an explicit type, ${total.duplicateOptionValues} select(s) have duplicate option values, ${total.brokenAriaReferences} ARIA reference(s) are unresolved, and ${Number(projectIssues.crossProjectDuplicateIds||0)} ID value(s) are reused across separate project templates. ${hardIssues} security/render issue(s); ${softIssues} accessibility/consistency candidate(s), including ${total.customRoleWithoutTabindex} custom-role controls without keyboard focus, ${total.positiveTabindex} positive tabindex values, ${total.invalidButtonTypes} invalid button types, ${total.duplicateAccessKeys} duplicate access keys, ${total.emptyOptionGroupLabels} unlabeled option groups and ${total.brokenFragmentLinks} broken fragment links. ${project.bindersWithEventEvidence||0}/${projectExpected||0} project binders contain recognizable event-wiring code; ${project.controlsWithBindingHint||0}/${project.controls||0} project controls have a matching static selector hint. This session has observed ${observedEvents} trusted interaction event(s) across about ${observedTargets} control identities; no field values, text, keys or content are stored. ${total.controls} controls were inventoried without activating them. Destructive, permission, upload, download and save actions are never automatically triggered. Click or change controls normally, then rerun Health Check to refresh trusted-interaction coverage. Source/DOM wiring hints are not a guarantee that every action works end-to-end.`;
+      window.__CURIOID_HEALTH_WHOLE_SITE_CENSUS=Object.freeze({live,project,standalone:standaloneAudit,total,hardIssues,softIssues,observedEvents,observedTargets});
+      const allProjectTemplatesOk=Boolean(uiCensus&&projectChecked===projectExpected);
+      add('Whole-site controls, options & interaction wiring audit',hardIssues===0&&allProjectTemplatesOk
+        ?{ok:true,warning:softIssues>0||observedEvents===0,detail}
+        :{ok:false,detail:`${detail} ${!allProjectTemplatesOk?'Some project templates could not be inspected. ':''}Open window.__CURIOID_HEALTH_WHOLE_SITE_CENSUS for structured counts.`});
     } catch(error) {
-      window.__CURIOID_HEALTH_UI_CENSUS = null;
-      add('All project buttons, options & interaction wiring - read-only audit',{ok:false,warning:true,detail:String(error?.message||error).slice(0,240)});
+      window.__CURIOID_HEALTH_UI_CENSUS=null;
+      window.__CURIOID_HEALTH_WHOLE_SITE_CENSUS=null;
+      add('Whole-site controls, options & interaction wiring audit',{ok:false,warning:true,detail:`The complete whole-site census did not finish: ${String(error?.message||error).slice(0,220)}. No controls were activated.`});
     }
     const roomCount = document.querySelectorAll('.room-window[data-room]').length;
     const osIds = ['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'];
     const osBootReady = osIds.every(id => projects?.ids?.includes(id));
     add('Secure context', isSecureContext ? {ok:true,detail:'The page is running in a secure context.'} : {ok:false,detail:'HTTPS is required for service workers and several storage APIs.'});
+    // Headers are enforced by the host, not the static HTML meta policy. Report
+    // exactly what the deployed origin sends so an ignored _headers file is visible.
+    try {
+      const headerResponse=await healthTimeout(fetch(location.href,{method:'HEAD',cache:'no-store',credentials:'same-origin'}),8000,'hosting security-header audit');
+      const header=name=>String(headerResponse.headers.get(name)||'').trim();
+      const hsts=header('strict-transport-security');
+      const csp=header('content-security-policy');
+      const permissions=header('permissions-policy').toLowerCase();
+      const xcto=/^nosniff$/i.test(header('x-content-type-options'));
+      const referrer=/^(strict-origin-when-cross-origin|strict-origin|no-referrer)$/i.test(header('referrer-policy'));
+      const framing=/^sameorigin$/i.test(header('x-frame-options'))||/frame-ancestors\s+'self'/i.test(csp);
+      const contentType=header('content-type');
+      const crossDomainPolicy=/^none$/i.test(header('x-permitted-cross-domain-policies'));
+      const policyChecks={xContentTypeOptions:xcto,referrerPolicy:referrer,frameAncestors:framing,crossDomainPolicy,
+        cameraDenied:/camera=\(\)/.test(permissions),microphoneDenied:/microphone=\(\)/.test(permissions),geolocationDenied:/geolocation=\(\)/.test(permissions),paymentDenied:/payment=\(\)/.test(permissions),
+        hsts:location.protocol!=='https:'||/max-age\s*=\s*(?:[1-9]\d{6,})/i.test(hsts),peripheralApisDenied:/usb=\(\)/.test(permissions)&&/bluetooth=\(\)/.test(permissions)&&/serial=\(\)/.test(permissions)&&/hid=\(\)/.test(permissions)};
+      const missing=Object.entries(policyChecks).filter(([,ok])=>!ok).map(([name])=>name);
+      const detail=`HTTP ${headerResponse.status}; Content-Type ${contentType||'not exposed'}; X-Content-Type-Options ${xcto?'nosniff':'missing/weak'}; Referrer-Policy ${header('referrer-policy')||'missing'}; framing ${framing?'restricted to same-origin':'not restricted by a response header'}; Permissions-Policy ${permissions||'missing'}; X-Permitted-Cross-Domain-Policies ${crossDomainPolicy?'none':'missing/weak'}; HSTS ${location.protocol!=='https:'?'not applicable on HTTP':hsts||'missing'}. ${missing.length?`Needs host configuration: ${missing.join(', ')}.`:'Core response-header safeguards are present.'} The page's meta CSP is checked separately; frame-ancestors requires a response header.`;
+      add('Hosting response security headers',missing.length?{ok:false,warning:true,detail}:{ok:true,detail});
+    } catch(error) { add('Hosting response security headers',{ok:false,warning:true,detail:`Could not inspect response headers: ${String(error?.message||error).slice(0,180)}. Check the hosting configuration.`}); }
     add('Page and catalogue', roomCount ? {ok:true,detail:`${roomCount} project room(s) are present in the page.`} : {ok:false,detail:'No project rooms were found in the page.'});
     add('Browser tab title',document.title==='CURIOID'?{ok:true,detail:'The active browser tab title is exactly CURIOID.'}:{ok:false,detail:`Expected the exact tab title CURIOID; received ${JSON.stringify(document.title)}.`});
     const fullscreenStyle=document.getElementById('curioid-fullscreen-app-layout');
@@ -1195,36 +1289,7 @@
         ?{ok:true,detail:'The editor caps source at 250 KB, runs JavaScript inside an opaque-origin frame and short-lived Worker, blocks network and nested-worker APIs, validates opaque origin + exact frame source + token, terminates at 14/15 seconds, caps output and timers at 128 active / 20,000 callbacks; WebAssembly, SharedArrayBuffer and Atomics are disabled. Browsers do not expose a portable hard Worker heap quota.'}
         :{ok:false,detail:`Language Studio source contract missing: ${Object.entries(checks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
     } catch(error) { add('Language Studio Worker isolation and resource budgets',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
-    // Count static controls in the three separate app documents in addition to the
-    // 58 registered project templates. The catalogue has 59 rooms because Sandbox
-    // OS is a native workshop room rather than a registered project template.
-    // DOMParser never executes the page scripts it parses.
-    try {
-      const standalonePages=['applications-tools-apps.html','music-audio-apps.html','chroma-loom.html'];
-      const standaloneAudit=await Promise.all(standalonePages.map(async file=>{
-        const response=await healthTimeout(fetch(new URL(file,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${file} interface inventory`);
-        if(!response.ok)throw new Error(`${file} returned HTTP ${response.status}`);
-        const doc=new DOMParser().parseFromString(await response.text(),'text/html');
-        const controls=[...doc.querySelectorAll('button,input:not([type="hidden"]),select,textarea,a[href],[role="button"],[role="tab"],[role="switch"]')];
-        const counts={buttons:0,inputs:0,selects:0,textareas:0,links:0,options:0,unlabeled:0,duplicateIds:0,inlineHandlers:0,javascriptUrls:0,unsafeBlankLinks:0};
-        const ids=[...doc.querySelectorAll('[id]')].map(node=>node.id).filter(Boolean);
-        counts.duplicateIds=ids.length-new Set(ids).size;
-        for(const node of doc.querySelectorAll('*'))for(const attr of [...node.attributes]){
-          if(/^on[a-z]+$/i.test(attr.name))counts.inlineHandlers++;
-          if(['href','src','action','formaction','xlink:href'].includes(attr.name)&&/^\s*javascript:/i.test(attr.value||''))counts.javascriptUrls++;
-        }
-        for(const node of controls){
-          const tag=node.tagName.toLowerCase();
-          if(tag==='button')counts.buttons++;else if(tag==='input')counts.inputs++;else if(tag==='select'){counts.selects++;counts.options+=node.querySelectorAll('option').length;}else if(tag==='textarea')counts.textareas++;else if(tag==='a'){counts.links++;if(node.target==='_blank'&&!/(^|\s)(noopener|noreferrer)(\s|$)/i.test(node.rel||''))counts.unsafeBlankLinks++;}
-          const named=Boolean((node.getAttribute('aria-label')||node.getAttribute('aria-labelledby')||node.getAttribute('title')||'').trim()||node.textContent?.trim()||node.labels?.length||node.closest('label'));
-          if(!named)counts.unlabeled++;
-        }
-        return {file,counts,frames:doc.querySelectorAll('iframe').length};
-      }));
-      const total=standaloneAudit.reduce((acc,item)=>{for(const [key,value] of Object.entries(item.counts))acc[key]=(acc[key]||0)+value;acc.frames+=item.frames;return acc;},{frames:0});
-      const hard=total.duplicateIds+total.inlineHandlers+total.javascriptUrls+total.unsafeBlankLinks;
-      add('Standalone studios and Chroma Loom - control inventory',hard?{ok:false,detail:`Static standalone documents: ${JSON.stringify(total)}. Review inline handlers, javascript URLs, duplicate IDs and unsafe external links.`}:{ok:true,detail:`Read-only DOMParser inventory across ${standaloneAudit.length} standalone documents: ${total.buttons} buttons, ${total.inputs} inputs, ${total.selects} selects, ${total.textareas} textareas, ${total.links} links and ${total.options} select options; ${total.unlabeled} naming candidates; ${total.frames} iframe(s). ${standaloneAudit.map(item=>item.file+': '+item.counts.buttons+' buttons / '+item.counts.options+' options').join('; ')}. Scripts are not executed and dynamically generated controls are covered separately by the project runtime census and SRI checks.`});
-    } catch(error) { add('Standalone studios and Chroma Loom - control inventory',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
+    // Standalone documents are included in the consolidated whole-site control audit above.
     // Review security-sensitive DOM construction and the custom-OS sanitizer.
     // These checks verify the intended safe-output contracts without injecting
     // payloads into the live page or opening an app window.
@@ -1234,9 +1299,9 @@
         if(!response.ok)throw new Error(`${file} returned HTTP ${response.status}`);
         return response.text();
       }
-      const [vantaSecurity,darkSecurity,glitchSecurity,coreSecurity,appsPageSecurity,musicPageSecurity]=await Promise.all([
+      const [vantaSecurity,darkSecurity,glitchSecurity,coreSecurity,appsPageSecurity,musicPageSecurity,serviceWorkerSecurity]=await Promise.all([
         readSecuritySource('vanta-deck-app.js'),readSecuritySource('dark-looper-app.js'),readSecuritySource('glitchyard-app.js'),
-        readSecuritySource('projects-core.js'),readSecuritySource('applications-tools-apps.html'),readSecuritySource('music-audio-apps.html')
+        readSecuritySource('projects-core.js'),readSecuritySource('applications-tools-apps.html'),readSecuritySource('music-audio-apps.html'),readSecuritySource('service-worker-current.js')
       ]);
       const securityContracts={
         vantaDynamicTextEscaped:vantaSecurity.includes('const escapeHTML = value =>')&&vantaSecurity.includes('escapeHTML(m.label)')&&vantaSecurity.includes('escapeHTML(m.value)')&&vantaSecurity.includes('escapeHTML(r.body)')&&vantaSecurity.includes('safeRecommendationLevel(r.level)'),
@@ -1247,13 +1312,25 @@
         sandboxChildMessagesUseExactHostOrigin:coreSecurity.includes('safeHostOrigin=inlineSafeJson(String(hostOrigin||window.location.origin))')&&coreSecurity.includes('event.origin!==hostOrigin')&&coreSecurity.includes('type:\'request\',id,method,payload},hostOrigin)'),
         customOsWorkerDisablesWasmAndSharedMemory:coreSecurity.includes("'WebAssembly','SharedArrayBuffer','Atomics'")&&coreSecurity.includes('webAssembly:false,sharedMemory:false'),
         legacyOsSourceNeverRuns:coreSecurity.includes('legacy JavaScript that is preserved for migration but is never executed')&&coreSecurity.includes('data-cos-js readonly')&&!coreSecurity.includes("${pkg.source.workerJs?'':userJs}"),
-        applicationsPageUsesStrictCsp:applicationsPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(applicationsPageSecurity),
+        applicationsPageUsesStrictCsp:appsPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(applicationsPageSecurity),
         musicPageUsesStrictCsp:musicPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(musicPageSecurity),
         noDynamicCodeExecution:/\beval\s*\(|new\s+Function\s*\(/.test(vantaSecurity+darkSecurity+glitchSecurity+coreSecurity)===false,
-        privacySafeInteractionObserver:coreSecurity.includes('event.isTrusted !== true')&&coreSecurity.includes('privacy-safe-interaction-observer')&&coreSecurity.includes('curioidInteractionHistory')&&!/event\.target\.value|event\.key|innerText.*interaction/i.test(coreSecurity.slice(coreSecurity.indexOf('Privacy-safe interaction observations'),coreSecurity.indexOf('window.CurioidProjects')))
+        privacySafeInteractionObserver:coreSecurity.includes('event.isTrusted !== true')&&coreSecurity.includes('privacy-safe-interaction-observer')&&coreSecurity.includes('curioidInteractionHistory')&&!/event\.target\.value|event\.key|innerText.*interaction/i.test(coreSecurity.slice(coreSecurity.indexOf('Privacy-safe interaction observations'),coreSecurity.indexOf('window.CurioidProjects'))),
+        standaloneStudioFramesUseOpaqueSandbox:siteRuntimeSource.includes('frame.setAttribute("sandbox", "allow-scripts allow-downloads")')&&siteRuntimeSource.includes('frame.referrerPolicy = "strict-origin"')&&siteRuntimeSource.includes('frame.allow = "autoplay; clipboard-write"'),
+        embeddedStudioFramesUseOpaqueSandbox:coreSecurity.includes('sandbox="allow-scripts allow-downloads"')&&coreSecurity.includes('referrerpolicy="strict-origin"')&&coreSecurity.includes('allow="autoplay; clipboard-write"'),
+        opaqueFrameHeightMessagesBindSourceAndOrigin:siteRuntimeSource.includes('event.source !== frame.contentWindow')&&siteRuntimeSource.includes('event.origin !== "null"')&&siteRuntimeSource.includes('CURIOID_APP_HEIGHT')&&appsPageSecurity.includes('event.source !== window.parent')&&appsPageSecurity.includes('event.origin !== parentOrigin'),
+        staleStandaloneLaunchIgnoredAfterDispose:siteRuntimeSource.includes('if (disposed || !frame.isConnected || !room.classList.contains("open")) return;'),
+        opaqueFrameDisposeStopsLateLoads:appsPageSecurity.includes('window.__curioidAppDisposed = true')&&appsPageSecurity.includes('if(window.__curioidAppDisposed)return;')&&darkSecurity.includes("window.addEventListener('curioid-app-dispose'")&&vantaSecurity.includes("window.addEventListener('curioid-app-dispose'"),
+        firstPartyFrameBfCacheResumesObservers:appsPageSecurity.includes('event?.persisted === true')&&appsPageSecurity.includes("window.addEventListener('pageshow', onPageShow)")&&musicPageSecurity.includes("window.addEventListener('pageshow', onPageShow)"),
+        customOsWorkerBfCacheLifecycle:coreSecurity.includes('event.persisted!==true)stopWorker()')&&coreSecurity.includes('event?.persisted===true&&workerInstance')&&coreSecurity.includes('workerLastBeat=Date.now();workerVisibilityHandler();}}'),
+        vantaGlobalListenersAndAsyncWorkCleaned:vantaSecurity.includes("window.removeEventListener('keydown', onGlobalKeydown)")&&vantaSecurity.includes('state.disposed = true')&&vantaSecurity.includes('state.inputRevision += 1')&&vantaSecurity.includes('Input is too large. The maximum supported size is 2,000,000 characters.'),
+        serviceWorkerScopesMessagesAndHashesDocuments:serviceWorkerSecurity.includes('if (!safeScopedClient(event.source)) return;')&&serviceWorkerSecurity.includes('new Set(Object.keys(EXPECTED_SHA256))')&&serviceWorkerSecurity.includes('responseMatchesRelease(key,response)')&&serviceWorkerSecurity.includes("responseMatchesRelease('curioid-icon.svg', svgIcon)")&&serviceWorkerSecurity.includes('PRECACHE_LAST_REQUEST'),
+        glitchyardRunSnapshotsAndInputCaps:glitchSecurity.includes('const revision=inputRevision,tool=selected,file=selectedFile')&&glitchSecurity.includes('const isCurrent=()')&&glitchSecurity.includes('2,000,000 characters'),
+        glitchyardGzipAndImageBounds:glitchSecurity.includes('readBoundedBytes(stream,16*1024*1024)')&&glitchSecurity.includes('file.size>25*1024*1024')&&glitchSecurity.includes('width*height>16777216'),
+        glitchyardLinearTextCounting:glitchSecurity.includes('useTyped=text.length>16000')&&glitchSecurity.includes('new Uint32Array(0x110000)')&&glitchSecurity.includes('new Map()')&&glitchSecurity.includes('touched.push(code)')&&glitchSecurity.includes('leftCounts=new Map()')&&glitchSecurity.includes('generatedName')&&glitchSecurity.includes('500,000 combined characters')
       };
       add('DOM injection, custom-OS and messaging security review',Object.values(securityContracts).every(Boolean)
-        ?{ok:true,detail:'VANTA DECK escapes dynamic text and whitelists CSS classes; Dark Looper uses text nodes for dynamic library labels; GLITCHYARD escapes raw Markdown HTML and constrains external links; custom OS previews remove active content/event attributes and restrict resource URLs; child-to-parent sandbox messages use the exact host origin and the host validates opaque origin, exact frame source and per-frame token; custom OS Workers disable WebAssembly and shared-memory APIs; legacy custom-OS source is preserved for migration but never executed; standalone pages retain strict CSP; trusted interaction telemetry records only event types and element identifiers in memory, not entered values or text; no eval/new Function execution path was found in the reviewed application/runtime sources.'}
+        ?{ok:true,detail:'VANTA DECK escapes dynamic text, caps expensive text work, invalidates stale hashes after edits and removes its global keyboard listener on disposal; Dark Looper uses text nodes for dynamic library labels; GLITCHYARD escapes raw Markdown HTML, invalidates stale runs, caps text/file/decompression/image workloads and uses bounded linear counting; custom OS previews remove active content/event attributes and restrict resource URLs; custom OS messages bind origin, exact source and per-frame token; first-party studios run in opaque-origin script/download-only frames, height messages bind the exact child source and opaque origin, BFCache suspension resumes observers without disposing restored apps, and permanent disposal stops observers plus late app initialization; custom OS Workers disable WebAssembly and shared-memory APIs; legacy custom-OS source is preserved for migration but never executed; standalone pages retain strict CSP; trusted interaction telemetry records only event types and element identifiers in memory, not entered values or text; no eval/new Function execution path was found in the reviewed application/runtime sources.'}
         :{ok:false,detail:`Security source contract needs attention: ${Object.entries(securityContracts).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
     } catch(error) { add('DOM injection, custom-OS and messaging security review',{ok:false,warning:true,detail:String(error?.message||error).slice(0,240)}); }
     // Verify the newly uploaded Chroma Loom app is first in Digital Art and
@@ -1268,7 +1345,7 @@
       if(!coreResponse.ok||!digitalResponse.ok)throw new Error(`Chroma source fetch failed: core ${coreResponse.status}, digital art ${digitalResponse.status}`);
       const [projectsCoreSource,projectsDigitalArtSource]=await Promise.all([coreResponse.text(),digitalResponse.text()]);
       const roomRegistered=projectsCoreSource.includes('"chroma-loom":')&&projectsCoreSource.includes('"chroma-loom":"digital-art"');
-      const frameIsolation=projectsDigitalArtSource.includes('sandbox="allow-scripts allow-downloads"')&&projectsDigitalArtSource.includes('src="./chroma-loom.html"');
+      const frameIsolation=projectsDigitalArtSource.includes('sandbox="allow-scripts allow-downloads"')&&projectsDigitalArtSource.includes('src="./chroma-loom.html?curioid-embed=1"');
       const filePresent=await fetch(new URL('chroma-loom.html',deploymentBase).href,{method:'HEAD',cache:'no-store',credentials:'same-origin'}).then(response=>response.ok).catch(()=>false);
       add('Chroma Loom first Digital Art app',digitalFirst&&roomRegistered&&frameIsolation&&filePresent
         ?{ok:true,detail:'Chroma Loom is the first Digital Art room, registered in the category module, and runs from its own sandboxed local HTML file with script and download permissions only.'}
@@ -1310,9 +1387,9 @@
       const kinetaResponse=await healthTimeout(fetch(new URL('projects-category-web-experiments.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'Kineta performance contract audit');
       if(!kinetaResponse.ok)throw new Error(`Web Experiments bundle returned HTTP ${kinetaResponse.status}`);
       const kinetaSource=await kinetaResponse.text();
-      const kinetaChecks={adaptiveDpr:kinetaSource.includes('adaptiveQualityScale')&&(/const nextDpr\s*=\s*Math\.max\(\.72,\s*baseDpr\s*\*\s*adaptiveQualityScale\)/.test(kinetaSource)),lowResourceBudget:kinetaSource.includes('deviceMemoryGb')&&kinetaSource.includes('const particleCap = lowResourceDevice'),hiddenPause:kinetaSource.includes('new IntersectionObserver')&&kinetaSource.includes('document.hidden||!kinetaInView'),fixedStep:kinetaSource.includes('while (accumulator >= FIXED_DT && steps < 8)'),particleCompaction:kinetaSource.includes('function updateParticles(dt)')&&kinetaSource.includes('particles.length = write;')&&!/particles\.splice\(i,1\)/.test(kinetaSource)};
+      const kinetaChecks={adaptiveDpr:kinetaSource.includes('adaptiveQualityScale')&&(/const nextDpr\s*=\s*Math\.max\(\.72,\s*baseDpr\s*\*\s*adaptiveQualityScale\)/.test(kinetaSource)),lowResourceBudget:kinetaSource.includes('deviceMemoryGb')&&kinetaSource.includes('const particleCap = lowResourceDevice'),hiddenPause:kinetaSource.includes('new IntersectionObserver')&&kinetaSource.includes('document.hidden||!kinetaInView'),fixedStep:kinetaSource.includes('while (accumulator >= FIXED_DT && steps < 8)'),particleCompaction:kinetaSource.includes('function updateParticles(dt)')&&kinetaSource.includes('particles.length = write;')&&!/particles\.splice\(i,1\)/.test(kinetaSource),ecosystemSpatialGrid:kinetaSource.includes('function prepareEcoSpatialGrid(food, agents)')&&kinetaSource.includes('function ecoGridHasUsefulSpread(food, agents)')&&kinetaSource.includes('function moveEcoAgentBucket(index, x, y)')&&kinetaSource.includes('ECO_GRID_CELL_SIZE = 150'),singlePassLeader:kinetaSource.includes('function findKinetaLeader()')&&!/const leader = \[\.\.\.creatures\]\.sort/.test(kinetaSource),indexedPredation:!kinetaSource.includes('food.indexOf(target)')&&!kinetaSource.includes('agents.indexOf(target)'),cachedEcoCounts:kinetaSource.includes('ecoState.grazers')&&kinetaSource.includes('ecoState.hunters')&&!kinetaSource.includes('ecoState.agents.filter(')};
       add('Kineta adaptive performance safeguards',Object.values(kinetaChecks).every(Boolean)
-        ?{ok:true,detail:'Kineta uses adaptive canvas pixel ratio, hardware-aware population/particle/ecosystem budgets, visibility-based loop suspension, bounded fixed-step catch-up and in-place particle compaction.'}
+        ?{ok:true,detail:'Kineta uses adaptive canvas pixel ratio, hardware-aware simulation budgets, visibility-based loop suspension, bounded fixed-step catch-up, in-place compaction, spatially indexed ecosystem searches, cached population counts and single-pass leader selection.'}
         :{ok:false,detail:`Kineta performance contract missing: ${Object.entries(kinetaChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
       const taskbarChecks={observer:osSource.includes("new ResizeObserver(scheduleRetroTray)"),deferredControls:osSource.includes('retroOverflowItems.prepend(entry.node)'),restoreOrder:osSource.includes('entry.marker.parentNode?.insertBefore(entry.node,entry.marker.nextSibling)'),cleanup:osSource.includes('retroTrayCleanup=()=>')};
       add('Doors98 responsive taskbar overflow',Object.values(taskbarChecks).every(Boolean)
@@ -1336,10 +1413,33 @@
       const styleSource=await styleResponse.text();
       const wallpaperNames=[...new Set([...styleSource.matchAll(/\.cos-desktop-stage\[data-wallpaper=\"([^\"]+)\"\]/g)].map(match=>match[1]))];
       const projectLayoutGuard=styleSource.includes('CURIOID v1.333 universal project content guard')&&styleSource.includes('.room-window .room-mount :is(button,input,select,textarea)')&&styleSource.includes('overflow-wrap:anywhere');
-      const pageLayoutGuard=Boolean(document.getElementById('curioid-v1-329-responsive-overflow-guard'));
+      const pageLayoutGuard=Boolean(document.getElementById('curioid-v1-329-responsive-overflow-guard')&&document.getElementById('curioid-v1-342-layout-guard')); 
       add('Sitewide responsive layout and overflow safeguards',projectLayoutGuard&&pageLayoutGuard
         ?{ok:true,detail:'Additive responsive guards are present in both the homepage and shared project stylesheet. They allow text/buttons to wrap and preserve scrollable code/table content without hiding interface elements.'}
         :{ok:false,warning:true,detail:`Responsive layout guards are incomplete: project stylesheet ${projectLayoutGuard?'present':'missing'}, homepage style ${pageLayoutGuard?'present':'missing'}.`});
+      // Inspect current viewport geometry without collapsing, hiding or modifying UI.
+      const viewportWidth=Math.max(1,document.documentElement.clientWidth||window.innerWidth||1);
+      const documentWidth=Math.max(document.documentElement.scrollWidth,document.body?.scrollWidth||0);
+      const overflowCandidates=[];
+      for(const node of [...document.querySelectorAll('body *')]){
+        if(!node.getClientRects().length||node.closest('[data-health-overflow-ignore]'))continue;
+        const style=getComputedStyle(node);
+        if(style.display==='none'||style.visibility==='hidden'||style.position==='fixed'&&node.getAttribute('aria-hidden')==='true')continue;
+        if(node.clientWidth>0&&node.scrollWidth>node.clientWidth+8&&
+          !['auto','scroll'].includes(style.overflowX)&&style.whiteSpace!=='nowrap'&&
+          !['PRE','TEXTAREA','SELECT','TABLE','CANVAS','SVG','IFRAME'].includes(node.tagName)&&
+          !node.closest('pre,textarea,table,[data-scroll-region],[class*="scroll"],[class*="overflow"]')){
+          const rect=node.getBoundingClientRect();
+          if(rect.width>0&&rect.right>viewportWidth+3||node.scrollWidth>node.clientWidth+24){
+            const identity=node.id?'#'+node.id:(node.classList?.length?'.'+[...node.classList].slice(0,2).join('.') : node.tagName.toLowerCase());
+            overflowCandidates.push({identity:identity.slice(0,120),scrollWidth:node.scrollWidth,clientWidth:node.clientWidth});
+          }
+        }
+      }
+      const documentOverflow=documentWidth>viewportWidth+3;
+      add('Live layout, horizontal overflow & text fit',!documentOverflow&&!overflowCandidates.length
+        ?{ok:true,detail:`Current viewport ${viewportWidth}px; document width ${documentWidth}px. No uncontained horizontal overflow was detected in visible page elements. Scrollable code, tables, editor panes and intentionally clipped media are excluded. This tests the current viewport only; repeat at 200% zoom and narrow mobile widths.`}
+        :{ok:false,warning:true,detail:`Current viewport ${viewportWidth}px; document width ${documentWidth}px (${documentOverflow?`${documentWidth-viewportWidth}px page overflow`: 'page width fits'}). ${overflowCandidates.length} visible element(s) may overflow: ${overflowCandidates.slice(0,10).map(item=>`${item.identity} ${item.scrollWidth}/${item.clientWidth}px`).join('; ')||'none individually identified'}. No element was hidden or removed.`});
       const popupChecks={doors98:styleSource.includes('.room-window.open:is([data-room=\"dead-interface\"'),aura:styleSource.includes('[data-room=\"aura-synthesis\"]'),aether:styleSource.includes('[data-room=\"aether-os\"]'),sandbox:styleSource.includes('.curioid-os-runtime{inset:3vh 3vw!important'),themeCount:wallpaperNames.length>=25};
       add('Large OS popup windows and Sandbox theme coverage',Object.values(popupChecks).every(Boolean)
         ?{ok:true,detail:`Doors98, AURA and Aether have room-sized popup presentation; Sandbox has a centered, dismissible window shell and ${wallpaperNames.length} CSS-backed desktop themes.`}

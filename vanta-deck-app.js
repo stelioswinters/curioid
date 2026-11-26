@@ -1,4 +1,5 @@
 (function () {
+      if (window.__curioidAppDisposed) return;
       const app = document.getElementById('zt-app');
       if (!app) return;
 
@@ -11,7 +12,9 @@
         breathTimeout: null,
         countdownInterval: null,
         remainingSec: 120,
-        toastTimeout: null
+        toastTimeout: null,
+        inputRevision: 0,
+        disposed: false
       };
 
       const trackingKeys = new Set([
@@ -167,6 +170,7 @@
           measureLoopLag(),
           inspectWebGpu()
         ]);
+        if (state.disposed) return;
         const cpu = runCpuBench();
         const webgl = inspectWebGl();
         const media = inspectMediaAndDisplay();
@@ -208,6 +212,8 @@
             persisted = await navigator.storage.persisted();
           } catch {}
         }
+
+        if (state.disposed) return;
 
         // 1. Performance & Environment Score
         let perfScore = 100;
@@ -619,7 +625,11 @@
 
       function textStats() {
         const raw = byId('zt-text-input').value;
-        const wordCount = raw.trim() ? raw.trim().split(/\s+/).length : 0;
+        let wordCount = 0, inWord = false;
+        for (const character of raw) {
+          if (/\s/u.test(character)) inWord = false;
+          else if (!inWord) { wordCount += 1; inWord = true; }
+        }
         const charCount = raw.length;
         const minRead = Math.max(1, Math.ceil(wordCount / 220));
         const cleaned = raw.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
@@ -638,14 +648,23 @@
       }
 
       async function sha256Input() {
-        const raw = byId('zt-text-input').value;
+        const input = byId('zt-text-input');
+        const output = byId('zt-text-output');
+        if (!input || !output || state.disposed) return;
+        const raw = String(input.value || '');
+        if (raw.length > 2000000) {
+          output.value = 'Input is too large. The maximum supported size is 2,000,000 characters.';
+          return;
+        }
+        const revision = state.inputRevision;
         if (!window.crypto || !window.crypto.subtle) {
-          byId('zt-text-output').value = 'crypto.subtle requires a secure context (HTTPS or localhost).';
+          output.value = 'crypto.subtle requires a secure context (HTTPS or localhost).';
           return;
         }
         const digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+        if (state.disposed || revision !== state.inputRevision || !output.isConnected) return;
         const hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
-        byId('zt-text-output').value = 'SHA-256:\n' + hex;
+        output.value = 'SHA-256:\n' + hex;
         toast('Computed SHA-256 hash.');
       }
 
@@ -687,7 +706,19 @@
       async function copyText(str) {
         if (!str) return;
         try {
-          await navigator.clipboard.writeText(str);
+          if (navigator.clipboard?.writeText && window.isSecureContext) {
+            await navigator.clipboard.writeText(str);
+          } else {
+            const field = document.createElement('textarea');
+            field.value = str;
+            field.setAttribute('readonly', '');
+            field.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+            document.body.appendChild(field);
+            field.select();
+            let copied = false;
+            try { copied = document.execCommand('copy'); } finally { field.remove(); }
+            if (!copied) throw new Error('Clipboard write was denied.');
+          }
           toast('Copied to clipboard.');
         } catch {
           toast('Clipboard blocked by browser.');
@@ -797,6 +828,7 @@
 
       app.addEventListener('input', e => {
         const id = e.target.id;
+        if (id === 'zt-text-input') state.inputRevision += 1;
         if (id === 'zt-q-energy') byId('zt-val-energy').textContent = e.target.value + ' / 10';
         else if (id === 'zt-q-load') byId('zt-val-load').textContent = e.target.value + ' / 10';
         else if (id === 'zt-a-up') byId('zt-a-up-lbl').textContent = e.target.value;
@@ -807,15 +839,8 @@
         else if (id === 'zt-b-co') byId('zt-b-co-lbl').textContent = e.target.value;
       });
 
-      window.addEventListener('message', event => {
-        if (event.source !== window.parent || event.data?.type !== 'CURIOID_APP_DISPOSE') return;
-        clearTimeout(state.breathTimeout);
-        clearInterval(state.countdownInterval);
-        clearTimeout(state.toastTimeout);
-        state.breathTimeout = state.countdownInterval = state.toastTimeout = null;
-      });
-
-      window.addEventListener('keydown', e => {
+      const onGlobalKeydown = e => {
+        if (state.disposed) return;
         const readout = byId('zt-key-readout');
         if (!readout) return;
         const mods = [
@@ -826,5 +851,16 @@
         ].filter(Boolean);
         const combo = mods.length ? mods.join(' + ') + ' + ' + e.key : e.key;
         readout.textContent = 'Key: "' + combo + '" (code: ' + e.code + ')';
-      });
+      };
+      window.addEventListener('keydown', onGlobalKeydown);
+
+      window.addEventListener('curioid-app-dispose', () => {
+        state.disposed = true;
+        state.inputRevision += 1;
+        window.removeEventListener('keydown', onGlobalKeydown);
+        clearTimeout(state.breathTimeout);
+        clearInterval(state.countdownInterval);
+        clearTimeout(state.toastTimeout);
+        state.breathTimeout = state.countdownInterval = state.toastTimeout = null;
+      }, { once: true });
     })();

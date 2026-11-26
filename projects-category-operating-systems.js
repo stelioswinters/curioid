@@ -1,4 +1,4 @@
-/* CURIOID v1.333 category bundle: operating-systems. */
+/* CURIOID v1.342 category bundle: operating-systems. */
 (() => {
   'use strict';
   const window = globalThis.window;
@@ -6149,9 +6149,34 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       const unique=[...new Set(queue.filter(x=>x.entry).map(x=>x.entry.file))];try{await Promise.all(unique.map(decodeVoiceSample));}catch(error){setFeedback(`Could not decode one or more voicebank samples: ${error?.message||'unsupported or damaged audio file'}. Check that the bank uses readable WAV files.`);return;}queue.forEach(item=>{if(item.entry){item.entry.buffer=voicebank.buffers.get(item.entry.file);playVoiceSample(item.entry,item.note.midi,a.ctx.currentTime+.06+item.at,item.duration,state.vocalVoice,item.note.stress===1?1.1:.94);}else{const n={...item.note,start:item.at/(60/state.bpm),duration:item.duration/(60/state.bpm),phones:[item.fallback]};synthPhoneticSyllable(n,state.vocalVoice,a.ctx.currentTime+.06,60/state.bpm,.42);}});
       if(missing)setFeedback(`${voicebank.name} is singing. ${missing} phoneme(s) had no alias and used the synthetic fallback. Add mappings in Voicebank Manager.`);else setFeedback(`${voicebank.name} is singing your phonetic line with recorded voicebank samples.`);
     }
-    function singPhoneticPreview(){const a=makeAudio();if(!a)return;a.ctx.resume().then(()=>{stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,base=a.ctx.currentTime+.09,beat=60/state.bpm;/* A phonetic lead must remain monophonic: overlapping five synthesizers smear stop consonants and create comb-filtered formants. Choir harmony belongs to Echo Voice / Choir Matrix, not this articulation preview. */generated.forEach(n=>{const accent=n.stress===1?1.04:n.stress===2?.98:.82;synthPhoneticSyllable(n,lead,base,beat,accent,0,.82);});setFeedback('Phoneme Singer preview: one lead voice, reduced overlap and clear syllable timing. This is an instrumental-style synthetic approximation. For natural vocals, import a compatible UTAU/OpenUtau voicebank (oto.ini + matching WAV samples).');});}
-    function singEchoVoice(){const a=makeAudio();if(!a)return;a.ctx.resume().then(()=>{stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,include=state.vocalHarmonies,base=a.ctx.currentTime+.09,beat=60/state.bpm,offsets=state.intervals||[-12,-5,0,7,12];generated.forEach(note=>{const phones=Array.isArray(note.phones)?note.phones:[],vowel=phones.find(phone=>arpabetVowels.has(normalizePhone(phone)))||note.vowel||'AH',duration=Math.max(.045,note.duration*beat),at=base+Math.max(0,note.start||0)*beat,accent=note.stress===1?1.12:note.stress===2?1.02:.84;if(include){enoVoices.forEach((v,voice)=>{if(state.voices[voice])synthVowel(note.midi,vowel,voice,at,duration,(voice===lead?1:.58)*accent,offsets[voice],phones);});}else synthVowel(note.midi,vowel,lead,at,duration,accent,0,phones);});setFeedback('Basic Echo Voice is singing a smooth vowel-led choir. Switch to Advanced Phoneme Singer for the full consonant-by-consonant pronunciation engine.');});}
-    async function singVocal(){if(!generated.length&&!await generateVocal())return;const a=makeAudio();if(!a)return;if(state.vocalMode==='singer'){if(voicebank.aliases.size)await singVoicebank();else singPhoneticPreview();return;}singEchoVoice();}
+    async function singPhoneticPreview(audioOverride=null){
+      const a=audioOverride||makeAudio();if(!a)return;
+      try{if(a.ctx.state==='suspended')await a.ctx.resume();if(a.ctx.state!=='running')throw new Error('The browser audio context is not running.');
+        stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,base=a.ctx.currentTime+.09,beat=60/state.bpm;
+        /* Keep the phonetic lead monophonic so consonants remain clear. */
+        generated.forEach(n=>{const accent=n.stress===1?1.04:n.stress===2?.98:.82;synthPhoneticSyllable(n,lead,base,beat,accent,0,.82);});
+        setFeedback('Phoneme Singer is playing a procedural vocal approximation. For recorded natural vocals, import a compatible UTAU/OpenUtau voicebank with oto.ini and matching WAV samples.');
+      }catch(error){setFeedback(`Audio could not start: ${error?.message||'check browser audio permissions and try again.'}`);}
+    }
+    async function singEchoVoice(audioOverride=null){
+      const a=audioOverride||makeAudio();if(!a)return;
+      try{if(a.ctx.state==='suspended')await a.ctx.resume();if(a.ctx.state!=='running')throw new Error('The browser audio context is not running.');
+        stop(false);stopChoir();stopSynthPhrase();const lead=state.vocalVoice,include=state.vocalHarmonies,base=a.ctx.currentTime+.09,beat=60/state.bpm,offsets=state.intervals||[-12,-5,0,7,12];
+        generated.forEach(note=>{const phones=Array.isArray(note.phones)?note.phones:[],vowel=phones.find(phone=>arpabetVowels.has(normalizePhone(phone)))||note.vowel||'AH',duration=Math.max(.045,note.duration*beat),at=base+Math.max(0,note.start||0)*beat,accent=note.stress===1?1.12:note.stress===2?1.02:.84;if(include){enoVoices.forEach((v,voice)=>{if(state.voices[voice])synthVowel(note.midi,vowel,voice,at,duration,(voice===lead?1:.58)*accent,offsets[voice],phones);});}else synthVowel(note.midi,vowel,lead,at,duration,accent,0,phones);});
+        setFeedback('Echo Voice is singing. Basic mode uses a smooth vowel-led synthetic choir; Advanced Phoneme Singer adds consonant articulation.');
+      }catch(error){setFeedback(`Audio could not start: ${error?.message||'check browser audio permissions and try again.'}`);}
+    }
+    async function singVocal(){
+      // Create and resume the AudioContext directly inside the trusted click event.
+      // Do not await the remote/local lexicon before unlocking browser audio.
+      const a=makeAudio();if(!a)return;let wake;
+      try{wake=a.ctx.state==='suspended'?a.ctx.resume():Promise.resolve();}catch(error){setFeedback(`Audio could not start: ${error?.message||'browser audio is unavailable.'}`);return;}
+      if(!generated.length&&!await generateVocal())return;
+      try{await wake;if(a.ctx.state==='suspended')await a.ctx.resume();if(a.ctx.state!=='running')throw new Error('The browser did not activate audio. Click Sing again to grant audio playback.');}
+      catch(error){setFeedback(`Audio could not start: ${error?.message||'check browser audio permissions and try again.'}`);return;}
+      if(state.vocalMode==='singer'){if(voicebank.aliases.size)await singVoicebank();else await singPhoneticPreview(a);return;}
+      await singEchoVoice(a);
+    }
     function exportPhonemeSheet(){downloadJSON({app:'Echonoise Phoneme Sheet',version:1,mode:state.vocalMode,lyrics:state.lyrics,key:enoKeys[state.key],scale:state.scale,bpm:state.bpm,syllables:generated.map(n=>({word:n.text||String(n.word??''),wordIndex:n.word,phones:n.phones||[],midi:n.midi,start:n.start,duration:n.duration,stress:n.stress||0}))},'echonoise-phoneme-sheet.json');}
     function playChoir(){const a=makeAudio();if(!a)return;a.ctx.resume().then(()=>{stopChoir();const mood=state.mood,root=60+state.key,offsets=state.intervals||({warm:[0,7,3,12,-5],glass:[0,12,19,24,28],low:[-12,-5,0,7,12],uneasy:[0,6,3,10,13],bright:[0,7,12,16,19]}[mood]||[0,7,3,12,-5]),vowel={warm:'o',glass:'i',low:'u',uneasy:'a',bright:'e'}[mood]||'o',now=a.ctx.currentTime+.08;audio.choirNodes=[];state.voices.forEach((on,i)=>{if(!on)return;const node=synthVowel(root,vowel,i,now,18,.78,offsets[i]);if(node)audio.choirNodes.push(node);});const s=$e('[data-eno-choir-state]');if(s)s.textContent=`${mood.toUpperCase()} / SINGING`;});}
     function randomVoices(){const previous=state.voices.slice();state.voices=state.voices.map(()=>Math.random()>.24);if(!state.voices.some(Boolean))state.voices[2]=true;if(!persist())state.voices=previous;syncUI();}
@@ -6646,6 +6671,7 @@ function umbraMarkup(){
   }
 
 function bindUmbraOS(root){
+    const umbraAppSDK=window.CurioidAppSDK.forExperience('umbra-os');
     const $u=s=>$(s,root),$$u=s=>Array.from(root.querySelectorAll(s));
     const q=sel=>$u(sel);
     const isPlainRecord=value=>{if(!value||typeof value!=='object'||Array.isArray(value))return false;const proto=Object.getPrototypeOf(value);return proto===Object.prototype||proto===null;};
@@ -7198,7 +7224,7 @@ function bindUmbraOS(root){
     function newDocument(){checkpoint('New document');doc.width=clamp(Number(q('[data-u-new-width]').value)||1200,64,MAX_DIM);doc.height=clamp(Number(q('[data-u-new-height]').value)||760,64,MAX_DIM);doc.name='Untitled';layers=[makeLayer('Layer 01')];maskScratch.clear();selection=null;cloneSource=null;activeLayerId=layers[0].id;hasArtwork=false;const bgval=q('[data-u-new-bg]').value;if(bgval!=='transparent'){hasArtwork=true;const l=makeLayer('Background');l.canvas.getContext('2d').fillStyle=bgval;l.canvas.getContext('2d').fillRect(0,0,doc.width,doc.height);l.locked=true;layers.unshift(l);activeLayerId=layers[1].id;}canvas.width=preview.width=composite.width=doc.width;canvas.height=preview.height=composite.height=doc.height;adjustments={brightness:100,contrast:100,saturation:100,hue:0,blur:0,grayscale:0,sepia:0,invert:0};fitMode=true;fitZoom();syncUI();markChanged('New canvas created');closeWindow(q('[data-u-window="new"]'));}
     function applyPreset(id){const presets={noir:{brightness:94,contrast:142,saturation:0,hue:0,blur:0,grayscale:100,sepia:0,invert:0},cinema:{brightness:98,contrast:118,saturation:112,hue:-5,blur:0,grayscale:0,sepia:8,invert:0},faded:{brightness:108,contrast:82,saturation:76,hue:5,blur:.2,grayscale:0,sepia:18,invert:0},infrared:{brightness:104,contrast:128,saturation:168,hue:140,blur:0,grayscale:0,sepia:0,invert:0},dream:{brightness:106,contrast:88,saturation:120,hue:-18,blur:1.5,grayscale:0,sepia:6,invert:0},mono:{brightness:100,contrast:110,saturation:0,hue:0,blur:0,grayscale:100,sepia:0,invert:0}};checkpoint('Filter preset: '+id);adjustments={...presets[id]};syncUI();markChanged('Applied '+id.toUpperCase()+' grade');}
     function applyPixelForge(type){checkpoint('Pixel Forge: '+type);const l=createLayer('Forge · '+type);if(!l)return;hasArtwork=true;const c=getCtx(l);const w=doc.width,h=doc.height;c.save();if(type==='gradient'||type==='nebula'){const g=c.createRadialGradient(w*.5,h*.5,1,w*.5,h*.5,Math.max(w,h)*.72);g.addColorStop(0,fg);g.addColorStop(.5,type==='nebula'?'#8c4cff':'#252b4b');g.addColorStop(1,'#070a12');c.fillStyle=g;c.fillRect(0,0,w,h);if(type==='nebula'){c.globalCompositeOperation='screen';for(let i=0;i<26;i++){const x=Math.random()*w,y=Math.random()*h,r=rand(20,Math.max(35,w*.14));const s=c.createRadialGradient(x,y,0,x,y,r);s.addColorStop(0,`hsla(${Math.random()*360},90%,65%,.18)`);s.addColorStop(1,'transparent');c.fillStyle=s;c.fillRect(x-r,y-r,r*2,r*2);}}}else if(type==='noise'){const sw=Math.min(512,w),sh=Math.min(512,h),t=makeCanvas(sw,sh),tc=t.getContext('2d'),im=tc.createImageData(sw,sh);for(let i=0;i<im.data.length;i+=4){const n=Math.random()*255;im.data[i]=n;im.data[i+1]=n;im.data[i+2]=n;im.data[i+3]=Math.random()*105;}tc.putImageData(im,0,0);c.drawImage(t,0,0,w,h);}else if(type==='stars'){c.fillStyle='#070a12';c.fillRect(0,0,w,h);for(let i=0;i<Math.floor(w*h/4200);i++){const r=rand(.4,2.2);c.fillStyle=`rgba(225,235,255,${rand(.15,.9)})`;c.beginPath();c.arc(Math.random()*w,Math.random()*h,r,0,Math.PI*2);c.fill();}}else if(type==='scanlines'){c.fillStyle='rgba(0,0,0,.34)';for(let y=0;y<h;y+=4)c.fillRect(0,y,w,1.5);}else if(type==='halftone'){c.fillStyle=fg;for(let y=0;y<h;y+=12)for(let x=0;x<w;x+=12){const r=Math.random()*4.5;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();}}c.restore();updateLayerList();markChanged('Generated '+type+' texture');}
-    async function generateSoundPalette(){const phrase=q('[data-u-sound-palette-input]')?.value.trim(),status=q('[data-u-sound-palette-status]');if(!phrase){note('Enter a phrase for the sound palette.');return;}try{if(status)status.textContent='Querying Echonoise local phonetic service…';const palette=await CurioidKernel.requestCapability('echonoise.lexicon.palette',{text:phrase},{fromExperienceId:'umbra-os'});const colors=[...new Set((palette.colors||[]).filter(color=>/^#[0-9a-f]{6}$/i.test(String(color))).map(color=>String(color).toLowerCase()))].slice(0,8);if(!colors.length)throw new Error('The sound service returned no usable colors.');checkpoint('Generate phonetic color palette');fg=colors[0];if(colors[1])bg=colors[1];const paletteHost=q('[data-u-palette]');if(paletteHost)paletteHost.innerHTML=colors.map((color,index)=>`<button type="button" data-u-swatch="${color}" style="--swatch:${color}" title="${color} · ${esc(String(palette.swatches?.[index]?.role||'Sound color'))}"><span>${color}</span></button>`).join('');syncUI();if(status)status.textContent=`${colors.length} colors from ${palette.fingerprint?.wordCount||0} words · dominant vowel ${palette.fingerprint?.dominantVowel||' - '} · seed ${palette.seed}.`;note('Echonoise sound palette applied to Color Lab.');}catch(error){if(status)status.textContent=error.message||'Sound palette unavailable. Open Echonoise and retry.';}}
+    async function generateSoundPalette(){const phrase=q('[data-u-sound-palette-input]')?.value.trim(),status=q('[data-u-sound-palette-status]');if(!phrase){note('Enter a phrase for the sound palette.');return;}try{if(status)status.textContent='Querying Echonoise local phonetic service…';const palette=await umbraAppSDK.capabilities.call('echonoise.lexicon.palette',{text:phrase});const colors=[...new Set((palette.colors||[]).filter(color=>/^#[0-9a-f]{6}$/i.test(String(color))).map(color=>String(color).toLowerCase()))].slice(0,8);if(!colors.length)throw new Error('The sound service returned no usable colors.');checkpoint('Generate phonetic color palette');fg=colors[0];if(colors[1])bg=colors[1];const paletteHost=q('[data-u-palette]');if(paletteHost)paletteHost.innerHTML=colors.map((color,index)=>`<button type="button" data-u-swatch="${color}" style="--swatch:${color}" title="${color} · ${esc(String(palette.swatches?.[index]?.role||'Sound color'))}"><span>${color}</span></button>`).join('');syncUI();if(status)status.textContent=`${colors.length} colors from ${palette.fingerprint?.wordCount||0} words · dominant vowel ${palette.fingerprint?.dominantVowel||' - '} · seed ${palette.seed}.`;note('Echonoise sound palette applied to Color Lab.');}catch(error){if(status)status.textContent=error.message||'Sound palette unavailable. Open Echonoise and retry.';}}
     function extractPalette(){const sample=makeCanvas(64,64),sc=sample.getContext('2d');sc.drawImage(canvas,0,0,64,64);const data=sc.getImageData(0,0,64,64).data,pixels=[];for(let i=0;i<data.length;i+=16)if(data[i+3]>=40)pixels.push([data[i],data[i+1],data[i+2]]);const colors=curioidClusterPalette(pixels,8,8).map(item=>item.hex);q('[data-u-palette]').innerHTML=colors.map(color=>`<button type="button" data-u-swatch="${color}" style="--swatch:${color}" title="${color}" aria-label="Use extracted color ${color}"><span>${color}</span></button>`).join('')||'<p class="umbra-empty-list">No visible colors found on this canvas yet.</p>';note('Extracted '+colors.length+' perceptually spaced OKLab colors.');}
     function openDb(){
       if(dbPromise)return dbPromise;
@@ -7361,7 +7387,7 @@ function bindUmbraOS(root){
         catch(error){clearTimeout(autosaveTimer);try{await restoreData(previous);dirty=false;history.length=historyLength;renderHistory();}catch(rollbackError){throw new Error(`${error.message} The previous document could not be restored in memory: ${rollbackError.message}`);}throw error;}
       }
     });
-    return()=>{unregisterUmbraAdapter();uaDispose();disposed=true;spacePanActive=false;nudgeKeys.clear();cloneSnapshot=null;selectionClipboard=null;umbraFullscreen.destroy();clearTimeout(autosaveTimer);clearInterval(clockTimer);if(renderFrame)cancelAnimationFrame(renderFrame);stageObserver?.disconnect();if(drawing){try{drawing.ctx.restore();}catch(_){}}};
+    return()=>{umbraAppSDK.dispose();unregisterUmbraAdapter();uaDispose();disposed=true;spacePanActive=false;nudgeKeys.clear();cloneSnapshot=null;selectionClipboard=null;umbraFullscreen.destroy();clearTimeout(autosaveTimer);clearInterval(clockTimer);if(renderFrame)cancelAnimationFrame(renderFrame);stageObserver?.disconnect();if(drawing){try{drawing.ctx.restore();}catch(_){}}};
   }
 
 function createAetherHistoryJournal(options={}){
@@ -7404,7 +7430,7 @@ function aetherMarkup(){return `
             <svg class="aether-edges" data-a-edges viewBox="0 0 2600 1800" aria-hidden="true"></svg>
             <div class="aether-node-layer" data-a-node-layer></div>
           </div>
-          <div class="aether-empty" data-a-empty><span class="aether-empty-symbol">✧</span><b>START WITH A THOUGHT</b><p>Drop files, links, notes or code into the mesh.<br>Related material receives suggested context links.</p><div><button type="button" data-a-add-note>＋ Create a note</button><button type="button" data-a-add-link>↗ Add a link</button><button type="button" data-a-add-file>⌁ Drop a file</button></div><small>No account · Local processing · No model download</small></div>
+          <div class="aether-empty" data-a-empty><span class="aether-empty-symbol">✧</span><b>YOUR IDEAS, CONNECTED</b><p>Start with a note, a useful link or a file. Arrange each item on this open canvas, then connect the ideas that belong together.</p><div><button type="button" data-a-add-note>＋ Create a note</button><button type="button" data-a-add-link>↗ Add a link</button><button type="button" data-a-add-file>⌁ Add a file</button></div><small>One open canvas · Local workspace · No account needed</small></div>
           <div class="aether-stage-hud"><span data-a-zoom-label>100%</span><span>SPACE + DRAG TO PAN</span><span data-a-node-label>0 NODES</span></div>
           <div class="aether-stage-controls"><button type="button" data-a-zoom-out aria-label="Zoom out">−</button><button type="button" data-a-zoom-in aria-label="Zoom in">＋</button><button type="button" data-a-fit title="Fit all nodes">⌗</button></div>
           <div class="aether-connect-hint" data-a-connect-hint hidden>SELECT ANOTHER NODE TO CREATE A THREAD <button type="button" data-a-cancel-connect>Cancel</button></div>
@@ -8105,17 +8131,25 @@ function bindAuraSynthesis(root, api = {}) {
     const startButton = q('[data-aura-start]');
     let startMenuPositionFrame = 0;
     function positionStartMenu(){
-      if(!startMenu||startMenu.hidden||!startButton||!startWrap||!root.isConnected)return;
-      const anchor=startButton.getBoundingClientRect(),rootRect=root.getBoundingClientRect();
-      const scaleY=root.offsetHeight?rootRect.height/root.offsetHeight:1;
-      const availableAbove=Math.max(100,(anchor.top-rootRect.top)/(scaleY||1)-16);
-      const availableBelow=Math.max(100,(rootRect.bottom-anchor.bottom)/(scaleY||1)-16);
-      const placeAbove=availableAbove>=Math.min(240,availableBelow)||availableAbove>=availableBelow;
-      const maxHeight=Math.max(100,Math.min(560,placeAbove?availableAbove:availableBelow));
-      startMenu.style.position='absolute';startMenu.style.left='0px';startMenu.style.right='auto';
-      startMenu.style.width='min(390px, calc(100vw - 24px))';startMenu.style.maxWidth='calc(100vw - 24px)';startMenu.style.maxHeight=`${maxHeight}px`;
-      if(placeAbove){startMenu.style.top='auto';startMenu.style.bottom='calc(100% + 8px)';}
-      else{startMenu.style.bottom='auto';startMenu.style.top='calc(100% + 8px)';}
+      if(!startMenu||startMenu.hidden||!startButton||!root.isConnected)return;
+      const anchor=startButton.getBoundingClientRect();
+      const viewport=window.visualViewport;
+      const viewLeft=viewport?viewport.offsetLeft:0;
+      const viewTop=viewport?viewport.offsetTop:0;
+      const viewWidth=viewport?viewport.width:window.innerWidth;
+      const viewHeight=viewport?viewport.height:window.innerHeight;
+      const margin=12,gap=8;
+      const width=Math.min(390,Math.max(220,viewWidth-margin*2));
+      const left=Math.max(viewLeft+margin,Math.min(anchor.left,viewLeft+viewWidth-width-margin));
+      const above=Math.max(100,anchor.top-viewTop-gap-margin);
+      const below=Math.max(100,viewTop+viewHeight-anchor.bottom-gap-margin);
+      const placeAbove=true;
+      const maxHeight=Math.max(100,Math.min(560,above));
+      startMenu.style.position='fixed';startMenu.style.left=`${left}px`;startMenu.style.right='auto';
+      startMenu.style.width=`${width}px`;startMenu.style.maxWidth=`calc(100vw - ${margin*2}px)`;
+      startMenu.style.maxHeight=`${maxHeight}px`;startMenu.style.overflowY='auto';startMenu.style.zIndex='100000';
+      startMenu.style.top=placeAbove?'auto':`${anchor.bottom+gap}px`;
+      startMenu.style.bottom=placeAbove?`${Math.max(margin,viewHeight-(anchor.top-viewTop)+gap)}px`:'auto';
     }
     function scheduleStartMenuPosition(){cancelAnimationFrame(startMenuPositionFrame);startMenuPositionFrame=requestAnimationFrame(positionStartMenu);}
     function setStartMenuOpen(open) {
@@ -8124,13 +8158,15 @@ function bindAuraSynthesis(root, api = {}) {
       if (startButton) { startButton.setAttribute('aria-expanded', String(next)); startButton.setAttribute('aria-label', next ? 'Close AURA application launcher' : 'Open AURA application launcher'); }
       startWrap?.classList.toggle('is-open', next);
       if(next)scheduleStartMenuPosition();
-      else if(startMenu){startMenu.style.removeProperty('position');startMenu.style.removeProperty('left');startMenu.style.removeProperty('right');startMenu.style.removeProperty('top');startMenu.style.removeProperty('bottom');startMenu.style.removeProperty('width');startMenu.style.removeProperty('max-width');startMenu.style.removeProperty('max-height');}
+      else if(startMenu){startMenu.style.removeProperty('position');startMenu.style.removeProperty('left');startMenu.style.removeProperty('right');startMenu.style.removeProperty('top');startMenu.style.removeProperty('bottom');startMenu.style.removeProperty('width');startMenu.style.removeProperty('max-width');startMenu.style.removeProperty('max-height');startMenu.style.removeProperty('overflow-y');startMenu.style.removeProperty('z-index');}
       return next;
     }
     const onStartButtonClick = event => { event.preventDefault(); event.stopPropagation(); setStartMenuOpen(startMenu?.hidden !== false); };
     const onStartMenuViewportChange=()=>{if(startMenu&&!startMenu.hidden)scheduleStartMenuPosition();};
     startButton?.addEventListener('click', onStartButtonClick);
     window.addEventListener('resize',onStartMenuViewportChange,{passive:true});
+    window.visualViewport?.addEventListener('resize',onStartMenuViewportChange,{passive:true});
+    window.visualViewport?.addEventListener('scroll',onStartMenuViewportChange,{passive:true});
     window.addEventListener('scroll',onStartMenuViewportChange,true);
     let noticeTimer = 0, daemonTimer = 0, clockTimer = 0, disposed = false;
     let zIndex = 10, deliverables = 1;
@@ -9080,7 +9116,7 @@ function bindAuraSynthesis(root, api = {}) {
         const nextInbox=[...universeInbox,{id:`in-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,7)}`,from:auraSafeText(meta.sourceExperienceId||'Independent world',80),type:auraSafeText(meta.type,80),title:auraSafeText(meta.title||'Shared reference',120),summary,receivedAt:new Date().toISOString()}].slice(-30);if(!writeUniverseInbox(nextInbox))throw new Error('The AURA inbox could not be saved. Existing records remain unchanged.');universeInbox=nextInbox;const inbox=activeWindows.get('universe');if(inbox)renderUniverseInbox(inbox);say('An external creative reference has arrived in the CURIOID Inbox.');return{message:'Saved a reviewable reference in the local CURIOID Inbox. The source project was not modified.',count:1};
       }
     });
-    return()=>{clearArcadeTimers();unregisterAuraAdapter();disposed=true;if(window.CurioidAuraOpenApp===auraOpenAppBridge){if(previousAuraOpenApp)window.CurioidAuraOpenApp=previousAuraOpenApp;else delete window.CurioidAuraOpenApp;}if(creatorSaveTimer){clearTimeout(creatorSaveTimer);const creatorWin=activeWindows.get('creator-workbench');if(creatorWin)saveCreatorProject(creatorWin,false);}clearTimeout(noticeTimer);clearInterval(scoreTimer);clearInterval(clockTimer);clearInterval(daemonTimer);document.removeEventListener('pointerdown',closeOutside);window.removeEventListener('resize',onStartMenuViewportChange);window.removeEventListener('scroll',onStartMenuViewportChange,true);cancelAnimationFrame(startMenuPositionFrame);startButton?.removeEventListener('click',onStartButtonClick);root.removeEventListener('click',onClick);root.removeEventListener('input',onInput);root.removeEventListener('change',onChange);root.removeEventListener('pointerdown',onPointerDown);root.removeEventListener('pointermove',onPointerMove);root.removeEventListener('pointerup',onPointerUp);root.removeEventListener('pointercancel',onPointerUp);root.removeEventListener('keydown',onKey);auraFullscreen.destroy();stopDaw();[ambientOsc,...ambientPartials].filter(Boolean).forEach(node=>{try{node.stop();}catch(_){}try{node.disconnect();}catch(_){}});try{ambientGain?.disconnect();}catch(_){}ambientOsc=null;ambientPartials=[];ambientGain=null;try{ambientContext?.close();}catch(_){}try{dawContext?.close();}catch(_){};};
+    return()=>{clearArcadeTimers();unregisterAuraAdapter();disposed=true;if(window.CurioidAuraOpenApp===auraOpenAppBridge){if(previousAuraOpenApp)window.CurioidAuraOpenApp=previousAuraOpenApp;else delete window.CurioidAuraOpenApp;}if(creatorSaveTimer){clearTimeout(creatorSaveTimer);const creatorWin=activeWindows.get('creator-workbench');if(creatorWin)saveCreatorProject(creatorWin,false);}clearTimeout(noticeTimer);clearInterval(scoreTimer);clearInterval(clockTimer);clearInterval(daemonTimer);document.removeEventListener('pointerdown',closeOutside);window.removeEventListener('resize',onStartMenuViewportChange);window.visualViewport?.removeEventListener('resize',onStartMenuViewportChange);window.visualViewport?.removeEventListener('scroll',onStartMenuViewportChange);window.removeEventListener('scroll',onStartMenuViewportChange,true);cancelAnimationFrame(startMenuPositionFrame);startButton?.removeEventListener('click',onStartButtonClick);root.removeEventListener('click',onClick);root.removeEventListener('input',onInput);root.removeEventListener('change',onChange);root.removeEventListener('pointerdown',onPointerDown);root.removeEventListener('pointermove',onPointerMove);root.removeEventListener('pointerup',onPointerUp);root.removeEventListener('pointercancel',onPointerUp);root.removeEventListener('keydown',onKey);auraFullscreen.destroy();stopDaw();[ambientOsc,...ambientPartials].filter(Boolean).forEach(node=>{try{node.stop();}catch(_){}try{node.disconnect();}catch(_){}});try{ambientGain?.disconnect();}catch(_){}ambientOsc=null;ambientPartials=[];ambientGain=null;try{ambientContext?.close();}catch(_){}try{dawContext?.close();}catch(_){};};
   }
 
   if (!window.CurioidProjects?.registerCategory) throw new Error('CURIOID shared core must load before the operating-systems category bundle.');

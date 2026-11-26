@@ -596,7 +596,7 @@
       const ROOM_INFO = {
         "chroma-loom": { title: "Chroma Loom", mark: "00", icon: "✺", description: "A tactical colour-flood game with procedural woven patterns, special tiles and exportable artwork", copy: "Expand a living colour field with limited moves. Choose palettes and weave styles, discover prism and anchor tiles, and export your completed pattern as a PNG. Runs locally in an isolated game frame.", category: "digital-art" },
         "sandbox-os": { title: "Sandbox OS", mark: "07", icon: "✳", description: "Build your own operating system in Basic, Advanced or Hybrid mode", copy: "Start with a blank OS or a starter recipe. Add modules one by one, create your own private tools, or switch to Advanced and Hybrid when you want more control. Your OS packages and data stay in this browser. Open the workshop to build, test, save, export and manage your personal operating systems.", category: "operating-systems" },
-        "aether-os": { title: "Aether / Cognitive Field", mark: "06", icon: "✧", description: "A local cognitive environment for semantic constellations, evidence synthesis and temporal knowledge mapping", copy: "Aether is a local-first cognitive field for notes, links, code, files and connected ideas. Its Dream Engine proposes explainable semantic relationships; Synthesis creates traceable extractive briefs from your own source cards; Chronoscope arranges knowledge by time. It does not claim sentience or invent facts. Processing stays on-device, with a local worker, IndexedDB and OPFS when supported. WebGPU is optional and not required. No cloud model or remote service is used.", category: "operating-systems" },
+        "aether-os": { title: "Aether / Cognitive Field - Cognitive Field", mark: "06", icon: "✧", description: "A local cognitive environment for semantic constellations, evidence synthesis and temporal knowledge mapping", copy: "Aether is a local-first cognitive field for notes, links, code, files and connected ideas. Its Dream Engine proposes explainable semantic relationships; Synthesis creates traceable extractive briefs from your own source cards; Chronoscope arranges knowledge by time. It does not claim sentience or invent facts. Processing stays on-device, with a local worker, IndexedDB and OPFS when supported. WebGPU is optional and not required. No cloud model or remote service is used.", category: "operating-systems" },
         "kineta-hyperion": { title: "KINETA // HYPERION", mark: "01", icon: "⚙", description: "Evolve creatures, play with ragdoll physics and master a wobbly walking challenge", copy: "A six-mode artificial-life laboratory: evolve creatures, manipulate ragdoll physics, master Stride Trial, design cellular automata, tune inter-species particle forces and intervene in a living micro-biosphere. Start with one creature, edit genetic and simulation rules, save champion DNA and experiment locally without an account or external engine.", category: "web-experiments" },
         "oddity-lab": { title: "Face Machine", mark: "02", icon: "◉", description: "Generate almost-human faces that feel quietly alive", category: "web-experiments" },
         "aura-synthesis": { title: "Administrative Creative Environment", mark: "01", icon: "◈", description: "A governed creative office for routine tasking, personal standing and approved production records", copy: "AURA//SYNTHESIS is the standard administrative workspace for creative production. It maintains a personal standing account, issues small continuity directives and records routine acknowledgements. Its color, language, spatial and audio departments operate under fixed office procedures. Local records remain in this browser. AURA does not inspect activity outside its own workspace or control access to other CURIOID worlds.", category: "operating-systems" },
@@ -609,7 +609,7 @@
         "faultline-portrait": { title: "Faultline Portrait", mark: "05", icon: "◍", description: "Portraits assembled from misaligned pieces of memory", copy: "Build a fractured portrait from contour bands, displaced features and geological color layers. Push the face toward abstraction without losing its uneasy likeness, then export a high-resolution image." },
         "velvet-weather": { title: "Velvet Weather", mark: "06", icon: "☁", description: "A forecast for skies that do not occur naturally", copy: "Generate slow-moving atmospheric landscapes with impossible cloud formations, unfamiliar horizons and weather systems that behave almost correctly." },
 
-        "umbra-os": { title: "UMBRA Studio", mark: "01", icon: "◐", description: "A darkroom OS for layers, light, texture and impossible images", copy: "Enter UMBRA Studio, a self-contained creative desktop with a lightweight layered image editor. Paint, erase, mask, blend, add type, generate textures, tune color and export polished artwork. Your images stay in your browser." },
+        "umbra-os": { title: "Umbra Studio - Sovereign Photographic Editor", mark: "01", icon: "◐", description: "A darkroom OS for layers, light, texture and impossible images", copy: "Enter UMBRA Studio, a self-contained creative desktop with a lightweight layered image editor. Paint, erase, mask, blend, add type, generate textures, tune color and export polished artwork. Your images stay in your browser." },
         "chromatic-fossils": { title: "Chromatic Fossils", mark: "02", icon: "◈", description: "Color studies that look excavated from another world", copy: "Layered color fields, strange material studies and abstract compositions with the feeling of found objects. Build layered geological color compositions, adjust the strata and export an original digital artwork." },
         "organic-errors": { title: "Organic Errors", mark: "03", icon: "✣", description: "Beautiful accidents, warped forms and digital growths", copy: "Grow branching forms and cellular structures, mutate their patterns and export the moments when the system almost becomes something familiar." },
         "afterimage-studio": { title: "Afterimage Studio", mark: "04", icon: "▤", description: "Layered images, visual echoes and color ghosts", copy: "Load an image locally and create echoes, offsets, grain and color ghosts. Your source image stays in your browser." },
@@ -702,8 +702,8 @@
         Object.freeze({ id: 'dead-interface', name: 'Doors98', summary: 'A retro desktop with its own rooms, keys and local C: memory.', mark: '▤' }),
         Object.freeze({ id: 'food-alchemy', name: 'NOURISH OS', summary: 'A kitchen desktop for ingredients, recipes, planning and food experiments.', mark: '♨' }),
         Object.freeze({ id: 'echonoise-os', name: 'Echonoise', summary: 'A music-making environment for songs, sessions and voice experiments.', mark: '♫' }),
-        Object.freeze({ id: 'umbra-os', name: 'UMBRA', summary: 'A darkroom-style image workspace for layers, light and texture.', mark: '◐' }),
-        Object.freeze({ id: 'aether-os', name: 'Aether.OS', summary: 'A contextual mesh for notes, links, files and connected ideas.', mark: '✧' }),
+        Object.freeze({ id: 'umbra-os', name: 'Umbra Studio - Sovereign Photographic Editor', summary: 'A sovereign photographic editor for layers, light and texture.', mark: '◐' }),
+        Object.freeze({ id: 'aether-os', name: 'Aether / Cognitive Field - Cognitive Field', summary: 'A spatial canvas for notes, links, files and connected ideas.', mark: '✧' }),
         Object.freeze({ id: 'aura-synthesis', name: 'AURA//SYNTHESIS', summary: 'A managed creative administration environment with structured tasking and local standing records.', mark: '◈' })
       ]);
       const CURIOID_WORLD_BY_ID = new Map(CURIOID_WORLD_DEFINITIONS.map(world => [world.id, world]));
@@ -1008,6 +1008,36 @@
         if (message) addSiteNotification(message, '', {});
       });
       const controlCenter = $('#siteControlCenter');
+      const appDisplayScale = $('[data-app-display-scale]', controlCenter);
+      const motionFrameRate = $('[data-motion-frame-rate]', controlCenter);
+      const applyAppDisplayScale = value => {
+        const allowed = new Set(['0.8','0.9','1','1.1','1.2','1.3']);
+        const next = allowed.has(String(value)) ? String(value) : '1';
+        document.documentElement.style.setProperty('--curioid-app-display-scale', next);
+        if (appDisplayScale) appDisplayScale.value = next;
+        return next;
+      };
+      const applyMotionFrameRate = value => {
+        const next = Number(value) === 30 ? '30' : '60';
+        if (motionFrameRate) motionFrameRate.value = next;
+        try { localStorage.setItem('curioid-motion-fps-v1', next); } catch (_) {}
+        window.CurioidMotion?.setFrameRate?.(Number(next));
+        return next;
+      };
+      let savedDisplayScale = '1';
+      try { savedDisplayScale = localStorage.getItem('curioid-app-display-scale-v1') || '1'; } catch (_) {}
+      applyAppDisplayScale(savedDisplayScale);
+      let savedMotionFps = '60';
+      try { savedMotionFps = localStorage.getItem('curioid-motion-fps-v1') || '60'; } catch (_) {}
+      applyMotionFrameRate(savedMotionFps);
+      appDisplayScale?.addEventListener('change', () => {
+        const next = applyAppDisplayScale(appDisplayScale.value);
+        try { localStorage.setItem('curioid-app-display-scale-v1', next); } catch (_) {}
+      });
+      motionFrameRate?.addEventListener('change', () => applyMotionFrameRate(motionFrameRate.value));
+      document.addEventListener('curioid:motionfpschange', event => {
+        if (motionFrameRate) motionFrameRate.value = Number(event.detail?.fps) === 30 ? '30' : '60';
+      });
       const controlStorage = $('[data-control-storage]', controlCenter);
       const controlShortcuts = $('[data-control-shortcuts]', controlCenter);
       const storageMeter = $('[data-storage-meter]', controlCenter);
@@ -1088,8 +1118,8 @@
       const healthDownloadButton = $('[data-health-download]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = '3c222ddb8e6c4c95b97c09261530c82e82c1c42c92c46d33e7cb5b44003fb755';
-      const HEALTH_MODULE_SRI = 'sha384-2lsl8TvWFouSt6L9grpjiubdm9BdkjdImdPUKk1iN+yLj1X5wOgwv5r0miZwmkwf';
+      const HEALTH_MODULE_HASH = 'a970dcf954fe555160d7f99527c8334c26fd75012cd28852360982049078a211';
+      const HEALTH_MODULE_SRI = 'sha384-xLTub60D/6RthgnGGPLev0UTZJ2EFOdJcNR4cTEGwOB2y7DNJ0/cOrmhDvlUGW45';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null, healthFailureReportFilename = ''; 
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -1102,7 +1132,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.335', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.342', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1134,7 +1164,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.335','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.342','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1146,7 +1176,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.335') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.342') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1785,13 +1815,13 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "bc97768da95b20e956d2b7f83ac5b7c40643871dcf58e72f6b2f0e3486e218a1", integrity: "sha384-S1subQVkKXx3yj34mEudIrv9KqOXqyItB+p1TP/K58pmrKBLfUdQDOw52iRIfrIk" },
-        "strange-archives": { file: "projects-category-strange-archives.js", hash: "c436fc2d70528c6f969139ad5ca3d827395aef1161e30bdee10e58574f2ae00e", integrity: "sha384-S7VtgXxlIwB/MvfBK8s1wKKFz4wcZj716ByY8SaGeyZotHR+WyX2nLT80fvzASDi" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "df3762fce2cf5c7fb60ebd589f91fa8e95bc217aa0aaa69482813ce0a2fca194", integrity: "sha384-4tB9kK/s8txkcPsP6bUVMUSX0OnxnKqsJXC2pRlOFLFA0mWN+FCUqgHglrrfM5F8" },
-        "tiny-games": { file: "projects-category-tiny-games.js", hash: "8851ac598b44544de56eaf4d6984b88d5d0a4c0b16c8afe94c5d9389ccee18b1", integrity: "sha384-fKEY31QHjCr4hIF7n8u1W5W4pQe8zVH9wTCRqePPHUrMm6ADedcBiTdyr2pCFW9I" },
-        "digital-art": { file: "projects-category-digital-art.js", hash: "402f924741e5d6a62194e24f205498057c5969aed4dd494461d31cdf8fa99304", integrity: "sha384-8BtI2wDm5ELZiGUJYSMTaQqsLPYBhQR7d5qUFsElSdkF6RikNW0UPquyIndonDV1" },
-        "sound-motion": { file: "projects-category-sound-motion.js", hash: "129173b387660f7bd81847c172d0ca34989bca88fe7d2504a618107e4b3a8e7a", integrity: "sha384-w3xqqnLJspWIPmZVWGABmMd/pPm4a8ge6VqlORZ7j4disKRVOQ+OsXLGRRyGIxQ0" },
-        "creative-tools": { file: "projects-category-creative-tools.js", hash: "0843d957f364080ccc9330219d8b00f2bcc95e8c00844b68b57e4b4936e2270b", integrity: "sha384-XJiTZVgM/+o8j1bTcwG2nzaUNvMUECcQfw6X5+U09F4+M19xm40yNeB0Ad5Wtt1z" }
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946", integrity: "sha384-RAeqs0W7rIL7+1QEHb69xXtP2z33wA60MyETKQMJ4Kj8Jjm0KuoKte0Pp/G186tI" },
+        "strange-archives": { file: "projects-category-strange-archives.js", hash: "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9", integrity: "sha384-g4hRSTBDB9JNNtb3KNiRCpfYEat7EF073JzAD7aRD1W3V3HVMxRL26IFDvl/VMW2" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "497be3e77f20adadeb03025662be9d4871439b026b079d3546ee2c3c49fbd5fc", integrity: "sha384-jhSrXXLkeMzAX7XLw8nYuCiX7OroxyFgJFs0PBeQio2oR2bId7cpDrVc9aOfGcxA" },
+        "tiny-games": { file: "projects-category-tiny-games.js", hash: "8e36510e5f598b2246243c69ac879cdea642f2886bcf4b1fbe435d221777eb20", integrity: "sha384-2ucEkXRNTuHD3NR7sohQcyGQDBNKpDUkOLZWbsuKcxeu7KX9xRpOWs3keuv4FTp5" },
+        "digital-art": { file: "projects-category-digital-art.js", hash: "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3", integrity: "sha384-TRnF/hTCD3QKJQO6MiFqfw/qmdqcq8gEg4efciUIKIbrwRQgeiKtJiBZnX9AS5KF" },
+        "sound-motion": { file: "projects-category-sound-motion.js", hash: "6bfbeeb6658f8909003c4c740019ae1e6668237709cf2c24649e4a95a358e58b", integrity: "sha384-fsANJ2SVk4Muy79tUnY9sY32oaOonFXTZbpZATSlWSEPRNDB3I/a4+UBmTtUW8L5" },
+        "creative-tools": { file: "projects-category-creative-tools.js", hash: "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90", integrity: "sha384-J11KlHxUtYqU40iMauGaO2PIaCJ0HYAaRopt97aPnOKK4/cUR0cS28noI6bTmnr+" }
       });
       function ensureProjectAssets() {
         // A file:// page has an opaque origin in modern browsers. Do not try to
@@ -1926,8 +1956,8 @@
         };
 
         const PROJECT_STYLES_FILE = "projects-styles.css";
-        const PROJECT_STYLES_SHA256 = "bc8ac7707980d58095a6aa4c45c106da06ac0809a568b57ece16ab74b96b8cfe";
-        const PROJECT_STYLES_SRI = "sha384-PvLz6wAxj0cos2Wio/e/9NhRUKLwtMqFvyucaHl8mfemwqt5uZLmVXXASwqwtUfZ";
+        const PROJECT_STYLES_SHA256 = "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e";
+        const PROJECT_STYLES_SRI = "sha384-wKBgjOa4ggmty+/bjyqjvxsFFKOOnxBEK9dCFD85RcdBKIRQB02BXI1/Ivoao8nM";
         const loadProjectCss = ({ retry = false } = {}) => {
           if (document.querySelector('[data-curioid-project-css][data-loaded="true"]')) {
             projectCssError = null;
@@ -2005,7 +2035,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "e1c173133987e4ed8ec4bd0f9b81d92b09baf3409af68e407159e8705ce8995e", integrity: "sha384-09IkoIOPFZpAs6KJDaSvcZNjt+Qaj5pUQ4TmmyRZev9TeQtJS9SCnrSAm/RInGCN",
+            file: "projects-core.js", hash: "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438", integrity: "sha384-KwXs4mic5LINPb1ytkmfViadChJXmeSfjbs2hPvUesVkNL+tOryLQGuEEQhHpgPL",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -2081,7 +2111,7 @@
           // Refresh the registration metadata without activating a waiting worker.
           // This ensures the current release can receive the diagnostic pre-cache
           // command even when the site was opened before its update finished.
-          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.335", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
+          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.342", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
           await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Service-worker update check timed out")), Math.min(timeoutMs,15000)))]);
         } catch (error) {
           try { registration = await serviceWorker.getRegistration(serviceRoot.href); } catch (_) {}
@@ -2090,7 +2120,7 @@
         const isCurrent = worker => {
           try {
             const url = new URL(worker?.scriptURL || "");
-            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.335";
+            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.342";
           } catch (_) { return false; }
         };
         if (!isCurrent(registration?.waiting) && isCurrent(registration?.installing)) {
@@ -2107,7 +2137,7 @@
           try { registration = await serviceWorker.getRegistration(serviceRoot.href) || registration; } catch (_) {}
         }
         const worker = isCurrent(registration?.waiting) ? registration.waiting : isCurrent(registration?.active) ? registration.active : null;
-        if (!worker) return { available:false, reason:"No current v1.335 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
+        if (!worker) return { available:false, reason:"No current v1.342 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
         const send = (command, limit) => new Promise((resolve, reject) => {
           const channel = new MessageChannel();
           let settled = false;
@@ -2122,7 +2152,7 @@
           const timer = setTimeout(() => finish(new Error(`${command} timed out`)), limit);
           channel.port1.onmessage = event => finish(null, event.data || { ok:false, reason:"Worker returned an empty response." });
           channel.port1.onmessageerror = () => finish(new Error(`${command} response could not be decoded`));
-          try { worker.postMessage({ type:command, release:"v1.335" }, [channel.port2]); }
+          try { worker.postMessage({ type:command, release:"v1.342" }, [channel.port2]); }
           catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
         });
         if (worker === registration?.active && !serviceWorker.controller) {
@@ -2197,8 +2227,8 @@
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "e1c173133987e4ed8ec4bd0f9b81d92b09baf3409af68e407159e8705ce8995e", as: "script" },
-        { file: "projects-styles.css", hash: "bc8ac7707980d58095a6aa4c45c106da06ac0809a568b57ece16ab74b96b8cfe", as: "style" }
+        { file: "projects-core.js", hash: "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438", as: "script" },
+        { file: "projects-styles.css", hash: "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e", as: "style" }
       ]);
       let projectPrefetchScheduled = false;
       const projectPrefetchHints = new Set();
@@ -2351,35 +2381,22 @@
         frame.className = "standalone-project-frame";
         frame.title = project.title;
         frame.loading = "eager";
-        frame.referrerPolicy = "no-referrer";
-        frame.allow = "autoplay; clipboard-read; clipboard-write";
+        frame.setAttribute("sandbox", "allow-scripts allow-downloads");
+        frame.referrerPolicy = "strict-origin";
+        frame.allow = "autoplay; clipboard-write";
+        frame.style.height = "860px";
         frame.setAttribute("allowfullscreen", "");
         let disposed = false;
-        let observer = null;
-        let resizeQueued = false;
-        const resize = () => {
-          if (disposed || resizeQueued) return;
-          resizeQueued = true;
-          requestAnimationFrame(() => {
-            resizeQueued = false;
-            if (disposed) return;
-            try {
-              const doc = frame.contentDocument;
-              const body = doc?.body;
-              const root = doc?.documentElement;
-              if (!body || !root) return;
-              const contentHeight = Math.max(body.scrollHeight, root.scrollHeight, body.offsetHeight, root.offsetHeight) + 16;
-              const fullscreenHeight = room.classList.contains('curioid-fullscreen-window') ? room.querySelector('.room-body')?.clientHeight : 0;
-              frame.style.height = fullscreenHeight > 0 ? `${fullscreenHeight}px` : `${Math.max(760, Math.min(1900, contentHeight))}px`;
-              if (!observer && typeof ResizeObserver === "function") {
-                observer = new ResizeObserver(resize);
-                observer.observe(root);
-                observer.observe(body);
-              }
-            } catch (_) { /* Cross-origin/early document access is intentionally ignored. */ }
-          });
+        const onFrameMessage = event => {
+          if (disposed || event.source !== frame.contentWindow || event.origin !== "null" || event.data?.type !== "CURIOID_APP_HEIGHT") return;
+          const height = Number(event.data.height);
+          if (!Number.isFinite(height) || height < 1 || height > 100000) return;
+          const boundedHeight = Math.max(760, Math.min(1900, Math.ceil(height + 16)));
+          const fullscreenHeight = room.classList.contains('curioid-fullscreen-window') ? room.querySelector('.room-body')?.clientHeight : 0;
+          frame.style.height = fullscreenHeight > 0 ? `${fullscreenHeight}px` : `${boundedHeight}px`;
         };
-        frame.addEventListener("load", () => { resize(); finishCurioidProjectLaunch(room); }, { once: true });
+        window.addEventListener("message", onFrameMessage);
+        frame.addEventListener("load", () => { if (disposed || !frame.isConnected || !room.classList.contains("open")) return; finishCurioidProjectLaunch(room); }, { once: true });
         const base = window.CURIOID_PROJECT_ASSET_BASE_URL || new URL(".", window.location.href).href;
         const appUrl = new URL(project.file, base);
         appUrl.hash = project.app;
@@ -2388,9 +2405,8 @@
         room._curioidCleanup = () => {
           if (disposed) return;
           disposed = true;
-          observer?.disconnect();
-          frame.removeEventListener("load", resize);
-          try { frame.contentWindow?.postMessage({ type: "CURIOID_APP_DISPOSE" }, window.location.origin); } catch (_) {}
+          window.removeEventListener("message", onFrameMessage);
+          try { frame.contentWindow?.postMessage({ type: "CURIOID_APP_DISPOSE" }, "*"); } catch (_) {}
           frame.src = "about:blank";
         };
         return true;
@@ -2647,7 +2663,7 @@
         const discovery = $("#discoveryChoices");
         const label = $("#catalogLabel");
         const categoriesButton = $("#returnToCategories");
-        if (categoriesButton) categoriesButton.hidden = mode !== "category";
+        if (categoriesButton) categoriesButton.hidden = mode !== "category" && mode !== "all";
         host.hidden = home;
         discovery.hidden = !home;
         label.hidden = home;
@@ -3431,7 +3447,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.335", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.342", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {

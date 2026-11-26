@@ -6,17 +6,96 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="#10131a" name="theme-color"/>
 <meta content="noindex,nofollow" name="robots"/>
-<meta content="default-src 'self';script-src 'self' 'strict-dynamic' 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-jXrJqZGpR5pqfioPBNBWPWdjwW5wKbaWImQTgOqQBCM='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'" http-equiv="Content-Security-Policy"/>
+<meta content="default-src 'self';script-src 'self' 'strict-dynamic' 'sha256-7tfxcDo611s8f1N/TKYkAvXToalij/ienMXq0vocHw8=' 'sha256-Ym9qk00mp5HJ0p9BHY+idtaJqA+va7Iwy3rn12UhNqc='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
   <script id="curioid-frame-guard">
 (() => {
-  let blocked = false;
-  try {
-    blocked = window.top !== window.self && window.top.location.origin !== window.location.origin;
-  } catch (_) {
-    blocked = true;
+  const embedded = window.top !== window.self;
+  let parentOrigin = '';
+  if (embedded) {
+    try {
+      const ownOrigin = new URL(window.location.href).origin;
+      const referrerOrigin = new URL(document.referrer).origin;
+      if (ownOrigin === referrerOrigin) parentOrigin = referrerOrigin;
+    } catch (_) {}
   }
-  if (!blocked) return;
+  const blocked = embedded && !parentOrigin;
+  if (!embedded) return;
 
+  if (!blocked) {
+    let stopped = false;
+    let lastHeight = 0;
+    let frameRequest = 0;
+    let resizeObserver = null;
+    let mutationObserver = null;
+    let observing = false;
+    const reportHeight = () => {
+      frameRequest = 0;
+      if (stopped) return;
+      const body = document.body;
+      const doc = document.documentElement;
+      if (!body || !doc) return;
+      const height = Math.max(1, Math.ceil(Math.max(body.scrollHeight, doc.scrollHeight, body.offsetHeight, doc.offsetHeight)));
+      if (Math.abs(height - lastHeight) < 2) return;
+      lastHeight = height;
+      try { window.parent.postMessage({ type: 'CURIOID_APP_HEIGHT', height }, parentOrigin); } catch (_) {}
+    };
+    const scheduleHeight = () => {
+      if (stopped || frameRequest) return;
+      frameRequest = requestAnimationFrame(reportHeight);
+    };
+    const suspendObservers = () => {
+      if (frameRequest) cancelAnimationFrame(frameRequest);
+      frameRequest = 0;
+      resizeObserver?.disconnect();
+      mutationObserver?.disconnect();
+      resizeObserver = null;
+      mutationObserver = null;
+      window.removeEventListener('resize', scheduleHeight);
+      observing = false;
+    };
+    const stopObservers = () => {
+      if (stopped) return;
+      suspendObservers();
+      stopped = true;
+      try { window.__curioidAppDisposed = true; } catch (_) {}
+      document.removeEventListener('DOMContentLoaded', startObservers);
+      window.removeEventListener('load', scheduleHeight);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('message', onParentMessage);
+    };
+    function startObservers() {
+      if (stopped || observing) return;
+      observing = true;
+      scheduleHeight();
+      window.addEventListener('resize', scheduleHeight, { passive: true });
+      if (typeof ResizeObserver === 'function') {
+        resizeObserver = new ResizeObserver(scheduleHeight);
+        if (document.documentElement) resizeObserver.observe(document.documentElement);
+        if (document.body) resizeObserver.observe(document.body);
+      }
+      if (typeof MutationObserver === 'function' && document.documentElement) {
+        mutationObserver = new MutationObserver(scheduleHeight);
+        mutationObserver.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+      }
+    }
+    const onPageHide = event => { if (event?.persisted === true) suspendObservers(); else stopObservers(); };
+    const onPageShow = event => { if (event?.persisted === true) startObservers(); };
+    const onParentMessage = event => {
+      if (stopped || event.source !== window.parent || event.origin !== parentOrigin || event.data?.type !== 'CURIOID_APP_DISPOSE') return;
+      stopObservers();
+      try { window.dispatchEvent(new Event('curioid-app-dispose')); } catch (_) {}
+    };
+    window.addEventListener('load', scheduleHeight, { once: true });
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('message', onParentMessage);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startObservers, { once: true });
+    else startObservers();
+    Object.defineProperty(window, '__curioidTrustedParentOrigin', { value: parentOrigin, configurable: false, enumerable: false, writable: false });
+  }
+
+  if (!blocked) return;
   const cancelInteraction = event => {
     if (event.cancelable) event.preventDefault();
     event.stopImmediatePropagation();
@@ -27,10 +106,7 @@
     'pointerdown', 'pointerup', 'pointermove', 'mousedown', 'mouseup',
     'touchstart', 'touchend', 'dragstart', 'drop'
   ];
-  for (const type of blockedEvents) {
-    window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
-  }
-
+  for (const type of blockedEvents) window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
   const showFrameWarning = () => {
     if (document.body) document.body.inert = true;
     if (document.getElementById('curioid-frame-warning')) return;
@@ -48,12 +124,8 @@
     panel.append(heading, message);
     document.documentElement.append(panel);
   };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
-  } else {
-    showFrameWarning();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
+  else showFrameWarning();
 })();
   </script>
 <title>CURIOID</title>
@@ -561,6 +633,7 @@ body {
 .dt-tool-heading p:last-child{margin:6px 0 0;color:var(--dt-muted);font-size:11px;line-height:1.5}
 .dt-tool-index{padding:7px 9px;border:1px solid var(--dt-line);border-radius:8px;color:#9ba7b4;font:10px ui-monospace,monospace;white-space:nowrap}
 .dt-options{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin:0 0 13px;padding:10px 12px;border:1px solid var(--dt-line);border-radius:11px;background:rgba(255,255,255,.02)}
+.dt-unit-help{flex:1 1 100%;color:#9eabb8;font-size:9px;line-height:1.55}.dt-unit-help summary{cursor:pointer;color:var(--dt-lime);font-weight:700}.dt-unit-help p{margin:6px 0 0;max-width:100%;overflow-wrap:anywhere}
 .dt-option{display:grid;gap:5px;min-width:100px;color:#b9c4ce;font-size:10px}
 .dt-option>span{display:flex;justify-content:space-between;gap:8px;color:#9eabb8}
 .dt-option select,.dt-option input:not([type=checkbox]):not([type=range]){min-width:0;max-width:190px;padding:7px 9px;border:1px solid #394554;border-radius:7px;background:#151b24;color:#edf2f3;font-size:11px}
@@ -617,6 +690,21 @@ body {
 /* Consolidated app frame layout */
 .studio-app[hidden]{display:none!important}
 </style>
+<meta name="referrer" content="strict-origin"/>
+
+<style id="curioid-v1-342-layout-guard">
+  :where(main,section,article,aside,header,footer,form,fieldset,nav,div,label,details,summary,
+    .container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; }
+  :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,figcaption) { overflow-wrap:anywhere; word-break:normal; }
+  :where(button,[role="button"],input,select,textarea,output) { min-width:0; max-width:100%; white-space:normal; }
+  :where(img,svg,video,canvas,iframe) { max-width:100%; }
+  :where(pre,pre code,table,textarea,.code-output,.console-output) { max-width:100%; }
+  @media(max-width:680px) {
+    :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.dt-actions,.header-actions,.footer-actions) { min-width:0; flex-wrap:wrap; }
+    :where(.container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; max-width:100%; }
+  }
+</style>
+
 </head>
 <body>
 <div aria-live="polite" class="studio-toast" id="studio-toast" role="status"></div>
@@ -828,7 +916,7 @@ body {
 <p class="zt-metric-sub" style="margin-top:0;">
               Count words and reading time, clean extra spaces, format JSON, or compute a local SHA-256 hash.
             </p>
-<textarea class="zt-textarea" id="zt-text-input" placeholder="Paste text or JSON here..."></textarea>
+<textarea class="zt-textarea" id="zt-text-input" maxlength="2000000" placeholder="Paste text or JSON here..." spellcheck="false"></textarea>
 <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
 <button class="zt-btn" data-zt-action="text-stats" type="button">Stats &amp; Clean</button>
 <button class="zt-btn" data-zt-action="fmt-json" type="button">Format JSON</button>
@@ -900,13 +988,14 @@ body {
   const section=document.querySelector(`[data-studio-app="${active}"]`);
   if(section)section.hidden=false;
   const sources={ 'vanta-deck':'vanta-deck-app.js', 'devtoys':'glitchyard-app.js' };
-  const sri={'vanta-deck-app.js':'sha384-FGHy3a8BvctPm0Ouevyn86V5dKZc7cFvc5UBhUBGVmHpXAO0uKstruFWpPJ4jY9y','glitchyard-app.js':'sha384-FGHy3a8BvctPm0Ouevyn86V5dKZc7cFvc5UBhUBGVmHpXAO0uKstruFWpPJ4jY9y'};
+  const sri={'vanta-deck-app.js':'sha384-Ue4ohMQ9ETdgQuT9FnopDzmuBQgqP582k9OaVsBmArahK+NraGZ/V82jGMo+D8HN','glitchyard-app.js':'sha384-DQeZmCvk2Ai6/hrLL28V48Ev6ba6O/nWA+3ig1ElFI7KkJmKOhQsN4i+adS1srxb'};
   const showFailure=(message)=>{const host=(active==='devtoys'?document.getElementById('studio-glitchyard-mount'):section)||section||document.body;const box=document.createElement('div');box.setAttribute('role','alert');box.style.cssText='margin:24px;padding:18px;border:1px solid #b45309;border-radius:12px;background:#241b13;color:#ffdfad;font:14px/1.55 system-ui';box.textContent='This studio could not start. '+message+' Refresh the page after the current release files have finished deploying.';host.replaceChildren(box);};
   function loadLocalScript(file,integrity){return new Promise((resolve,reject)=>{if(!/^sha384-[A-Za-z0-9+/]+={0,2}$/.test(integrity||''))return reject(new Error('The release integrity declaration for '+file+' is missing or malformed.'));const script=document.createElement('script');script.src=new URL(file,location.href).href;script.async=false;script.integrity=integrity;script.crossOrigin='anonymous';script.referrerPolicy='no-referrer';script.onload=()=>resolve();script.onerror=()=>reject(new Error('The SRI-verified '+file+' script failed to load. Check that the file is beside this page and belongs to the same release.'));document.head.appendChild(script);});}
   let cleanup=()=>{};
   const appApi={ 'vanta-deck':{file:sources['vanta-deck'],integrity:sri[sources['vanta-deck']]}, 'devtoys':{file:sources.devtoys,integrity:sri[sources.devtoys]} }[active];
   loadLocalScript(appApi.file,appApi.integrity).then(()=>{
-    if(active==='devtoys'){let toastTimer=0;const notify=(message)=>{const toast=document.getElementById('studio-toast');if(!toast)return;toast.textContent=String(message||'Done');toast.classList.add('is-visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-visible'),2200);};const host=document.getElementById('studio-glitchyard-mount');if(typeof window.CurioidGlitchyard?.mount!=='function')throw new Error('Glitchyard registered no mount function.');cleanup=window.CurioidGlitchyard.mount(host,{toast:notify})||(()=>{});window.addEventListener('message',event=>{if(event.source!==window.parent||event.origin!==location.origin||event.data?.type!=='CURIOID_APP_DISPOSE')return;try{cleanup();}catch(_){}clearTimeout(toastTimer);});}
+    if(window.__curioidAppDisposed)return;
+    if(active==='devtoys'){let toastTimer=0;const notify=(message)=>{const toast=document.getElementById('studio-toast');if(!toast)return;toast.textContent=String(message||'Done');toast.classList.add('is-visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-visible'),2200);};const host=document.getElementById('studio-glitchyard-mount');if(typeof window.CurioidGlitchyard?.mount!=='function')throw new Error('Glitchyard registered no mount function.');cleanup=window.CurioidGlitchyard.mount(host,{toast:notify})||(()=>{});window.addEventListener('curioid-app-dispose',()=>{try{cleanup();}catch(_){}clearTimeout(toastTimer);},{once:true});}
   }).catch(error=>showFailure(String(error?.message||error).slice(0,220)));
 })();</script>
 </body>
