@@ -23,7 +23,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "projects-category-operating-systems.js": "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946",
   "projects-category-sound-motion.js": "6bfbeeb6658f8909003c4c740019ae1e6668237709cf2c24649e4a95a358e58b",
   "projects-category-strange-archives.js": "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9",
-  "projects-category-tiny-games.js": "8e36510e5f598b2246243c69ac879cdea642f2886bcf4b1fbe435d221777eb20",
+  "projects-category-tiny-games.js": "fcec73cfca4acae789de6a070e0770be426e3a94e2375a7a89a64408e48dfe26",
   "projects-category-web-experiments.js": "497be3e77f20adadeb03025662be9d4871439b026b079d3546ee2c3c49fbd5fc",
   "projects-core.js": "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438",
   "projects-styles.css": "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e",
