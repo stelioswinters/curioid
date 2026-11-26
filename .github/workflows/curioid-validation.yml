@@ -49,6 +49,8 @@ jobs:
           const fail = message => { console.error('FAIL:', message); process.exitCode = 1; };
           const assert = (condition, message) => { if (!condition) fail(message); };
           const index = read('index.html');
+          const indexHash = crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex');
+          console.log(`Computed index.html SHA-256: ${indexHash}`);
           const homepageHash = crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex');
           console.log(`Computed homepage SHA-256: ${homepageHash}`);
           const health = read('health-check.js');
@@ -109,6 +111,33 @@ jobs:
           const healthSriDescriptor = runtime.match(/const HEALTH_MODULE_SRI\s*=\s*['"](sha384-[^'"]+)['"]/)?.[1];
           assert(healthHashDescriptor === healthHash, 'Health Check lazy-loader SHA-256 descriptor does not match health-check.js.');
           assert(healthSriDescriptor === healthSri, 'Health Check lazy-loader SRI does not match health-check.js.');
+
+          // Verify the exact inline bootstrap hashes protected by each app page CSP.
+          for (const file of ['music-audio-apps.html', 'applications-tools-apps.html']) {
+            const html = read(file);
+            const cspTag = html.match(/<meta\\b[^>]*http-equiv="Content-Security-Policy"[^>]*>/i)
+              || html.match(/<meta\\b[^>]*content="[^"]*"[^>]*http-equiv="Content-Security-Policy"[^>]*>/i);
+            const policy = cspTag?.[0].match(/\\bcontent="([^"]+)"/i)?.[1] || '';
+            const scriptSrc = policy.split(';').map(part => part.trim()).find(part => part.startsWith('script-src')) || '';
+            const approved = new Set([...scriptSrc.matchAll(/'sha256-([^']+)'/g)].map(match => match[1]));
+            const inlineScripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)]
+              .filter(match => !/\\bsrc\\s*=/i.test(match[1]));
+            assert(inlineScripts.length >= 2, `${file} has fewer inline bootstrap scripts than expected.`);
+            inlineScripts.forEach((match, index) => {
+              const hash = crypto.createHash('sha256').update(match[2]).digest('base64');
+              assert(approved.has(hash), `${file} inline script ${index + 1} is blocked by its own Content Security Policy (SHA-256 ${hash}).`);
+            });
+            console.log(`${file}: ${inlineScripts.length} CSP-approved inline scripts.`);
+          }
+
+          for (const [file, scriptPath] of [['music-audio-apps.html', 'dark-looper-app.js'], ['applications-tools-apps.html', 'vanta-deck-app.js']]) {
+            const html = read(file);
+            const appSri = html.match(/const integrity='(sha384-[^']+)'/)?.[1]
+              || html.match(/'vanta-deck-app.js':'(sha384-[^']+)'/)?.[1];
+            assert(Boolean(appSri), `${file} is missing the app script integrity value for ${scriptPath}.`);
+            const actualSri = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync(scriptPath)).digest('base64');
+            assert(appSri === actualSri, `${file} app script SRI does not match ${scriptPath}.`);
+          }
           assert(manifestMatch && (() => {
             try { const manifest = JSON.parse(manifestMatch[1].replace(/,\s*}/g, '}')); return manifest['health-check.js'] === healthHash; }
             catch { return false; }
