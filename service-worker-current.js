@@ -1,6 +1,6 @@
-/* CURIOID v1.343 offline shell. Exact release hashes for every cached deployment asset. */
+/* CURIOID v1.344 offline shell. Exact release hashes for every cached deployment asset. */
 'use strict';
-const RELEASE_ID = 'v1.343';
+const RELEASE_ID = 'v1.344';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
@@ -14,8 +14,8 @@ const EXPECTED_SHA256 = Object.freeze({
   "curioids.html": "df08280dca7c9509971f26917aba9607ac5460ed68c80e43a83e158f2e558e49",
   "dark-looper-app.js": "d5b1969d36162f8e019c618f67d56dba2ac2d034e3b6d1b91c1f9f11ce2656dd",
   "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
-  "health-check.js": "776f6a2990571fa23f0c521a31fd04aa8c20928042297655912011bfabe08459",
-  "index.html": "dd3ce7c7340bbf1d59f73d6e9a3104003edc77edaa8fbd875a15c51824b48f58",
+  "health-check.js": "1b1c238f27d639cdea0857b77e7335dab880f8afb5d2f3e171a6e2dcc8cd731f",
+  "index.html": "e12f24431bb85f483c401e584bade31e8b357528ecf7f69747888b5f4d32728d",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
   "music-audio-apps.html": "0711844de6cde112b5e7d8e60d303142351ce858f52a5d390e76aedded4b2e1e",
   "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
@@ -28,7 +28,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "projects-core.js": "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438",
   "projects-styles.css": "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "c1ea49e036c10389be0dc6140a270d404d1fcdeacaa03a8147a373665e440191",
+  "site-runtime-current.js": "72771063e77bb62ba6e68aa1c01e3a9b686d6bcd9ef4ec9e08fcb6186cc04689",
   "sitemap.xml": "e2635e23146209aa3ea5c9bb84e7edabd9ecca73a18c7f3c5ade6199153bf63a",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
   "vanta-deck-app.js": "47b25c2ec7e4d05028579eee4111d647817a3004ddb1092089df767276fd7705",
