@@ -59,6 +59,9 @@ const assert = require('node:assert/strict');
         }).map(node => ({
           tag: node.tagName.toLowerCase(),
           type: node.getAttribute('type') || '',
+          parent: (node.parentElement?.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 180),
+          grandparent: (node.parentElement?.parentElement?.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 240),
+          hidden: node.hidden || getComputedStyle(node).display === 'none' || getComputedStyle(node).visibility === 'hidden',
           id: node.id || '',
           placeholder: node.getAttribute('placeholder') || '',
           title: node.getAttribute('title') || '',
@@ -81,6 +84,8 @@ const assert = require('node:assert/strict');
     }
     console.log('Mounted and cleanly closed ' + projectsToOpen.length + ' catalogue projects.');
     console.log('Mounted-project controls without an explicit accessible name:', JSON.stringify(unlabeledProjectControls));
+    const unlabeledProjectInputs = unlabeledProjectControls.filter(item => item.tag === 'input');
+    console.log('Unlabeled project input context:', JSON.stringify(unlabeledProjectInputs));
     const standaloneAndLiveLabels = await page.evaluate(async () => {
       const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
       const findUnlabeled = (root, source) => Array.from(root.querySelectorAll(selector)).filter(node => {
