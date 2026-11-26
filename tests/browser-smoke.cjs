@@ -37,6 +37,7 @@ const assert = require('node:assert/strict');
     );
     assert.ok(projectsToOpen.length >= 59, 'Expected at least 59 catalogue projects, found ' + projectsToOpen.length);
 
+    const unlabeledProjectControls = [];
     for (const { category, project } of projectsToOpen) {
       await page.locator('[data-category="' + category + '"]').click();
       const room = page.locator('#room-' + project);
@@ -46,6 +47,26 @@ const assert = require('node:assert/strict');
         return node?.dataset.loaded === 'true' || Boolean(node?.querySelector('.project-load-error'));
       }, project, { timeout: 90000 });
       assert.equal(await room.getAttribute('data-loaded'), 'true', project + ' failed to mount');
+      const projectLabels = await room.locator('.room-mount').evaluate(root => {
+        const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
+        return Array.from(root.querySelectorAll(selector)).filter(node => {
+          const labelledBy = (node.getAttribute('aria-labelledby') || '').trim().split(/\\s+/).filter(Boolean);
+          const labelledByText = labelledBy.map(id => root.ownerDocument.getElementById(id)?.textContent || '').join(' ').trim();
+          return !((node.getAttribute('aria-label') || '').trim() || labelledByText ||
+            (['button', 'a'].includes(node.tagName.toLowerCase()) && node.textContent?.trim()) ||
+            node.getAttribute('title')?.trim() || node.labels?.length || node.closest('label') ||
+            (['button', 'submit', 'reset', 'image'].includes(String(node.type || '').toLowerCase()) && node.value));
+        }).map(node => ({
+          tag: node.tagName.toLowerCase(),
+          type: node.getAttribute('type') || '',
+          id: node.id || '',
+          placeholder: node.getAttribute('placeholder') || '',
+          title: node.getAttribute('title') || '',
+          text: (node.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 100),
+          aria: node.getAttribute('aria-label') || ''
+        }));
+      });
+      unlabeledProjectControls.push(...projectLabels.map(item => ({ project, ...item })));
 
       // Some desktops show a first-use security note after mounting.
       const notesDialog = page.locator('#curioid-important-notes');
@@ -59,6 +80,30 @@ const assert = require('node:assert/strict');
       await page.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'false', project);
     }
     console.log('Mounted and cleanly closed ' + projectsToOpen.length + ' catalogue projects.');
+    console.log('Mounted-project controls without an explicit accessible name:', JSON.stringify(unlabeledProjectControls));
+    const standaloneAndLiveLabels = await page.evaluate(async () => {
+      const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
+      const findUnlabeled = (root, source) => Array.from(root.querySelectorAll(selector)).filter(node => {
+        const labelledBy = (node.getAttribute('aria-labelledby') || '').trim().split(/\\s+/).filter(Boolean);
+        const labelledByText = labelledBy.map(id => root.getElementById?.(id)?.textContent || root.querySelector?.('#' + CSS.escape(id))?.textContent || '').join(' ').trim();
+        return !((node.getAttribute('aria-label') || '').trim() || labelledByText ||
+          (['button', 'a'].includes(node.tagName.toLowerCase()) && node.textContent?.trim()) ||
+          node.getAttribute('title')?.trim() || node.labels?.length || node.closest('label') ||
+          (['button', 'submit', 'reset', 'image'].includes(String(node.type || '').toLowerCase()) && node.value));
+      }).map(node => ({ source, tag: node.tagName.toLowerCase(), type: node.getAttribute('type') || '',
+        id: node.id || '', placeholder: node.getAttribute('placeholder') || '', title: node.getAttribute('title') || '',
+        text: (node.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 100) }));
+      const live = findUnlabeled(document, 'index.html');
+      const standalone = [];
+      for (const file of ['applications-tools-apps.html', 'music-audio-apps.html', 'chroma-loom.html', 'curioids.html']) {
+        const response = await fetch(file, { cache: 'no-store' });
+        if (!response.ok) throw new Error(file + ' returned HTTP ' + response.status);
+        const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
+        standalone.push(...findUnlabeled(doc, file));
+      }
+      return { live, standalone };
+    });
+    console.log('Live/standalone controls without an explicit accessible name:', JSON.stringify(standaloneAndLiveLabels));
 
     // Search should filter the catalogue and clear should restore it.
     const search = page.locator('#projectSearch');
