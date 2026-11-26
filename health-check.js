@@ -1,7 +1,7 @@
-/* CURIOID v1.325 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.327 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.325';
+  const EXPECTED_RELEASE = 'v1.327';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -613,7 +613,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.325',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.327',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -647,7 +647,9 @@
       const projectCountAligned=!!count&&count===expectedCount;
       const categoryCountAligned=!!categoryCount&&categoryCount===expectedCategories;
       const runtimeTag=shellDoc.querySelector('script[src*="site-runtime-current.js"]');
+      const runtimePreloadTag=shellDoc.querySelector('link[rel="preload"][as="script"][href*="site-runtime-current.js"]');
       const runtimeSRIValid=!!runtimeTag&&/^sha384-[A-Za-z0-9+/]+=*$/.test(runtimeTag.integrity||'')&&new URL(runtimeTag.src,pageUrl).searchParams.get('v')?.startsWith('sha256-');
+      const runtimePreloadSRIValid=!!runtimePreloadTag&&runtimePreloadTag.integrity===runtimeTag?.integrity&&new URL(runtimePreloadTag.href,pageUrl).searchParams.get('v')===new URL(runtimeTag?.src||pageUrl,pageUrl).searchParams.get('v');
       const brandMarkMatches=await (async()=>{
         try{
           const iconResponse=await healthTimeout(fetch(new URL(iconSvg,pageUrl).href,{cache:'no-store',credentials:'same-origin'}),7000,'brand SVG request');
@@ -662,10 +664,10 @@
           return headerPaths.length===3&&headerCircles.length===2&&JSON.stringify(headerPaths)===JSON.stringify(iconPaths)&&JSON.stringify(headerCircles)===JSON.stringify(iconCircles);
         }catch(_){return false;}
       })();
-      const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid;
-      const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
+      const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid&&runtimePreloadSRIValid;
+      const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,runtimePreloadSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
       const releaseAligned=publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE;
-      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.325; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
+      return {ok:releaseAligned&&runtimeSRIValid&&runtimePreloadSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.327; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; preload/script SRI ${runtimePreloadSRIValid?'aligned':'mismatched or missing'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
     }catch(error){return {ok:false,detail:String(error?.message||error).slice(0,240)}}
   }
   function safeJson(value) {
@@ -810,76 +812,55 @@
     return report;
   }
   let lastReportObjectUrl = null;
-  window.addEventListener('pagehide',()=>{if(lastReportObjectUrl){try{URL.revokeObjectURL(lastReportObjectUrl);}catch(_){}lastReportObjectUrl=null;}},{once:true});
-  function downloadHealthReport() {
-    if (!lastHealthReport) return false;
-    const lines = [
-      'CURIOID HEALTH CHECK REPORT', '===========================',
-      `Generated: ${lastHealthReport.generatedAt}`, `Release: ${lastHealthReport.release}`,
-      `Page: ${lastHealthReport.page.url}`, '', 'SUMMARY', '-------',
-      lastHealthReport.checks.map(row => `${row.ok ? 'PASS' : row.warning ? 'WARN' : 'FAIL'}  ${row.label}\n      ${row.detail}`).join('\n'),
-      '', 'FULL TECHNICAL DETAILS', '----------------------', safeJson(lastHealthReport),
-      '', 'PRIVACY', lastHealthReport.privacy
-    ].join('\n');
-    try {
-      const blob = new Blob(['\ufeff', lines], {type:'text/plain;charset=utf-8'});
-      const filename = `CURIOID-Health-Report-${new Date().toISOString().replace(/[:.]/g,'-')}.txt`;
-      // showSaveFilePicker must be called before yielding so Chromium can associate
-      // the request with the real Diagnostic/Download button activation.
-      if (typeof window.showSaveFilePicker === 'function' && window.isSecureContext && window.top === window) {
-        let pickerPromise;
-        try { pickerPromise = window.showSaveFilePicker({suggestedName:filename,types:[{description:'CURIOID health report',accept:{'text/plain':['.txt']}}]}); }
-        catch (_) { pickerPromise = null; }
-        if (pickerPromise) {
-          if (healthStatus) healthStatus.textContent = 'Choose where to save your TXT report…';
-          pickerPromise.then(async handle => {
-            const writable = await handle.createWritable();
-            try { await writable.write(blob); await writable.close(); }
-            catch (error) { try { await writable.abort(); } catch (_) {} throw error; }
-            if (healthStatus) healthStatus.textContent = `Saved ${filename}.`;
-          }).catch(error => {
-            if (error?.name === 'AbortError') { if (healthStatus) healthStatus.textContent = 'TXT save cancelled. Press Download TXT to try again.'; return; }
-            if (healthStatus) healthStatus.textContent = `Save dialog failed (${String(error?.message||error).slice(0,100)}). Use the visible download link below.`;
-            fallbackDownload(blob,filename);
-          });
-          return true;
-        }
-      }
-      fallbackDownload(blob,filename);
-      return true;
-    } catch (error) {
-      if (healthStatus) healthStatus.textContent = `Could not prepare the TXT report: ${String(error?.message||error).slice(0,180)}.`;
-      return false;
+  window.addEventListener('pagehide',()=>{
+    if(lastReportObjectUrl){try{URL.revokeObjectURL(lastReportObjectUrl);}catch(_){}lastReportObjectUrl=null;}
+  },{once:true});
+  function clearPreparedReportDownload() {
+    if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} lastReportObjectUrl = null; }
+    if (healthDownloadButton instanceof HTMLAnchorElement) {
+      healthDownloadButton.removeAttribute('href');
+      healthDownloadButton.removeAttribute('download');
+      healthDownloadButton.setAttribute('aria-disabled','true');
+      healthDownloadButton.setAttribute('tabindex','-1');
+      healthDownloadButton.setAttribute('aria-label','Run diagnostics before downloading the health report');
     }
   }
-  function fallbackDownload(blob, filename) {
-    const objectUrl = URL.createObjectURL(blob);
-    if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} }
-    lastReportObjectUrl = objectUrl;
-    let anchor = healthDownloadButton?.nextElementSibling;
-    if (!(anchor instanceof HTMLAnchorElement) || !anchor.matches('[data-health-download-fallback]')) {
-      anchor = document.createElement('a');
-      anchor.dataset.healthDownloadFallback = '';
-      anchor.className = 'health-download-fallback-link';
-      anchor.textContent = 'Download TXT report';
-      anchor.setAttribute('aria-label','Download the CURIOID health report as a text file');
-      if (healthDownloadButton?.parentElement) healthDownloadButton.insertAdjacentElement('afterend',anchor);
-      else (healthStatus?.parentElement||document.body).append(anchor);
+  function reportText(report) {
+    const lines = [
+      'CURIOID HEALTH CHECK REPORT', '===========================',
+      `Generated: ${report.generatedAt}`, `Release: ${report.release}`,
+      `Page: ${report.page.url}`, '', 'SUMMARY', '-------',
+      report.checks.map(row => `${row.ok ? 'PASS' : row.warning ? 'WARN' : 'FAIL'}  ${row.label}\n      ${row.detail}`).join('\n'),
+      '', 'FULL TECHNICAL DETAILS', '----------------------', safeJson(report),
+      '', 'PRIVACY', report.privacy
+    ].join('\n');
+    return lines;
+  }
+  function prepareReportDownload() {
+    if (!lastHealthReport || !(healthDownloadButton instanceof HTMLAnchorElement)) return false;
+    try {
+      const filename = `CURIOID-Health-Report-${new Date().toISOString().replace(/[:.]/g,'-')}.txt`;
+      const blob = new Blob(['\ufeff',reportText(lastHealthReport)], {type:'text/plain;charset=utf-8'});
+      const objectUrl = URL.createObjectURL(blob);
+      if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} }
+      lastReportObjectUrl = objectUrl;
+      healthDownloadButton.href = objectUrl;
+      healthDownloadButton.download = filename;
+      healthDownloadButton.setAttribute('aria-disabled','false');
+      healthDownloadButton.removeAttribute('tabindex');
+      healthDownloadButton.setAttribute('aria-label',`Download ${filename}`);
+      return true;
+    } catch (error) {
+      if (healthStatus) healthStatus.textContent = `Could not prepare the report download: ${String(error?.message||error).slice(0,160)}.`;
+      clearPreparedReportDownload();
+      return false;
     }
-    anchor.href = objectUrl;
-    anchor.download = filename;
-    anchor.hidden = false;
-    anchor.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin:6px 8px;padding:8px 12px;border:1px solid currentColor;border-radius:7px;color:inherit;text-decoration:underline;font-weight:700;cursor:pointer;';
-    // The link is visible and retained for manual activation if the browser
-    // suppresses the synthetic download. The click is still attempted now.
-    try { anchor.click(); } catch (_) {}
-    if (healthStatus) healthStatus.textContent = `Download requested: ${filename}. If no file appears, click the visible “Download TXT report” link.`;
   }
   async function runCurioidHealthCheck(runOptions = {}) {
     const diagnosticsStartedAt=performance.now();
     if (healthRunButton) { healthRunButton.disabled = true; healthRunButton.textContent = 'Checking…'; }
     if (healthRepairButton) healthRepairButton.disabled = true;
-    if (healthDownloadButton) healthDownloadButton.disabled = true;
+    clearPreparedReportDownload();
     paintHealthResults([], 'Running local checks. Temporary probes are removed after use.', 'CHECKING');
     const rows = activeDiagnosticRows = [], assetMeta = [];
     const add = (label, result) => {
@@ -1059,7 +1040,10 @@
       ? {ok:true,detail:`The current service worker verified and cached ${precacheResult.cachedCount ?? (precacheResult.results||[]).filter(item=>item.ok).length} critical project assets. ${precacheResult.controlled ? 'This page is now controlled by the current worker.' : 'The worker cache was populated without taking control of this page.'}`}
       : precacheResult?.available
         ? {ok:false,warning:true,detail:`The current worker could not fully pre-cache the project assets: ${(precacheResult.results||[]).filter(item=>!item.ok).map(item=>`${item.file}: ${item.error}`).join('; ') || precacheResult.reason || 'no successful response was returned'}.`}
-        : {ok:false,warning:true,detail:precacheResult?.reason || 'No matching current-release worker accepted the pre-cache command. The browser can still load apps online, but offline readiness requires refreshing the service worker.'});
+        : {ok:false,warning:true,detail:[
+            precacheResult?.reason || 'No matching current-release worker accepted the pre-cache command. The browser can still load apps online, but offline readiness requires refreshing the service worker.',
+            `Active worker: ${precacheResult?.active||'none'}; waiting worker: ${precacheResult?.waiting||'none'}; installing worker: ${precacheResult?.installing||'none'}.`
+          ].join(' ')});
     const releaseAssets = releaseManifest ? Object.entries(releaseManifest.manifest)
       .filter(([file]) => file !== 'index.html')
       .sort(([a],[b]) => a.localeCompare(b))
@@ -1088,34 +1072,67 @@
         const source=await response.text(),doc=new DOMParser().parseFromString(source,'text/html');
         const policy=doc.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content||'';
         const scriptSrc=policy.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1]||'';
-        const missing=[],checked=new Set();
-        // Check every inline block, including the page bootstrap that reveals
-        // the selected app. Checking only text/plain payloads misses a blocked
-        // launcher and can incorrectly report a blank app as CSP-ready.
-        const inlineScripts=[...doc.querySelectorAll('script:not([src])')].filter(node=>{
-          const type=(node.getAttribute('type')||'').trim().toLowerCase();
-          return (node.textContent||'').trim()&&!['application/json','application/ld+json','importmap'].includes(type);
-        });
-        for(const node of inlineScripts){
-          const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(node.textContent||''));
-          const hash=`'sha256-${btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''))}'`;
-          const label=node.id||`inline script #${inlineScripts.indexOf(node)+1}`;checked.add(node.id);
-          if(!scriptSrc.includes(hash))missing.push(`${label}: CSP hash missing`);
-        }
+        const missing=[],checked=[];
+        if(!scriptSrc.includes("'strict-dynamic'"))missing.push('script-src lacks strict-dynamic; dynamically inserted app payloads may be blocked');
         for(const id of scriptIds){
           const node=doc.getElementById(id);
-          if(!node||node.type!=='text/plain')missing.push(`${id}: missing payload`);
-          else if(!checked.has(id))missing.push(`${id}: script payload was not included in the CSP audit`);
+          if(!node){missing.push(`${id}: expected packaged script block is missing`);continue;}
+          if(id.startsWith('studio-source-') && node.type!=='text/plain'){
+            missing.push(`${id}: embedded source block has an unexpected script type`);continue;
+          }
+          const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(node.textContent||''));
+          const hash=`'sha256-${btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''))}'`;
+          if(!scriptSrc.includes(hash))missing.push(`${id}: CSP hash missing`);
+          else checked.push(id);
         }
-        return {path,missing,checked:inlineScripts.length};
+        const executableTypes=new Set(['','text/javascript','application/javascript','application/ecmascript','text/ecmascript']);
+        const unownedInline=[...doc.querySelectorAll('script:not([src])')].filter(node=>{
+          const type=(node.getAttribute('type')||'').trim().toLowerCase();
+          return (node.textContent||'').trim()&&executableTypes.has(type)&&!scriptIds.includes(node.id);
+        });
+        return {path,missing,checked,unownedInlineCount:unownedInline.length};
       }
       const standaloneCsp=await Promise.all([
-        auditEmbeddedCsp('music-audio-apps.html',['studio-source-looper']),
-        auditEmbeddedCsp('applications-tools-apps.html',['studio-source-vanta','studio-source-glitchyard'])
+        auditEmbeddedCsp('music-audio-apps.html',['studio-source-looper','curioid-music-audio-bootstrap']),
+        auditEmbeddedCsp('applications-tools-apps.html',['studio-source-vanta','studio-source-glitchyard','curioid-applications-tools-bootstrap'])
       ]);
       const missing=standaloneCsp.flatMap(item=>item.missing.map(issue=>`${item.path} / ${issue}`));
-      add('Standalone studio CSP boot contracts',missing.length?{ok:false,detail:missing.join('; ')}:{ok:true,detail:'All inline launcher scripts and the Looper, Vanta Deck and Glitchyard embedded payloads have exact SHA-256 authorizations in their standalone page CSPs. No unsafe-inline or unsafe-eval exception is used.'});
+      const unowned=standaloneCsp.reduce((sum,item)=>sum+item.unownedInlineCount,0);
+      add('Standalone studio CSP boot contracts',missing.length
+        ?{ok:false,detail:missing.join('; ')}
+        :unowned
+          ?{ok:true,warning:true,detail:`All packaged app payloads and launchers have exact SHA-256 CSP authorization, and strict-dynamic allows only those trusted launchers to execute the child scripts they create. ${unowned} additional executable inline block(s) appeared in the edge-transformed responses and are not part of the packaged release; browser CSP violation events are tracked separately. No unsafe-inline or unsafe-eval exception is used.`}
+          :{ok:true,detail:'All packaged app payloads and launchers have exact SHA-256 CSP authorization. No unowned inline blocks were found and no unsafe-inline or unsafe-eval exception is used.'});
     } catch(error) { add('Standalone studio CSP boot contracts',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
+    // Verify the distinct built-in Phoneme Singer synthesis path and the
+    // desktop group-drag implementation from the published source files.
+    try {
+      const [osResponse,coreResponse]=await Promise.all([
+        healthTimeout(fetch(new URL('projects-category-operating-systems.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'OS source contract audit'),
+        healthTimeout(fetch(new URL('projects-core.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'desktop interaction source audit')
+      ]);
+      if(!osResponse.ok||!coreResponse.ok)throw new Error(`Source fetch failed: OS ${osResponse.status}, core ${coreResponse.status}`);
+      const [osSource,coreSource]=await Promise.all([osResponse.text(),coreResponse.text()]);
+      const singerChecks={dedicatedVowel:osSource.includes('function synthSingerVowel('),harmonicSource:osSource.includes('function getSingerPeriodicWave('),modeRouting:osSource.includes("state.vocalMode==='singer')synthSingerVowel"),consonantProjection:osSource.includes("singerProjection=state.vocalMode==='singer'?1.28:1")};
+      const singerOk=Object.values(singerChecks).every(Boolean);
+      add('Echonoise Phoneme Singer synthesis contract',singerOk
+        ?{ok:true,detail:'The built-in Singer uses a separate harmonic source, dedicated formant/singer-formant resonators, ARPABET vowel routing and stronger consonant projection. This verifies implementation presence, not subjective audio quality or a recorded voicebank.'}
+        :{ok:false,detail:`Dedicated singer path is incomplete: ${Object.entries(singerChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+      const nourishGroupStart=osSource.indexOf("root.addEventListener('curioid:desktop-group-move'");
+      const nourishGroupEnd=nourishGroupStart>=0?osSource.indexOf("root.addEventListener('contextmenu'",nourishGroupStart):-1;
+      const nourishGroupBody=nourishGroupStart>=0?osSource.slice(nourishGroupStart,nourishGroupEnd>nourishGroupStart?nourishGroupEnd:nourishGroupStart+5000):'';
+      const groupChecks={pointerEngine:coreSource.includes('curioidGroupDragState')&&coreSource.includes("new CustomEvent('curioid:desktop-group-move'"),doors98Persistence:osSource.includes("iconArea?.addEventListener('curioid:desktop-group-move'")&&osSource.includes('if(saveIconLayout()){detail.handled=true'),nourishPersistence:nourishGroupBody.includes('if(saveFoodIconLayout())'),nourishReadOnlySessionMove:nourishGroupBody.includes('if(saveFoodIconLayout())')&&!/iconLayoutReadOnly/.test((nourishGroupBody.match(/const detail=event\.detail;([\s\S]*?)\n\s*const items=/)||[])[1]||''),freeMoveSurfaces:coreSource.includes("{surface:'.food-os-free-item-canvas',items:'.food-os-free-item'}")&&coreSource.includes("{surface:'[data-food-free-icons]',items:'.food-os-free-icon'}")};
+      const groupOk=Object.values(groupChecks).every(Boolean);
+      add('Desktop multi-selection group movement',groupOk
+        ?{ok:true,detail:'Marquee-selected items can be moved together. Doors98 persists through its guarded save path; Nourish persists when writable and keeps protected-storage moves in session memory; other surfaces retain offsets for the mounted session.'}
+        :{ok:false,detail:`Group-move contract is incomplete: ${Object.entries(groupChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+      const nourishSessionOnly=osSource.includes("if(!target||iconLayout.mode!=='free'||e.button!==0)return;")&&osSource.includes("if(iconLayoutReadOnly){setFeedback('Session-only layout mode:");
+      add('Nourish protected Free Move',nourishSessionOnly
+        ?{ok:true,detail:'Free Move remains interactive even when saved layout storage is read-only. Changes are session-only and the protected saved layout is not overwritten.'}
+        :{ok:false,detail:'The source contract for session-only movement in read-only storage mode is missing.'});
+    } catch(error) {
+      add('Echonoise and desktop interaction source contracts',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)});
+    }
     // A native OS can hide the general app layer. Open catalogue rooms must be
     // restored to the catalogue DOM while the OS is active, never left inside
     // that hidden layer.
@@ -1164,6 +1181,18 @@
     add('Runtime-to-release asset map',coreMapMatches&&categoryMapIssues.length===0
       ? {ok:true,detail:`projects-core.js SHA-256/SHA-384 matches the loader; ${Object.keys(categoryAssetMap||{}).length} category descriptors match the worker manifest and downloaded bytes.`}
       : {ok:false,detail:`Shared core SRI/hash ${coreMapMatches?'match':'MISMATCH'}; category descriptor problems: ${categoryMapIssues.join(', ')||'none'}.`});
+    const styleRuntimeHash=siteRuntimeSource.match(/const PROJECT_STYLES_SHA256\s*=\s*["']([a-f0-9]{64})["']/i)?.[1]||'';
+    const sharedPrefetchBlock=siteRuntimeSource.match(/const SHARED_PREFETCH_ASSETS\s*=\s*Object\.freeze\(\[([\s\S]*?)\]\);/)?.[1]||'';
+    const prefetchCoreHash=sharedPrefetchBlock.match(/file:\s*["']projects-core\.js["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1]||'';
+    const prefetchStyleHash=sharedPrefetchBlock.match(/file:\s*["']projects-styles\.txt["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1]||'';
+    const styleAssetMeta=assetMeta.find(item=>item.file==='projects-styles.txt');
+    const sharedHashProblems=[];
+    if(!styleRuntimeHash||styleRuntimeHash!==releaseManifest?.manifest?.['projects-styles.txt']||!styleAssetMeta?.hashMatches)sharedHashProblems.push('project stylesheet loader hash');
+    if(!prefetchStyleHash||prefetchStyleHash!==releaseManifest?.manifest?.['projects-styles.txt'])sharedHashProblems.push('project stylesheet prefetch hash');
+    if(!prefetchCoreHash||prefetchCoreHash!==releaseManifest?.manifest?.['projects-core.js']||!coreAssetMeta?.hashMatches)sharedHashProblems.push('shared core prefetch hash');
+    add('Runtime shared-core and stylesheet hash alignment',sharedHashProblems.length
+      ?{ok:false,detail:`Runtime-to-manifest shared-asset hash mismatch: ${sharedHashProblems.join(', ')}. Project launch or offline pre-cache can fail even when the files themselves are valid.`}
+      :{ok:true,detail:'The runtime stylesheet loader, stylesheet prefetch, shared-core prefetch and worker manifest all declare the exact SHA-256 hashes of the deployed files.'});
     try {
       const swUrl = new URL(`service-worker-current.js?release=${EXPECTED_RELEASE}`, deploymentBase);
       const swResponse = await healthTimeout(fetch(swUrl.href, {cache:'no-store',credentials:'same-origin'}), 8000, 'Service-worker file request');
@@ -1324,6 +1353,11 @@
     add('Web Locks serialization canary',lockCanary);
     const downloadCanary = await probeDownloadCanary();
     add('Report/download preparation canary',downloadCanary);
+    const reportRunControl=document.querySelector('[data-health-run]'),reportLink=document.querySelector('[data-health-download]');
+    const singleReportControl=Boolean(reportRunControl&&reportLink instanceof HTMLAnchorElement&&getComputedStyle(reportLink).display==='none');
+    add('Single-control TXT report download',singleReportControl
+      ?{ok:true,detail:'Only one visible Health Check control is used. It runs diagnostics first, then changes into the TXT download action; the native Blob anchor is hidden and triggered synchronously from the next user click. Browser/OS save prompts cannot be verified by page JavaScript.'}
+      :{ok:false,detail:'The single-control report download UI is incomplete or the hidden native download anchor is missing.'});
     const brokenImages = [...document.images].filter(image=>image.complete&&image.naturalWidth===0&&image.currentSrc);
     const brokenStylesheets = [...document.querySelectorAll('link[rel="stylesheet"]')].filter(link=>link.href&&!link.sheet);
     add('Live document resource health',brokenImages.length||brokenStylesheets.length
@@ -1344,7 +1378,7 @@
     add('Back/forward cache and page lifecycle',notRestored
       ? {ok:false,warning:true,detail:`The browser exposes notRestoredReasons for this navigation: ${safeJson(notRestored).slice(0,360)}.`}
       : {ok:true,detail:'No browser-provided BFCache exclusion reasons are exposed for this navigation. Actual browser shutdown/restart and long-running tab behavior still require a real browser session.'});
-    const manualOnly = 'Now automated by this button: all seven category bundles through the production SRI loader; current worker update preflight; shell-cache completeness; release/SRI/CSP checks; disposable IndexedDB transaction rollback; OPFS staged commit/cleanup; storage/API canaries; runtime-scope cleanup; static HTML sink inventory; and temporary probe cleanup. Still owner-dependent: publish this ZIP to GitHub Pages; confirm physical iOS/Android and private-browser rendering; verify the OS save prompt/destination permissions; test true process termination and multi-hour restore/tab stability; decide about cloud sync/sign-in/analytics.';
+    const manualOnly = 'Now automated by this button: all seven category bundles through the production SRI loader; current worker update preflight; shell-cache completeness; release/SRI/CSP checks; disposable IndexedDB transaction rollback; OPFS staged commit/cleanup; storage/API canaries; runtime-scope cleanup; static HTML sink inventory; and temporary probe cleanup. Still owner-dependent: publish this ZIP to GitHub Pages; confirm physical iOS/Android and private-browser rendering; verify the OS save prompt/destination permissions; test true process termination and multi-hour restore/tab stability; verify actual operating-system download handling; decide about cloud sync/sign-in/analytics.';
     add('Remaining owner-dependent verification',{ok:true,detail:manualOnly});
     const cleanup = await cleanupOwnedHealthProbes();
     maintenance.temporaryProbeCleanup = cleanup; maintenance.completedAt = new Date().toISOString();
@@ -1359,7 +1393,7 @@
     if(healthRunButton){healthRunButton.disabled=false;healthRunButton.textContent='Run again';}
     if(healthRepairButton) healthRepairButton.disabled=!navigator.serviceWorker;
     lastHealthReport=makeHealthReport(rows,assetMeta,registration,cacheNames,estimate,persisted,performanceSnapshot,cacheInventory,publishedSiteSnapshot,performance.now()-diagnosticsStartedAt);
-    if(healthDownloadButton) healthDownloadButton.disabled=false;
+    prepareReportDownload();
     return rows;
   }
       async function runSafe(runOptions = {}) {
@@ -1371,7 +1405,7 @@
           completed.push({label:'Diagnostics execution',ok:false,detail:message});
           paintHealthResults(completed,'Diagnostics could not finish. Download the partial report and send it for investigation.','INCOMPLETE');
           lastHealthReport={title:'CURIOID PARTIAL HEALTH REPORT',generatedAt:new Date().toISOString(),release:document.querySelector('meta[name="curioid-release"]')?.content||document.querySelector('.site-version')?.textContent?.trim()||'unknown',page:{url:location.origin+location.pathname,title:document.title},diagnosticSupport:{longTask:!!longTaskObserver,eventTiming:!!eventTimingObserver,lcp:!!lcpObserver,layoutShift:!!layoutShiftObserver,longAnimationFrame:!!longAnimationFrameObserver},checks:completed,lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE||null,recentErrors:diagnosticEvents.slice(-40),maintenance:window.__CURIOID_HEALTH_MAINTENANCE||null,privacy:'No cookies, passwords, localStorage contents, database records, files or project content included.'};
-          if(healthDownloadButton) healthDownloadButton.disabled=false;
+          prepareReportDownload();
           if(healthRepairButton) healthRepairButton.disabled=!navigator.serviceWorker;
           if(healthDetailsSummary) healthDetailsSummary.textContent=`View partial diagnostic results (${completed.length} checks)`;
           return [];
@@ -1397,7 +1431,7 @@
           paintHealthResults([{label:'Service-worker registration',ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}],'The browser could not complete the update/refresh. Saved projects and browser storage were not changed.','UNAVAILABLE');
         } finally { if(healthRepairButton&&healthRepairButton.isConnected){healthRepairButton.disabled=false;healthRepairButton.textContent='Refresh service-worker registration';} }
       }
-      return Object.freeze({ run:runSafe, download:downloadHealthReport, refresh:refreshServiceWorkerRegistration });
+      return Object.freeze({ run:runSafe, refresh:refreshServiceWorkerRegistration });
     }
   root.CurioidHealthCheck = Object.freeze({ create });
 })(window);

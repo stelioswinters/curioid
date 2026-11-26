@@ -1052,8 +1052,8 @@
       const healthDownloadButton = $('[data-health-download]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = '60b676c102e87efea9e91f5d716f56f364ec4aad3a16161ce6ee9d75e56399aa';
-      const HEALTH_MODULE_SRI = 'sha384-8QaKWH3o5AEXGBZt+OOKq8Fc1tDej8zHDOtjMXAyNsAUzvfKIVPnmhrqOMM17ujI';
+      const HEALTH_MODULE_HASH = 'd3381757f7d4b7bd455c37b57fd9122c4d6e5a75d04de19547c94e3d5e931570';
+      const HEALTH_MODULE_SRI = 'sha384-jDprzO6eB/AlgkYSoyElij06m65sMAY+nt1qvRPw22VE2L2QNYDyH28hxDoYdoQZ';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null, healthFailureReportFilename = ''; 
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -1066,7 +1066,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.325', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.327', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1098,7 +1098,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.325','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.327','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1110,7 +1110,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.325') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.327') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1159,10 +1159,27 @@
           const textReport = ['CURIOID HEALTH CHECK REPORT','===========================',`Generated: ${generatedAt}`,`Release: ${report.release}`,`Page: ${report.page}`,'','SUMMARY','-------',`FAIL  Health Check module
       ${report.error}`,'','FULL TECHNICAL DETAILS','----------------------',JSON.stringify(report,null,2),'','PRIVACY',report.privacy].join('\n');
           healthFailureReportUrl=URL.createObjectURL(new Blob(['\ufeff',textReport],{type:'text/plain;charset=utf-8'}));
-          if(healthDownloadButton)healthDownloadButton.disabled=false;
+          if(healthDownloadButton instanceof HTMLAnchorElement){
+            healthDownloadButton.href=healthFailureReportUrl;
+            healthDownloadButton.download=healthFailureReportFilename;
+            healthDownloadButton.setAttribute('aria-disabled','false');
+            healthDownloadButton.removeAttribute('tabindex');
+            healthDownloadButton.setAttribute('aria-label',`Download ${healthFailureReportFilename}`);
+          }
         } catch(_) {}
       };
+      let healthReportReady=false;
       healthRunButton?.addEventListener('click',async()=>{
+        if(healthReportReady){
+          // The user's second click is still a real gesture. Invoke the prepared
+          // same-origin Blob download synchronously from this handler; the
+          // hidden anchor never appears as a second visible button.
+          if(healthDownloadButton instanceof HTMLAnchorElement&&healthDownloadButton.href&&healthDownloadButton.getAttribute('aria-disabled')==='false'){
+            try{healthDownloadButton.click();healthStatus&&(healthStatus.textContent='TXT report download requested. If the browser blocks downloads, allow downloads for this site and run the check again.');}
+            catch(error){healthStatus&&(healthStatus.textContent=`The browser rejected the TXT download request: ${String(error?.message||error).slice(0,160)}`);}
+          }
+          healthReportReady=false;healthRunButton.textContent='Run diagnostics again';return;
+        }
         healthRunButton.disabled=true;healthRunButton.textContent='Loading checks…';
         // Request persistent storage synchronously inside the diagnostic button's
         // user gesture, before awaiting the lazy Health Check module import.
@@ -1171,21 +1188,12 @@
         catch(_) { persistencePromise=Promise.resolve(null); }
         try{const api=await ensureHealthApi();await api.run({persistencePromise});}
         catch(error){try{await recoverStaleWorkerAfterAssetFailure();}catch(recoveryError){if(recoveryError?.code==='CURIOID_SW_RECOVERY_RELOAD')return;}showHealthModuleError(error);}
-        finally{healthRunButton.disabled=false;if(healthRunButton.textContent==='Loading checks…')healthRunButton.textContent='Run diagnostics';}
-      });
-      healthDownloadButton?.addEventListener('click',()=>{
-        try {
-          // The module is already loaded when this button becomes enabled.
-          // Keep the download invocation synchronous inside the user's click.
-          if (healthApi?.download) { const started=healthApi.download(); if(!started&&healthStatus)healthStatus.textContent='The TXT report download could not be started. Press the button again or rerun diagnostics.'; return; }
-          if (healthFailureReportUrl && healthFailureReportFilename) {
-            const anchor=document.createElement('a');anchor.href=healthFailureReportUrl;anchor.download=healthFailureReportFilename;anchor.style.cssText='position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;';anchor.setAttribute('aria-hidden','true');anchor.tabIndex=-1;document.body.appendChild(anchor);
-            try{anchor.click();if(healthStatus)healthStatus.textContent=`Downloading ${healthFailureReportFilename}.`;}finally{anchor.remove();}
-            return;
-          }
-          if (healthStatus) healthStatus.textContent='Run diagnostics first. Once the report is ready, this button downloads the TXT file immediately.';
-        } catch(error) {
-          if(healthStatus)healthStatus.textContent=`Report download failed: ${String(error?.message||error).slice(0,180)}. Press the download button again.`;
+        finally{
+          healthRunButton.disabled=false;
+          const reportReady=healthDownloadButton instanceof HTMLAnchorElement&&Boolean(healthDownloadButton.href)&&healthDownloadButton.getAttribute('aria-disabled')==='false';
+          healthReportReady=reportReady;
+          healthRunButton.textContent=reportReady?'Download TXT report':'Run diagnostics';
+          if(reportReady&&healthStatus)healthStatus.textContent='Diagnostics complete. Press this same button to download the TXT report. No second download button is needed.';
         }
       });
       healthRepairButton?.addEventListener('click',async()=>{
@@ -1674,7 +1682,7 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "f5c56c0c2c8171c3960e918a9fa46360f4a357062338b777dc6f544b0209c35c", integrity: "sha384-cMc/OlKo+nB5mEddEbi3fQ5E5CkkExisr2rIsZaUkvIrXfhoJ4vP+feKChZRtumy" },
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "3ef88e0b2af064bd6de259eab384e2cd5726d03a52b47ea65942057eb0335f01", integrity: "sha384-gR/9OVAuWwLMu3nKYxV1chQLF7LGgkz2VIRJPOkFjuuFO6IdMkb6sTzfYC7GPXw+" },
         "strange-archives": { file: "projects-category-strange-archives.js", hash: "daed6cdec514093867dc85c009ede32fbde1aef03ac4a80a3f17a92377302316", integrity: "sha384-YeR1Fwj0bMY3wPy3iKph54rlf17yVe3Gh6jWF1bFihmezdxbu6qzn7BGSE4TWnZ4" },
         "web-experiments": { file: "projects-category-web-experiments.js", hash: "0215bde235233ae03ab070649dea1cfbcb5a9f3089e9dca52a4300d514ccaa8e", integrity: "sha384-gjlQ60fu1KYPCgdeD8XolfLjl1zjImTZoL57zXypAeA0LVVRqBbBvzeXxyH6kI7Q" },
         "tiny-games": { file: "projects-category-tiny-games.js", hash: "39ad375e8f3b0263be2c987e59d836968fd69a4e748c379cb30e8f2c7ab8b796", integrity: "sha384-AqdgEuM9DkrAYA40dMPzd8ij/TgadeZKc+3ZNyDNoCt/PEj+41r28J8355H6xKBj" },
@@ -1813,7 +1821,7 @@
         };
 
         const PROJECT_STYLES_FILE = "projects-styles.txt";
-        const PROJECT_STYLES_SHA256 = "06f517bdde4cab76ff896dad0158144b03f7dee5ed99f45f6544b6a7bdf8978f";
+        const PROJECT_STYLES_SHA256 = "694ca5863b946f565219dd76858f636858d80ba47c419aee9d0368b341515b3f";
         const loadProjectCss = ({ retry = false } = {}) => {
           if (document.querySelector('[data-curioid-project-css][data-loaded="true"]')) {
             projectCssError = null;
@@ -1883,7 +1891,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "720850c3c24fd0bfb795280482f1c591cca5c2810ac673e9e8696e05a781b07d", integrity: "sha384-UfvHbL+bk1fgRRhYoofHPn1t/MUH8BbIbpgFfTi4kx3apACEW90F+JFaxONTqjx3",
+            file: "projects-core.js", hash: "84b86bcb70b7382bed3a4e94cc3b790a02366305befcbadc326e824c2f862ad6", integrity: "sha384-8Z1oZnveM6Yw2Pjj47aSJaFrRTBRZEYy4zDRrcoh5Pm0Q5k0EhN5VZwaLqq6GwKz",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -1959,7 +1967,7 @@
           // Refresh the registration metadata without activating a waiting worker.
           // This ensures the current release can receive the diagnostic pre-cache
           // command even when the site was opened before its update finished.
-          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.325", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
+          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.327", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
           await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Service-worker update check timed out")), Math.min(timeoutMs,15000)))]);
         } catch (error) {
           try { registration = await serviceWorker.getRegistration(serviceRoot.href); } catch (_) {}
@@ -1968,7 +1976,7 @@
         const isCurrent = worker => {
           try {
             const url = new URL(worker?.scriptURL || "");
-            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.325";
+            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.327";
           } catch (_) { return false; }
         };
         if (!isCurrent(registration?.waiting) && isCurrent(registration?.installing)) {
@@ -1985,7 +1993,7 @@
           try { registration = await serviceWorker.getRegistration(serviceRoot.href) || registration; } catch (_) {}
         }
         const worker = isCurrent(registration?.waiting) ? registration.waiting : isCurrent(registration?.active) ? registration.active : null;
-        if (!worker) return { available:false, reason:"No current v1.325 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
+        if (!worker) return { available:false, reason:"No current v1.327 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
         const send = (command, limit) => new Promise((resolve, reject) => {
           const channel = new MessageChannel();
           let settled = false;
@@ -2000,7 +2008,7 @@
           const timer = setTimeout(() => finish(new Error(`${command} timed out`)), limit);
           channel.port1.onmessage = event => finish(null, event.data || { ok:false, reason:"Worker returned an empty response." });
           channel.port1.onmessageerror = () => finish(new Error(`${command} response could not be decoded`));
-          try { worker.postMessage({ type:command, release:"v1.325" }, [channel.port2]); }
+          try { worker.postMessage({ type:command, release:"v1.327" }, [channel.port2]); }
           catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
         });
         if (worker === registration?.active && !serviceWorker.controller) {
@@ -2075,8 +2083,8 @@
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "4e46554e93824accc36c4d48cf781bcb2a6a85adc35d79017ed7c3ff045e43d0", as: "script" },
-        { file: "projects-styles.txt", hash: "06f517bdde4cab76ff896dad0158144b03f7dee5ed99f45f6544b6a7bdf8978f", as: "fetch" }
+        { file: "projects-core.js", hash: "84b86bcb70b7382bed3a4e94cc3b790a02366305befcbadc326e824c2f862ad6", as: "script" },
+        { file: "projects-styles.txt", hash: "694ca5863b946f565219dd76858f636858d80ba47c419aee9d0368b341515b3f", as: "fetch" }
       ]);
       let projectPrefetchScheduled = false;
       const projectPrefetchHints = new Set();
@@ -3179,7 +3187,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.325", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.327", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {

@@ -3456,6 +3456,15 @@ fileNameInput.addEventListener('input',()=>{filename.textContent=fileNameInput.v
         icon.addEventListener('dblclick',()=>{if(Date.now()<skipIconClickUntil)return;if(icon.dataset.roomShortcut)openRoom(icon.dataset.roomShortcut);else if(icon.dataset.userRoomShortcut)openRoom(icon.dataset.userRoomShortcut);else if(icon.dataset.userFileShortcut){openFileKey(icon.dataset.userFileShortcut);}else if(icon.dataset.retroSpecialShortcut==='drive')open('computer');else if(icon.dataset.retroSpecialShortcut==='key-ring')open('file-manager');else if(icon.dataset.retroSpecialShortcut==='key-return')open('trash');});
         icon.addEventListener('contextmenu',e=>{contextTarget=icon;});
       }
+      iconArea?.addEventListener('curioid:desktop-group-move',event=>{
+        const detail=event.detail;if(!detail||!Array.isArray(detail.items)||!Number.isFinite(detail.deltaX)||!Number.isFinite(detail.deltaY))return;
+        const group=detail.items.filter(icon=>icons.includes(icon));if(group.length<2)return;
+        const before=group.map(icon=>({icon,left:icon.style.left,top:icon.style.top}));
+        group.forEach(icon=>setIconPosition(icon,(parseFloat(icon.style.left)||0)+detail.deltaX,(parseFloat(icon.style.top)||0)+detail.deltaY));
+        updateIconScrollExtent();
+        if(saveIconLayout()){detail.handled=true;skipIconClickUntil=Date.now()+360;}
+        else before.forEach(item=>{if(item.left)item.icon.style.setProperty('left',item.left,'important');else item.icon.style.removeProperty('left');if(item.top)item.icon.style.setProperty('top',item.top,'important');else item.icon.style.removeProperty('top');});
+      });
       iconArea?.addEventListener('click',/** @param {CurioidDOMEvent} event */ event=>{if(event.target!==iconArea&&!event.target.matches('.retro-icon-scroll-extent'))return;icons.forEach(icon=>icon.classList.remove('selected'));});
       icons.forEach(bindDesktopIcon);
       function freeDesktopSlot(){const b=iconBounds(),stepX=86,stepY=82,cols=Math.max(1,Math.floor((b.w-16)/stepX)),visibleRows=Math.max(3,Math.floor((b.h-18)/stepY)),rows=Math.max(visibleRows,Math.ceil((icons.length+1)/cols)+2);for(let row=0;row<rows;row++)for(let col=0;col<cols;col++){const x=10+col*stepX,y=10+row*stepY;if(!icons.some(icon=>Math.abs((parseFloat(icon.style.left)||0)-x)<58&&Math.abs((parseFloat(icon.style.top)||0)-y)<56))return{x,y};}return{x:10,y:10+rows*stepY};}
@@ -5058,7 +5067,7 @@ function bindFoodFoundry(root){
     root.addEventListener('dragend',()=>{dragId=null;$$f('.is-drop-target').forEach(node=>node.classList.remove('is-drop-target'));});
     root.addEventListener('pointerdown',/** @param {CurioidDOMEvent} e */ e=>{
       const item=e.target.closest('[data-food-free-item]'),icon=e.target.closest('[data-food-free-icon]'),target=item||icon;
-      if(!target||iconLayout.mode!=='free'||iconLayoutReadOnly||e.button!==0)return;
+      if(!target||iconLayout.mode!=='free'||e.button!==0)return;
       const kind=item?'item':'app',host=item?$f('[data-food-free-item-canvas]'):$f('[data-food-free-icons]');if(!host)return;
       const bounds=host.getBoundingClientRect(),rect=target.getBoundingClientRect();
       foodIconDrag={kind,element:target,host,id:item?item.dataset.foodFreeItem:icon.dataset.foodFreeIcon,pointerId:e.pointerId,x:e.clientX,y:e.clientY,left:rect.left-bounds.left,top:rect.top-bounds.top,moved:false};
@@ -5082,6 +5091,21 @@ function bindFoodFoundry(root){
       $$f('[data-food-window]').forEach(w=>{w._drag=null;});
     });
     root.addEventListener('pointercancel',/** @param {CurioidDOMEvent} e */ e=>{if(foodIconDrag&&foodIconDrag.pointerId===e.pointerId)foodIconDrag=null;$$f('[data-food-window]').forEach(w=>{w._drag=null;});});
+    root.addEventListener('curioid:desktop-group-move',event=>{
+      const detail=event.detail;if(!detail||!Array.isArray(detail.items)||!Number.isFinite(detail.deltaX)||!Number.isFinite(detail.deltaY)||iconLayout.mode!=='free')return;
+      const items=detail.items.filter(node=>node.matches('[data-food-free-item]'));
+      const icons=detail.items.filter(node=>node.matches('[data-food-free-icon]'));
+      if(items.length+icons.length<2)return;
+      const previous=JSON.parse(JSON.stringify(iconLayout));
+      for(const node of items){const id=node.dataset.foodFreeItem,host=$f('[data-food-free-item-canvas]'),width=Math.max(1,host?.clientWidth||1),height=Math.max(180,host?.clientHeight||180),current=iconLayout.itemPositions[id]||{x:parseFloat(node.style.left)||0,y:parseFloat(node.style.top)||0};iconLayout.itemPositions[id]={x:clamp(current.x+detail.deltaX,0,Math.max(0,width-node.offsetWidth)),y:clamp(current.y+detail.deltaY,0,50000)};}
+      for(const node of icons){const id=node.dataset.foodFreeIcon,host=$f('[data-food-free-icons]'),width=Math.max(1,host?.clientWidth||1),height=Math.max(1,host?.clientHeight||1),current=iconLayout.positions[id]||{x:parseFloat(node.style.left)/width*100||0,y:parseFloat(node.style.top)/height*100||0};iconLayout.positions[id]={x:clamp(current.x+detail.deltaX/width*100,0,90),y:clamp(current.y+detail.deltaY/height*100,0,88)};}
+      if(saveFoodIconLayout()){
+        for(const node of items){const pos=iconLayout.itemPositions[node.dataset.foodFreeItem];if(pos){node.style.left=`${pos.x}px`;node.style.top=`${pos.y}px`;}}
+        for(const node of icons){const pos=iconLayout.positions[node.dataset.foodFreeIcon];if(pos){node.style.left=`${pos.x}%`;node.style.top=`${pos.y}%`;}}
+        const itemCanvas=$f('[data-food-free-item-canvas]');if(itemCanvas&&items.length){const bottom=Math.max(itemCanvas.clientHeight,...items.map(node=>(iconLayout.itemPositions[node.dataset.foodFreeItem]?.y||0)+node.offsetHeight+20));itemCanvas.style.height=`${Math.min(50000,bottom)}px`;}
+        detail.handled=true;setFeedback(`Moved ${items.length+icons.length} desktop items together${iconLayoutReadOnly?' for this session only':'.'}`);
+      }else iconLayout=previous;
+    });
     root.addEventListener('contextmenu',/** @param {CurioidDOMEvent} e */ e=>{if(e.target.closest('button,input,select,textarea,[data-food-window],.food-os-desktop-toolbar,.food-os-taskbar,.food-os-start-menu,.food-os-clock-panel,.food-os-context-menu'))return;e.preventDefault();foodContextAt(e);});
     root.addEventListener('click',/** @param {CurioidDOMEvent} e */ e=>{if(!e.target.closest('[data-food-context-menu]'))$f('[data-food-context-menu]').hidden=true;if(!e.target.closest('[data-food-clock-panel],[data-food-clock-toggle]')){$f('[data-food-clock-panel]').hidden=true;$f('[data-food-clock-toggle]').setAttribute('aria-expanded','false');}});
     root.addEventListener('keydown',/** @param {CurioidDOMEvent} e */ e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='d'){e.preventDefault();minimizeAllFoodWindows();return;}if(e.altKey&&e.key==='F4'){e.preventDefault();const open=$$f('[data-food-window]').filter(w=>w.isConnected&&w.style.display!=='none').sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0))[0];if(open)closeWindow(open);return;}if(e.key!=='Escape')return;const clockPanel=$f('[data-food-clock-panel]');if(clockPanel&&!clockPanel.hidden){clockPanel.hidden=true;$f('[data-food-clock-toggle]')?.setAttribute('aria-expanded','false');return;}const menu=$f('[data-food-start-menu]');if(!$f('[data-food-context-menu]').hidden){$f('[data-food-context-menu]').hidden=true;return;}if(menu&&!menu.hidden){setFoodStartMenuOpen(false);$f('[data-food-start-toggle]')?.focus();return;}const windows=$$f('[data-food-window]').filter(w=>w.isConnected);if(windows.length){windows.sort((a,b)=>(Number(b.style.zIndex)||0)-(Number(a.style.zIndex)||0));closeWindow(windows[0]);}});
@@ -5443,7 +5467,7 @@ function bindEchonoise(root, api = {}){
       if(id==='vocal')body=`<div class="eno-vocal-shell">
         <div class="eno-vocal-modebar" role="group" aria-label="Vocal synthesis mode">
           <button type="button" data-eno-vocal-mode="echo" class="${state.vocalMode==='echo'?'is-active':''}"><b>01</b><span><strong>Basic · Echo Voice</strong><small>Smooth vowel choir · instant formant synthesis</small></span></button>
-          <button type="button" data-eno-vocal-mode="singer" class="${state.vocalMode==='singer'?'is-active':''}"><b>02</b><span><strong>Advanced · Phoneme Singer</strong><small>Dictionary phonemes · precise consonants · voicebank support</small></span></button>
+          <button type="button" data-eno-vocal-mode="singer" class="${state.vocalMode==='singer'?'is-active':''}"><b>02</b><span><strong>Advanced · Phoneme Singer</strong><small>Resonant vowel engine · timed consonants · recorded voicebank support</small></span></button>
         </div>
         <div class="eno-vocal-layout">
           <section class="eno-vocal-editor">
@@ -5483,7 +5507,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       </div>`;
       if(id==='voicebank')body=`<div class="eno-voicebank-manager">
         <div class="eno-app-toolbar"><span>VOICEBANK MANAGER / LOCAL IMPORT</span><span data-eno-vb-summary>NO SINGER</span></div>
-        <div class="eno-voicebank-intro"><span>🎙️</span><div><b>Optional: use your own recorded singer</b><p>The built-in Phoneme Singer works without this. If you already own a compatible UTAU/OpenUtau-style voicebank, select its <code>oto.ini</code> file together with the matching WAV recordings. Folder access is not requested; only the files you choose are read.</p></div></div>
+        <div class="eno-voicebank-intro"><span>🎙️</span><div><b>Optional: use your own recorded singer</b><p>The built-in Phoneme Singer is a synthetic phoneme/formant preview; a compatible recorded voicebank is required for natural recorded vocals. If you already own a compatible UTAU/OpenUtau-style voicebank, select its <code>oto.ini</code> file together with the matching WAV recordings. Folder access is not requested; only the files you choose are read.</p></div></div>
         <label class="eno-voicebank-drop"><input type="file" data-eno-voicebank-files multiple accept=".ini,.wav,.wave,.txt"><span>＋ Select voicebank files</span><small>Select the oto.ini and its matching WAV recordings. CURIOID reads only the files you choose and never requests folder access.</small></label>
         <div class="eno-voicebank-stats"><div><b data-eno-vb-files>0</b><small>AUDIO FILES</small></div><div><b data-eno-vb-aliases>0</b><small>ALIASES</small></div><div><b data-eno-vb-loaded>0</b><small>DECODED SAMPLES</small></div></div>
         <label class="eno-field"><span>Custom alias mapping <small>one per line: PHONEME or PHONEME SEQUENCE = exact bank alias</small></span><textarea rows="5" data-eno-alias-overrides placeholder="AA = aa\nK AE = k ae\nL IY = lee\nS = s">${esc(state.vocalAliasOverrides||'')}</textarea></label>
@@ -5593,7 +5617,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       const segments=allocatePhonemeDurations(phones,dur);let cursor=start;
       phones.forEach((phone,i)=>{
         const segment=segments[i],id=normalizePhone(phone),overlap=i?Math.min(.010,segment*.14):0,at=Math.max(start,cursor-overlap),scheduled=segment+overlap;
-        if(arpabetVowels.has(id))synthVowel(note.midi,id,voiceId,at,scheduled,velocity,transpose,phones);
+        if(arpabetVowels.has(id)){if(state.vocalMode==='singer')synthSingerVowel(note.midi,id,voiceId,at,scheduled,velocity,transpose,phones);else synthVowel(note.midi,id,voiceId,at,scheduled,velocity,transpose,phones);}
         else synthConsonant(id,note.midi,voiceId,at,scheduled,velocity*Math.max(.25,Math.min(1.2,consonantBlend)),transpose);
         cursor+=segment;
       });
@@ -5871,7 +5895,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       if(editor&&state.vocalMode==='singer')editor.value=generated.map(n=>`${n.text||n.word}${n.syllableCount>1?` (${n.syllableIndex+1}/${n.syllableCount})`:''}: ${(n.phones||[]).join(' ')}`).join('\n');
     }
 
-    function syncVocalMode(){const isSinger=state.vocalMode==='singer';const panel=$e('[data-eno-singer-panel]');if(panel)panel.hidden=!isSinger;$$e('[data-eno-vocal-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.enoVocalMode===state.vocalMode));const hint=$e('[data-eno-vocal-hint]');if(hint)hint.textContent=isSinger?'Phoneme Singer uses dictionary-backed ARPABET timing, full consonant articulation, diphthong movement and optional recorded voicebanks.':'Echo Voice also reads the pronunciation dictionary, then sings every syllable with softer consonants, formant vowels and the five-voice harmony.';}
+    function syncVocalMode(){const isSinger=state.vocalMode==='singer';const panel=$e('[data-eno-singer-panel]');if(panel)panel.hidden=!isSinger;$$e('[data-eno-vocal-mode]').forEach(b=>b.classList.toggle('is-active',b.dataset.enoVocalMode===state.vocalMode));const hint=$e('[data-eno-vocal-hint]');if(hint)hint.textContent=isSinger?'Phoneme Singer uses a brighter harmonic source, dedicated singer-formant resonators and timed ARPABET consonants. A recorded voicebank is required for a natural recorded singer timbre.':'Echo Voice also reads the pronunciation dictionary, then sings every syllable with softer consonants, formant vowels and the five-voice harmony.';}
     async function generateVocal(){
       const lyrics=$e('[data-eno-lyrics]')?.value??state.lyrics;state.lyrics=clean(lyrics,360);state.vocalVoice=clamp(Number($e('[data-eno-vocal-voice]')?.value??state.vocalVoice),0,4);state.vocalHarmonies=Boolean($e('[data-eno-harmonies]')?.checked);state.key=Number($e('[data-eno-vocal-key]')?.value??state.key);state.scale=$e('[data-eno-vocal-scale]')?.value||state.scale;state.bpm=clamp(Number($e('[data-eno-vocal-bpm]')?.value)||state.bpm,55,180);
       let syllables,dictionaryFallback=false;try{const dict=await ensurePronunciationDictionary();paintDictionaryStatus();syllables=phonemizeLyrics(state.lyrics,dict);}catch(error){dictionaryFallback=true;syllables=phonemizeLyrics(state.lyrics,Object.create(null));paintDictionaryStatus();}
@@ -5948,6 +5972,46 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       osc.start(when);vibrato.start(when);osc.stop(when+duration+.12);vibrato.stop(when+duration+.13);
       return trackSynthNode({osc,gain:amp,vibrato,breath,filters,sources:[osc,vibrato,...(breath?[breath]:[])]});
     }
+    const singerPeriodicWaveCache=new WeakMap();
+    function getSingerPeriodicWave(ctx){
+      let wave=singerPeriodicWaveCache.get(ctx);if(wave)return wave;
+      const count=24,real=new Float32Array(count+1),imag=new Float32Array(count+1);
+      for(let harmonic=1;harmonic<=count;harmonic++){
+        const tilt=1/Math.pow(harmonic,.82),oddBias=harmonic%2?1:.78,upperLift=harmonic>=5?1.16:1;
+        imag[harmonic]=tilt*oddBias*upperLift;
+      }
+      wave=ctx.createPeriodicWave(real,imag,{disableNormalization:false});singerPeriodicWaveCache.set(ctx,wave);return wave;
+    }
+    function synthSingerVowel(midi,vowel,voiceId,when,duration,velocity=1,transpose=0,contextPhones=[]){
+      const audioState=makeAudio();if(!audioState)return;const ctx=audioState.ctx,profile=enoVoices[voiceId]||enoVoices[2];
+      const phone=arpabetVowels.has(normalizePhone(vowel))?normalizePhone(vowel):(legacyVowelPhone[String(vowel||'a').toLowerCase()]||'AE');
+      const from=formantTarget(phone),to=diphthongTargets[phone]?formantTarget(diphthongTargets[phone]):from,factor=profile.formants||[1,1,1];
+      const index=Array.isArray(contextPhones)?contextPhones.findIndex(item=>normalizePhone(item)===phone):-1;
+      const adjacent=[index>0?normalizePhone(contextPhones[index-1]):'',index>=0?normalizePhone(contextPhones[index+1]):''];
+      const nasal=adjacent.some(item=>['M','N','NG'].includes(item)),rounded=adjacent.includes('W'),rhotic=adjacent.includes('R');
+      const context=[rounded?.96:1,rounded?.91:1,rhotic?.82:1],frequency=enoMidiFreq(midi+transpose),osc=ctx.createOscillator(),amp=ctx.createGain(),pan=ctx.createStereoPanner?ctx.createStereoPanner():null;
+      try{osc.setPeriodicWave(getSingerPeriodicWave(ctx));}catch(_){osc.type='sawtooth';}
+      const attack=Math.min(.042,Math.max(.012,duration*.105)),release=Math.min(.09,Math.max(.032,duration*.17));
+      osc.frequency.setValueAtTime(frequency*.986,when);if(duration>.07)osc.frequency.exponentialRampToValueAtTime(frequency,when+attack*.9);osc.detune.setValueAtTime((voiceId-2)*1.25,when);
+      const vibrato=ctx.createOscillator(),vibratoGain=ctx.createGain(),vibratoAmount=clamp(Number(state.vocalVibrato??42),0,100)/100;
+      vibrato.frequency.setValueAtTime((profile.vibrato||5.2)*1.035,when);vibratoGain.gain.setValueAtTime(0,when);
+      if(vibratoAmount>.005&&duration>.22){const depth=frequency*.0046*vibratoAmount;vibratoGain.gain.linearRampToValueAtTime(0,when+duration*.2);vibratoGain.gain.linearRampToValueAtTime(depth,when+duration*.48);vibratoGain.gain.setTargetAtTime(depth*.78,when+duration*.48,.105);}
+      vibrato.connect(vibratoGain);vibratoGain.connect(osc.frequency);
+      const filters=[],bands=[.92,.68,.42,nasal?.16:.115],centres=[from[0]*factor[0]*context[0],from[1]*factor[1]*context[1],from[2]*factor[2]*context[2],nasal?1450:3150+(voiceId-2)*105],targets=[to[0]*factor[0]*context[0],to[1]*factor[1]*context[1],to[2]*factor[2]*context[2],centres[3]];
+      const qs=[4.7,5.8,5.1,nasal?2.8:2.15];
+      for(let i=0;i<4;i++){
+        const filter=ctx.createBiquadFilter(),gain=ctx.createGain();filter.type='bandpass';filter.Q.value=qs[i];
+        const f0=clamp(centres[i],180,Math.min(10500,ctx.sampleRate*.44)),f1=clamp(targets[i],180,Math.min(10500,ctx.sampleRate*.44));filter.frequency.setValueAtTime(f0,when);
+        if(i<3&&diphthongTargets[phone]&&duration>.085)filter.frequency.setTargetAtTime(f1,when+duration*.22,Math.max(.03,duration*.18));
+        gain.gain.value=bands[i]*(i===3?clamp(1+(state.vocalArticulation-72)/220,.75,1.2):1);osc.connect(filter);filter.connect(gain);gain.connect(amp);filters.push(filter,gain);
+      }
+      if(pan){pan.pan.value=clamp((profile.pan||0)*.7,-1,1);amp.connect(pan);pan.connect(audioState.mix);filters.push(pan);}else amp.connect(audioState.mix);
+      const articulation=clamp(Number(state.vocalArticulation)||72,25,100)/72,level=state.levels[voiceId]??.65;
+      const peak=Math.max(.001,.132*velocity*level*Math.min(1.18,articulation));amp.gain.setValueAtTime(.0001,when);amp.gain.linearRampToValueAtTime(peak,when+attack);amp.gain.setTargetAtTime(peak*.88,when+attack,Math.max(.04,duration*.2));
+      amp.gain.setTargetAtTime(.0001,when+Math.max(attack,duration-release),Math.max(.025,release*.38));
+      osc.start(when);vibrato.start(when);osc.stop(when+duration+.12);vibrato.stop(when+duration+.13);
+      return trackSynthNode({osc,gain:amp,vibrato,filters,sources:[osc,vibrato]});
+    }
     function stopSynthPhrase(){
       const now=audio?.ctx?.currentTime||0;
       if(audio?.ctx){activeSynthNodes.slice().forEach(node=>{try{node.gain.gain.cancelScheduledValues(now);node.gain.gain.setTargetAtTime(.0001,now,.025);const sources=node.sources||[node.osc,node.vibrato,node.extra];sources.filter(Boolean).forEach(source=>source.stop(now+.13));}catch(_){}});}
@@ -5968,7 +6032,7 @@ read = R EH1 D || R IY1 D">${esc(state.vocalPronunciationOverrides||'')}</textar
       }
       if(pan){pan.pan.value=profile.pan||0;amp.connect(pan);pan.connect(audioState.mix);}else amp.connect(audioState.mix);
       const articulation=clamp(Number(state.vocalArticulation)||72,25,100)/72,level=state.levels[voiceId]??.65;
-      const peak=(fricative?.073:stop?.086:sonorant?.055:.045)*velocity*Math.min(1.15,articulation)*level;
+      const singerProjection=state.vocalMode==='singer'?1.28:1,peak=(fricative?.073:stop?.086:sonorant?.055:.045)*velocity*Math.min(1.15,articulation)*level*singerProjection;
       const attack=stop?.0015:fricative?.006:.009,actual=Math.max(.012,Math.min(duration,stop?.052:fricative?duration*.94:duration));
       amp.gain.setValueAtTime(.0001,when);amp.gain.linearRampToValueAtTime(peak,when+Math.min(attack,actual*.35));amp.gain.setTargetAtTime(.0001,when+Math.max(.01,actual-.012),stop?.009:.024);
       noise.start(when,getVocalNoiseOffset(ctx));noise.stop(when+actual+.018);

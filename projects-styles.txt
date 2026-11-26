@@ -287,3 +287,9 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
 /* v1.325 safe desktop marquee selection */
 .curioid-desktop-marquee-box{position:fixed;z-index:2147483000;pointer-events:none;box-sizing:border-box;border:1px solid rgba(110,218,255,.96);background:rgba(65,165,220,.18);box-shadow:0 0 0 1px rgba(8,20,35,.45) inset;border-radius:2px;}
 .curioid-marquee-selected{outline:2px solid rgba(110,218,255,.95)!important;outline-offset:1px!important;box-shadow:0 0 0 2px rgba(9,24,42,.58)!important;}
+
+
+/* CURIOID desktop multi-selection: selected groups move as one pointer gesture. */
+.curioid-marquee-selected{will-change:translate;}
+.curioid-desktop-group-dragging,.curioid-desktop-group-dragging *{cursor:grabbing!important;user-select:none!important;-webkit-user-select:none!important;}
+.curioid-desktop-marquee-box{touch-action:none;}

@@ -13441,34 +13441,56 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   // Clicking empty desktop canvas clears icon targeting, like a conventional desktop shell.
   document.addEventListener('click',/** @param {CurioidDOMEvent} event */ event=>{
     if(Date.now()<curioidLastMarqueeAt)return;
-    const surfaces=['[data-retro-icon-area]','.food-os-desktop-items','.eno-desktop','.umbra-desktop','.aether-stage','.aura-desktop','.cos-desktop-stage'];
+    const surfaces=['[data-retro-icon-area]','.food-os-desktop-items','.food-os-free-item-canvas','[data-food-free-icons]','.eno-desktop','.umbra-desktop','.aether-stage','.aura-desktop','.cos-desktop-stage'];
     const surface=event.target instanceof Element?event.target.closest(surfaces.join(',')):null;
-    if(!surface||event.target.closest('[data-retro-room-shortcut],[data-user-room-shortcut],[data-user-file-shortcut],[data-food-desktop-item],[data-eno-launch],[data-u-launch],[data-a-node-select],.aether-node,[data-cos-shell-shortcut]'))return;
+    if(!surface||event.target.closest('[data-retro-room-shortcut],[data-user-room-shortcut],[data-user-file-shortcut],[data-food-desktop-item],[data-food-free-icon],[data-food-free-item],[data-eno-launch],[data-u-launch],[data-a-node-select],.aether-node,[data-cos-shell-shortcut]'))return;
     surface.querySelectorAll('.selected,.is-selected').forEach(node=>{node.classList.remove('selected','is-selected');if(node.hasAttribute('aria-pressed'))node.setAttribute('aria-pressed','false');});
   },true);
 
-  // Desktop marquee selection: mouse/pen drag on empty desktop space selects
-  // every fully/partially intersected item. It is visual-only and never writes
-  // saved layouts; individual OS actions still own their data and drag logic.
+  // Desktop marquee selection and group movement share one safe pointer layer.
+  // Group movement is session-only by default; Doors98 and Nourish may persist
+  // through their own guarded storage handlers after the custom event fires.
   const curioidMarqueeSurfaces=[
     {surface:'[data-retro-icon-area]',items:'.retro-icon'},
     {surface:'.food-os-desktop-items',items:'.food-os-item'},
+    {surface:'.food-os-free-item-canvas',items:'.food-os-free-item'},
+    {surface:'[data-food-free-icons]',items:'.food-os-free-icon'},
     {surface:'.eno-desktop-icons',items:'.eno-desktop-icon'},
     {surface:'.aether-stage',items:'.aether-node'},
     {surface:'.aura-window-layer',items:'[data-aura-window]'}
   ];
-  let curioidMarqueeState=null,curioidLastMarqueeAt=0;
+  let curioidMarqueeState=null,curioidGroupDragState=null,curioidLastMarqueeAt=0;
   const curioidMarqueeClear=()=>document.querySelectorAll('.curioid-marquee-selected').forEach(node=>{node.classList.remove('curioid-marquee-selected');node.removeAttribute('aria-selected');});
+  const readCurioidTranslate=node=>{const value=getComputedStyle(node).translate;if(!value||value==='none')return{x:0,y:0};const parts=value.split(/\s+/).map(part=>Number.parseFloat(part));return{x:Number.isFinite(parts[0])?parts[0]:0,y:Number.isFinite(parts[1])?parts[1]:0};};
+  const restoreCurioidGroupTranslate=state=>state.items.forEach((node,index)=>{node.style.translate=state.originalInline[index];});
   document.addEventListener('pointerdown',event=>{
     if(event.button!==0||event.pointerType==='touch'||!(event.target instanceof Element))return;
     const config=curioidMarqueeSurfaces.find(item=>event.target.closest(item.surface));if(!config)return;
-    const surface=event.target.closest(config.surface);if(!surface||event.target.closest(`${config.items},button,a,input,select,textarea,[contenteditable="true"],canvas`))return;
+    const surface=event.target.closest(config.surface);if(!surface)return;
+    const picked=event.target.closest(config.items);
+    if(picked?.classList.contains('curioid-marquee-selected')){
+      const items=[...surface.querySelectorAll(`${config.items}.curioid-marquee-selected`)];
+      if(items.length>1){
+        curioidGroupDragState={pointerId:event.pointerId,surface,items,startX:event.clientX,startY:event.clientY,x:event.clientX,y:event.clientY,moved:false,originalInline:items.map(node=>node.style.translate),base:items.map(readCurioidTranslate)};
+        // Suppress the OS's single-item drag handler, but preserve the ordinary
+        // click event when the pointer is released without moving.
+        event.stopImmediatePropagation();try{surface.setPointerCapture(event.pointerId);}catch(_){}return;
+      }
+    }
+    if(event.target.closest(`${config.items},button,a,input,select,textarea,[contenteditable="true"],canvas`))return;
     const box=document.createElement('div');box.className='curioid-desktop-marquee-box';box.setAttribute('aria-hidden','true');document.body.append(box);
     curioidMarqueeState={pointerId:event.pointerId,surface,config,startX:event.clientX,startY:event.clientY,x:event.clientX,y:event.clientY,box,additive:event.shiftKey,moved:false};
     if(!event.shiftKey)curioidMarqueeClear();
     try{surface.setPointerCapture(event.pointerId);}catch(_){}
   },true);
   document.addEventListener('pointermove',event=>{
+    const group=curioidGroupDragState;
+    if(group&&event.pointerId===group.pointerId){
+      group.x=event.clientX;group.y=event.clientY;const dx=group.x-group.startX,dy=group.y-group.startY;
+      if(!group.moved&&Math.hypot(dx,dy)<4)return;
+      group.moved=true;event.preventDefault();document.documentElement.classList.add('curioid-desktop-group-dragging');
+      group.items.forEach((node,index)=>{const base=group.base[index];node.style.translate=`${base.x+dx}px ${base.y+dy}px`;});return;
+    }
     const state=curioidMarqueeState;if(!state||event.pointerId!==state.pointerId)return;
     state.x=event.clientX;state.y=event.clientY;
     if(!state.moved&&Math.hypot(state.x-state.startX,state.y-state.startY)<6)return;
@@ -13476,10 +13498,21 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
     Object.assign(state.box.style,{left:`${left}px`,top:`${top}px`,width:`${width}px`,height:`${height}px`});
   },true);
   const finishCurioidMarquee=event=>{
+    const group=curioidGroupDragState;
+    if(group&&event.pointerId===group.pointerId){
+      curioidGroupDragState=null;document.documentElement.classList.remove('curioid-desktop-group-dragging');
+      if(event.type==='pointercancel'){restoreCurioidGroupTranslate(group);return;}
+      if(!group.moved)return;
+      curioidLastMarqueeAt=Date.now()+220;
+      const detail={items:group.items,deltaX:group.x-group.startX,deltaY:group.y-group.startY,handled:false,originalTranslate:group.originalInline.slice()};
+      group.surface.dispatchEvent(new CustomEvent('curioid:desktop-group-move',{bubbles:true,detail}));
+      if(detail.handled)restoreCurioidGroupTranslate(group);
+      return;
+    }
     const state=curioidMarqueeState;if(!state||event.pointerId!==state.pointerId)return;
     curioidMarqueeState=null;state.box.remove();
     if(!state.moved)return;
-    curioidLastMarqueeAt=Date.now()+160;
+    curioidLastMarqueeAt=Date.now()+180;
     const selection={left:Math.min(state.startX,state.x),right:Math.max(state.startX,state.x),top:Math.min(state.startY,state.y),bottom:Math.max(state.startY,state.y)};
     for(const item of state.surface.querySelectorAll(state.config.items)){
       const rect=item.getBoundingClientRect();if(rect.width<=0||rect.height<=0)continue;
@@ -13489,6 +13522,7 @@ await CurioidOS.connect.grantMessage('request-summary', 'aether-os');
   };
   document.addEventListener('pointerup',finishCurioidMarquee,true);
   document.addEventListener('pointercancel',finishCurioidMarquee,true);
+  document.addEventListener('click',event=>{if(Date.now()<curioidLastMarqueeAt&&event.target instanceof Element&&event.target.closest('.curioid-marquee-selected')){event.preventDefault();event.stopImmediatePropagation();}},true);
 
   // 19 - Unbuilt Tomorrow: thirty-six proposals that were almost commissioned.
   

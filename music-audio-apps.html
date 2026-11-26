@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10131a">
 <meta name="robots" content="noindex,nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-nv/J4GhPZhS47ltkV2dGN955wzMS1QXDImsn7v/KXVg=' 'sha256-8bINOR2MBE95GmCcDFtnPBtOe1ViopgGA5O+nt6VlwE=' 'sha256-iztOBM38GcsUwfxyZoPmaH5r2UzPADonXIiajG/AYIE='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'strict-dynamic' 'sha256-nv/J4GhPZhS47ltkV2dGN955wzMS1QXDImsn7v/KXVg=' 'sha256-8bINOR2MBE95GmCcDFtnPBtOe1ViopgGA5O+nt6VlwE=' 'sha256-iztOBM38GcsUwfxyZoPmaH5r2UzPADonXIiajG/AYIE='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>CURIOID</title>
 <style>
 :root {
@@ -938,7 +938,7 @@ body {
     try { audioContext?.close?.(); } catch (_) {}
   });
 })();</script>
-<script>
+<script id="curioid-music-audio-bootstrap">
 (()=>{
   'use strict';
   const allowed=new Set(["dark-looper"]);
