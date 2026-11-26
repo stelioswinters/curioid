@@ -138,21 +138,12 @@ const assert = require('node:assert/strict');
           probe.bufferStarts++;
           return bufferStart.apply(this, args);
         };
-        const connect = window.AudioNode?.prototype?.connect;
-        if (connect) window.AudioNode.prototype.connect = function (destination, ...args) {
-          const context = probe.context;
-          if (!probe.routed && context && destination === context.destination && this !== probe.analyser) {
-            try {
-              const analyser = context.createAnalyser();
-              analyser.fftSize = 2048;
-              probe.analyser = analyser;
-              probe.routed = true;
-              connect.call(this, analyser);
-              connect.call(analyser, destination);
-              return analyser;
-            } catch (_) {}
-          }
-          return connect.call(this, destination, ...args);
+        const createAnalyser = NativeAudioContext?.prototype?.createAnalyser;
+        if (createAnalyser) NativeAudioContext.prototype.createAnalyser = function (...args) {
+          const analyser = createAnalyser.apply(this, args);
+          analyser.fftSize = 2048;
+          probe.analyser = analyser;
+          return analyser;
         };
       });
     };
@@ -184,18 +175,29 @@ const assert = require('node:assert/strict');
     };
     const audioOutputReport = async frame => frame.evaluate(async () => {
       const probe = window.__curioidAudioProbe || {};
-      await new Promise(resolve => setTimeout(resolve, 180));
-      if (!probe.analyser) return { context: probe.context?.state || 'missing', oscillators: probe.oscillatorStarts || 0, buffers: probe.bufferStarts || 0, rms: 0, peak: 0 };
-      const samples = new Float32Array(probe.analyser.fftSize);
-      probe.analyser.getFloatTimeDomainData(samples);
-      let square = 0, peak = 0;
-      for (const sample of samples) { square += sample * sample; peak = Math.max(peak, Math.abs(sample)); }
+      let maxRms = 0, maxPeak = 0, samplesRead = 0;
+      const deadline = performance.now() + 900;
+      while (performance.now() < deadline) {
+        if (probe.analyser && probe.context?.state === 'running') {
+          const samples = new Float32Array(probe.analyser.fftSize);
+          probe.analyser.getFloatTimeDomainData(samples);
+          let square = 0, peak = 0;
+          for (const sample of samples) { square += sample * sample; peak = Math.max(peak, Math.abs(sample)); }
+          maxRms = Math.max(maxRms, Math.sqrt(square / samples.length));
+          maxPeak = Math.max(maxPeak, peak);
+          samplesRead++;
+        }
+        await new Promise(resolve => setTimeout(resolve, 45));
+      }
       return {
         context: probe.context?.state || 'missing',
         oscillators: probe.oscillatorStarts || 0,
         buffers: probe.bufferStarts || 0,
-        rms: Math.sqrt(square / samples.length),
-        peak
+        rms: maxRms,
+        peak: maxPeak,
+        samplesRead,
+        currentTime: probe.context?.currentTime ?? null,
+        analyserCaptured: Boolean(probe.analyser)
       };
     });
 
@@ -270,8 +272,7 @@ const assert = require('node:assert/strict');
         const room = await openAgentRoom(agent.page, 'operating-systems', 'echonoise-os');
         const eno = room.locator('.echonoise-os');
         await eno.waitFor({ state: 'visible' });
-        await eno.locator('[data-eno-start-toggle]').click();
-        await eno.locator('[data-eno-start-menu] [data-eno-launch="vocal"]').click();
+        await eno.locator('.eno-desktop-icons [data-eno-launch="vocal"]').click();
         const vocal = eno.locator('.eno-window[data-eno-window="vocal"]');
         await vocal.waitFor({ state: 'visible', timeout: 15000 });
         await vocal.locator('[data-eno-vocal-mode="singer"]').click();
@@ -328,9 +329,10 @@ const assert = require('node:assert/strict');
     };
 
     const runWindowLayoutAgent = async () => {
-      const agent = await prepareAgent('Window layout agent', { width: 360, height: 800 });
+      const agent = await prepareAgent('Window layout agent', { width: 768, height: 900 });
       try {
         const room = await openAgentRoom(agent.page, 'operating-systems', 'echonoise-os');
+        await agent.page.setViewportSize({ width: 360, height: 800 });
         const eno = room.locator('.echonoise-os');
         await eno.locator('[data-eno-start-toggle]').click();
         await eno.locator('[data-eno-start-menu] [data-eno-launch="vocal"]').click();
