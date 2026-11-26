@@ -38,8 +38,10 @@ const assert = require('node:assert/strict');
     assert.ok(projectsToOpen.length >= 59, 'Expected at least 59 catalogue projects, found ' + projectsToOpen.length);
 
     const unlabeledProjectControls = [];
+    const windowLayoutFindings = [];
     for (const { category, project } of projectsToOpen) {
       await page.locator('[data-category="' + category + '"]').click();
+      await page.setViewportSize({ width: 360, height: 800 });
       const room = page.locator('#room-' + project);
       await room.locator('.room-heading').click();
       await page.waitForFunction(id => {
@@ -47,6 +49,30 @@ const assert = require('node:assert/strict');
         return node?.dataset.loaded === 'true' || Boolean(node?.querySelector('.project-load-error'));
       }, project, { timeout: 90000 });
       assert.equal(await room.getAttribute('data-loaded'), 'true', project + ' failed to mount');
+      const layoutIssues = await room.evaluate(root => {
+        const mount = root.querySelector('.room-mount');
+        if (!mount) return [];
+        const mountRect = mount.getBoundingClientRect();
+        const selector = '[class*="window"],[role="dialog"],[class*="dialog"],[data-eno-window]';
+        return [...mount.querySelectorAll(selector)].filter(node => {
+          const rect = node.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0 && getComputedStyle(node).display !== 'none';
+        }).map(node => {
+          const rect = node.getBoundingClientRect();
+          const style = getComputedStyle(node);
+          const delta = node.scrollWidth - node.clientWidth;
+          const outside = rect.left < mountRect.left - 2 || rect.right > mountRect.right + 2;
+          const unscrollableOverflow = delta > 6 && !['auto','scroll'].includes(style.overflowX);
+          return {
+            selector: node.tagName.toLowerCase() + (node.id ? '#' + node.id : '') +
+              (typeof node.className === 'string' && node.className.trim() ? '.' + node.className.trim().split(/\\s+/).slice(0,3).join('.') : ''),
+            text: (node.innerText || '').trim().replace(/\\s+/g,' ').slice(0,90),
+            clientWidth: node.clientWidth, scrollWidth: node.scrollWidth, overflowX: style.overflowX,
+            outsideMount: outside, unscrollableOverflow
+          };
+        }).filter(item => item.outsideMount || item.unscrollableOverflow);
+      });
+      if (layoutIssues.length) windowLayoutFindings.push({ project, issues: layoutIssues.slice(0,12) });
       const projectLabels = await room.locator('.room-mount').evaluate(root => {
         const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
         return Array.from(root.querySelectorAll(selector)).filter(node => node.getClientRects().length && !node.closest('[aria-hidden="true"]')).filter(node => {
@@ -81,8 +107,10 @@ const assert = require('node:assert/strict');
       }
       await room.locator('.room-heading').click();
       await page.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'false', project);
+      await page.setViewportSize({ width: 1365, height: 900 });
     }
     console.log('Mounted and cleanly closed ' + projectsToOpen.length + ' catalogue projects.');
+    console.log('360px window/content overflow findings:', JSON.stringify(windowLayoutFindings));
     console.log('Mounted-project controls without an explicit accessible name:', JSON.stringify(unlabeledProjectControls));
     const unlabeledProjectInputs = unlabeledProjectControls.filter(item => item.tag === 'input');
     console.log('Unlabeled project input context:', JSON.stringify(unlabeledProjectInputs));
