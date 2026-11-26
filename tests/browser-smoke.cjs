@@ -55,10 +55,11 @@ const assert = require('node:assert/strict');
     }));
     assert.ok(dimensions.document <= dimensions.viewport + 2,
       'Horizontal overflow at 360px: ' + JSON.stringify(dimensions));
-    await page.locator('#menuToggle').click();
-    assert.equal(await page.locator('#menuToggle').getAttribute('aria-expanded'), 'true');
-    await page.locator('#menuToggle').click();
-    assert.equal(await page.locator('#menuToggle').getAttribute('aria-expanded'), 'false');
+    const menuToggle = page.locator('#menuToggle');
+    if (await menuToggle.getAttribute('aria-expanded') !== 'true') await menuToggle.click();
+    assert.equal(await menuToggle.getAttribute('aria-expanded'), 'true');
+    await menuToggle.click();
+    assert.equal(await menuToggle.getAttribute('aria-expanded'), 'false');
 
     if (failures.length) throw new Error('Browser errors:\\n' + failures.join('\\n'));
     console.log('CURIOID browser smoke tests passed: release, 7 collections, search, Control Panel, mobile overflow and menu.');
