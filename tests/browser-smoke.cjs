@@ -17,10 +17,17 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator('[data-category]').count(), 7);
 
     // First-visit notes are modal and intentionally block the page until acknowledged.
+    await page.waitForTimeout(1500);
     const notesDialog = page.locator('#curioid-important-notes');
     if (await notesDialog.count() && await notesDialog.evaluate(node => node.open)) {
-      await notesDialog.locator('button').last().click();
-      await notesDialog.waitFor({ state: 'hidden' });
+      const actions = await notesDialog.locator('button, a, [role="button"]').evaluateAll(nodes =>
+        nodes.map(node => ({ tag: node.tagName, text: (node.innerText || '').trim(), label: node.getAttribute('aria-label') }))
+      );
+      console.log('First-visit notes actions:', JSON.stringify(actions));
+      const acknowledge = notesDialog.getByText('GOT IT', { exact: true });
+      if (await acknowledge.count()) await acknowledge.click();
+      else await notesDialog.locator('button').last().click();
+      await notesDialog.waitFor({ state: 'hidden', timeout: 10000 });
     }
 
     // Every collection must switch to its own view and expose a non-empty catalogue.
