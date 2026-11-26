@@ -1,7 +1,7 @@
-/* CURIOID v1.342 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.343 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.342';
+  const EXPECTED_RELEASE = 'v1.343';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -616,7 +616,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.342',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.343',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -1306,6 +1306,10 @@
       const securityContracts={
         vantaDynamicTextEscaped:vantaSecurity.includes('const escapeHTML = value =>')&&vantaSecurity.includes('escapeHTML(m.label)')&&vantaSecurity.includes('escapeHTML(m.value)')&&vantaSecurity.includes('escapeHTML(r.body)')&&vantaSecurity.includes('safeRecommendationLevel(r.level)'),
         darkLooperDynamicRowsUseTextNodes:darkSecurity.includes('row.replaceChildren(nameLabel, categoryLabel)')&&!/row\.innerHTML\s*=\s*[^;]+(?:name|category)/i.test(darkSecurity),
+        darkLooperAudioGraphReleases:darkSecurity.includes('voiceCleanupTimers')&&darkSecurity.includes('activeVoices')&&darkSecurity.includes('voice.disconnect()')&&darkSecurity.includes('activeVoices.clear()'),
+        darkLooperRecordingMimePreserved:darkSecurity.includes('recorder.mimeType')&&darkSecurity.includes('pendingRecordingExtension')&&darkSecurity.includes('new Blob(chunks, { type: actualMimeType })'),
+        darkLooperDisposalSuppressesLateRecordingPopup:darkSecurity.includes('if (appDisposed) { chunks.length = 0;')&&darkSecurity.includes('mediaRecorder.onstop = null'),
+        darkLooperSequencerControlsKeyboardAccessible:darkSecurity.includes("pip.setAttribute('role', 'button')")&&darkSecurity.includes("row.setAttribute('role', 'button')"),
         glitchyardMarkdownEscapesRawHTML:glitchSecurity.includes('function markdownToHtml(text){let escaped=html(text);')&&glitchSecurity.includes('rel="noopener noreferrer"')&&glitchSecurity.includes('const dtEsc = value =>'),
         customOsSanitizerRemovesActiveContent:coreSecurity.includes("script,iframe,frame,object,embed,applet")&&coreSecurity.includes("if(name.startsWith('on')")&&coreSecurity.includes('curioidOsSafeResourceUrl(value,context)')&&coreSecurity.includes('CURIOID_OS_SOURCE_LIMITS.html'),
         sandboxMessagesBindSourceAndToken:coreSecurity.includes("if(event.origin!=='null')return;const frame=[...frameRegistry.values()].find(item=>item.iframe.contentWindow===event.source)")&&coreSecurity.includes('event.data.token!==frame.token'),
@@ -1330,7 +1334,7 @@
         glitchyardLinearTextCounting:glitchSecurity.includes('useTyped=text.length>16000')&&glitchSecurity.includes('new Uint32Array(0x110000)')&&glitchSecurity.includes('new Map()')&&glitchSecurity.includes('touched.push(code)')&&glitchSecurity.includes('leftCounts=new Map()')&&glitchSecurity.includes('generatedName')&&glitchSecurity.includes('500,000 combined characters')
       };
       add('DOM injection, custom-OS and messaging security review',Object.values(securityContracts).every(Boolean)
-        ?{ok:true,detail:'VANTA DECK escapes dynamic text, caps expensive text work, invalidates stale hashes after edits and removes its global keyboard listener on disposal; Dark Looper uses text nodes for dynamic library labels; GLITCHYARD escapes raw Markdown HTML, invalidates stale runs, caps text/file/decompression/image workloads and uses bounded linear counting; custom OS previews remove active content/event attributes and restrict resource URLs; custom OS messages bind origin, exact source and per-frame token; first-party studios run in opaque-origin script/download-only frames, height messages bind the exact child source and opaque origin, BFCache suspension resumes observers without disposing restored apps, and permanent disposal stops observers plus late app initialization; custom OS Workers disable WebAssembly and shared-memory APIs; legacy custom-OS source is preserved for migration but never executed; standalone pages retain strict CSP; trusted interaction telemetry records only event types and element identifiers in memory, not entered values or text; no eval/new Function execution path was found in the reviewed application/runtime sources.'}
+        ?{ok:true,detail:'VANTA DECK escapes dynamic text, caps expensive text work, invalidates stale hashes after edits and removes its global keyboard listener on disposal; D4RK L00PER releases short-lived audio nodes, preserves actual recording MIME types, suppresses late recorder callbacks on disposal and exposes keyboard-accessible sequencer and sound controls; Dark Looper uses text nodes for dynamic library labels; GLITCHYARD escapes raw Markdown HTML, invalidates stale runs, caps text/file/decompression/image workloads and uses bounded linear counting; custom OS previews remove active content/event attributes and restrict resource URLs; custom OS messages bind origin, exact source and per-frame token; first-party studios run in opaque-origin script/download-only frames, height messages bind the exact child source and opaque origin, BFCache suspension resumes observers without disposing restored apps, and permanent disposal stops observers plus late app initialization; custom OS Workers disable WebAssembly and shared-memory APIs; legacy custom-OS source is preserved for migration but never executed; standalone pages retain strict CSP; trusted interaction telemetry records only event types and element identifiers in memory, not entered values or text; no eval/new Function execution path was found in the reviewed application/runtime sources.'}
         :{ok:false,detail:`Security source contract needs attention: ${Object.entries(securityContracts).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
     } catch(error) { add('DOM injection, custom-OS and messaging security review',{ok:false,warning:true,detail:String(error?.message||error).slice(0,240)}); }
     // Verify the newly uploaded Chroma Loom app is first in Digital Art and
