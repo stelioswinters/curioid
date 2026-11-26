@@ -1,6 +1,6 @@
-/* CURIOID v1.342 offline shell. Exact release hashes for every cached deployment asset. */
+/* CURIOID v1.343 offline shell. Exact release hashes for every cached deployment asset. */
 'use strict';
-const RELEASE_ID = 'v1.342';
+const RELEASE_ID = 'v1.343';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
@@ -12,12 +12,12 @@ const EXPECTED_SHA256 = Object.freeze({
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
   "curioids.html": "df08280dca7c9509971f26917aba9607ac5460ed68c80e43a83e158f2e558e49",
-  "dark-looper-app.js": "c177c25fb85fcc5bf15348d7a64cf4ef69055df9ecdfa61a3018252bbd2984e6",
+  "dark-looper-app.js": "d5b1969d36162f8e019c618f67d56dba2ac2d034e3b6d1b91c1f9f11ce2656dd",
   "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
-  "health-check.js": "a970dcf954fe555160d7f99527c8334c26fd75012cd28852360982049078a211",
-  "index.html": "6d44d4ba61f71219d40080e4e09d515778bcaab69dde7ce76194a3364d2ec6dd",
+  "health-check.js": "776f6a2990571fa23f0c521a31fd04aa8c20928042297655912011bfabe08459",
+  "index.html": "dd3ce7c7340bbf1d59f73d6e9a3104003edc77edaa8fbd875a15c51824b48f58",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
-  "music-audio-apps.html": "cc667b8b6ac77f628464cfa31b30a837098149546ddb3d6df796de8f99b033fc",
+  "music-audio-apps.html": "0711844de6cde112b5e7d8e60d303142351ce858f52a5d390e76aedded4b2e1e",
   "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
   "projects-category-digital-art.js": "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3",
   "projects-category-operating-systems.js": "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946",
