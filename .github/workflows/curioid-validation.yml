@@ -21,10 +21,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 20
 
@@ -43,7 +43,6 @@ jobs:
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
-          import path from 'node:path';
           import crypto from 'node:crypto';
 
           const read = file => fs.readFileSync(file, 'utf8');
@@ -115,6 +114,20 @@ jobs:
             assert(crypto.createHash('sha256').update(css).digest('hex') === cssHash, 'Project stylesheet SHA-256 descriptor is stale.');
             assert('sha384-' + crypto.createHash('sha384').update(css).digest('base64') === cssSri, 'Project stylesheet SRI descriptor is stale.');
           } else fail('Project stylesheet integrity descriptors or file are missing.');
+
+          const sizeBudgets = {
+            'index.html': 180 * 1024,
+            'site-runtime-current.js': 320 * 1024,
+            'projects-core.js': 2 * 1024 * 1024,
+            'projects-category-operating-systems.js': 2.3 * 1024 * 1024,
+            'projects-styles.css': 1.1 * 1024 * 1024
+          };
+          for (const [file, budget] of Object.entries(sizeBudgets)) {
+            if (!fs.existsSync(file)) { fail(`Performance budget target is missing: ${file}`); continue; }
+            const bytes = fs.statSync(file).size;
+            assert(bytes <= budget, `${file} exceeds its ${Math.round(budget / 1024)} KiB performance budget (${Math.round(bytes / 1024)} KiB).`);
+            console.log(`Bundle budget: ${file} ${Math.round(bytes / 1024)} / ${Math.round(budget / 1024)} KiB.`);
+          }
 
           console.log(`Release ${release}: release markers, runtime SRI, category SRI and offline hashes checked.`);
           NODE
