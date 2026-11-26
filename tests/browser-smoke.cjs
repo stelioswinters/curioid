@@ -17,6 +17,7 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator('[data-category]').count(), 7);
 
     // Every collection must switch to its own view and expose a non-empty catalogue.
+    await page.locator('#browseCollections > summary').click();
     for (const category of await page.locator('[data-category]').evaluateAll(nodes => nodes.map(node => node.dataset.category))) {
       await page.locator('[data-category="' + category + '"]').click();
       await page.waitForFunction(id => {
