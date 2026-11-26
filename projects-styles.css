@@ -217,7 +217,7 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
 }
 
 
-/* CURIOID v1.297 — responsive text and content-boundary safeguards. */
+/* CURIOID v1.297 - responsive text and content-boundary safeguards. */
 :where(.project-tool,.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis,.curioid-assistant-panel)
   :where(p,h1,h2,h3,h4,h5,h6,label,legend,summary,figcaption,li,dt,dd,small,strong,span,a,button,output) {
   max-width: 100%;
@@ -382,7 +382,7 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
 .eno-vocal-shell [data-eno-harmonies]:disabled+span{opacity:.55}.eno-vocal-shell .eno-check.is-singer-disabled{opacity:.72;cursor:not-allowed}
 
 
-/* CURIOID v1.333 universal project content guard — additive; no UI elements are hidden or removed. */
+/* CURIOID v1.333 universal project content guard - additive; no UI elements are hidden or removed. */
 .room-window,.room-window .room-body,.room-window .room-mount,.room-window .room-mount>*{min-width:0;max-width:100%;box-sizing:border-box}
 .room-window .room-mount :is(button,input,select,textarea){min-width:0;max-width:100%;box-sizing:border-box}
 .room-window .room-mount :is(button){white-space:normal;overflow-wrap:anywhere;}
@@ -394,7 +394,7 @@ html.motion-reduced .retro-bella-panel.bella-avatar-mode .retro-bella-character 
 @media(max-width:680px){.room-window.open{max-width:calc(100vw - 12px)}.room-window.open .room-body,.room-window.open .room-mount{min-width:0;max-width:100%}.room-window.open .room-mount :is(button,input,select,textarea){max-width:100%}}
 
 
-/* CURIOID v1.333 extended layout care — wrap controls and preserve all content. */
+/* CURIOID v1.333 extended layout care - wrap controls and preserve all content. */
 .room-window .room-mount :where(label,legend,fieldset,summary,details){min-width:0;max-width:100%;overflow-wrap:anywhere}
 .room-window .room-mount :where(.actions,.toolbar,.tool-row,.control-row,.button-row,.action-row,.button-group,.control-group,.tabs,.tab-list,.nav-tabs){min-width:0;max-width:100%;flex-wrap:wrap}
 .room-window .room-mount :where(.grid,.row,.panel-grid,.card-grid,.form-grid,.workspace-grid,.split-layout,.column-layout){min-width:0;max-width:100%}

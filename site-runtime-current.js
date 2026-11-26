@@ -585,7 +585,7 @@
       }
       const CATEGORIES = [
         { id: "operating-systems", title: "Digital Worlds", kicker: "00 / INDEPENDENT DESKTOPS", description: "Six independent desktops, each with its own apps and atmosphere. Step inside one, or build a world of your own in Sandbox OS.", featured: ["dead-interface", "aether-os"], rooms: ["dead-interface", "food-alchemy", "echonoise-os", "umbra-os", "aura-synthesis", "aether-os", "sandbox-os"] },
-        { id: "strange-archives", title: "Strange Archives", kicker: "01 / THE UNUSUAL", description: "Invented histories, impossible objects and fragments from other timelines.", featured: ["museum-almost", "unbuilt-tomorrow"], rooms: ["museum-almost", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
+        { id: "strange-archives", title: "Stories", kicker: "01 / THE UNUSUAL", description: "Unusual archives, impossible objects and fragments from other timelines.", featured: ["museum-almost", "unbuilt-tomorrow"], rooms: ["museum-almost", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
         { id: "web-experiments", title: "Web Experiments", kicker: "02 / INTERACTIVE", description: "Curious machines, strange physics and interactive systems to explore.", featured: ["kineta-hyperion", "gravity-garden"], rooms: ["kineta-hyperion", "oddity-lab", "gravity-garden", "pattern-engine", "impossible-objects", "pixel-weather", "dream-index", "pendulum-choir"] },
         { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", featured: ["curioids", "one-button-ritual"], rooms: ["curioids", "pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers", "unreliable-lift", "moth-census"] },
         { id: "digital-art", title: "Digital Art", kicker: "04 / MAKE", description: "Generative images, strange compositions, motion drawings and visual worlds.", featured: ["chroma-loom", "afterimage-studio"], rooms: ["chroma-loom", "chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather", "strata-loom", "motion-residue", "negative-space"] },
@@ -1017,7 +1017,7 @@
       const storageProtectionBadge = $('[data-storage-protection-badge]', controlCenter);
       const storagePersistButton = $('[data-storage-persist-request]', controlCenter);
       const formatStorageSize = bytes => {
-        if (!Number.isFinite(bytes) || bytes < 0) return '—';
+        if (!Number.isFinite(bytes) || bytes < 0) return ' - ';
         if (bytes < 1048576) return `${(bytes / 1024).toFixed(0)} KB`;
         return `${(bytes / 1048576).toFixed(bytes >= 10 * 1048576 ? 0 : 1)} MB`;
       };
@@ -1088,8 +1088,8 @@
       const healthDownloadButton = $('[data-health-download]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = '4916aa4d6944d40135c4777d398f8ffbf0eafc2bac92fad15342d9512f17a217';
-      const HEALTH_MODULE_SRI = 'sha384-RBcmw1nl1D7Stdll5eAiDnkxZ4TKgSRIdk6gsdnYuIoxEWVbtCMQLDR+wfxKx2nQ';
+      const HEALTH_MODULE_HASH = '3c222ddb8e6c4c95b97c09261530c82e82c1c42c92c46d33e7cb5b44003fb755';
+      const HEALTH_MODULE_SRI = 'sha384-2lsl8TvWFouSt6L9grpjiubdm9BdkjdImdPUKk1iN+yLj1X5wOgwv5r0miZwmkwf';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null, healthFailureReportFilename = ''; 
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -1102,7 +1102,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.334', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.335', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1134,7 +1134,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.334','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.335','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1146,7 +1146,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.334') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.335') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1785,11 +1785,11 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "31a29489a59a423a931e82079912934a52d2e1904602cd1fbeabbc9f91c86703", integrity: "sha384-xbABRfyVDFtVY9NR4o54A6CREgJr8uk7pRa/FibqE92dGi7usOnxZOCcXRgrSbwa" },
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "bc97768da95b20e956d2b7f83ac5b7c40643871dcf58e72f6b2f0e3486e218a1", integrity: "sha384-S1subQVkKXx3yj34mEudIrv9KqOXqyItB+p1TP/K58pmrKBLfUdQDOw52iRIfrIk" },
         "strange-archives": { file: "projects-category-strange-archives.js", hash: "c436fc2d70528c6f969139ad5ca3d827395aef1161e30bdee10e58574f2ae00e", integrity: "sha384-S7VtgXxlIwB/MvfBK8s1wKKFz4wcZj716ByY8SaGeyZotHR+WyX2nLT80fvzASDi" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "4967263cee2f5b952a7c1a611ca1b1b11e2207565af328cb2bd9f6dbd7b09ea8", integrity: "sha384-nBYCUy12b3RYbCfPUZPbXAjBkbbKAvyxmnTB6w3Xvt+s9SDOq3AZvo45dKXh/orO" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "df3762fce2cf5c7fb60ebd589f91fa8e95bc217aa0aaa69482813ce0a2fca194", integrity: "sha384-4tB9kK/s8txkcPsP6bUVMUSX0OnxnKqsJXC2pRlOFLFA0mWN+FCUqgHglrrfM5F8" },
         "tiny-games": { file: "projects-category-tiny-games.js", hash: "8851ac598b44544de56eaf4d6984b88d5d0a4c0b16c8afe94c5d9389ccee18b1", integrity: "sha384-fKEY31QHjCr4hIF7n8u1W5W4pQe8zVH9wTCRqePPHUrMm6ADedcBiTdyr2pCFW9I" },
-        "digital-art": { file: "projects-category-digital-art.js", hash: "e3f715aefbcf029ddcb08c2c93969a39e2c60ae01e1b27d524cd64428ad15538", integrity: "sha384-Cajq27fiJwnZUbCCCuWY5HWkCP/mJLLRO/Mc/WDjlkultWyWQlQbw5PAGQ3W4Gbc" },
+        "digital-art": { file: "projects-category-digital-art.js", hash: "402f924741e5d6a62194e24f205498057c5969aed4dd494461d31cdf8fa99304", integrity: "sha384-8BtI2wDm5ELZiGUJYSMTaQqsLPYBhQR7d5qUFsElSdkF6RikNW0UPquyIndonDV1" },
         "sound-motion": { file: "projects-category-sound-motion.js", hash: "129173b387660f7bd81847c172d0ca34989bca88fe7d2504a618107e4b3a8e7a", integrity: "sha384-w3xqqnLJspWIPmZVWGABmMd/pPm4a8ge6VqlORZ7j4disKRVOQ+OsXLGRRyGIxQ0" },
         "creative-tools": { file: "projects-category-creative-tools.js", hash: "0843d957f364080ccc9330219d8b00f2bcc95e8c00844b68b57e4b4936e2270b", integrity: "sha384-XJiTZVgM/+o8j1bTcwG2nzaUNvMUECcQfw6X5+U09F4+M19xm40yNeB0Ad5Wtt1z" }
       });
@@ -1926,8 +1926,8 @@
         };
 
         const PROJECT_STYLES_FILE = "projects-styles.css";
-        const PROJECT_STYLES_SHA256 = "4d30563c63090405a52e2d5e54bf10447de386f7dcfd2007a29814674c94767d";
-        const PROJECT_STYLES_SRI = "sha384-7PCB00nPrGfGA/RkdAvzoGZHWFlbvAdfIotbfPxo/9SMUJd6ycnvyRP2TpA5Ctwp";
+        const PROJECT_STYLES_SHA256 = "bc8ac7707980d58095a6aa4c45c106da06ac0809a568b57ece16ab74b96b8cfe";
+        const PROJECT_STYLES_SRI = "sha384-PvLz6wAxj0cos2Wio/e/9NhRUKLwtMqFvyucaHl8mfemwqt5uZLmVXXASwqwtUfZ";
         const loadProjectCss = ({ retry = false } = {}) => {
           if (document.querySelector('[data-curioid-project-css][data-loaded="true"]')) {
             projectCssError = null;
@@ -2005,7 +2005,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "ec883c4a574ab72df936574d62860d96369f4a5013684c95bc2bfbb2d8a52dd0", integrity: "sha384-B05LWfF6HKMOQRMn2wZfVM4qSz+R0ndXv5gbK05spCXhkCspBKX3IiI4zLjAtrR7",
+            file: "projects-core.js", hash: "e1c173133987e4ed8ec4bd0f9b81d92b09baf3409af68e407159e8705ce8995e", integrity: "sha384-09IkoIOPFZpAs6KJDaSvcZNjt+Qaj5pUQ4TmmyRZev9TeQtJS9SCnrSAm/RInGCN",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -2081,7 +2081,7 @@
           // Refresh the registration metadata without activating a waiting worker.
           // This ensures the current release can receive the diagnostic pre-cache
           // command even when the site was opened before its update finished.
-          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.334", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
+          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.335", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
           await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Service-worker update check timed out")), Math.min(timeoutMs,15000)))]);
         } catch (error) {
           try { registration = await serviceWorker.getRegistration(serviceRoot.href); } catch (_) {}
@@ -2090,7 +2090,7 @@
         const isCurrent = worker => {
           try {
             const url = new URL(worker?.scriptURL || "");
-            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.334";
+            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.335";
           } catch (_) { return false; }
         };
         if (!isCurrent(registration?.waiting) && isCurrent(registration?.installing)) {
@@ -2107,7 +2107,7 @@
           try { registration = await serviceWorker.getRegistration(serviceRoot.href) || registration; } catch (_) {}
         }
         const worker = isCurrent(registration?.waiting) ? registration.waiting : isCurrent(registration?.active) ? registration.active : null;
-        if (!worker) return { available:false, reason:"No current v1.334 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
+        if (!worker) return { available:false, reason:"No current v1.335 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
         const send = (command, limit) => new Promise((resolve, reject) => {
           const channel = new MessageChannel();
           let settled = false;
@@ -2122,7 +2122,7 @@
           const timer = setTimeout(() => finish(new Error(`${command} timed out`)), limit);
           channel.port1.onmessage = event => finish(null, event.data || { ok:false, reason:"Worker returned an empty response." });
           channel.port1.onmessageerror = () => finish(new Error(`${command} response could not be decoded`));
-          try { worker.postMessage({ type:command, release:"v1.334" }, [channel.port2]); }
+          try { worker.postMessage({ type:command, release:"v1.335" }, [channel.port2]); }
           catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
         });
         if (worker === registration?.active && !serviceWorker.controller) {
@@ -2197,8 +2197,8 @@
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "ec883c4a574ab72df936574d62860d96369f4a5013684c95bc2bfbb2d8a52dd0", as: "script" },
-        { file: "projects-styles.css", hash: "4d30563c63090405a52e2d5e54bf10447de386f7dcfd2007a29814674c94767d", as: "style" }
+        { file: "projects-core.js", hash: "e1c173133987e4ed8ec4bd0f9b81d92b09baf3409af68e407159e8705ce8995e", as: "script" },
+        { file: "projects-styles.css", hash: "bc8ac7707980d58095a6aa4c45c106da06ac0809a568b57ece16ab74b96b8cfe", as: "style" }
       ]);
       let projectPrefetchScheduled = false;
       const projectPrefetchHints = new Set();
@@ -2646,6 +2646,8 @@
         const host = $("#categorySections");
         const discovery = $("#discoveryChoices");
         const label = $("#catalogLabel");
+        const categoriesButton = $("#returnToCategories");
+        if (categoriesButton) categoriesButton.hidden = mode !== "category";
         host.hidden = home;
         discovery.hidden = !home;
         label.hidden = home;
@@ -2673,7 +2675,9 @@
         } else if (mode === "category") {
           setActiveCategory(categoryId);
           const category = CATEGORIES.find(item => item.id === categoryId);
-          if ($('#catalogTitle')) $('#catalogTitle').textContent = category?.title || 'Projects';
+          const discoveryChoice = Array.from(document.querySelectorAll('[data-browse-category]')).find(button => button.dataset.browseCategory === categoryId);
+          const pathLabel = discoveryChoice?.querySelector('.discovery-title')?.textContent?.trim();
+          if ($('#catalogTitle')) $('#catalogTitle').textContent = pathLabel || category?.title || 'Projects';
           if ($('#catalogHint')) $('#catalogHint').textContent = `${category?.featured?.length || 0} FEATURED · ${category?.rooms?.length || 0} PROJECTS`;
         } else if (searching) {
           setActiveCategory(null);
@@ -2691,7 +2695,8 @@
           button.setAttribute("aria-pressed", String(selected));
         });
         if (options.scroll && !home) {
-          const target = mode === "category" ? CATEGORY_SECTION_BY_ID.get(categoryId) : host;
+          // Keep the category return control visible at the top of the selected collection.
+          const target = mode === "category" ? label : host;
           requestAnimationFrame(() => target?.scrollIntoView({ behavior: scrollBehavior(), block: "start" }));
         }
       }
@@ -2707,6 +2712,8 @@
         if (!['sound-motion', 'creative-tools'].includes(categoryId)) scheduleSharedRuntimePrefetch(categoryId);
       }
       function showAllProjects(options = {}) {
+        const browseDisclosure = $('#browseCollections');
+        if (browseDisclosure) browseDisclosure.open = true;
         if (projectSearch?.value) projectSearch.value = "";
         if (clearProjectSearch) clearProjectSearch.hidden = true;
         searchResultsStatus.hidden = true;
@@ -2750,6 +2757,7 @@
         const choice = event.target.closest("[data-browse-category]");
         if (choice) showCategory(choice.dataset.browseCategory);
       });
+      $("#returnToCategories").addEventListener("click", () => showDiscoveryHome());
       $("#brandHome").addEventListener("click", event => {
         event.preventDefault();
         showDiscoveryHome();
@@ -3423,7 +3431,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.334", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.335", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {

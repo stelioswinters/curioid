@@ -1,7 +1,7 @@
-/* CURIOID v1.334 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.335 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.334';
+  const EXPECTED_RELEASE = 'v1.335';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -173,7 +173,7 @@
     const known = {
       'health-check.js':'Health Check module', 'vanta-deck-app.js':'VANTA DECK app script', 'glitchyard-app.js':'GLITCHYARD app script', 'dark-looper-app.js':'D4RK L00PER app script', 'chroma-loom.html':'Chroma Loom standalone app', 'projects-core.js':'Shared project core',
       'projects-styles.css':'Project stylesheet source', 'projects-category-operating-systems.js':'Operating Systems category bundle',
-      'projects-category-strange-archives.js':'Strange Archives category bundle', 'projects-category-web-experiments.js':'Web Experiments category bundle',
+      'projects-category-strange-archives.js':'Stories category bundle', 'projects-category-web-experiments.js':'Web Experiments category bundle',
       'projects-category-tiny-games.js':'Tiny Games category bundle', 'projects-category-digital-art.js':'Digital Art category bundle',
       'projects-category-sound-motion.js':'Sound Motion category bundle', 'projects-category-creative-tools.js':'Creative Tools category bundle',
       'music-audio-apps.html':'Music & Audio apps page', 'applications-tools-apps.html':'Applications & Tools apps page',
@@ -616,7 +616,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.334',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.335',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -947,14 +947,14 @@
       const interactionProjects=interactionHistory.filter(item=>item.totalEvents>0);
       const interactionEvents=interactionHistory.reduce((sum,item)=>sum+item.totalEvents,0);
       const interactionSummary=interactionProjects.length
-        ?` Privacy-safe real-interaction observer has seen ${interactionEvents} trusted event(s) across ${interactionProjects.length} project(s): ${interactionProjects.map(item=>`${item.projectId} (${item.totalEvents})`).slice(0,12).join(', ')}. It records event types and element IDs only—never text, keys or field values.`
+        ?` Privacy-safe real-interaction observer has seen ${interactionEvents} trusted event(s) across ${interactionProjects.length} project(s): ${interactionProjects.map(item=>`${item.projectId} (${item.totalEvents})`).slice(0,12).join(', ')}. It records event types and element IDs only - never text, keys or field values.`
         :' No real project-control interaction has been observed in this tab yet; opening and using projects will populate privacy-safe counters.';
-      add('All project buttons, options & interaction wiring — read-only audit',hardIssues===0&&uiCensus.checked===uiCensus.projectCount
+      add('All project buttons, options & interaction wiring - read-only audit',hardIssues===0&&uiCensus.checked===uiCensus.projectCount
         ?{ok:true,warning:softIssues>0,detail:`${uiCensus.detail} ${softIssues?`${softIssues} accessibility/consistency item(s) are candidates for review.`:'No structural UI/security issues were detected.'} Event handlers are inspected as source contracts; destructive controls are intentionally never clicked. Dynamically generated controls are separately reported as source hints and should be verified when their project is opened.${interactionSummary}`}
         :{ok:false,detail:`${uiCensus.detail} ${hardIssues} unsafe/render issue(s) detected; inspect the per-project census stored in window.__CURIOID_HEALTH_UI_CENSUS.${interactionSummary}`});
     } catch(error) {
       window.__CURIOID_HEALTH_UI_CENSUS = null;
-      add('All project buttons, options & interaction wiring — read-only audit',{ok:false,warning:true,detail:String(error?.message||error).slice(0,240)});
+      add('All project buttons, options & interaction wiring - read-only audit',{ok:false,warning:true,detail:String(error?.message||error).slice(0,240)});
     }
     const roomCount = document.querySelectorAll('.room-window[data-room]').length;
     const osIds = ['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'];
@@ -1223,8 +1223,8 @@
       }));
       const total=standaloneAudit.reduce((acc,item)=>{for(const [key,value] of Object.entries(item.counts))acc[key]=(acc[key]||0)+value;acc.frames+=item.frames;return acc;},{frames:0});
       const hard=total.duplicateIds+total.inlineHandlers+total.javascriptUrls+total.unsafeBlankLinks;
-      add('Standalone studios and Chroma Loom — control inventory',hard?{ok:false,detail:`Static standalone documents: ${JSON.stringify(total)}. Review inline handlers, javascript URLs, duplicate IDs and unsafe external links.`}:{ok:true,detail:`Read-only DOMParser inventory across ${standaloneAudit.length} standalone documents: ${total.buttons} buttons, ${total.inputs} inputs, ${total.selects} selects, ${total.textareas} textareas, ${total.links} links and ${total.options} select options; ${total.unlabeled} naming candidates; ${total.frames} iframe(s). ${standaloneAudit.map(item=>item.file+': '+item.counts.buttons+' buttons / '+item.counts.options+' options').join('; ')}. Scripts are not executed and dynamically generated controls are covered separately by the project runtime census and SRI checks.`});
-    } catch(error) { add('Standalone studios and Chroma Loom — control inventory',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
+      add('Standalone studios and Chroma Loom - control inventory',hard?{ok:false,detail:`Static standalone documents: ${JSON.stringify(total)}. Review inline handlers, javascript URLs, duplicate IDs and unsafe external links.`}:{ok:true,detail:`Read-only DOMParser inventory across ${standaloneAudit.length} standalone documents: ${total.buttons} buttons, ${total.inputs} inputs, ${total.selects} selects, ${total.textareas} textareas, ${total.links} links and ${total.options} select options; ${total.unlabeled} naming candidates; ${total.frames} iframe(s). ${standaloneAudit.map(item=>item.file+': '+item.counts.buttons+' buttons / '+item.counts.options+' options').join('; ')}. Scripts are not executed and dynamically generated controls are covered separately by the project runtime census and SRI checks.`});
+    } catch(error) { add('Standalone studios and Chroma Loom - control inventory',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
     // Review security-sensitive DOM construction and the custom-OS sanitizer.
     // These checks verify the intended safe-output contracts without injecting
     // payloads into the live page or opening an app window.

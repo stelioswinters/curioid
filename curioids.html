@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="description" content="Curioids: a local full-body creature auto-battler and CURIOID website exploration game." />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-G84nYhCcFe3jPJoZrYr2GvAIYNp6rtdH08IDGjcXN24='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-Y6qIa7UhFfidtGe1HC+Coz5skwjPDfT/+UToQ76Xa+I='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
   <script id="curioid-frame-guard">
 (() => {
   let blocked = false;
@@ -55,7 +55,7 @@
   }
 })();
   </script>
-  <meta name="curioids-build" content="v1.334" />
+  <meta name="curioids-build" content="v1.335" />
   <title>CURIOID</title>
   <style>
     :root {
@@ -962,7 +962,7 @@
 
     <section class="panel" id="tab-world">
       <div class="site-hero">
-        <h2 style="margin-top:0;">CurioidHub — Offline Interactive World</h2>
+        <h2 style="margin-top:0;">CurioidHub - Offline Interactive World</h2>
         <p class="muted">This local practice area lets you test the arena systems. Permanent collection eggs are discovered by exploring the wider CURIOID website.</p>
         <div class="row">
           <button id="btn-feed" class="btn-primary">🍪 Feed Clicker (<span id="feed-count">0</span>/10)</button>
@@ -1095,7 +1095,7 @@
       { id: "c73", name: "Mireclamper", tier: 4, atk: 9, hp: 10, tags: ["Tech", "Guardian"], text: "Start: Deal 3 dmg to front & +2 ATK self.", ab: { when: "start", kind: "dmg_front_buff_self", val: 3 } },
       { id: "c74", name: "Venomfin", tier: 4, atk: 9, hp: 9, tags: ["Venom", "Mystic"], text: "Start: Apply 2 Poison to front & 2nd foe.", ab: { when: "start", kind: "poison_two", val: 2 } },
 
-      // Tier 1 additions (7) — strange hatchlings and field companions.
+      // Tier 1 additions (7) - strange hatchlings and field companions.
       { id: "c75", name: "Glimmergait", tier: 1, atk: 2, hp: 4, tags: ["Mystic", "Beast"], text: "Start: Give +1 HP to the ally ahead.", ab: { when: "start", kind: "buff_ahead_hp", val: 1 } },
       { id: "c76", name: "Mossmote", tier: 1, atk: 2, hp: 5, tags: ["Guardian", "Mystic"], text: "End Turn: Gain +1 HP permanently.", ab: { when: "end", kind: "self_hp_only", val: 1 } },
       { id: "c77", name: "Voltweevil", tier: 1, atk: 3, hp: 3, tags: ["Tech"], text: "Buy: Give +1 ATK to a random ally.", ab: { when: "buy", kind: "buff_atk_random_buy", val: 1 } },
@@ -1104,7 +1104,7 @@
       { id: "c80", name: "Crankle", tier: 1, atk: 2, hp: 5, tags: ["Tech", "Guardian"], text: "Start: Gain Melon perk if none.", ab: { when: "start", kind: "self_melon", val: 1 } },
       { id: "c81", name: "Pebblepup", tier: 1, atk: 3, hp: 3, tags: ["Beast"], text: "Faint: Give +1 HP to a random ally.", ab: { when: "faint", kind: "buff_hp_random", val: 1 } },
 
-      // Tier 2 additions (7) — adaptive and disruptive mid-run units.
+      // Tier 2 additions (7) - adaptive and disruptive mid-run units.
       { id: "c82", name: "Siltwhistle", tier: 2, atk: 4, hp: 5, tags: ["Mystic", "Guardian"], text: "End Turn: Give +1/+1 to the lowest-HP ally.", ab: { when: "end", kind: "buff_lowest", val: 1 } },
       { id: "c83", name: "Gasketgull", tier: 2, atk: 4, hp: 4, tags: ["Tech", "Beast"], text: "Start: Deal 2 damage to a random enemy.", ab: { when: "start", kind: "dmg_random", val: 2 } },
       { id: "c84", name: "Velcroach", tier: 2, atk: 4, hp: 5, tags: ["Tech", "Venom"], text: "Faint: Deal 2 damage to the front enemy.", ab: { when: "faint", kind: "dmg_front", val: 2 } },
@@ -1113,7 +1113,7 @@
       { id: "c87", name: "Glitchmole", tier: 2, atk: 4, hp: 5, tags: ["Tech", "Guardian"], text: "End Turn: Gain +1/+1 permanently.", ab: { when: "end", kind: "self_stats", val: 1 } },
       { id: "c88", name: "Dreadling", tier: 2, atk: 4, hp: 4, tags: ["Venom", "Mystic"], text: "Faint: Apply 2 Poison to all enemies.", ab: { when: "faint", kind: "poison_all", val: 2 } },
 
-      // Tier 3 additions (6) — unusual specialists with team-shaping abilities.
+      // Tier 3 additions (6) - unusual specialists with team-shaping abilities.
       { id: "c89", name: "Orbitshell", tier: 3, atk: 6, hp: 7, tags: ["Mystic", "Guardian"], text: "Start: Give +2 ATK to all allies.", ab: { when: "start", kind: "buff_all_atk", val: 2 } },
       { id: "c90", name: "Rattlejaw", tier: 3, atk: 7, hp: 6, tags: ["Beast", "Venom"], text: "Before Attack: Deal 2 damage to the front foe.", ab: { when: "before_atk", kind: "poke_front", val: 2 } },
       { id: "c91", name: "Cablesprout", tier: 3, atk: 6, hp: 7, tags: ["Tech", "Mystic"], text: "End Turn: Give +1/+1 to the ally ahead.", ab: { when: "end", kind: "buff_ahead", val: 1 } },
@@ -1121,7 +1121,7 @@
       { id: "c93", name: "Boulderwisp", tier: 3, atk: 6, hp: 8, tags: ["Guardian"], text: "Start: Gain +3 HP.", ab: { when: "start", kind: "self_hp", val: 3 } },
       { id: "c94", name: "Kitewretch", tier: 3, atk: 7, hp: 6, tags: ["Beast", "Mystic"], text: "Faint: Give +2/+2 to the ally behind.", ab: { when: "faint", kind: "buff_behind_both", val: 2 } },
 
-      // Tier 4 additions (6) — late-run anomalies.
+      // Tier 4 additions (6) - late-run anomalies.
       { id: "c95", name: "Nullcolossus", tier: 4, atk: 8, hp: 10, tags: ["Tech", "Guardian"], text: "Start: Give +2/+2 to all allies.", ab: { when: "start", kind: "buff_all_both", val: 2 } },
       { id: "c96", name: "Starmaw", tier: 4, atk: 9, hp: 8, tags: ["Mystic", "Venom"], text: "Faint: Apply 4 Poison to all enemies.", ab: { when: "faint", kind: "poison_all", val: 4 } },
       { id: "c97", name: "Thundertusk", tier: 4, atk: 8, hp: 11, tags: ["Beast", "Guardian"], text: "Hurt: Deal 4 damage back to the attacker.", ab: { when: "hurt", kind: "thorns", val: 4 } },
@@ -1181,44 +1181,44 @@
     }
 
     const QUESTS = [
-      { id: "q1", clue: "??? — \"Reach the bottom of the Abyssal Trench.\"", bias: 2 },
-      { id: "q2", clue: "??? — \"Feed the clicker 10 times.\"", bias: 1 },
-      { id: "q3", clue: "??? — \"Run a calculation in the Math Widget.\"", bias: 2 },
-      { id: "q4", clue: "??? — \"Type 'egg' on your keyboard.\"", bias: 3 },
-      { id: "q5", clue: "??? — \"Hover over the bottom-right radar for 3s.\"", bias: 2 },
-      { id: "q6", clue: "??? — \"Switch browser tabs and come back.\"", bias: 3 },
-      { id: "q7", clue: "??? — \"Click rapidly 6 times in 1.5s.\"", bias: 2 },
-      { id: "q8", clue: "??? — \"Toggle light/dark theme.\"", bias: 1 },
-      { id: "q9", clue: "??? — \"Stay active on the site for 35s.\"", bias: 3 },
-      { id: "q10", clue: "??? — \"Post a message in the Note Stream.\"", bias: 2 },
-      { id: "q11", clue: "??? — \"Click Ping Signal.\"", bias: 1 },
-      { id: "q12", clue: "??? — \"Unlock at least 6 mysteries.\"", bias: 4 },
-      { id: "q13", clue: "??? — \"Open the 20-Pool Builder tab.\"", bias: 2 },
-      { id: "q14", clue: "??? — \"Roll the shop or inspect the Mystery List.\"", bias: 2 },
-      { id: "q15", clue: "??? — Explore the Operating Systems district.", bias: 1, site: { kind: "category", id: "operating-systems" } },
-      { id: "q16", clue: "??? — Enter AURA and inspect its Directorate.", bias: 2, site: { kind: "project", id: "aura-synthesis" } },
-      { id: "q17", clue: "??? — Descend into UMBRA Studio.", bias: 2, site: { kind: "project", id: "umbra-os" } },
-      { id: "q18", clue: "??? — Open Aether's Cognitive Field.", bias: 3, site: { kind: "project", id: "aether-os" } },
-      { id: "q19", clue: "??? — Visit the Sandbox OS workshop.", bias: 2, site: { kind: "project", id: "sandbox-os" } },
-      { id: "q20", clue: "??? — Enter the Digital Art district.", bias: 1, site: { kind: "category", id: "digital-art" } },
-      { id: "q21", clue: "??? — Explore the Sound & Motion district.", bias: 2, site: { kind: "category", id: "sound-motion" } },
-      { id: "q22", clue: "??? — Explore the Strange Archives district.", bias: 2, site: { kind: "category", id: "strange-archives" } },
-      { id: "q23", clue: "??? — Explore the Web Experiments district.", bias: 1, site: { kind: "category", id: "web-experiments" } },
-      { id: "q24", clue: "??? — Explore the Applications & Tools district.", bias: 2, site: { kind: "category", id: "creative-tools" } },
-      { id: "q25", clue: "??? — Create or generate something in a project.", bias: 2, site: { kind: "stat", id: "creates", min: 1 } },
-      { id: "q26", clue: "??? — Save or export something from a project.", bias: 3, site: { kind: "stat", id: "exports", min: 1 } },
-      { id: "q27", clue: "??? — Search the CURIOID catalogue.", bias: 1, site: { kind: "stat", id: "searches", min: 1 } },
-      { id: "q28", clue: "??? — Touch or draw on a creative canvas.", bias: 2, site: { kind: "stat", id: "canvas", min: 1 } },
-      { id: "q29", clue: "??? — Visit six different project rooms.", bias: 3, site: { kind: "projects", min: 6 } },
-      { id: "q30", clue: "??? — Explore all seven CURIOID districts.", bias: 4, site: { kind: "categories", min: 7 } },
-      { id: "q31", clue: "??? — Submit a form in any CURIOID project.", bias: 1, site: { kind: "stat", id: "forms", min: 1 } },
-      { id: "q32", clue: "??? — Import a local file into a creative project.", bias: 3, site: { kind: "stat", id: "imports", min: 1 } },
-      { id: "q33", clue: "??? — Perform ten different project actions.", bias: 2, site: { kind: "stat", id: "actions", min: 10 } },
-      { id: "q34", clue: "??? — Visit ten different project rooms.", bias: 4, site: { kind: "projects", min: 10 } },
-      { id: "q35", clue: "??? — Explore the Tiny Games district itself.", bias: 1, site: { kind: "category", id: "tiny-games" } },
-      { id: "q36", clue: "??? — Boot the Uncatalogued Desktop in Doors98.", bias: 2, site: { kind: "project", id: "dead-interface" } },
-      { id: "q37", clue: "??? — Visit NOURISH and inspect its food laboratory.", bias: 2, site: { kind: "project", id: "food-alchemy" } },
-      { id: "q38", clue: "??? — Enter the Echonoise sound world.", bias: 3, site: { kind: "project", id: "echonoise-os" } }
+      { id: "q1", clue: "??? - \"Reach the bottom of the Abyssal Trench.\"", bias: 2 },
+      { id: "q2", clue: "??? - \"Feed the clicker 10 times.\"", bias: 1 },
+      { id: "q3", clue: "??? - \"Run a calculation in the Math Widget.\"", bias: 2 },
+      { id: "q4", clue: "??? - \"Type 'egg' on your keyboard.\"", bias: 3 },
+      { id: "q5", clue: "??? - \"Hover over the bottom-right radar for 3s.\"", bias: 2 },
+      { id: "q6", clue: "??? - \"Switch browser tabs and come back.\"", bias: 3 },
+      { id: "q7", clue: "??? - \"Click rapidly 6 times in 1.5s.\"", bias: 2 },
+      { id: "q8", clue: "??? - \"Toggle light/dark theme.\"", bias: 1 },
+      { id: "q9", clue: "??? - \"Stay active on the site for 35s.\"", bias: 3 },
+      { id: "q10", clue: "??? - \"Post a message in the Note Stream.\"", bias: 2 },
+      { id: "q11", clue: "??? - \"Click Ping Signal.\"", bias: 1 },
+      { id: "q12", clue: "??? - \"Unlock at least 6 mysteries.\"", bias: 4 },
+      { id: "q13", clue: "??? - \"Open the 20-Pool Builder tab.\"", bias: 2 },
+      { id: "q14", clue: "??? - \"Roll the shop or inspect the Mystery List.\"", bias: 2 },
+      { id: "q15", clue: "??? - Explore the Operating Systems district.", bias: 1, site: { kind: "category", id: "operating-systems" } },
+      { id: "q16", clue: "??? - Enter AURA and inspect its Directorate.", bias: 2, site: { kind: "project", id: "aura-synthesis" } },
+      { id: "q17", clue: "??? - Descend into UMBRA Studio.", bias: 2, site: { kind: "project", id: "umbra-os" } },
+      { id: "q18", clue: "??? - Open Aether's Cognitive Field.", bias: 3, site: { kind: "project", id: "aether-os" } },
+      { id: "q19", clue: "??? - Visit the Sandbox OS workshop.", bias: 2, site: { kind: "project", id: "sandbox-os" } },
+      { id: "q20", clue: "??? - Enter the Digital Art district.", bias: 1, site: { kind: "category", id: "digital-art" } },
+      { id: "q21", clue: "??? - Explore the Sound & Motion district.", bias: 2, site: { kind: "category", id: "sound-motion" } },
+      { id: "q22", clue: "??? - Explore the Stories district.", bias: 2, site: { kind: "category", id: "strange-archives" } },
+      { id: "q23", clue: "??? - Explore the Web Experiments district.", bias: 1, site: { kind: "category", id: "web-experiments" } },
+      { id: "q24", clue: "??? - Explore the Applications & Tools district.", bias: 2, site: { kind: "category", id: "creative-tools" } },
+      { id: "q25", clue: "??? - Create or generate something in a project.", bias: 2, site: { kind: "stat", id: "creates", min: 1 } },
+      { id: "q26", clue: "??? - Save or export something from a project.", bias: 3, site: { kind: "stat", id: "exports", min: 1 } },
+      { id: "q27", clue: "??? - Search the CURIOID catalogue.", bias: 1, site: { kind: "stat", id: "searches", min: 1 } },
+      { id: "q28", clue: "??? - Touch or draw on a creative canvas.", bias: 2, site: { kind: "stat", id: "canvas", min: 1 } },
+      { id: "q29", clue: "??? - Visit six different project rooms.", bias: 3, site: { kind: "projects", min: 6 } },
+      { id: "q30", clue: "??? - Explore all seven CURIOID districts.", bias: 4, site: { kind: "categories", min: 7 } },
+      { id: "q31", clue: "??? - Submit a form in any CURIOID project.", bias: 1, site: { kind: "stat", id: "forms", min: 1 } },
+      { id: "q32", clue: "??? - Import a local file into a creative project.", bias: 3, site: { kind: "stat", id: "imports", min: 1 } },
+      { id: "q33", clue: "??? - Perform ten different project actions.", bias: 2, site: { kind: "stat", id: "actions", min: 10 } },
+      { id: "q34", clue: "??? - Visit ten different project rooms.", bias: 4, site: { kind: "projects", min: 10 } },
+      { id: "q35", clue: "??? - Explore the Tiny Games district itself.", bias: 1, site: { kind: "category", id: "tiny-games" } },
+      { id: "q36", clue: "??? - Boot the Uncatalogued Desktop in Doors98.", bias: 2, site: { kind: "project", id: "dead-interface" } },
+      { id: "q37", clue: "??? - Visit NOURISH and inspect its food laboratory.", bias: 2, site: { kind: "project", id: "food-alchemy" } },
+      { id: "q38", clue: "??? - Enter the Echonoise sound world.", bias: 3, site: { kind: "project", id: "echonoise-os" } }
     ];
 
     const STORAGE_KEY = "curioids_save_v4";
@@ -2173,7 +2173,7 @@
         more.textContent = `+ ${remainder} more combat events resolved`;
         content.appendChild(more);
       }
-      const outcomeText = outcome === "win" ? "🏆 VICTORY — your team held the field" : outcome === "loss" ? "💔 DEFEAT — the enemy broke through" : "🤝 DRAW — both teams fell";
+      const outcomeText = outcome === "win" ? "🏆 VICTORY - your team held the field" : outcome === "loss" ? "💔 DEFEAT - the enemy broke through" : "🤝 DRAW - both teams fell";
       if (!skipBattleAnimation) {
         const summary = document.createElement("p");
         summary.className = "fx-caption";
@@ -2964,7 +2964,7 @@
       if (strategy) {
         const frontline = list.find(Boolean);
         const frontlineCreature = frontline ? (CREATURE_BY_ID.get(frontline.cid) || SPECIAL_CREATURES[frontline.cid]) : null;
-        const intent = frontlineCreature?.text ? ` Front intent: ${frontlineCreature.name} — ${frontlineCreature.text}` : " No frontline intent yet.";
+        const intent = frontlineCreature?.text ? ` Front intent: ${frontlineCreature.name} - ${frontlineCreature.text}` : " No frontline intent yet.";
         strategy.textContent = rareEncounter
           ? `🌠 RARE FIELD ENCOUNTER · ${rareEncounter.name} · ${rareEncounter.title}.${intent}`
           : `${personality.icon} ${personality.name} · ${personality.description}.${intent}`;
@@ -3013,7 +3013,7 @@
             <div class="unit-ability">${escapeGameText(c.text || "A summoned ally")}</div>
           `;
         } else {
-          slot.innerHTML = `<span class="muted" style="margin:auto;">—</span>`;
+          slot.innerHTML = `<span class="muted" style="margin:auto;"> - </span>`;
         }
         el.appendChild(slot);
       }

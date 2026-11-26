@@ -217,7 +217,7 @@
           perfScore -= 22;
           recs.push({
             level: 'bad',
-            title: 'Software Graphics Detected — Enable Hardware Acceleration',
+            title: 'Software Graphics Detected - Enable Hardware Acceleration',
             body: 'Enable hardware/graphics acceleration in browser settings so video, canvases, and UI render on your GPU.'
           });
         } else {
@@ -232,8 +232,8 @@
           level: webgpu.ready ? 'good' : 'warn',
           title: webgpu.ready ? 'WebGPU Compute & Graphics Ready' : 'WebGPU Not Active',
           body: webgpu.ready
-            ? webgpu.detail + ' — capable of modern browser GPU compute and shaders.'
-            : webgpu.detail + ' — standard WebGL/CPU rendering remains available.'
+            ? webgpu.detail + ' - capable of modern browser GPU compute and shaders.'
+            : webgpu.detail + ' - standard WebGL/CPU rendering remains available.'
         });
 
         if (fps < 50) {
@@ -355,13 +355,13 @@
         byId('zt-pc-summary').textContent =
           perfScore >= 85 ? 'Strong frame pacing, graphics, and browser responsiveness.' :
           perfScore >= 65 ? 'Solid baseline with a few quick tweaks available.' :
-                            'Performance bottlenecks detected — see findings below.';
+                            'Performance bottlenecks detected - see findings below.';
 
         byId('zt-sec-score').textContent = secScore + ' / 100';
         byId('zt-sec-summary').textContent =
           secScore >= 85 ? 'Secure context and cryptographic primitives verified.' :
           secScore >= 65 ? 'Baseline security active; review hardening notes below.' :
-                           'Security warnings detected — check context & crypto status.';
+                           'Security warnings detected - check context & crypto status.';
 
         byId('zt-pc-metrics').innerHTML = metrics.map(m => (
           '<div class="zt-metric">' +
@@ -416,7 +416,7 @@
           recs.push({
             level: 'good',
             title: 'Lock In One High-Value Task',
-            body: 'Readiness is strong — pick one clear outcome and run the timer without tab-hopping.'
+            body: 'Readiness is strong - pick one clear outcome and run the timer without tab-hopping.'
           });
         }
 
@@ -451,7 +451,7 @@
           },
           creative: {
             title: 'Permission for a Rough Draft',
-            body: 'Build a rough, imperfect sketch or prototype first — polish comes after momentum.'
+            body: 'Build a rough, imperfect sketch or prototype first - polish comes after momentum.'
           },
           money: {
             title: 'Spot Leaks & Pause Impulse Buys',
@@ -562,7 +562,7 @@
           if (state.remainingSec <= 0) {
             stopTimer();
             const disp = byId('zt-timer-display');
-            if (disp) disp.textContent = '00:00 — Done';
+            if (disp) disp.textContent = '00:00 - Done';
             toast('Timer complete.');
           }
         }, 1000);
@@ -681,7 +681,7 @@
         const out = byId('zt-decision-verdict');
         if (sa > sb) out.textContent = a + ' leads (' + sa + '/30 vs ' + sb + '/30)';
         else if (sb > sa) out.textContent = b + ' leads (' + sb + '/30 vs ' + sa + '/30)';
-        else out.textContent = 'Tie (' + sa + '/30) — pick lower friction';
+        else out.textContent = 'Tie (' + sa + '/30) - pick lower friction';
       }
 
       async function copyText(str) {

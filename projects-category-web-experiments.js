@@ -1286,7 +1286,7 @@ const PALETTES = [
         return () => { faceDisposed = true; stopFaceMotion(); document.removeEventListener('visibilitychange', onFaceVisibility); unsubscribeMotion(); globalMotionButton?.removeEventListener('click', toggleGlobalMotion); };
   }
 
-/* KINETA // HYPERION — CURIOID Web Experiments module. Local, self-contained 2D physics. */
+/* KINETA // HYPERION - CURIOID Web Experiments module. Local, self-contained 2D physics. */
 function kinetaMarkup() {
   const stage = `
     <style>
@@ -2205,14 +2205,14 @@ function bindKineta(root, api = {}) {
           if (point.x + point.r <= obstacle.x || point.x - point.r >= obstacle.x + obstacle.w) continue;
           const top = terrainY(obstacle.x + obstacle.w * .5) - obstacle.h;
           if (point.y + point.r > top) {
-            if (point.head) { endRun('HEAD DOWN — hurdle collision'); return; }
+            if (point.head) { endRun('HEAD DOWN - hurdle collision'); return; }
             point.y = top - point.r;
             point.px += (point.x - point.px) * .35;
           }
         } else if (bob) {
           const dx = point.x - bob.x, dy = point.y - bob.y, distance = Math.max(.001, Math.hypot(dx, dy));
           if (distance < point.r + obstacle.r) {
-            if (point.head) { endRun('HEAD DOWN — swinging hazard'); return; }
+            if (point.head) { endRun('HEAD DOWN - swinging hazard'); return; }
             const overlap = point.r + obstacle.r - distance;
             point.x += dx / distance * overlap; point.y += dy / distance * overlap;
             point.px -= dx / distance * 4;
@@ -2220,10 +2220,10 @@ function bindKineta(root, api = {}) {
         }
       }
     }
-    if (head.y + head.r > terrainY(head.x) - 1) { endRun('HEAD DOWN — the runner touched the track'); return; }
+    if (head.y + head.r > terrainY(head.x) - 1) { endRun('HEAD DOWN - the runner touched the track'); return; }
     walker.maxX = Math.max(walker.maxX, hip.x);
     runLeft = Math.max(0, runLeft - dt);
-    if (runLeft <= 0) endRun('TIME UP — distance secured');
+    if (runLeft <= 0) endRun('TIME UP - distance secured');
     const metres = Math.max(0, (walker.maxX - walker.startX) / 14);
     runRecord = Math.max(runRecord, metres);
   }

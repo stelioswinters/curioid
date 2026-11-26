@@ -7,9 +7,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="site-runtime-current.js?v=sha256-3aef8dc4a421c00ba3e5ce08ddee556fd54cfe263327af93c5746a28c5ce1b6f" as="script" integrity="sha384-ADoRJQJZt4XuomOFhMs5r4XbG9sQPuC1keeEsKxMjH2LeEDBFGHmOaIymuwCGhPx" crossorigin="anonymous" fetchpriority="high">
-  <meta name="description" content="Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.">
-  <meta name="curioid-release" content="v1.334">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-7b98431ac8a0fb450e8640f36e4adeff227ab5db41a52df739eed86c737a2701" as="script" integrity="sha384-hDslyYH1DGN9rLW+Y6m/AxHoPa/vQkOGkks+GIZnqEcIsHa4nuR57DxrP5PatiuZ" crossorigin="anonymous" fetchpriority="high">
+  <meta name="description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
+  <meta name="curioid-release" content="v1.335">
   <meta name="curioid-project-count" content="59">
   <meta name="curioid-category-count" content="7">
   <meta name="curioid-os-count" content="6">
@@ -72,11 +72,11 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
   <meta property="og:title" content="CURIOID | Browser Games, Music, Art &amp; Creative Worlds">
-  <meta property="og:description" content="Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.">
+  <meta property="og:description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
   <meta property="og:url" content="https://stelioswinters.com/curioid/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CURIOID | Browser Games, Music, Art &amp; Creative Worlds">
-  <meta name="twitter:description" content="Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.">
+  <meta name="twitter:description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
   <meta property="og:image" content="https://stelioswinters.com/curioid/social-preview.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -84,7 +84,7 @@
   <meta name="twitter:image" content="https://stelioswinters.com/curioid/social-preview.png">
   <title>CURIOID</title>
   
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CURIOID","url":"https://stelioswinters.com/curioid/","description":"Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.","creator":{"@type":"Person","name":"Stelios Winters"},"inLanguage":"en","isAccessibleForFree":true}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CURIOID","url":"https://stelioswinters.com/curioid/","description":"Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.","creator":{"@type":"Person","name":"Stelios Winters"},"inLanguage":"en","isAccessibleForFree":true}</script>
   <link rel="icon" type="image/svg+xml" href="curioid-icon.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="curioid-icon-192.png">
   <link rel="apple-touch-icon" href="curioid-icon-192.png">
@@ -188,6 +188,12 @@
     .project-search input:focus { border-color: #73704f; box-shadow: 0 0 0 3px rgba(214,255,105,.09); }
     .project-search button { position: absolute; top: 4px; right: 5px; width: 30px; height: 30px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size:21px; cursor: pointer; }
     .project-search button:hover { background: #2b2b35; color: var(--text); }
+    .sidebar-search { display:grid; gap:7px; margin:0 2px 17px; }
+    .sidebar-search>label { color:#aaa8b4; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    .sidebar-search>small { color:#777582; font-size:9px; line-height:1.45; }
+    .sidebar-search .project-search { margin:0; }
+    .sidebar-search .project-search input { padding-left:34px; }
+    .sidebar-search .discovery-search-icon { position:absolute; top:50%; left:10px; transform:translateY(-50%); color:var(--acid); font-size:19px; line-height:1; pointer-events:none; }
     .search-results-status { margin: 0 0 13px; color: var(--muted); font-size:11px; }
     .search-empty { padding: 26px; border: 1px dashed var(--line); border-radius: 13px; color: var(--muted); text-align: center; }
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -279,11 +285,8 @@
     .topbar-action[hidden] { display: none; }
     .menu-toggle { display: none; width: 39px; height: 39px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--text); cursor: pointer; }
     .page-wrap { max-width: 1380px; margin: 0 auto; }
-    .hero { padding: 43px 0 29px; }
-    .hero-kicker { display: flex; align-items: center; gap: 9px; margin: 0 0 13px; color: var(--acid); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .17em; text-transform: uppercase; }
-
-    .hero-kicker::before { content: ""; width: 23px; height: 1px; background: var(--acid); }
-    h1 { max-width: 790px; margin: 0; font-size:clamp(35px, 5vw, 59px); line-height: .99; letter-spacing: -.065em; font-weight: 820; }
+    .hero { padding: 15px 0 18px; }
+    h1 { max-width: 790px; margin: 0; font-size:clamp(25px, 2.8vw, 31px); line-height: .99; letter-spacing: -.065em; font-weight: 820; }
     .strange-word { position: relative; display: inline-flex; align-items: baseline; color: var(--acid); font-style: normal; letter-spacing: -.075em; transform: skewX(-8deg) rotate(-1.4deg); transform-origin: left center; text-shadow: 2px 0 rgba(214,255,105,.27), -2px 1px rgba(214,255,105,.16), 0 0 22px rgba(214,255,105,.12); white-space: nowrap; }
     .strange-word::before { content: attr(data-word); position: absolute; z-index: 0; color: var(--acid); opacity: .2; transform: translate(4px,-3px) skewX(17deg) scaleY(.88); clip-path: inset(0 0 46% 0); pointer-events: none; }
     .strange-word span { position: relative; z-index: 1; display: inline-block; }
@@ -294,19 +297,8 @@
     .strange-word span:nth-child(5) { transform: translateY(2px) rotate(-8deg) scaleX(.9); }
     .strange-word span:nth-child(6) { transform: translateY(-3px) rotate(7deg) scaleY(.9); }
     .strange-word span:nth-child(7) { transform: translateY(1px) rotate(-4deg) scaleX(1.08); }
-    .hero-bottom { display: flex; align-items: flex-end; justify-content: flex-start; gap: 24px; margin-top: 17px; }
-    .hero-copy { max-width: 690px; margin: 0; color: var(--muted); font-size:14px; line-height: 1.75; }
-    .hero-assurance { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:15px 0 0; color:#8f8d9a; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.13em; }
+    .hero-assurance { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:11px 0 0; color:#8f8d9a; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.13em; }
     .hero-assurance span { color:var(--acid); }
-    .discovery-search { display:grid; gap:7px; width:min(100%,640px); margin-top:24px; }
-    .discovery-search>label { color:#aaa8b4; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; text-transform:uppercase; }
-    .discovery-search>small { color:#706f7c; font-size:10px; }
-    .discovery-search .project-search { display:flex; align-items:center; gap:10px; min-width:0; min-height:48px; padding:0 12px; border:1px solid #363743; border-radius:10px; background:#171820; }
-    .discovery-search .project-search:focus-within { border-color:#626e48; box-shadow:0 0 0 3px rgba(214,255,105,.055); }
-    .discovery-search .project-search input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--text); font:12px system-ui,sans-serif; }
-    .discovery-search .project-search input::placeholder { color:#777582; }
-    .discovery-search-icon { color:var(--acid); font-size:21px; line-height:1; }
-    .discovery-search #clearProjectSearch { display:grid; place-items:center; width:27px; height:27px; border:1px solid #3e3f4a; border-radius:7px; background:#20212a; color:#dedce5; font-size:18px; cursor:pointer; }
     .discovery-section { padding:0 0 24px; }
     .discovery-section[hidden] { display:none; }
     .discovery-heading { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:0 0 15px; }
@@ -378,12 +370,14 @@
 
 
     .section-rule { height: 1px; margin: 0 0 22px; border: 0; background: var(--line); }
-    .rooms-label { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin: 0 0 10px; color: var(--dim); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .15em; text-transform: uppercase; }
+    .rooms-label { display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap: 12px 20px; margin: 0 0 10px; color: var(--dim); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .15em; text-transform: uppercase; }
     .rooms-label span:last-child { color: #686674; letter-spacing: .08em; }
 
     .rooms-label{align-items:center;}
-    .rooms-label-actions{display:flex;align-items:center;gap:9px;min-width:0;}
+    .rooms-label-actions{display:flex;align-items:center;gap:16px;min-width:0;flex-wrap:wrap;}
     .rooms-label-actions>span:first-child{color:#858390;letter-spacing:.08em;}
+    .categories-return-button { min-height:28px; margin-left:3px; padding:5px 10px; border:1px solid #41434f; border-radius:7px; background:#1b1c24; color:#d0ced8; font:800 8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; cursor:pointer; transition:border-color .16s ease,color .16s ease,background .16s ease; }
+    .categories-return-button:hover { border-color:var(--acid); background:#22251d; color:var(--acid); }
     .egg-hunt-toggle{position:relative;display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;padding:5px;border:1px solid rgba(214,255,105,.72);border-radius:8px;background:linear-gradient(145deg,#252a1d,#181a21);color:var(--acid);cursor:pointer;transition:border-color .18s,background .18s,transform .18s;}
     .egg-hunt-toggle svg{display:block;width:19px;height:19px;fill:rgba(214,255,105,.18);stroke:var(--acid);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
     .topbar .egg-hunt-toggle{width:32px;height:32px;flex:0 0 32px;padding:5px;}
@@ -418,7 +412,7 @@
     .site-control-small-action[data-health-download][aria-disabled="false"]{cursor:pointer;}
     .site-control-small-action[hidden]{display:none;}
     .site-control-preferences .status-live{font-size:9px;letter-spacing:.08em;}
-    @media(max-width:900px){.hero-kicker .menu-toggle{display:grid;place-items:center;}.hero-kicker{gap:9px;}.rooms-label{align-items:flex-start;}.rooms-label-actions{flex-shrink:0;}}
+    @media(max-width:900px){.rooms-label{align-items:flex-start;}.rooms-label-actions{flex-shrink:0;}}
     @media(max-width:560px){.rooms-label{font-size:8px;letter-spacing:.1em;}.rooms-label-actions{gap:6px;}.site-control-preferences{margin-inline:12px;}.global-volume-control{grid-template-columns:1fr 42px;}.global-volume-control>span{grid-column:1/-1;}}
 
     .category-stack { display: grid; gap: 37px; }
@@ -541,10 +535,8 @@
       .topbar-right { gap:6px;font-size:9px; }
       .motion-toggle { padding:4px 6px;font-size:9px;white-space:nowrap; }
       .status-live { display:none; }
-      .hero { padding: 31px 1px 22px; }
-      h1 { font-size:clamp(34px, 10vw, 47px); }
-      .hero-bottom { display: block; margin-top: 13px; }
-      .hero-copy { font-size:11px; }
+      .hero { padding: 12px 1px 16px; }
+      h1 { font-size:clamp(25px, 7.2vw, 32px); }
       .room-heading { flex-wrap: nowrap; }
       .room-ecosystem { align-items: flex-start; }
       .category-heading { align-items: flex-start; }
@@ -984,7 +976,17 @@
       <span><span class="brand-word">CURIOID</span><span class="brand-caption">A place for all<br><span>things curious</span></span></span>
     </a>
 
-    <details class="sidebar-browse-collections">
+    <section class="sidebar-search" aria-label="Search projects">
+      <label for="projectSearch">Looking for something?</label>
+      <div class="project-search" role="search">
+        <span class="discovery-search-icon" aria-hidden="true">⌕</span>
+        <input id="projectSearch" type="search" placeholder="Search projects, ideas or tags…" autocomplete="off" spellcheck="false" aria-keyshortcuts="/" aria-controls="categorySections" aria-describedby="projectSearchHint">
+        <button id="clearProjectSearch" type="button" aria-label="Clear project search" title="Clear search" hidden>×</button>
+      </div>
+      <small id="projectSearchHint">Try “music”, “physics”, “pixel” or “mystery”.</small>
+    </section>
+
+    <details class="sidebar-browse-collections" id="browseCollections">
       <summary><span>Browse collections</span><span class="sidebar-browse-count">7</span></summary>
       <nav class="project-nav category-nav" id="categoryNav" aria-label="Project collections">
         <button class="nav-item nav-item-all" type="button" data-browse-all aria-pressed="false">
@@ -994,7 +996,7 @@
           <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Digital Worlds</span><span class="nav-indicator"></span>
         </button>
       <button class="nav-item" type="button" data-category="strange-archives" aria-pressed="false">
-        <span class="nav-symbol" aria-hidden="true">⌑</span><span class="nav-label">Strange Archives</span><span class="nav-indicator"></span>
+        <span class="nav-symbol" aria-hidden="true">⌑</span><span class="nav-label">Stories</span><span class="nav-indicator"></span>
       </button>
       <button class="nav-item" type="button" data-category="web-experiments" aria-pressed="false">
         <span class="nav-symbol" aria-hidden="true">◉</span><span class="nav-label">Web Experiments</span><span class="nav-indicator"></span>
@@ -1041,11 +1043,11 @@
           </div>
           <div class="site-notification-list" id="notificationActivityView" role="tabpanel" aria-labelledby="notificationActivityTab" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div>
           <div class="site-notification-updates" id="notificationUpdatesView" role="tabpanel" aria-labelledby="notificationUpdatesTab" hidden>
-            <article><small>v1.334 · NOV 26, 2026</small><b>A calmer first look</b><p>Choose a direction before the full catalogue appears. The home screen stays open, simple and curious.</p></article>
-            <article><small>DISCOVERY</small><b>Featured, first</b><p>Hand-picked starting points now sit at the top of every collection.</p></article>
-            <article><small>DISCOVERY</small><b>Find things by tags</b><p>Projects now carry quick tags. Select a tag to search the whole collection.</p></article>
-            <article><small>THE WORLDS</small><b>Desktops with their own personality</b><p>The six digital worlds and Sandbox OS keep their full desktop interfaces, apps and taskbars.</p></article>
-            <article><small>NO INTERRUPTIONS</small><b>Updates on your terms</b><p>New features live here under the bell. No announcement pop-ups.</p></article>
+            <article><small>v1.335 · NOV 26, 2026</small><b>A more compact first look</b><p>The oversized introduction is gone. The tagline now leads straight into the collection buttons.</p></article>
+            <article><small>DISCOVERY</small><b>Search where you browse</b><p>Project search now lives in the sidebar, ready whenever you need it.</p></article>
+            <article><small>COLLECTIONS</small><b>Stories, not Archives</b><p>The former Archives collection is now called Stories, with its unusual archives kept front and center.</p></article>
+            <article><small>ACCESSIBILITY</small><b>One tap back to categories</b><p>Category views now include a CATEGORIES button, and All expands the sidebar collection list.</p></article>
+            <article><small>HEALTH CHECK</small><b>Integrity references corrected</b><p>The Health Check loader now uses the current module hashes and matching release metadata.</p></article>
           </div>
           <footer>Activity stays in this session. Release notes wait here until you open them.</footer>
         </section></div>
@@ -1054,21 +1056,8 @@
     </header>
     <div class="page-wrap">
       <section class="hero" aria-labelledby="heroTitle">
-        <p class="hero-kicker">A PLAYGROUND FOR THE CURIOUS</p>
         <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> <span class="results-word">results.</span></h1>
-        <div class="hero-bottom">
-          <p class="hero-copy">Play a little game, make something visual, or lose yourself in sound. Explore six independent digital worlds, curious tools and stranger experiments — then build a world of your own.</p>
-        </div>
         <p class="hero-assurance">NO DOWNLOADS <span aria-hidden="true">·</span> NO ACCOUNT <span aria-hidden="true">·</span> JUST EXPLORE</p>
-        <div class="discovery-search">
-          <label for="projectSearch">Looking for something?</label>
-          <div class="project-search" role="search">
-            <span class="discovery-search-icon" aria-hidden="true">⌕</span>
-            <input id="projectSearch" type="search" placeholder="Search projects, ideas or tags…" autocomplete="off" spellcheck="false" aria-keyshortcuts="/" aria-controls="categorySections">
-            <button id="clearProjectSearch" type="button" aria-label="Clear project search" title="Clear search" hidden>×</button>
-          </div>
-          <small>Try “music”, “physics”, “pixel” or “mystery”.</small>
-        </div>
       </section>
       <hr class="section-rule">
       <section class="discovery-section" id="discoveryChoices" aria-labelledby="discoveryTitle">
@@ -1082,17 +1071,23 @@
           <button class="discovery-card" type="button" data-browse-category="sound-motion" data-tone="listen" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">〰</span><span class="discovery-title">LISTEN</span><span class="discovery-description">Play with sound, rhythm and strange instruments.</span><span class="discovery-meta">MUSIC &amp; AUDIO <b>05</b></span></button>
           <button class="discovery-card" type="button" data-browse-category="web-experiments" data-tone="explore" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">◉</span><span class="discovery-title">EXPLORE</span><span class="discovery-description">Interactive oddities, simulations and living systems.</span><span class="discovery-meta">WEB EXPERIMENTS <b>08</b></span></button>
           <button class="discovery-card" type="button" data-browse-category="operating-systems" data-tone="worlds" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">◈</span><span class="discovery-title">WORLDS</span><span class="discovery-description">Six independent desktops with their own apps and personalities.</span><span class="discovery-meta">DIGITAL WORLDS <b>07</b></span></button>
-          <button class="discovery-card" type="button" data-browse-category="strange-archives" data-tone="archive" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">⌑</span><span class="discovery-title">ARCHIVES</span><span class="discovery-description">Unusual stories, impossible objects and lost fragments.</span><span class="discovery-meta">STRANGE ARCHIVES <b>05</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="strange-archives" data-tone="archive" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">⌑</span><span class="discovery-title">STORIES</span><span class="discovery-description">Unusual archives, impossible objects and lost fragments.</span><span class="discovery-meta">STORIES <b>05</b></span></button>
           <button class="discovery-card" type="button" data-browse-category="creative-tools" data-tone="tools" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">⌘</span><span class="discovery-title">TOOLS</span><span class="discovery-description">Clever creative utilities for making and tinkering.</span><span class="discovery-meta">CREATIVE TOOLS <b>17</b></span></button>
           <button class="discovery-card discovery-card-build" type="button" data-build-project="sandbox-os" data-tone="build"><span class="discovery-glyph" aria-hidden="true">✳</span><span class="discovery-title">BUILD</span><span class="discovery-description">Design a digital world and make it your own.</span><span class="discovery-meta">MAKE YOUR OWN WORLD <b>↗</b></span></button>
           <button class="discovery-card discovery-card-all" type="button" data-browse-all aria-pressed="false" data-tone="all"><span class="discovery-glyph" aria-hidden="true">↗</span><span class="discovery-title">ALL</span><span class="discovery-description">See every project, all seven collections, one big rabbit hole.</span><span class="discovery-meta">ALL 59 PROJECTS <b>59</b></span></button>
         </div>
       </section>
-      <div class="rooms-label" id="catalogLabel" hidden><span id="catalogTitle">All projects</span><span id="catalogHint">FEATURED FIRST · BROWSE EVERY COLLECTION</span></div>
+      <div class="rooms-label" id="catalogLabel" hidden>
+        <div class="rooms-label-actions">
+          <span id="catalogTitle">All projects</span>
+          <button class="categories-return-button" id="returnToCategories" type="button" aria-label="Return to categories" title="Choose another category" hidden>CATEGORIES</button>
+        </div>
+        <span id="catalogHint">FEATURED FIRST · BROWSE EVERY COLLECTION</span>
+      </div>
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word or tag.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections" hidden></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.334</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.335</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
     </div>
   </main>
 
@@ -1188,6 +1183,6 @@
 
 
 
-  <script src="site-runtime-current.js?v=sha256-3aef8dc4a421c00ba3e5ce08ddee556fd54cfe263327af93c5746a28c5ce1b6f" defer integrity="sha384-ADoRJQJZt4XuomOFhMs5r4XbG9sQPuC1keeEsKxMjH2LeEDBFGHmOaIymuwCGhPx" crossorigin="anonymous" data-cfasync="false"></script>
+  <script src="site-runtime-current.js?v=sha256-7b98431ac8a0fb450e8640f36e4adeff227ab5db41a52df739eed86c737a2701" defer integrity="sha384-hDslyYH1DGN9rLW+Y6m/AxHoPa/vQkOGkks+GIZnqEcIsHa4nuR57DxrP5PatiuZ" crossorigin="anonymous" data-cfasync="false"></script>
 </body>
 </html>
