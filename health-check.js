@@ -1,7 +1,7 @@
-/* CURIOID v1.324 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.325 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.324';
+  const EXPECTED_RELEASE = 'v1.325';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -613,7 +613,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.324',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.325',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -665,7 +665,7 @@
       const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid;
       const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
       const releaseAligned=publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE;
-      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.324; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
+      return {ok:releaseAligned&&runtimeSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.325; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
     }catch(error){return {ok:false,detail:String(error?.message||error).slice(0,240)}}
   }
   function safeJson(value) {
@@ -791,7 +791,7 @@
       browser:{ userAgent:navigator.userAgent, userAgentData:navigator.userAgentData?{brands:navigator.userAgentData.brands||[],mobile:!!navigator.userAgentData.mobile,platform:navigator.userAgentData.platform||null}:null, platform:navigator.platform || 'not supplied', vendor:navigator.vendor || 'not supplied', language:navigator.language || 'not supplied', languages:navigator.languages || [], screen:screenInfo, hardwareConcurrency:navigator.hardwareConcurrency || null, deviceMemory:navigator.deviceMemory || null, maxTouchPoints:navigator.maxTouchPoints||0, connection:connection ? { effectiveType:connection.effectiveType||null, downlink:connection.downlink||null, rtt:connection.rtt||null, saveData:!!connection.saveData, type:connection.type||null } : null },
       publishedSite:publishedSiteSnapshot||null,
       siteInventory:{projectCount,categoryCount,operatingSystemCount:Number(document.querySelector('meta[name="curioid-os-count"]')?.content)||6,activeWindowCount:activeWindows.length,activeWindows,categoryButtons:[...document.querySelectorAll('.category-nav [data-category]')].map(node=>String(node.dataset.category||'').slice(0,80)),loadedCategories:projects?.getLoadedCategories?.()||[]},
-      capabilities:{ fetch:typeof fetch==='function', webCrypto:!!crypto?.subtle, serviceWorker:!!navigator.serviceWorker, cacheStorage:!!window.caches, indexedDB:!!window.indexedDB, opfs:typeof navigator.storage?.getDirectory==='function', localStorage:(()=>{try{return !!window.localStorage;}catch(_){return false;}})(), sessionStorage:(()=>{try{return !!window.sessionStorage;}catch(_){return false;}})(), workers:typeof Worker==='function', sharedWorkers:typeof SharedWorker==='function', broadcastChannel:typeof BroadcastChannel==='function', webLocks:!!navigator.locks?.request, resizeObserver:typeof ResizeObserver==='function', intersectionObserver:typeof IntersectionObserver==='function', mutationObserver:typeof MutationObserver==='function', offscreenCanvas:typeof OffscreenCanvas==='function', compressionStream:typeof CompressionStream==='function', decompressionStream:typeof DecompressionStream==='function', fileSystemAccess:typeof showOpenFilePicker==='function', webShare:typeof navigator.share==='function', clipboard:!!navigator.clipboard?.writeText, webgpu:!!navigator.gpu, canvas:!!document.createElement('canvas').getContext('2d'), webgl:(()=>{try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(_){return false;}})(), webAudio:!!(window.AudioContext||window.webkitAudioContext), wasm:typeof WebAssembly==='object', webCodecs:typeof VideoDecoder==='function'||typeof AudioDecoder==='function' },
+      capabilities:{ fetch:typeof fetch==='function', webCrypto:!!crypto?.subtle, serviceWorker:!!navigator.serviceWorker, cacheStorage:!!window.caches, indexedDB:!!window.indexedDB, opfs:typeof navigator.storage?.getDirectory==='function', localStorage:(()=>{try{return !!window.localStorage;}catch(_){return false;}})(), sessionStorage:(()=>{try{return !!window.sessionStorage;}catch(_){return false;}})(), workers:typeof Worker==='function', sharedWorkers:typeof SharedWorker==='function', broadcastChannel:typeof BroadcastChannel==='function', webLocks:!!navigator.locks?.request, resizeObserver:typeof ResizeObserver==='function', intersectionObserver:typeof IntersectionObserver==='function', mutationObserver:typeof MutationObserver==='function', offscreenCanvas:typeof OffscreenCanvas==='function', compressionStream:typeof CompressionStream==='function', decompressionStream:typeof DecompressionStream==='function', fileSystemAccess:typeof showOpenFilePicker==='function', fileSavePicker:typeof showSaveFilePicker==='function', webShare:typeof navigator.share==='function', clipboard:!!navigator.clipboard?.writeText, webgpu:!!navigator.gpu, canvas:!!document.createElement('canvas').getContext('2d'), webgl:(()=>{try{const c=document.createElement('canvas');return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch(_){return false;}})(), webAudio:!!(window.AudioContext||window.webkitAudioContext), wasm:typeof WebAssembly==='object', webCodecs:typeof VideoDecoder==='function'||typeof AudioDecoder==='function' },
       runtime:{ projectCodeLoaded:!!projects, projectCount:projects?.ids?.length || projectCount || 0, osIds:projects?.ids?.filter(id=>['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'].includes(id)) || [], loadedCategories:projects?.getLoadedCategories?.()||[], activeWindows, supervisor:runtime, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null },
       serviceWorker:{ supported:!!navigator.serviceWorker, controller:navigator.serviceWorker?.controller?.scriptURL || null, registration:registration ? { scope:registration.scope, active:registration.active?.scriptURL || null, waiting:registration.waiting?.scriptURL || null, installing:registration.installing?.scriptURL || null, updateViaCache:registration.updateViaCache || null } : null },
       delivery:{ csp:document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || null, baseUri:deploymentBase.href, referrerPolicy:document.querySelector('meta[name="referrer"]')?.content || null, lastAssetFailure:window.__CURIOID_LAST_ASSET_LOAD_FAILURE || null, htmlInlineHandlerCount:Array.from(document.querySelectorAll('*')).reduce((count,node)=>count+[...node.attributes].filter(attribute=>/^on/i.test(attribute.name)).length,0), externalScriptOrigins:[...document.scripts].map(node=>{try{return new URL(node.src,location.href).origin;}catch(_){return null;}}).filter(origin=>origin&&origin!==location.origin) },
@@ -814,39 +814,66 @@
   function downloadHealthReport() {
     if (!lastHealthReport) return false;
     const lines = [
-      'CURIOID HEALTH CHECK REPORT',
-      '===========================',
-      `Generated: ${lastHealthReport.generatedAt}`,
-      `Release: ${lastHealthReport.release}`,
-      `Page: ${lastHealthReport.page.url}`,
-      '', 'SUMMARY', '-------',
+      'CURIOID HEALTH CHECK REPORT', '===========================',
+      `Generated: ${lastHealthReport.generatedAt}`, `Release: ${lastHealthReport.release}`,
+      `Page: ${lastHealthReport.page.url}`, '', 'SUMMARY', '-------',
       lastHealthReport.checks.map(row => `${row.ok ? 'PASS' : row.warning ? 'WARN' : 'FAIL'}  ${row.label}\n      ${row.detail}`).join('\n'),
       '', 'FULL TECHNICAL DETAILS', '----------------------', safeJson(lastHealthReport),
       '', 'PRIVACY', lastHealthReport.privacy
     ].join('\n');
     try {
       const blob = new Blob(['\ufeff', lines], {type:'text/plain;charset=utf-8'});
-      const objectUrl = URL.createObjectURL(blob);
-      if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} }
-      lastReportObjectUrl = objectUrl;
       const filename = `CURIOID-Health-Report-${new Date().toISOString().replace(/[:.]/g,'-')}.txt`;
-      const anchor = document.createElement('a');
-      anchor.href = objectUrl;
-      anchor.download = filename;
-      anchor.style.cssText = 'position:fixed;left:-10000px;top:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;';
-      anchor.setAttribute('aria-hidden','true');
-      anchor.tabIndex = -1;
-      document.body.appendChild(anchor);
-      try { anchor.click(); }
-      finally { anchor.remove(); }
-      // The temporary link is removed immediately; the object URL stays alive
-      // until the next report or page exit so the browser can finish saving it.
-      if (healthStatus) healthStatus.textContent = `Downloading ${filename}.`;
+      // showSaveFilePicker must be called before yielding so Chromium can associate
+      // the request with the real Diagnostic/Download button activation.
+      if (typeof window.showSaveFilePicker === 'function' && window.isSecureContext && window.top === window) {
+        let pickerPromise;
+        try { pickerPromise = window.showSaveFilePicker({suggestedName:filename,types:[{description:'CURIOID health report',accept:{'text/plain':['.txt']}}]}); }
+        catch (_) { pickerPromise = null; }
+        if (pickerPromise) {
+          if (healthStatus) healthStatus.textContent = 'Choose where to save your TXT report…';
+          pickerPromise.then(async handle => {
+            const writable = await handle.createWritable();
+            try { await writable.write(blob); await writable.close(); }
+            catch (error) { try { await writable.abort(); } catch (_) {} throw error; }
+            if (healthStatus) healthStatus.textContent = `Saved ${filename}.`;
+          }).catch(error => {
+            if (error?.name === 'AbortError') { if (healthStatus) healthStatus.textContent = 'TXT save cancelled. Press Download TXT to try again.'; return; }
+            if (healthStatus) healthStatus.textContent = `Save dialog failed (${String(error?.message||error).slice(0,100)}). Use the visible download link below.`;
+            fallbackDownload(blob,filename);
+          });
+          return true;
+        }
+      }
+      fallbackDownload(blob,filename);
       return true;
     } catch (error) {
-      if (healthStatus) healthStatus.textContent = `Could not start the TXT report download: ${String(error?.message||error).slice(0,180)}. Press the download button again or rerun diagnostics.`;
+      if (healthStatus) healthStatus.textContent = `Could not prepare the TXT report: ${String(error?.message||error).slice(0,180)}.`;
       return false;
     }
+  }
+  function fallbackDownload(blob, filename) {
+    const objectUrl = URL.createObjectURL(blob);
+    if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} }
+    lastReportObjectUrl = objectUrl;
+    let anchor = healthDownloadButton?.nextElementSibling;
+    if (!(anchor instanceof HTMLAnchorElement) || !anchor.matches('[data-health-download-fallback]')) {
+      anchor = document.createElement('a');
+      anchor.dataset.healthDownloadFallback = '';
+      anchor.className = 'health-download-fallback-link';
+      anchor.textContent = 'Download TXT report';
+      anchor.setAttribute('aria-label','Download the CURIOID health report as a text file');
+      if (healthDownloadButton?.parentElement) healthDownloadButton.insertAdjacentElement('afterend',anchor);
+      else (healthStatus?.parentElement||document.body).append(anchor);
+    }
+    anchor.href = objectUrl;
+    anchor.download = filename;
+    anchor.hidden = false;
+    anchor.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;min-height:36px;margin:6px 8px;padding:8px 12px;border:1px solid currentColor;border-radius:7px;color:inherit;text-decoration:underline;font-weight:700;cursor:pointer;';
+    // The link is visible and retained for manual activation if the browser
+    // suppresses the synthetic download. The click is still attempted now.
+    try { anchor.click(); } catch (_) {}
+    if (healthStatus) healthStatus.textContent = `Download requested: ${filename}. If no file appears, click the visible “Download TXT report” link.`;
   }
   async function runCurioidHealthCheck(runOptions = {}) {
     const diagnosticsStartedAt=performance.now();
@@ -1052,6 +1079,70 @@
     add('Static HTML/JavaScript security-sink inventory',sinkTotal===0
       ? {ok:true,detail:'No common dynamic HTML/script sink patterns, inline event handlers, or javascript: URLs were found in the HTML and JavaScript assets scanned.'}
       : {ok:false,warning:true,detail:`Static inventory across external JS and inline HTML scripts/attributes (not a vulnerability verdict): ${JSON.stringify(sinkTotals)}. Constant/template-controlled and sanitized uses may be safe; source review is needed before changing any sink.`});
+    // Verify the exact embedded app scripts that are dynamically executed by
+    // standalone pages are authorized by each page's own CSP hash list.
+    try {
+      async function auditEmbeddedCsp(path, scriptIds) {
+        const response=await healthTimeout(fetch(new URL(path, deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${path} CSP audit`);
+        if(!response.ok)throw new Error(`${path} returned HTTP ${response.status}`);
+        const source=await response.text(),doc=new DOMParser().parseFromString(source,'text/html');
+        const policy=doc.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content||'';
+        const scriptSrc=policy.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1]||'';
+        const missing=[],checked=new Set();
+        // Check every inline block, including the page bootstrap that reveals
+        // the selected app. Checking only text/plain payloads misses a blocked
+        // launcher and can incorrectly report a blank app as CSP-ready.
+        const inlineScripts=[...doc.querySelectorAll('script:not([src])')].filter(node=>{
+          const type=(node.getAttribute('type')||'').trim().toLowerCase();
+          return (node.textContent||'').trim()&&!['application/json','application/ld+json','importmap'].includes(type);
+        });
+        for(const node of inlineScripts){
+          const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(node.textContent||''));
+          const hash=`'sha256-${btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''))}'`;
+          const label=node.id||`inline script #${inlineScripts.indexOf(node)+1}`;checked.add(node.id);
+          if(!scriptSrc.includes(hash))missing.push(`${label}: CSP hash missing`);
+        }
+        for(const id of scriptIds){
+          const node=doc.getElementById(id);
+          if(!node||node.type!=='text/plain')missing.push(`${id}: missing payload`);
+          else if(!checked.has(id))missing.push(`${id}: script payload was not included in the CSP audit`);
+        }
+        return {path,missing,checked:inlineScripts.length};
+      }
+      const standaloneCsp=await Promise.all([
+        auditEmbeddedCsp('music-audio-apps.html',['studio-source-looper']),
+        auditEmbeddedCsp('applications-tools-apps.html',['studio-source-vanta','studio-source-glitchyard'])
+      ]);
+      const missing=standaloneCsp.flatMap(item=>item.missing.map(issue=>`${item.path} / ${issue}`));
+      add('Standalone studio CSP boot contracts',missing.length?{ok:false,detail:missing.join('; ')}:{ok:true,detail:'All inline launcher scripts and the Looper, Vanta Deck and Glitchyard embedded payloads have exact SHA-256 authorizations in their standalone page CSPs. No unsafe-inline or unsafe-eval exception is used.'});
+    } catch(error) { add('Standalone studio CSP boot contracts',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
+    // A native OS can hide the general app layer. Open catalogue rooms must be
+    // restored to the catalogue DOM while the OS is active, never left inside
+    // that hidden layer.
+    try {
+      const osIds=new Set(['dead-interface','food-alchemy','echonoise-os','umbra-os','aura-synthesis','aether-os','sandbox-os']);
+      const nativeOsOpen=[...document.querySelectorAll('.room-window.open[data-room]')].some(room=>osIds.has(room.dataset.room));
+      const layer=document.getElementById('curioid-app-layer');
+      const openApps=[...document.querySelectorAll('.room-window.open[data-room]')].filter(room=>!osIds.has(room.dataset.room));
+      const stranded=openApps.filter(room=>room.parentElement===layer&&nativeOsOpen);
+      const layerMismatch=openApps.filter(room=>!nativeOsOpen&&room.parentElement!==layer);
+      const ok=!stranded.length&&!layerMismatch.length&&(!nativeOsOpen||layer?.hidden===true);
+      add('Catalogue app portal and OS coexistence',ok?{ok:true,detail:`${openApps.length} open non-OS app(s); native OS open: ${nativeOsOpen}; no app is stranded in a hidden portal layer.`}:{ok:false,detail:`${stranded.length} app(s) remain in the hidden portal while a native OS is open; ${layerMismatch.length} open app(s) are outside the visible portal when no native OS is open.`});
+    } catch(error) { add('Catalogue app portal and OS coexistence',{ok:false,detail:String(error?.message||error).slice(0,180)}); }
+    // Confirm that the Sandbox frame bootstrap source hash is aligned with the
+    // parent CSP and that the source contract still reports precise boot stages.
+    try {
+      const response=await healthTimeout(fetch(new URL('projects-core.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'Sandbox bootstrap source audit');
+      if(!response.ok)throw new Error(`projects-core.js returned HTTP ${response.status}`);
+      const source=await response.text(),match=source.match(/frameScript=`([\s\S]*?)`;if\(!globalThis\.crypto/);
+      if(!match)throw new Error('The isolated Sandbox frame bootstrap source could not be located.');
+      const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(match[1]));
+      const hash=`'sha256-${btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''))}'`;
+      const csp=document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content||'';
+      const authorised=(csp.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1]||'').includes(hash);
+      const contracts=['curioid-frame-token','securitypolicyviolation','boot-stage','worker-src blob:','payload-script-appended'].every(token=>source.includes(token));
+      add('Sandbox isolated-frame bootstrap contract',authorised&&contracts&&/frame-src[^;]*blob:/i.test(csp)?{ok:true,detail:'The isolated Sandbox launcher SHA-256 is authorized by the parent CSP; Blob script execution is explicitly scoped; frame token, CSP error and startup-stage reporting are present.'}:{ok:false,detail:`Parent CSP hash ${authorised?'matches':'does not match'}; frame diagnostics contract ${contracts?'present':'incomplete'}; Blob frame source ${/frame-src[^;]*blob:/i.test(csp)?'allowed':'not allowed'}.`});
+    } catch(error) { add('Sandbox isolated-frame bootstrap contract',{ok:false,detail:String(error?.message||error).slice(0,220)}); }
     const coreAssetMeta = assetMeta.find(item=>item.file==='projects-core.js');
     const runtimeCoreHash = siteRuntimeSource.match(/file:\s*["']projects-core\.js["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1] || '';
     const runtimeCoreSri = siteRuntimeSource.match(/file:\s*["']projects-core\.js["'][^}]*integrity:\s*["'](sha384-[^"']+)["']/)?.[1] || '';
@@ -1165,6 +1256,26 @@
     if(skippedHeadingLevels.length) a11yIssues.push(`${skippedHeadingLevels.length} heading level jump(s)`);
     const a11yLandmarks={main:document.querySelectorAll('main,[role=main]').length,nav:document.querySelectorAll('nav,[role=navigation]').length,header:document.querySelectorAll('header,[role=banner]').length,footer:document.querySelectorAll('footer,[role=contentinfo]').length};
     add('Accessibility and document structure',a11yIssues.length?{ok:false,warning:true,detail:a11yIssues.join('; ')+`; ${headings.length} headings and landmarks ${JSON.stringify(a11yLandmarks)}.`}:{ok:true,detail:`Language/title present; ${buttons.length} buttons, ${links.length} links, ${images.length} images and ${controls.length} form controls checked; ${headings.length} headings; landmarks ${JSON.stringify(a11yLandmarks)}; no duplicate IDs or basic naming gaps found. Automated structural check only, not a full WCAG audit.`});
+    // Check same-page navigation targets without making network requests.
+    const localAnchorLinks=links.filter(node=>{try{const target=new URL(node.href,location.href);return target.origin===location.origin&&target.pathname===location.pathname&&!!target.hash&&target.hash!=='#';}catch(_){return false;}});
+    const missingAnchorTargets=localAnchorLinks.filter(node=>{try{return !document.getElementById(decodeURIComponent(new URL(node.href,location.href).hash.slice(1)));}catch(_){return true;}});
+    add('In-page navigation targets',missingAnchorTargets.length?{ok:false,warning:true,detail:`${missingAnchorTargets.length} same-page link target(s) could not be found: ${missingAnchorTargets.slice(0,8).map(node=>node.getAttribute('href')).join(', ')}.`}:{ok:true,detail:`${localAnchorLinks.length} same-page navigation link(s) checked; all referenced element IDs exist.`});
+    // Flag only measurable horizontal clipping, not normal multi-line wrapping.
+    const clippedButtons=buttons.filter(button=>{
+      if(!button.getClientRects().length||button.disabled)return false;
+      const style=getComputedStyle(button);
+      const constrained=style.overflowX==='hidden'||style.textOverflow==='ellipsis'||style.whiteSpace==='nowrap';
+      return constrained&&button.clientWidth>0&&button.scrollWidth>button.clientWidth+4;
+    });
+    add('Visible button label clipping',clippedButtons.length?{ok:false,warning:true,detail:`${clippedButtons.length} visible button(s) may clip horizontally: ${clippedButtons.slice(0,10).map(node=>(node.getAttribute('aria-label')||node.title||node.textContent||'unnamed').trim().replace(/\s+/g,' ').slice(0,48)).join(' · ')}. Resize the window or inspect the listed controls.`}:{ok:true,detail:`${buttons.length} buttons checked; no obvious horizontal label clipping detected in the current viewport. This does not replace manual visual review.`});
+    // Font readiness is useful when a layout looks broken because a web font is still pending.
+    if(document.fonts?.ready){
+      try{await healthTimeout(document.fonts.ready,5000,'document font readiness');add('Font loading readiness',document.fonts.status==='loaded'?{ok:true,detail:'The document font set reports loaded. This does not prove every requested font family exists or matches the intended design.'}:{ok:false,warning:true,detail:`Document font loading state is ${document.fonts.status}. Some text may still be using fallback fonts.`});}
+      catch(error){add('Font loading readiness',{ok:false,warning:true,detail:`Font readiness did not settle within the diagnostic window: ${String(error?.message||error).slice(0,150)}.`});}
+    }else add('Font loading readiness',{ok:false,warning:true,detail:'The CSS Font Loading API is not exposed by this browser.'});
+    // Chromium exposes an optional heap snapshot; many browsers intentionally hide it.
+    const heap=performance.memory&&Number.isFinite(performance.memory.usedJSHeapSize)?performance.memory:null;
+    add('JavaScript heap snapshot',heap?{ok:true,detail:`Used ${formatStorageSize(heap.usedJSHeapSize)} of ${formatStorageSize(heap.jsHeapSizeLimit)} reported JavaScript heap; allocated ${formatStorageSize(heap.totalJSHeapSize)}. Browser-specific snapshot, not a leak verdict.`}:{ok:false,warning:true,detail:'This browser does not expose a JavaScript heap-size estimate. No memory usage is inferred.'});
     const performanceSnapshot = collectPerformanceSnapshot();
     const navPerf = performanceSnapshot.navigation;
     add('Navigation performance',navPerf?{ok:true,detail:`Response wait ${navPerf.serverResponseWaitMs??'n/a'} ms; DOM interactive ${navPerf.domInteractiveMs??'n/a'} ms; DOMContentLoaded ${navPerf.domContentLoadedMs??'n/a'} ms; load event ${navPerf.loadEventMs??'n/a'} ms. These are this page's navigation timings.`}:{ok:false,warning:true,detail:'Navigation Timing is unavailable in this browser.'});

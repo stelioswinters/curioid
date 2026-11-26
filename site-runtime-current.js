@@ -491,7 +491,7 @@
       let curioidActiveRoomId = '';
       let curioidSavedPageScroll = 0;
       let curioidRoomStackSequence = 0;
-      function curioidOpenRooms() { return [...document.querySelectorAll('.room-window.open.curioid-fullscreen-window')].filter(room => ROOM_INFO[room.dataset.room]?.category !== 'operating-systems'); }
+      function curioidOpenRooms() { return [...document.querySelectorAll('.room-window.open[data-room]')].filter(room => ROOM_INFO[room.dataset.room]?.category !== 'operating-systems'); }
       function curioidHasNativeOperatingSystemOpen() {
         return [...document.querySelectorAll('.room-window.open[data-room]')].some(room => ROOM_INFO[room.dataset.room]?.category === 'operating-systems');
       }
@@ -511,9 +511,14 @@
       function curioidRenderAppSwitcher() {
         const rooms = curioidOpenRooms();
         const nativeOsOpen = curioidHasNativeOperatingSystemOpen();
-        // A native OS has its own Fullscreen API and window manager. Keep the
-        // generic viewport layer out of the way until that OS is closed; any
-        // other open project windows remain mounted and resume afterwards.
+        // Never strand catalogue apps in a layer hidden behind a native OS.
+        // Restore their original DOM positions while any native OS is open;
+        // portal them back only after the OS closes.
+        if (nativeOsOpen) {
+          for (const room of rooms) if (room.dataset.curioidPortalled === 'true') curioidRestoreRoom(room);
+        } else {
+          for (const room of rooms) if (room.parentElement !== curioidAppLayer) curioidPortalRoom(room);
+        }
         curioidAppLayer.hidden = rooms.length === 0 || nativeOsOpen;
         document.documentElement.classList.toggle('curioid-app-open',rooms.length>0 && !nativeOsOpen);
         document.body.classList.toggle('curioid-app-open',rooms.length>0 && !nativeOsOpen);
@@ -555,7 +560,7 @@
         if(room)curioidActivateRoom(room);
       });
       function curioidPortalRoom(room) {
-        if (!room || ROOM_INFO[room.dataset.room]?.category === 'operating-systems' || room.parentElement === curioidAppLayer) return;
+        if (!room || curioidHasNativeOperatingSystemOpen() || ROOM_INFO[room.dataset.room]?.category === 'operating-systems' || room.parentElement === curioidAppLayer) return;
         if (!room._curioidPortalOrigin) room._curioidPortalOrigin={parent:room.parentNode,next:room.nextSibling};
         if (!document.body.classList.contains('curioid-app-open')) curioidSavedPageScroll=window.scrollY||window.pageYOffset||0;
         curioidAppLayer.appendChild(room);
@@ -1047,8 +1052,8 @@
       const healthDownloadButton = $('[data-health-download]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = '2b3627c2e114c6860adb9abc12b8242fe93e7e0d949cfe5ba620d222ff352d4d';
-      const HEALTH_MODULE_SRI = 'sha384-ia6Za0h+ehwSydgGwoFiM1fDpEW6bUjGnS5dmJSM6WAYctipmEZKwkC10AiMEa7J';
+      const HEALTH_MODULE_HASH = '60b676c102e87efea9e91f5d716f56f364ec4aad3a16161ce6ee9d75e56399aa';
+      const HEALTH_MODULE_SRI = 'sha384-8QaKWH3o5AEXGBZt+OOKq8Fc1tDej8zHDOtjMXAyNsAUzvfKIVPnmhrqOMM17ujI';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null, healthFailureReportFilename = ''; 
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -1061,7 +1066,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.324', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.325', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1093,7 +1098,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.324','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.325','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1105,7 +1110,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.324') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.325') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1669,7 +1674,7 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "03a6f28e1b6ac3d29a0dc9d8feec58180165687903c48daaf0adf3efb1438fe0", integrity: "sha384-O+0V+Lmu/RcEPjybZ+02m/LEhj/YWLSIDWEtazUR1UmktCGTBAAmXfIZUEvDC0bG" },
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "f5c56c0c2c8171c3960e918a9fa46360f4a357062338b777dc6f544b0209c35c", integrity: "sha384-cMc/OlKo+nB5mEddEbi3fQ5E5CkkExisr2rIsZaUkvIrXfhoJ4vP+feKChZRtumy" },
         "strange-archives": { file: "projects-category-strange-archives.js", hash: "daed6cdec514093867dc85c009ede32fbde1aef03ac4a80a3f17a92377302316", integrity: "sha384-YeR1Fwj0bMY3wPy3iKph54rlf17yVe3Gh6jWF1bFihmezdxbu6qzn7BGSE4TWnZ4" },
         "web-experiments": { file: "projects-category-web-experiments.js", hash: "0215bde235233ae03ab070649dea1cfbcb5a9f3089e9dca52a4300d514ccaa8e", integrity: "sha384-gjlQ60fu1KYPCgdeD8XolfLjl1zjImTZoL57zXypAeA0LVVRqBbBvzeXxyH6kI7Q" },
         "tiny-games": { file: "projects-category-tiny-games.js", hash: "39ad375e8f3b0263be2c987e59d836968fd69a4e748c379cb30e8f2c7ab8b796", integrity: "sha384-AqdgEuM9DkrAYA40dMPzd8ij/TgadeZKc+3ZNyDNoCt/PEj+41r28J8355H6xKBj" },
@@ -1878,7 +1883,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "4e46554e93824accc36c4d48cf781bcb2a6a85adc35d79017ed7c3ff045e43d0", integrity: "sha384-BKh7cwdKIzcvD5fLEFn/Vs05GmmUgQ1pQpa0x3Ln6H1oP91NlpaI4hNRAsBvSZkt",
+            file: "projects-core.js", hash: "720850c3c24fd0bfb795280482f1c591cca5c2810ac673e9e8696e05a781b07d", integrity: "sha384-UfvHbL+bk1fgRRhYoofHPn1t/MUH8BbIbpgFfTi4kx3apACEW90F+JFaxONTqjx3",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -1954,7 +1959,7 @@
           // Refresh the registration metadata without activating a waiting worker.
           // This ensures the current release can receive the diagnostic pre-cache
           // command even when the site was opened before its update finished.
-          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.324", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
+          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.325", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
           await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Service-worker update check timed out")), Math.min(timeoutMs,15000)))]);
         } catch (error) {
           try { registration = await serviceWorker.getRegistration(serviceRoot.href); } catch (_) {}
@@ -1963,7 +1968,7 @@
         const isCurrent = worker => {
           try {
             const url = new URL(worker?.scriptURL || "");
-            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.324";
+            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.325";
           } catch (_) { return false; }
         };
         if (!isCurrent(registration?.waiting) && isCurrent(registration?.installing)) {
@@ -1980,7 +1985,7 @@
           try { registration = await serviceWorker.getRegistration(serviceRoot.href) || registration; } catch (_) {}
         }
         const worker = isCurrent(registration?.waiting) ? registration.waiting : isCurrent(registration?.active) ? registration.active : null;
-        if (!worker) return { available:false, reason:"No current v1.324 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
+        if (!worker) return { available:false, reason:"No current v1.325 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
         const send = (command, limit) => new Promise((resolve, reject) => {
           const channel = new MessageChannel();
           let settled = false;
@@ -1995,7 +2000,7 @@
           const timer = setTimeout(() => finish(new Error(`${command} timed out`)), limit);
           channel.port1.onmessage = event => finish(null, event.data || { ok:false, reason:"Worker returned an empty response." });
           channel.port1.onmessageerror = () => finish(new Error(`${command} response could not be decoded`));
-          try { worker.postMessage({ type:command, release:"v1.324" }, [channel.port2]); }
+          try { worker.postMessage({ type:command, release:"v1.325" }, [channel.port2]); }
           catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
         });
         if (worker === registration?.active && !serviceWorker.controller) {
@@ -3174,7 +3179,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.324", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.325", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {

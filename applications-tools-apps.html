@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10131a">
 <meta name="robots" content="noindex,nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-fyhkrkU8bnpVxZvY1usGYdNaqgGZvwfFlGP8b4mQcG0=' 'sha256-Q/yfAHxq7fzztjzSVzddqEJRL5+LfiX45ID7EWCFPpk=' 'sha256-gLJEb4Bfw9o6m8Eb3nkcQLuvCf5Owo0FO3OYDz4clt8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-fyhkrkU8bnpVxZvY1usGYdNaqgGZvwfFlGP8b4mQcG0=' 'sha256-Q/yfAHxq7fzztjzSVzddqEJRL5+LfiX45ID7EWCFPpk=' 'sha256-gLJEb4Bfw9o6m8Eb3nkcQLuvCf5Owo0FO3OYDz4clt8=' 'sha256-qmrK/0Ru/3YSHLBVTQ6uQrB21lceqyFIU3UpsR6wbsk=' 'sha256-LsuwGyHhgjzu2RyVIwVD5rP8XYwcW45b3sV03Q1MPPg='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <title>CURIOID</title>
 <style>
 :root {
@@ -1902,7 +1902,7 @@ ${url.href}\n\nProtocol: ${url.protocol}\nHostname: ${url.hostname||'—'}\nPort
   }
 
   function mountGlitchyard(host,api={}){if(!host)return()=>{};host.innerHTML=glitchyardMarkup();return bindGlitchyard(host,api);}
-  window.CurioidGlitchyard = Object.freeze({ version:'v1.324', toolCount:GLITCHYARD_TOOLS.length, markup:glitchyardMarkup, bind:bindGlitchyard, mount:mountGlitchyard });
+  window.CurioidGlitchyard = Object.freeze({ version:'v1.325', toolCount:GLITCHYARD_TOOLS.length, markup:glitchyardMarkup, bind:bindGlitchyard, mount:mountGlitchyard });
 })();
 </script>
 <script>

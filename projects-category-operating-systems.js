@@ -4680,7 +4680,7 @@ function bindFoodFoundry(root){
       }catch(error){iconLayoutReadOnly=true;iconLayout={mode:'structured',positions:{},itemPositions:{}};iconLayoutPersistedState={mode:'structured',positions:{},itemPositions:{}};setFeedback(`Saved desktop icon preferences need recovery: ${error.message} The original bytes were left untouched and layout editing is disabled.`);}
     }
     function saveFoodIconLayout(){
-      if(iconLayoutReadOnly){iconLayout=JSON.parse(JSON.stringify(iconLayoutPersistedState));setFeedback('Desktop icon preferences are in read-only recovery mode. The original saved layout was not changed.');return false;}
+      if(iconLayoutReadOnly){setFeedback('Session-only layout mode: you can arrange this desktop until NOURISH closes. The protected saved layout remains unchanged.');return true;}
       const previousState=JSON.parse(JSON.stringify(iconLayoutPersistedState));let previousRaw;
       try{previousRaw=localStorage.getItem(ICON_LAYOUT_KEY);}catch(error){iconLayoutReadOnly=true;iconLayout=previousState;setFeedback(`Desktop icon preferences could not be inspected (${error?.message||'storage unavailable'}). No changes were made.`);const control=$f('[data-food-icon-mode]');if(control)control.disabled=true;return false;}
       if(previousRaw!==iconLayoutRawSnapshot){iconLayoutReadOnly=true;iconLayout=previousState;setFeedback('Desktop icon preferences changed in another tab. Reload NOURISH before editing this layout.');const control=$f('[data-food-icon-mode]');if(control)control.disabled=true;return false;}
@@ -4720,8 +4720,8 @@ function bindFoodFoundry(root){
       host.hidden=!free;
       toggle.setAttribute('aria-pressed',String(free));
       toggle.textContent=free?'STRUCTURED':'FREE MOVE';
-      toggle.disabled=iconLayoutReadOnly;
-      toggle.title=iconLayoutReadOnly?'Desktop layout editing is disabled until the original saved preferences can be recovered.':free?'Return to the structured desktop layout.':'Freely arrange application shortcuts and every ingredient or discovery on the desktop.';
+      toggle.disabled=false;
+      toggle.title=iconLayoutReadOnly?'Session-only free movement. Storage is protected; changes will not be saved.':free?'Return to the structured desktop layout.':'Freely arrange application shortcuts and every ingredient or discovery on the desktop.';
       if(!free){host.replaceChildren();renderFoodFreeItems();return;}
       host.replaceChildren();
       const compact=host.clientWidth<540;
@@ -7868,19 +7868,22 @@ function bindAuraSynthesis(root, api = {}) {
     const q = s => $(s,root), qa = s => $$(s,root);
     const notice = q('[data-aura-notice]');
     const startWrap = q('.aura-start-details');
+    if(startWrap && getComputedStyle(startWrap).position==='static')startWrap.style.position='relative';
     const startMenu = q('[data-aura-start-menu]');
     const startButton = q('[data-aura-start]');
     let startMenuPositionFrame = 0;
     function positionStartMenu(){
-      if(!startMenu||startMenu.hidden||!startButton||!root.isConnected)return;
-      const anchor=startButton.getBoundingClientRect(),vw=Math.max(240,window.innerWidth||document.documentElement.clientWidth||360),vh=Math.max(240,window.innerHeight||document.documentElement.clientHeight||600);
-      const width=Math.min(390,Math.max(220,vw-24)),left=clamp(anchor.left,12,Math.max(12,vw-width-12));
-      const availableAbove=Math.max(120,anchor.top-18),availableBelow=Math.max(120,vh-anchor.bottom-18);
-      const placeAbove=availableAbove>=Math.min(260,availableBelow)||availableAbove>=availableBelow;
-      const maxHeight=Math.min(560,Math.max(120,placeAbove?availableAbove:availableBelow),Math.max(120,vh-24));
-      startMenu.style.position='fixed';startMenu.style.left=`${left}px`;startMenu.style.width=`${width}px`;startMenu.style.maxHeight=`${maxHeight}px`;
-      if(placeAbove){startMenu.style.top='auto';startMenu.style.bottom=`${Math.max(12,vh-anchor.top+8)}px`;}
-      else{startMenu.style.bottom='auto';startMenu.style.top=`${Math.min(vh-maxHeight-12,anchor.bottom+8)}px`;}
+      if(!startMenu||startMenu.hidden||!startButton||!startWrap||!root.isConnected)return;
+      const anchor=startButton.getBoundingClientRect(),rootRect=root.getBoundingClientRect();
+      const scaleY=root.offsetHeight?rootRect.height/root.offsetHeight:1;
+      const availableAbove=Math.max(100,(anchor.top-rootRect.top)/(scaleY||1)-16);
+      const availableBelow=Math.max(100,(rootRect.bottom-anchor.bottom)/(scaleY||1)-16);
+      const placeAbove=availableAbove>=Math.min(240,availableBelow)||availableAbove>=availableBelow;
+      const maxHeight=Math.max(100,Math.min(560,placeAbove?availableAbove:availableBelow));
+      startMenu.style.position='absolute';startMenu.style.left='0px';startMenu.style.right='auto';
+      startMenu.style.width='min(390px, calc(100vw - 24px))';startMenu.style.maxWidth='calc(100vw - 24px)';startMenu.style.maxHeight=`${maxHeight}px`;
+      if(placeAbove){startMenu.style.top='auto';startMenu.style.bottom='calc(100% + 8px)';}
+      else{startMenu.style.bottom='auto';startMenu.style.top='calc(100% + 8px)';}
     }
     function scheduleStartMenuPosition(){cancelAnimationFrame(startMenuPositionFrame);startMenuPositionFrame=requestAnimationFrame(positionStartMenu);}
     function setStartMenuOpen(open) {
@@ -7889,7 +7892,7 @@ function bindAuraSynthesis(root, api = {}) {
       if (startButton) { startButton.setAttribute('aria-expanded', String(next)); startButton.setAttribute('aria-label', next ? 'Close AURA application launcher' : 'Open AURA application launcher'); }
       startWrap?.classList.toggle('is-open', next);
       if(next)scheduleStartMenuPosition();
-      else if(startMenu){startMenu.style.removeProperty('position');startMenu.style.removeProperty('left');startMenu.style.removeProperty('top');startMenu.style.removeProperty('bottom');startMenu.style.removeProperty('width');startMenu.style.removeProperty('max-height');}
+      else if(startMenu){startMenu.style.removeProperty('position');startMenu.style.removeProperty('left');startMenu.style.removeProperty('right');startMenu.style.removeProperty('top');startMenu.style.removeProperty('bottom');startMenu.style.removeProperty('width');startMenu.style.removeProperty('max-width');startMenu.style.removeProperty('max-height');}
       return next;
     }
     const onStartButtonClick = event => { event.preventDefault(); event.stopPropagation(); setStartMenuOpen(startMenu?.hidden !== false); };
