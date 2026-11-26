@@ -7,9 +7,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="site-runtime-current.js?v=sha256-c1ea49e036c10389be0dc6140a270d404d1fcdeacaa03a8147a373665e440191" as="script" integrity="sha384-OhtbymauLuDKKx+kkWFcen+1CzD6Ot7rEMs9PA5p8Hmh1+StWvFdA5vYzTDRowT1" crossorigin="anonymous" fetchpriority="high">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-72771063e77bb62ba6e68aa1c01e3a9b686d6bcd9ef4ec9e08fcb6186cc04689" as="script" integrity="sha384-g71cworYgzdKU8caXQn/yrq+9g/X3n7g0QnJGok6LPspGHWfwRBIf9c+L7T/bgL1" crossorigin="anonymous" fetchpriority="high">
   <meta name="description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
-  <meta name="curioid-release" content="v1.343">
+  <meta name="curioid-release" content="v1.344">
   <meta name="curioid-project-count" content="59">
   <meta name="curioid-category-count" content="7">
   <meta name="curioid-os-count" content="6">
@@ -1078,7 +1078,8 @@
           </div>
           <div class="site-notification-list" id="notificationActivityView" role="tabpanel" aria-labelledby="notificationActivityTab" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div>
           <div class="site-notification-updates" id="notificationUpdatesView" role="tabpanel" aria-labelledby="notificationUpdatesTab" hidden>
-            <article><small>v1.343 · NOV 26, 2026</small><b>More reliable audio and accessible controls</b><p>D4RK L00PER now releases short-lived audio graph nodes, preserves the browser’s actual recording format, and shuts down active recording cleanly when its window closes. Step and sound selection controls now support keyboard navigation.</p></article>
+            <article><small>v1.344 · NOV 26, 2026</small><b>Service-worker release alignment</b><p>Aligned all runtime service-worker registration, update, recovery and diagnostic message checks with v1.344. The runtime script preload, execution integrity and offline cache manifest now reference the same verified build.</p></article>
+            <article><small>v1.344 · NOV 26, 2026</small><b>More reliable audio and accessible controls</b><p>D4RK L00PER now releases short-lived audio graph nodes, preserves the browser’s actual recording format, and shuts down active recording cleanly when its window closes. Step and sound selection controls now support keyboard navigation.</p></article>
             <article><small>v1.342 · NOV 26, 2026</small><b>Whole-site health audit and responsive care</b><p>Health Check now combines live site controls, all project templates and standalone tools in one privacy-safe interaction audit. Added live overflow and host-header checks, exact-origin app-frame messages and additive small-screen text-fit guards.</p></article>
             <article><small>v1.341 · NOV 26, 2026</small><b>Hardened App SDK resource lifecycles</b><p>Fixed long-session resource accounting so released listeners, timers and registrations free capacity. Resource-limit failures now avoid leaving behind untracked timers or partially registered Connect contracts.</p></article>
             <article><small>v1.340 · NOV 26, 2026</small><b>App SDK foundation, lifecycle controls and expanded MIME support</b><p>Introduced CurioidAppSDK v1 with manifest-gated capabilities, typed contracts and automatic app resource cleanup. UMBRA now uses the SDK for Echonoise integration, and GLITCHYARD MIME lookup covers more than 1,500 file extensions. Connect Console now reports SDK sessions and tracked resources.</p></article>
@@ -1127,7 +1128,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word or tag.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections" hidden></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.343</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.344</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
     </div>
   </main>
 
@@ -1229,6 +1230,6 @@
 
 
 
-  <script src="site-runtime-current.js?v=sha256-c1ea49e036c10389be0dc6140a270d404d1fcdeacaa03a8147a373665e440191" defer integrity="sha384-OhtbymauLuDKKx+kkWFcen+1CzD6Ot7rEMs9PA5p8Hmh1+StWvFdA5vYzTDRowT1" crossorigin="anonymous" data-cfasync="false"></script>
+  <script src="site-runtime-current.js?v=sha256-72771063e77bb62ba6e68aa1c01e3a9b686d6bcd9ef4ec9e08fcb6186cc04689" defer integrity="sha384-g71cworYgzdKU8caXQn/yrq+9g/X3n7g0QnJGok6LPspGHWfwRBIf9c+L7T/bgL1" crossorigin="anonymous" data-cfasync="false"></script>
 </body>
 </html>
