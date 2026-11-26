@@ -1118,8 +1118,8 @@
       const healthDownloadButton = $('[data-health-download]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = 'a970dcf954fe555160d7f99527c8334c26fd75012cd28852360982049078a211';
-      const HEALTH_MODULE_SRI = 'sha384-xLTub60D/6RthgnGGPLev0UTZJ2EFOdJcNR4cTEGwOB2y7DNJ0/cOrmhDvlUGW45';
+      const HEALTH_MODULE_HASH = 'fcb7b789afcdd5ae344f2894cf75761ba8627d014624292b22cac389d5972f25';
+      const HEALTH_MODULE_SRI = 'sha384-gjIgXWKHCAoRn6QvG0CMzIEE7r7+EDieu+/hYRFsgTUCe6V1TTjsFU+cGtxpfdhA';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null, healthFailureReportFilename = ''; 
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
