@@ -134,6 +134,7 @@ jobs:
               || html.match(/'vanta-deck-app.js':'(sha384-[^']+)'/)?.[1];
             assert(Boolean(appSri), `${file} is missing the app script integrity value for ${scriptPath}.`);
             const actualSri = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync(scriptPath)).digest('base64');
+            console.log(scriptPath + ' computed SRI: ' + actualSri);
             assert(appSri === actualSri, `${file} app script SRI does not match ${scriptPath}.`);
           }
           assert(manifestMatch && (() => {
