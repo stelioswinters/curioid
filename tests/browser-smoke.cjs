@@ -164,7 +164,7 @@ const assert = require('node:assert/strict');
       agentPage.on('console', message => { if (message.type() === 'error') agentFailures.push(agentName + ' console: ' + message.text()); });
       agentPage.on('requestfailed', request => agentFailures.push(agentName + ' request failed: ' + request.url() + ' (' + request.failure()?.errorText + ')'));
       await agentPage.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 60000 });
-      await agentPage.locator('#browseCollections > summary').click();
+      await agentPage.locator('#browseCollections').evaluate(node => { node.open = true; });
       return { context, page: agentPage };
     };
     const openAgentRoom = async (agentPage, category, project) => {
@@ -203,6 +203,14 @@ const assert = require('node:assert/strict');
       const agent = await prepareAgent('D4RK L00PER agent', { width: 1365, height: 900 });
       try {
         const room = await openAgentRoom(agent.page, 'sound-motion', 'dark-looper');
+        const mountState = await room.evaluate(node => ({
+          loaded: node.dataset.loaded,
+          mountExists: Boolean(node.querySelector('.room-mount')),
+          mountHtml: (node.querySelector('.room-mount')?.innerHTML || '').slice(0, 2500),
+          iframeCount: node.querySelectorAll('iframe').length,
+          embeddedCount: node.querySelectorAll('[data-curioid-embedded-shell]').length
+        }));
+        console.log('D4RK L00PER room mount:', JSON.stringify(mountState));
         const iframe = room.locator('iframe[data-curioid-embedded-frame]');
         await iframe.waitFor({ state: 'attached', timeout: 30000 });
         const frameHandle = await iframe.elementHandle();
@@ -262,7 +270,8 @@ const assert = require('node:assert/strict');
         const room = await openAgentRoom(agent.page, 'operating-systems', 'echonoise-os');
         const eno = room.locator('.echonoise-os');
         await eno.waitFor({ state: 'visible' });
-        await eno.locator('.eno-desktop-icons [data-eno-launch="vocal"]').click();
+        await eno.locator('[data-eno-start-toggle]').click();
+        await eno.locator('[data-eno-start-menu] [data-eno-launch="vocal"]').click();
         const vocal = eno.locator('.eno-window[data-eno-window="vocal"]');
         await vocal.waitFor({ state: 'visible', timeout: 15000 });
         await vocal.locator('[data-eno-vocal-mode="singer"]').click();
@@ -323,7 +332,8 @@ const assert = require('node:assert/strict');
       try {
         const room = await openAgentRoom(agent.page, 'operating-systems', 'echonoise-os');
         const eno = room.locator('.echonoise-os');
-        await eno.locator('.eno-desktop-icons [data-eno-launch="vocal"]').click();
+        await eno.locator('[data-eno-start-toggle]').click();
+        await eno.locator('[data-eno-start-menu] [data-eno-launch="vocal"]').click();
         const vocal = eno.locator('.eno-window[data-eno-window="vocal"]');
         await vocal.waitFor({ state: 'visible' });
         const bounds = await vocal.evaluate(node => {
