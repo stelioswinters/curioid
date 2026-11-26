@@ -40,6 +40,51 @@ const assert = require('node:assert/strict');
 
     const unlabeledProjectControls = [];
     const windowLayoutFindings = [];
+    const buttonSweep = { clicked: 0, skipped: 0, failures: [], capped: false };
+    const sweepButtons = async (scope, sweepPage, projectLabel) => {
+      const visited = new Set();
+      for (let round = 0; round < 4; round++) {
+        const candidates = await scope.locator('button,[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"]').evaluateAll(nodes =>
+          nodes.map((node,index) => {
+            if (!node.dataset.curioidCiPressId) {
+              const seq = Number(window.__curioidCiPressSequence || 0) + 1;
+              window.__curioidCiPressSequence = seq;
+              node.dataset.curioidCiPressId = 'ci-press-' + seq;
+            }
+            const rect = node.getBoundingClientRect();
+            const style = getComputedStyle(node);
+            return {
+              id: node.dataset.curioidCiPressId,
+              label: String(node.getAttribute('aria-label') || node.innerText || node.textContent || node.title || node.getAttribute('data-action') || '').trim().replace(/\\s+/g,' ').slice(0,100),
+              visible: rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden',
+              disabled: Boolean(node.disabled || node.getAttribute('aria-disabled') === 'true'),
+              filePicker: /\\b(import|upload|browse|choose file|select file|restore file)\\b/i.test(String(node.innerText || node.getAttribute('aria-label') || ''))
+            };
+          })
+        );
+        const fresh = candidates.filter(item => item.visible && !item.disabled && !visited.has(item.id));
+        if (!fresh.length) break;
+        for (const item of fresh) {
+          visited.add(item.id);
+          if (item.filePicker) { buttonSweep.skipped++; continue; }
+          if (buttonSweep.clicked >= 2400) { buttonSweep.capped = true; break; }
+          const target = scope.locator('[data-curioid-ci-press-id="' + item.id + '"]');
+          try {
+            await target.click({ timeout: 1800, noWaitAfter: true });
+            buttonSweep.clicked++;
+            await sweepPage.waitForTimeout(25);
+          } catch (error) {
+            buttonSweep.failures.push({ project: projectLabel, button: item.label, reason: String(error?.message || error).slice(0,220) });
+          }
+        }
+        if (buttonSweep.capped) break;
+        // Close any modal opened by the button just pressed, then discover
+        // controls that were revealed by menus, tabs or dialogs.
+        await sweepPage.keyboard.press('Escape').catch(() => {});
+        await sweepPage.waitForTimeout(40);
+      }
+    };
+
     for (const { category, project } of projectsToOpen) {
       await page.locator('[data-category="' + category + '"]').click();
       await page.setViewportSize({ width: 360, height: 800 });
@@ -263,50 +308,6 @@ const assert = require('node:assert/strict');
       };
     });
 
-    const buttonSweep = { clicked: 0, skipped: 0, failures: [], capped: false };
-    const sweepButtons = async (scope, sweepPage, projectLabel) => {
-      const visited = new Set();
-      for (let round = 0; round < 4; round++) {
-        const candidates = await scope.locator('button,[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"]').evaluateAll(nodes =>
-          nodes.map((node,index) => {
-            if (!node.dataset.curioidCiPressId) {
-              const seq = Number(window.__curioidCiPressSequence || 0) + 1;
-              window.__curioidCiPressSequence = seq;
-              node.dataset.curioidCiPressId = 'ci-press-' + seq;
-            }
-            const rect = node.getBoundingClientRect();
-            const style = getComputedStyle(node);
-            return {
-              id: node.dataset.curioidCiPressId,
-              label: String(node.getAttribute('aria-label') || node.innerText || node.textContent || node.title || node.getAttribute('data-action') || '').trim().replace(/\\s+/g,' ').slice(0,100),
-              visible: rect.width > 0 && rect.height > 0 && style.display !== 'none' && style.visibility !== 'hidden',
-              disabled: Boolean(node.disabled || node.getAttribute('aria-disabled') === 'true'),
-              filePicker: /\\b(import|upload|browse|choose file|select file|restore file)\\b/i.test(String(node.innerText || node.getAttribute('aria-label') || ''))
-            };
-          })
-        );
-        const fresh = candidates.filter(item => item.visible && !item.disabled && !visited.has(item.id));
-        if (!fresh.length) break;
-        for (const item of fresh) {
-          visited.add(item.id);
-          if (item.filePicker) { buttonSweep.skipped++; continue; }
-          if (buttonSweep.clicked >= 2400) { buttonSweep.capped = true; break; }
-          const target = scope.locator('[data-curioid-ci-press-id="' + item.id + '"]');
-          try {
-            await target.click({ timeout: 1800, noWaitAfter: true });
-            buttonSweep.clicked++;
-            await sweepPage.waitForTimeout(25);
-          } catch (error) {
-            buttonSweep.failures.push({ project: projectLabel, button: item.label, reason: String(error?.message || error).slice(0,220) });
-          }
-        }
-        if (buttonSweep.capped) break;
-        // Close any modal opened by the button just pressed, then discover
-        // controls that were revealed by menus, tabs or dialogs.
-        await sweepPage.keyboard.press('Escape').catch(() => {});
-        await sweepPage.waitForTimeout(40);
-      }
-    };
 
     const runDarkLooperAgent = async () => {
       const agent = await prepareAgent('D4RK L00PER agent', { width: 1365, height: 900 });
