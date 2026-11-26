@@ -19,7 +19,7 @@ const assert = require('node:assert/strict');
     // First-visit notes are modal and intentionally block the page until acknowledged.
     const notesDialog = page.locator('#curioid-important-notes');
     if (await notesDialog.count() && await notesDialog.evaluate(node => node.open)) {
-      await notesDialog.getByRole('button', { name: /got it/i }).click();
+      await notesDialog.locator('button').last().click();
       await notesDialog.waitFor({ state: 'hidden' });
     }
 
