@@ -349,21 +349,25 @@
     
     if (loopToggle) {
       loopToggle.classList.toggle('playing', isPlaying);
+      loopToggle.setAttribute('aria-pressed', String(isPlaying));
       loopToggle.textContent = isPlaying ? 'Stop Loop' : 'Play Loop';
       loopToggle.disabled = isLiveRecording;
     }
     if (recToggle) {
       recToggle.classList.toggle('recording', isRecording);
+      recToggle.setAttribute('aria-pressed', String(isRecording));
       recToggle.textContent = isRecording ? 'Overdub: ON' : 'Overdub: OFF';
       recToggle.disabled = editMode || isLiveRecording;
     }
     if (editModeToggle) {
       editModeToggle.classList.toggle('edit-mode-active', editMode);
+      editModeToggle.setAttribute('aria-pressed', String(editMode));
       editModeToggle.textContent = editMode ? 'Edit: ON' : 'Edit: OFF';
       editModeToggle.disabled = isLiveRecording;
     }
     if (liveRecordBtn) {
       liveRecordBtn.classList.toggle('recording', isLiveRecording);
+      liveRecordBtn.setAttribute('aria-pressed', String(isLiveRecording));
       liveRecordBtn.textContent = isLiveRecording ? 'Stop Rec' : 'Live Rec';
     }
     if (mpcModeLabel) {
