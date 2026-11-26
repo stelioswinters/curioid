@@ -1,35 +1,40 @@
-/* CURIOID v1.327 offline shell. CDN-tolerant document validation; strict hashes for executable assets. */
+/* CURIOID v1.334 offline shell. CDN-tolerant document validation; strict hashes for executable assets. */
 'use strict';
-const RELEASE_ID = 'v1.327';
+const RELEASE_ID = 'v1.334';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const EXPECTED_SHA256 = Object.freeze({
-  "applications-tools-apps.html": "0d7e2401a92acd7c01bea7dfd851e9ec93b85526b4814460f4a56a3c5c4d2d2a",
+  "applications-tools-apps.html": "9ef7bfa06cfa6d4ae65bf9fc83b1ba6dfb5800adb5640630663c2c956b5658b1",
+  "chroma-loom.html": "2e20261cad01a46b28e0e075faf33287b961a390fe242949c5a05377c077b979",
   "curioid-icon-192.png": "32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887",
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
-  "curioids.html": "e1994e2b415d4ebe5d3b15fb1d4c3bfbc2c7e2c481b4fa49a50d082cee0d3301",
-  "health-check.js": "d3381757f7d4b7bd455c37b57fd9122c4d6e5a75d04de19547c94e3d5e931570",
-  "index.html": "b4808f7f92bdce19d87fd97d2a556be917ebfd7dec6b62819b6db0150857dc50",
+  "curioids.html": "b3ce77bafb63cd0ea263125842b99974af4c94bbed545dc8dfa72c5613479738",
+  "dark-looper-app.js": "cc2240fc2dd99051804782fc8291f97a69996ac19465f5c0c980a78969b96933",
+  "glitchyard-app.js": "99ba8270c53352826b9cbdb88dda362d18601d06a4bab13503873349738152a7",
+  "health-check.js": "6db03d6eb4572d563195c5bb2d24e44cc9cfb82d3af0dd257279e55567c234b8",
+  "index.html": "37bbfa7781b9881a46b0b2322e232fcf6f627adf54893db316a27def126c74e6",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
-  "music-audio-apps.html": "d64dc0df3bf08d2f10d06241b39066ad85abb38cc8fcbd2e73d9e597b8833e48",
-  "projects-category-creative-tools.js": "fdf7b5511a3bd556833f34b2802132e55ea469a537e13d7e662d7d64dfdd10b6",
-  "projects-category-digital-art.js": "03c99ab3504464e82eb109069d3256628bed80a7a81c468ee1a0569842372016",
-  "projects-category-operating-systems.js": "3ef88e0b2af064bd6de259eab384e2cd5726d03a52b47ea65942057eb0335f01",
-  "projects-category-sound-motion.js": "c621b4645b21798900ae17e9d11993d0dff729116959389bdf0d4b09ff788a6e",
-  "projects-category-strange-archives.js": "daed6cdec514093867dc85c009ede32fbde1aef03ac4a80a3f17a92377302316",
-  "projects-category-tiny-games.js": "39ad375e8f3b0263be2c987e59d836968fd69a4e748c379cb30e8f2c7ab8b796",
-  "projects-category-web-experiments.js": "0215bde235233ae03ab070649dea1cfbcb5a9f3089e9dca52a4300d514ccaa8e",
-  "projects-core.js": "84b86bcb70b7382bed3a4e94cc3b790a02366305befcbadc326e824c2f862ad6",
-  "projects-styles.txt": "694ca5863b946f565219dd76858f636858d80ba47c419aee9d0368b341515b3f",
+  "music-audio-apps.html": "e72db054a2fdc04a76ad5d8d0f7cdc6d68044542dd8ee6f74c91d457962c38ac",
+  "projects-category-creative-tools.js": "0843d957f364080ccc9330219d8b00f2bcc95e8c00844b68b57e4b4936e2270b",
+  "projects-category-digital-art.js": "e3f715aefbcf029ddcb08c2c93969a39e2c60ae01e1b27d524cd64428ad15538",
+  "projects-category-operating-systems.js": "31a29489a59a423a931e82079912934a52d2e1904602cd1fbeabbc9f91c86703",
+  "projects-category-sound-motion.js": "129173b387660f7bd81847c172d0ca34989bca88fe7d2504a618107e4b3a8e7a",
+  "projects-category-strange-archives.js": "c436fc2d70528c6f969139ad5ca3d827395aef1161e30bdee10e58574f2ae00e",
+  "projects-category-tiny-games.js": "8851ac598b44544de56eaf4d6984b88d5d0a4c0b16c8afe94c5d9389ccee18b1",
+  "projects-category-web-experiments.js": "4967263cee2f5b952a7c1a611ca1b1b11e2207565af328cb2bd9f6dbd7b09ea8",
+  "projects-core.js": "ec883c4a574ab72df936574d62860d96369f4a5013684c95bc2bfbb2d8a52dd0",
+  "projects-styles.css": "4d30563c63090405a52e2d5e54bf10447de386f7dcfd2007a29814674c94767d",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "d6a5d0c3be8b24dc638736de8fb625abdec399a3877023337660c0175eabc6a0",
-  "sitemap.xml": "6983c2451814d79ea47ff138849bda8faabd386b3379dd089445e72476836a87",
+  "site-runtime-current.js": "3aef8dc4a421c00ba3e5ce08ddee556fd54cfe263327af93c5746a28c5ce1b6f",
+  "sitemap.xml": "e2635e23146209aa3ea5c9bb84e7edabd9ecca73a18c7f3c5ade6199153bf63a",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
-  "vocal-lexicon.js": "1b5387a69ce496bc42b30b1fececb1678e2a259a029df3242535d4f41308b32a"
-});;;;
+  "vanta-deck-app.js": "5e475347154c15b5cffc32961c939e87a8fe12256dc16931ef69ac6ee3197f02",
+  "vocal-lexicon-data.json": "0a9c758a0ca06a83ca318d8bb38e8703518a5a4b705a449be45be0914bfeb5ee",
+  "vocal-lexicon.js": "7d9f5ed6e4edbf0abd4251560c757f006ba3dd8a8ee3390b302a38382c587ab6",
+});;;;;;;;
 const RUNTIME_PATH = 'site-runtime-current.js';
 const RUNTIME_HASH = EXPECTED_SHA256[RUNTIME_PATH];
 const SHELL_PATHS = [
@@ -43,12 +48,12 @@ const SHELL_PATHS = [
 const ON_DEMAND_CACHEABLE = new Set([
   'projects-core.js', 'projects-category-operating-systems.js', 'projects-category-strange-archives.js',
   'projects-category-web-experiments.js', 'projects-category-tiny-games.js', 'projects-category-digital-art.js',
-  'projects-category-sound-motion.js', 'projects-category-creative-tools.js', 'projects-styles.txt',
-  'health-check.js', 'music-audio-apps.html', 'applications-tools-apps.html', 'vocal-lexicon.js',
-  'curioids.html', 'robots.txt', 'sitemap.xml', 'social-preview.png'
+  'projects-category-sound-motion.js', 'projects-category-creative-tools.js', 'projects-styles.css',
+  'health-check.js', 'music-audio-apps.html', 'applications-tools-apps.html', 'vocal-lexicon.js', 'vocal-lexicon-data.json',
+  'curioids.html', 'robots.txt', 'sitemap.xml', 'social-preview.png', 'chroma-loom.html', 'dark-looper-app.js', 'glitchyard-app.js', 'vanta-deck-app.js'
 ]);
-const CACHEABLE_DOCUMENTS = new Set(['index.html', 'curioids.html', 'music-audio-apps.html', 'applications-tools-apps.html']);
-const STRICT_HASHED_ASSETS = new Set(Object.keys(EXPECTED_SHA256).filter(name => /\.js$/i.test(name) || name === 'projects-styles.txt'));
+const CACHEABLE_DOCUMENTS = new Set(['index.html', 'curioids.html', 'music-audio-apps.html', 'applications-tools-apps.html', 'chroma-loom.html']);
+const STRICT_HASHED_ASSETS = new Set(Object.keys(EXPECTED_SHA256).filter(name => /\.js$/i.test(name) || name === 'projects-styles.css' || name === 'vocal-lexicon-data.json'));
 const CACHEABLE = new Set([...SHELL_PATHS.map(path => relativePathFor(new URL(path, SCOPE_URL))).filter(Boolean), ...ON_DEMAND_CACHEABLE]);
 const absolute = path => new URL(path || './', SCOPE_URL).href;
 function relativePathFor(url) {
@@ -121,11 +126,12 @@ self.addEventListener('install', event => {
   })());
 });
 const DIAGNOSTIC_PRECACHE_PATHS = Object.freeze([
-  'projects-core.js', 'projects-styles.txt', 'health-check.js',
+  'projects-core.js', 'projects-styles.css', 'health-check.js',
   'projects-category-operating-systems.js', 'projects-category-strange-archives.js',
   'projects-category-web-experiments.js', 'projects-category-tiny-games.js',
   'projects-category-digital-art.js', 'projects-category-sound-motion.js',
-  'projects-category-creative-tools.js'
+  'projects-category-creative-tools.js', 'vocal-lexicon.js', 'vocal-lexicon-data.json', 'chroma-loom.html', 'dark-looper-app.js',
+  'glitchyard-app.js', 'vanta-deck-app.js'
 ]);
 function replyToMessage(event, data) {
   try { if (event.ports?.[0]) event.ports[0].postMessage(data); else event.source?.postMessage(data); } catch (_) {}
@@ -134,6 +140,14 @@ async function precacheCurrentReleaseAssets() {
   const cache = await caches.open(CACHE_NAME);
   const results = [];
   let cursor = 0;
+  // Avoid three simultaneous multi-megabyte response clones/digests on low-RAM
+  // phones. The browser still verifies every byte before it enters the cache;
+  // this only controls how many independent downloads are in flight.
+  const memoryGb = Number(self.navigator?.deviceMemory) || 0;
+  const connection = self.navigator?.connection || null;
+  const connectionType = String(connection?.effectiveType || '').toLowerCase();
+  const limitedDevice = (memoryGb > 0 && memoryGb <= 2) || connection?.saveData || ['slow-2g', '2g'].includes(connectionType);
+  const concurrency = limitedDevice ? 1 : 2;
   const worker = async () => {
     while (cursor < DIAGNOSTIC_PRECACHE_PATHS.length) {
       const file = DIAGNOSTIC_PRECACHE_PATHS[cursor++];
@@ -150,9 +164,9 @@ async function precacheCurrentReleaseAssets() {
       } catch (error) { results.push({file,ok:false,error:String(error?.message||error).slice(0,220)}); }
     }
   };
-  await Promise.all(Array.from({length:Math.min(3, DIAGNOSTIC_PRECACHE_PATHS.length)}, () => worker()));
+  await Promise.all(Array.from({length:Math.min(concurrency, DIAGNOSTIC_PRECACHE_PATHS.length)}, () => worker()));
   results.sort((a,b)=>DIAGNOSTIC_PRECACHE_PATHS.indexOf(a.file)-DIAGNOSTIC_PRECACHE_PATHS.indexOf(b.file));
-  return {type:'CURIOID_PRECACHE_RESULT',release:RELEASE_ID,ok:results.length===DIAGNOSTIC_PRECACHE_PATHS.length&&results.every(item=>item.ok),cachedCount:results.filter(item=>item.ok).length,expectedCount:DIAGNOSTIC_PRECACHE_PATHS.length,results};
+  return {type:'CURIOID_PRECACHE_RESULT',release:RELEASE_ID,ok:results.length===DIAGNOSTIC_PRECACHE_PATHS.length&&results.every(item=>item.ok),cachedCount:results.filter(item=>item.ok).length,expectedCount:DIAGNOSTIC_PRECACHE_PATHS.length,concurrency,results};
 }
 self.addEventListener('message', event => {
   const type = event.data?.type;
@@ -242,7 +256,13 @@ self.addEventListener('fetch', event => {
     if (cache) {
       try {
         const hit = await cache.match(cacheKey, {ignoreSearch: !releaseQuery});
-        if (hit?.ok && (!strict || await responseMatchesRelease(relativePath, hit))) return hit;
+        // Strict assets enter this release-scoped cache only after their bytes
+        // pass responseMatchesRelease() on the network or in the explicit
+        // integrity-checked precache action. The cache key is release-specific,
+        // and the consuming page independently enforces SRI (or Fetch integrity
+        // for the JSON lexicon). Re-hashing multi-megabyte cache hits on every
+        // navigation would waste CPU and allocate another full response buffer.
+        if (hit?.ok) return hit;
         if (hit) await cache.delete(cacheKey);
       } catch (_) {}
     }

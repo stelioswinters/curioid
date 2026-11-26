@@ -7,10 +7,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="site-runtime-current.js?v=sha256-d6a5d0c3be8b24dc638736de8fb625abdec399a3877023337660c0175eabc6a0" as="script" integrity="sha384-zBsQ+cV/NBQfDwaXVdimtSE/nXz7uJBVrP7XSr+TX9Lo4PvrtSXVCN4IeWqrbgvK" crossorigin="anonymous" fetchpriority="high">
-  <meta name="description" content="Six operating systems, Sandbox OS and 58 browser-native project windows for experiments, games, digital art, sound and creative tools.">
-  <meta name="curioid-release" content="v1.327">
-  <meta name="curioid-project-count" content="58">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-3aef8dc4a421c00ba3e5ce08ddee556fd54cfe263327af93c5746a28c5ce1b6f" as="script" integrity="sha384-ADoRJQJZt4XuomOFhMs5r4XbG9sQPuC1keeEsKxMjH2LeEDBFGHmOaIymuwCGhPx" crossorigin="anonymous" fetchpriority="high">
+  <meta name="description" content="Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.">
+  <meta name="curioid-release" content="v1.334">
+  <meta name="curioid-project-count" content="59">
   <meta name="curioid-category-count" content="7">
   <meta name="curioid-os-count" content="6">
   <meta name="robots" content="index,follow,max-image-preview:large">
@@ -18,24 +18,73 @@
   <meta name="color-scheme" content="dark">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: 'sha256-YbC9m/Jz/KgkXo09xXjN+GRu+vb2oGxJJmWQZIeuhkw='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' blob: 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <script id="curioid-frame-guard">
+(() => {
+  let blocked = false;
+  try {
+    blocked = window.top !== window.self && window.top.location.origin !== window.location.origin;
+  } catch (_) {
+    blocked = true;
+  }
+  if (!blocked) return;
+
+  const cancelInteraction = event => {
+    if (event.cancelable) event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+  const blockedEvents = [
+    'click', 'auxclick', 'dblclick', 'contextmenu', 'submit', 'reset',
+    'beforeinput', 'input', 'change', 'focus', 'focusin', 'keydown', 'keypress', 'keyup',
+    'pointerdown', 'pointerup', 'pointermove', 'mousedown', 'mouseup',
+    'touchstart', 'touchend', 'dragstart', 'drop'
+  ];
+  for (const type of blockedEvents) {
+    window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
+  }
+
+  const showFrameWarning = () => {
+    if (document.body) document.body.inert = true;
+    if (document.getElementById('curioid-frame-warning')) return;
+    const panel = document.createElement('section');
+    panel.id = 'curioid-frame-warning';
+    panel.setAttribute('role', 'alert');
+    panel.setAttribute('aria-live', 'assertive');
+    panel.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:grid;place-content:center;justify-items:center;gap:12px;box-sizing:border-box;padding:32px;background:#101014;color:#f8f7ff;font:16px/1.55 system-ui,sans-serif;text-align:center;pointer-events:auto;isolation:isolate;';
+    const heading = document.createElement('h1');
+    heading.textContent = 'Open CURIOID directly';
+    heading.style.cssText = 'max-width:24ch;margin:0;font-size:clamp(24px,5vw,38px);line-height:1.15;';
+    const message = document.createElement('p');
+    message.textContent = 'For your safety, this page is disabled inside another website. Open it in its own tab to use CURIOID.';
+    message.style.cssText = 'max-width:48ch;margin:0;color:#d2d0dc;';
+    panel.append(heading, message);
+    document.documentElement.append(panel);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
+  } else {
+    showFrameWarning();
+  }
+})();
+  </script>
   <link rel="canonical" href="https://stelioswinters.com/curioid/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CURIOID">
-  <meta property="og:title" content="CURIOID | Six Operating Systems, Sandbox OS & 58 Browser Projects">
-  <meta property="og:description" content="Six operating systems, Sandbox OS and 58 browser-native project windows for experiments, games, digital art, sound and creative tools.">
+  <meta property="og:title" content="CURIOID | Browser Games, Music, Art &amp; Creative Worlds">
+  <meta property="og:description" content="Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.">
   <meta property="og:url" content="https://stelioswinters.com/curioid/">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="CURIOID | Six Operating Systems, Sandbox OS & 58 Browser Projects">
-  <meta name="twitter:description" content="Six operating systems, Sandbox OS and 58 browser-native project windows for experiments, games, digital art, sound and creative tools.">
+  <meta name="twitter:title" content="CURIOID | Browser Games, Music, Art &amp; Creative Worlds">
+  <meta name="twitter:description" content="Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.">
   <meta property="og:image" content="https://stelioswinters.com/curioid/social-preview.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="CURIOID eye logo with six independent operating systems, Sandbox OS, and 58 browser-native project windows.">
+  <meta property="og:image:alt" content="CURIOID eye logo alongside six independent desktop worlds and a personal world builder, with examples from the games, art, sound and creative tools collection.">
   <meta name="twitter:image" content="https://stelioswinters.com/curioid/social-preview.png">
   <title>CURIOID</title>
   
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CURIOID","url":"https://stelioswinters.com/curioid/","description":"Six operating systems, Sandbox OS and 58 browser-native project windows for experiments, games, digital art, sound and creative tools.","creator":{"@type":"Person","name":"Stelios Winters"},"inLanguage":"en","isAccessibleForFree":true}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CURIOID","url":"https://stelioswinters.com/curioid/","description":"Play browser games, make visual art, experiment with sound and explore six independent digital worlds. Build one of your own. No downloads or account needed.","creator":{"@type":"Person","name":"Stelios Winters"},"inLanguage":"en","isAccessibleForFree":true}</script>
   <link rel="icon" type="image/svg+xml" href="curioid-icon.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="curioid-icon-192.png">
   <link rel="apple-touch-icon" href="curioid-icon-192.png">
@@ -246,7 +295,83 @@
     .strange-word span:nth-child(6) { transform: translateY(-3px) rotate(7deg) scaleY(.9); }
     .strange-word span:nth-child(7) { transform: translateY(1px) rotate(-4deg) scaleX(1.08); }
     .hero-bottom { display: flex; align-items: flex-end; justify-content: flex-start; gap: 24px; margin-top: 17px; }
-    .hero-copy { max-width: 610px; margin: 0; color: var(--muted); font-size:13px; line-height: 1.7; }
+    .hero-copy { max-width: 690px; margin: 0; color: var(--muted); font-size:14px; line-height: 1.75; }
+    .hero-assurance { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:15px 0 0; color:#8f8d9a; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.13em; }
+    .hero-assurance span { color:var(--acid); }
+    .discovery-search { display:grid; gap:7px; width:min(100%,640px); margin-top:24px; }
+    .discovery-search>label { color:#aaa8b4; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    .discovery-search>small { color:#706f7c; font-size:10px; }
+    .discovery-search .project-search { display:flex; align-items:center; gap:10px; min-width:0; min-height:48px; padding:0 12px; border:1px solid #363743; border-radius:10px; background:#171820; }
+    .discovery-search .project-search:focus-within { border-color:#626e48; box-shadow:0 0 0 3px rgba(214,255,105,.055); }
+    .discovery-search .project-search input { min-width:0; flex:1; border:0; outline:0; background:transparent; color:var(--text); font:12px system-ui,sans-serif; }
+    .discovery-search .project-search input::placeholder { color:#777582; }
+    .discovery-search-icon { color:var(--acid); font-size:21px; line-height:1; }
+    .discovery-search #clearProjectSearch { display:grid; place-items:center; width:27px; height:27px; border:1px solid #3e3f4a; border-radius:7px; background:#20212a; color:#dedce5; font-size:18px; cursor:pointer; }
+    .discovery-section { padding:0 0 24px; }
+    .discovery-section[hidden] { display:none; }
+    .discovery-heading { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:0 0 15px; }
+    .discovery-heading>div { min-width:0; }
+    .discovery-kicker { margin:0 0 5px; color:var(--acid); font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.16em; }
+    .discovery-heading h2 { margin:0; color:#efeee9; font-size:clamp(19px,2.4vw,25px); font-weight:780; letter-spacing:-.045em; }
+    .discovery-heading>p { max-width:240px; margin:0; color:#858390; font-size:10px; line-height:1.55; text-align:right; }
+    .discovery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .discovery-card { --browse-accent:#c1a5ff; position:relative; display:grid; grid-template-columns:34px minmax(0,1fr); grid-template-rows:auto 1fr auto; align-content:start; align-items:center; gap:5px 11px; min-width:0; min-height:125px; padding:15px; overflow:hidden; border:1px solid #343540; border-radius:12px; background:linear-gradient(140deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 62%),#171820; color:#e9e7ef; text-align:left; cursor:pointer; transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease; }
+    .discovery-card::after { content:""; position:absolute; top:-34px; right:-30px; width:95px; height:95px; border-radius:50%; background:var(--browse-accent); opacity:.065; filter:blur(2px); pointer-events:none; }
+    .discovery-card:hover,.discovery-card:focus-visible { transform:translateY(-2px); border-color:color-mix(in srgb,var(--browse-accent) 65%,#343540); background:linear-gradient(140deg,color-mix(in srgb,var(--browse-accent) 8%,#171820),#171820 75%); box-shadow:0 9px 24px rgba(0,0,0,.16); }
+    .discovery-card:focus-visible { outline:2px solid var(--browse-accent); outline-offset:3px; }
+    .discovery-card[aria-pressed="true"] { border-color:var(--browse-accent); }
+    .discovery-glyph { grid-row:1 / span 2; display:grid; place-items:center; width:34px; height:34px; border:1px solid color-mix(in srgb,var(--browse-accent) 30%,#33343e); border-radius:9px; background:color-mix(in srgb,var(--browse-accent) 9%,#1d1e27); color:var(--browse-accent); font-size:19px; }
+    .discovery-title { align-self:end; color:var(--browse-accent); font:800 17px/1.05 system-ui,sans-serif; letter-spacing:.045em; }
+    .discovery-description { grid-column:2; align-self:start; max-width:280px; color:#a4a2af; font:10px/1.5 system-ui,sans-serif; }
+    .discovery-meta { grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; padding-top:9px; border-top:1px solid rgba(255,255,255,.06); color:#797885; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; }
+    .discovery-meta b { color:var(--browse-accent); font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .discovery-card[data-tone="play"] { --browse-accent:#f3c45c; }
+    .discovery-card[data-tone="make"] { --browse-accent:#ff8fc5; }
+    .discovery-card[data-tone="listen"] { --browse-accent:#79d9df; }
+    .discovery-card[data-tone="explore"] { --browse-accent:#9da8ff; }
+    .discovery-card[data-tone="worlds"] { --browse-accent:#b3e879; }
+    .discovery-card[data-tone="archive"] { --browse-accent:#c1a5ff; }
+    .discovery-card[data-tone="tools"] { --browse-accent:#f09d78; }
+    .discovery-card[data-tone="build"] { --browse-accent:#a8e3a0; }
+    .discovery-card[data-tone="all"] { --browse-accent:#e4e0f0; }
+    .discovery-card-build { background:linear-gradient(140deg,rgba(120,192,132,.10),rgba(255,255,255,.008) 70%),#171820; }
+    .discovery-card-all { background:linear-gradient(140deg,rgba(187,174,220,.10),rgba(255,255,255,.008) 70%),#171820; }
+    .rooms-label[hidden],.category-stack[hidden] { display:none; }
+    .rooms-label { margin-top:2px; }
+    .rooms-label span:last-child { text-transform:uppercase; }
+    .sidebar-browse-collections { margin:14px 12px 0; border:1px solid #343540; border-radius:9px; background:#171820; }
+    .sidebar-browse-collections>summary { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:40px; padding:0 11px; color:#c8c6d0; font-size:11px; font-weight:700; cursor:pointer; list-style:none; }
+    .sidebar-browse-collections>summary::-webkit-details-marker { display:none; }
+    .sidebar-browse-collections>summary::after { content:"＋"; color:#898795; font-size:13px; }
+    .sidebar-browse-collections[open]>summary::after { content:"−"; }
+    .sidebar-browse-count { margin-left:auto; color:#777684; font:9px ui-monospace,monospace; }
+    .sidebar-browse-collections .category-nav { padding:4px 6px 7px; }
+    .sidebar-browse-collections .category-nav .nav-item { min-height:37px; }
+    .sidebar-browse-collections .nav-item-all { margin-bottom:5px; border-bottom:1px solid #30313a; border-radius:5px 5px 0 0; }
+    .sidebar-browse-collections .nav-item[aria-current="location"] { color:var(--acid); }
+    .notification-tabs { display:flex; gap:5px; padding:8px 10px 0; border-bottom:1px solid #30313b; }
+    .notification-tabs button { display:flex; align-items:center; gap:6px; padding:7px 9px 8px; border:0; border-bottom:2px solid transparent; background:transparent; color:#9998a5; font:10px system-ui,sans-serif; cursor:pointer; }
+    .notification-tabs button[aria-selected="true"] { border-bottom-color:var(--acid); color:#e8e6ed; }
+    .notification-tabs button span { padding:2px 5px; border-radius:8px; background:#2b2d34; color:#c4c2cf; font:8px ui-monospace,monospace; }
+    .site-notification-updates { overflow:auto; padding:6px; }
+    .site-notification-updates[hidden] { display:none; }
+    .site-notification-updates article { display:grid; gap:4px; padding:10px; border-bottom:1px solid #2c2d36; }
+    .site-notification-updates article:last-child { border-bottom:0; }
+    .site-notification-updates small { color:var(--acid); font:8px ui-monospace,monospace; letter-spacing:.12em; }
+    .site-notification-updates b { color:#e6e4ed; font:600 11px system-ui,sans-serif; }
+    .site-notification-updates p { margin:0; color:#aaa8b5; font:10px/1.5 system-ui,sans-serif; }
+    .room-tags { display:flex; align-items:center; flex-wrap:wrap; gap:5px; padding:0 15px 12px 62px; }
+    .room-tag { min-height:22px; padding:4px 7px; border:1px solid #373843; border-radius:6px; background:#1d1e26; color:#a7a5b1; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.035em; cursor:pointer; }
+    .room-tag:hover,.room-tag:focus-visible { border-color:#707e4c; color:var(--acid); }
+    .room-tag:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    .room-tag-featured { border-color:rgba(214,255,105,.32); background:rgba(214,255,105,.075); color:var(--acid); font-weight:800; letter-spacing:.11em; cursor:default; }
+    .room-list-divider { display:flex; align-items:center; gap:10px; margin:8px 0 1px; color:#7c7a88; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; }
+    .room-list-divider::after { content:""; height:1px; flex:1; background:#2b2c35; }
+    .room-list-divider[hidden] { display:none; }
+    .room-window.open .room-tags,.room-window.curioid-fullscreen-window .room-tags { display:none; }
+    @media(max-width:860px) { .discovery-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:560px) { .hero-assurance { font-size:8px; } .discovery-heading { align-items:flex-start; flex-direction:column; gap:6px; } .discovery-heading>p { max-width:none; text-align:left; } .discovery-grid { gap:8px; } .discovery-card { min-height:125px; padding:12px; grid-template-columns:29px minmax(0,1fr); gap:5px 8px; } .discovery-glyph { width:29px; height:29px; } .discovery-title { font-size:15px; } .room-tags { padding-left:12px; } }
+    @media(max-width:360px) { .discovery-grid { grid-template-columns:1fr; } .discovery-card { min-height:112px; } }
 
     /* Stage 5: the universe is a discovery layer, never another desktop. */
     .room-related-link:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
@@ -288,7 +413,9 @@
     .site-control-small-action{min-height:31px;padding:6px 9px;border:1px solid #41434f;border-radius:7px;background:#171820;color:#d5d3dd;font-size:10px;cursor:pointer;}
     .site-control-small-action:hover{border-color:#8f995d;background:#24261f;}
     /* A single visible Health Check control changes from Run to Download when ready. */
-    .site-control-small-action[data-health-download]{display:none!important;}
+    /* Health report uses one visible control: the same anchor runs diagnostics, then becomes the download. */
+    .site-control-small-action[data-health-download][aria-disabled="true"]{opacity:.58;cursor:wait;pointer-events:none;} .site-control-small-action[data-health-run][data-running="true"]{opacity:.58;cursor:wait;pointer-events:none;}
+    .site-control-small-action[data-health-download][aria-disabled="false"]{cursor:pointer;}
     .site-control-small-action[hidden]{display:none;}
     .site-control-preferences .status-live{font-size:9px;letter-spacing:.08em;}
     @media(max-width:900px){.hero-kicker .menu-toggle{display:grid;place-items:center;}.hero-kicker{gap:9px;}.rooms-label{align-items:flex-start;}.rooms-label-actions{flex-shrink:0;}}
@@ -338,9 +465,6 @@
     .room-name-wrap { flex: 1; min-width: 0; }
     .room-name { display: block; overflow: hidden; color: #e9e8e4; font-size:13px; font-weight: 760; text-overflow: ellipsis; white-space: nowrap; }
     .room-description { display: block; overflow: hidden; margin-top: 3px; color: #898794; font-size:10px; text-overflow: ellipsis; white-space: nowrap; }
-    .room-state { flex: 0 0 auto; min-width: 54px; padding: 4px 7px; border: 1px solid #3b3a45; border-radius: 5px; color: #888694; background: #15151b; text-align: center; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .09em; }
-    .room-state.closed { border-color: #373640; background: #15151b; color: #777580; }
-    .room-state.open { border-color: #52633a; background: rgba(214,255,105,.075); color: var(--acid); box-shadow: inset 0 0 0 1px rgba(214,255,105,.025); }
     .room-chevron { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 25px; border: 1px solid #393943; border-radius: 7px; color: #aaa8b3; font-size:15px; transition: transform .2s ease; }
     .room-window.open .room-chevron { transform: rotate(180deg); color: var(--acid); }
     .room-body { padding: 17px; }
@@ -429,7 +553,6 @@
       .room-icon { width: 30px; height: 30px; flex-basis: 30px; }
       .room-number { display: none; }
       .room-description { max-width: 200px; }
-      .room-state { display: inline-flex; align-items: center; justify-content: center; min-width: 47px; font-size:9px; padding: 4px 5px; }
       .room-body { padding: 9px; }
       .site-footer { display: grid; justify-content: start; gap:7px; line-height:1.8; }
       .site-footer > span { display:block; }
@@ -782,7 +905,7 @@
   .room-window.curioid-fullscreen-window .room-heading{min-height:48px;padding:7px 10px}
   .room-window.curioid-fullscreen-window .room-name{font-size:14px}
   .room-window.curioid-fullscreen-window .room-description{display:block;max-width:100%;white-space:normal;font-size:10px;line-height:1.35}
-  .room-window.curioid-fullscreen-window .room-state,.room-window.curioid-fullscreen-window .room-chevron{display:none}
+  .room-window.curioid-fullscreen-window .room-chevron{display:none}
   .room-fullscreen-close{display:none;place-items:center;align-self:center;width:34px;height:34px;margin-right:2px;padding:0;border:1px solid #68434c;border-radius:8px;background:#2a1b21;color:#ffb4bf;font:20px/1 system-ui,sans-serif;cursor:pointer}
   .room-window.curioid-fullscreen-window .room-fullscreen-close{display:grid}
   .room-fullscreen-close:hover{border-color:#ff889b;background:#392129;color:#fff}
@@ -802,10 +925,47 @@
   @media(max-height:620px){.room-window.curioid-fullscreen-window .room-card-head{min-height:44px}.room-window.curioid-fullscreen-window .room-heading{min-height:38px}.room-window.curioid-fullscreen-window .room-description{display:none}}
   @media(prefers-reduced-motion:reduce){#curioid-app-layer *,#curioid-app-layer *:before,#curioid-app-layer *:after{scroll-behavior:auto!important;transition-duration:0s!important;animation-duration:.001ms!important}}
 </style>
+
+<style id="curioid-native-os-window-presentation">
+/* Native operating systems use the same large, dismissible workspace window as other CURIOID apps. */
+.room-window.open[data-room="dead-interface"],.room-window.open[data-room="aura-synthesis"],.room-window.open[data-room="aether-os"]{position:fixed!important;inset:3vh 3vw!important;z-index:99980!important;display:flex!important;flex-direction:column!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;overflow:hidden!important;border:1px solid #525a67!important;border-radius:16px!important;background:#11151d!important;box-shadow:0 28px 100px rgba(0,0,0,.68),0 0 0 1px rgba(255,255,255,.035)!important}
+.room-window.open[data-room="dead-interface"] .room-card-head,.room-window.open[data-room="aura-synthesis"] .room-card-head,.room-window.open[data-room="aether-os"] .room-card-head{flex:0 0 auto!important;grid-template-columns:minmax(0,1fr) 38px 38px 38px!important;gap:6px!important;min-height:56px!important;padding:5px 8px!important;background:linear-gradient(180deg,#1b202b,#121720)!important}
+.room-window.open[data-room="dead-interface"] .room-heading,.room-window.open[data-room="aura-synthesis"] .room-heading,.room-window.open[data-room="aether-os"] .room-heading{min-height:46px!important;padding:6px 10px!important}
+.room-window.open[data-room="dead-interface"] .room-name,.room-window.open[data-room="aura-synthesis"] .room-name,.room-window.open[data-room="aether-os"] .room-name{font-size:14px!important}
+.room-window.open[data-room="dead-interface"] .room-description,.room-window.open[data-room="aura-synthesis"] .room-description,.room-window.open[data-room="aether-os"] .room-description{display:block!important;max-width:100%!important;white-space:normal!important;font-size:10px!important;line-height:1.35!important}
+.room-window.open[data-room="dead-interface"] .room-chevron,.room-window.open[data-room="aura-synthesis"] .room-chevron,.room-window.open[data-room="aether-os"] .room-chevron{display:none!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-fullscreen-close{display:grid!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-body{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;min-height:0!important;overflow:auto!important;padding:clamp(8px,1.4vw,20px)!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-mount{display:flex!important;flex:1 0 auto!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:100%!important;margin:0 auto!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-mount>:not(.project-style-warning){flex:0 0 auto!important;width:min(100%,1760px)!important;max-width:100%!important;margin:auto!important}
+@media(max-width:760px){.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]){inset:max(4px,env(safe-area-inset-top)) max(4px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left))!important;border-radius:10px!important}.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-card-head{grid-template-columns:minmax(0,1fr) 32px 32px 32px!important;gap:3px!important;min-height:48px!important;padding:3px!important}.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-description{display:none!important}.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-body{padding:6px!important}}
+</style>
+
+<style id="curioid-v1-329-responsive-overflow-guard">
+  /* Additive layout guard: wrap content instead of clipping or deleting it. */
+  :where(.app-shell,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-shortcuts-dialog,.site-modal,.dialog,.modal,.panel,.panel-content){min-width:0;max-width:100%;}
+  :where(.main,.main-content,.category-stack,.category-section,.room-list,.room-body,.room-mount){overflow-wrap:anywhere;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,legend,summary,figcaption,.room-name,.room-description,.category-heading-copy){min-width:0;max-width:100%;overflow-wrap:anywhere;text-overflow:clip;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(button,input,select,textarea){min-width:0;max-width:100%;box-sizing:border-box;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(button){white-space:normal;overflow-wrap:anywhere;text-overflow:clip;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(img,video,iframe,svg,canvas){max-width:100%;}
+  :where(.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(pre,code){max-width:100%;}
+  :where(.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(pre){overflow:auto;white-space:pre;overscroll-behavior-x:contain;}
+  :where(.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(table){max-width:100%;}
+  @media(max-width:760px){
+    :where(.room-window.open,.site-control-panel,.site-modal,.dialog,.modal){max-width:calc(100vw - 16px);}
+    :where(.room-window.open .room-body,.room-window.open .room-mount){min-width:0;max-width:100%;}
+    :where(.room-window.open .room-mount) :where(button,input,select,textarea){max-width:100%;}
+  }
+  :where(.sidebar,.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(.grid,.row,.toolbar,.actions,.button-row,.action-row,.tabs,.tab-list){min-width:0;max-width:100%;flex-wrap:wrap;}
+  :where(.sidebar,.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(h1,h2,h3,h4,h5,h6,p,li,label,legend,summary,small,span,strong,em){overflow-wrap:anywhere;word-break:normal;}
+  :where(.sidebar,.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(input,select,textarea,button){min-width:0;max-width:100%;box-sizing:border-box;}
+  @media(max-width:480px){:where(.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list){min-width:0;max-width:100%;padding-inline:clamp(6px,2vw,12px);} :where(.site-control-panel,.site-modal,.dialog,.modal){max-width:calc(100vw - 12px);}}
+</style>
 </head>
 <body>
   <noscript><div class="noscript-notice">CURIOID needs JavaScript enabled to open its interactive projects. No account or remote AI service is required.</div></noscript>
-  <a class="skip-link" href="#categorySections">Skip to destinations</a>
+  <a class="skip-link" href="#discoveryChoices">Skip to collections</a>
   <div class="scrim" id="scrim" aria-hidden="true"></div>
   <aside class="sidebar" id="sidebar" aria-label="CURIOID destinations">
     <a class="brand" href="#top" aria-label="CURIOID home" id="brandHome">
@@ -824,34 +984,35 @@
       <span><span class="brand-word">CURIOID</span><span class="brand-caption">A place for all<br><span>things curious</span></span></span>
     </a>
 
-    <div class="project-search" role="search">
-      <label class="sr-only" for="projectSearch">Find a project</label>
-      <input id="projectSearch" type="search" placeholder="Find a project… ( / )" autocomplete="off" spellcheck="false" aria-keyshortcuts="/" aria-controls="categorySections">
-      <button id="clearProjectSearch" type="button" aria-label="Clear project search" title="Clear search" hidden>×</button>
-    </div>
-    <nav class="project-nav category-nav" id="categoryNav" aria-label="Project categories">
-      <button class="nav-item active" type="button" data-category="operating-systems" aria-current="location">
-        <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Operating Systems</span><span class="nav-indicator"></span>
-      </button>
-      <button class="nav-item" type="button" data-category="strange-archives">
+    <details class="sidebar-browse-collections">
+      <summary><span>Browse collections</span><span class="sidebar-browse-count">7</span></summary>
+      <nav class="project-nav category-nav" id="categoryNav" aria-label="Project collections">
+        <button class="nav-item nav-item-all" type="button" data-browse-all aria-pressed="false">
+          <span class="nav-symbol" aria-hidden="true">✳</span><span class="nav-label">All projects</span><span class="nav-indicator"></span>
+        </button>
+        <button class="nav-item" type="button" data-category="operating-systems" aria-pressed="false">
+          <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Digital Worlds</span><span class="nav-indicator"></span>
+        </button>
+      <button class="nav-item" type="button" data-category="strange-archives" aria-pressed="false">
         <span class="nav-symbol" aria-hidden="true">⌑</span><span class="nav-label">Strange Archives</span><span class="nav-indicator"></span>
       </button>
-      <button class="nav-item" type="button" data-category="web-experiments">
+      <button class="nav-item" type="button" data-category="web-experiments" aria-pressed="false">
         <span class="nav-symbol" aria-hidden="true">◉</span><span class="nav-label">Web Experiments</span><span class="nav-indicator"></span>
       </button>
-      <button class="nav-item" type="button" data-category="tiny-games">
+      <button class="nav-item" type="button" data-category="tiny-games" aria-pressed="false">
         <span class="nav-symbol" aria-hidden="true">▣</span><span class="nav-label">Tiny Games</span><span class="nav-indicator"></span>
       </button>
-      <button class="nav-item" type="button" data-category="digital-art">
+      <button class="nav-item" type="button" data-category="digital-art" aria-pressed="false">
         <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Digital Art</span><span class="nav-indicator"></span>
       </button>
-      <button class="nav-item" type="button" data-category="sound-motion">
-        <span class="nav-symbol" aria-hidden="true">〰</span><span class="nav-label">Music &amp; Audio</span><span class="nav-indicator"></span>
+      <button class="nav-item" type="button" data-category="sound-motion" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">〰</span><span class="nav-label">Music &amp; Sound</span><span class="nav-indicator"></span>
       </button>
-      <button class="nav-item" type="button" data-category="creative-tools">
-        <span class="nav-symbol" aria-hidden="true">⌘</span><span class="nav-label">Applications &amp; Tools</span><span class="nav-indicator"></span>
+      <button class="nav-item" type="button" data-category="creative-tools" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">⌘</span><span class="nav-label">Creative Tools</span><span class="nav-indicator"></span>
       </button>
-    </nav>
+      </nav>
+    </details>
 
     <div class="sidebar-bottom">
       <div class="sidebar-tools" aria-label="Website settings">
@@ -866,31 +1027,72 @@
   <main class="main" id="top">
     <header class="topbar">
       <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
-      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">58 Projects</span></div>
+      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">59 Projects</span></div>
       <div class="topbar-right">
         <button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" data-enabled="false" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button>
         <label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label>
         <button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button>
         <button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button>
-        <div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden><header><div><b>Notifications</b><small>Important activity from your worlds</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header><div class="site-notification-list" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div><footer>Kept in memory for this session only.</footer></section></div>
-        <span class="status-live" id="topStatus" aria-live="polite">0 windows open</span>
+        <div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden>
+          <header><div><b>Notifications</b><small>Updates when you choose to look</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header>
+          <div class="notification-tabs" role="tablist" aria-label="Notification sections">
+            <button type="button" id="notificationActivityTab" role="tab" data-notification-tab="activity" aria-selected="true" aria-controls="notificationActivityView">Activity</button>
+            <button type="button" id="notificationUpdatesTab" role="tab" data-notification-tab="updates" aria-selected="false" aria-controls="notificationUpdatesView" tabindex="-1">New &amp; Updated <span>5</span></button>
+          </div>
+          <div class="site-notification-list" id="notificationActivityView" role="tabpanel" aria-labelledby="notificationActivityTab" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div>
+          <div class="site-notification-updates" id="notificationUpdatesView" role="tabpanel" aria-labelledby="notificationUpdatesTab" hidden>
+            <article><small>v1.334 · NOV 26, 2026</small><b>A calmer first look</b><p>Choose a direction before the full catalogue appears. The home screen stays open, simple and curious.</p></article>
+            <article><small>DISCOVERY</small><b>Featured, first</b><p>Hand-picked starting points now sit at the top of every collection.</p></article>
+            <article><small>DISCOVERY</small><b>Find things by tags</b><p>Projects now carry quick tags. Select a tag to search the whole collection.</p></article>
+            <article><small>THE WORLDS</small><b>Desktops with their own personality</b><p>The six digital worlds and Sandbox OS keep their full desktop interfaces, apps and taskbars.</p></article>
+            <article><small>NO INTERRUPTIONS</small><b>Updates on your terms</b><p>New features live here under the bell. No announcement pop-ups.</p></article>
+          </div>
+          <footer>Activity stays in this session. Release notes wait here until you open them.</footer>
+        </section></div>
+        <span class="status-live" id="topStatus" aria-live="polite">0 experiences open</span>
       </div>
     </header>
     <div class="page-wrap">
       <section class="hero" aria-labelledby="heroTitle">
-        <p class="hero-kicker">EXPLORE THE CURIOID UNIVERSE</p>
+        <p class="hero-kicker">A PLAYGROUND FOR THE CURIOUS</p>
         <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> <span class="results-word">results.</span></h1>
         <div class="hero-bottom">
-          <p class="hero-copy">Six creative worlds, useful tools and Sandbox OS. Explore a world or build one of your own.</p>
+          <p class="hero-copy">Play a little game, make something visual, or lose yourself in sound. Explore six independent digital worlds, curious tools and stranger experiments — then build a world of your own.</p>
         </div>
-
+        <p class="hero-assurance">NO DOWNLOADS <span aria-hidden="true">·</span> NO ACCOUNT <span aria-hidden="true">·</span> JUST EXPLORE</p>
+        <div class="discovery-search">
+          <label for="projectSearch">Looking for something?</label>
+          <div class="project-search" role="search">
+            <span class="discovery-search-icon" aria-hidden="true">⌕</span>
+            <input id="projectSearch" type="search" placeholder="Search projects, ideas or tags…" autocomplete="off" spellcheck="false" aria-keyshortcuts="/" aria-controls="categorySections">
+            <button id="clearProjectSearch" type="button" aria-label="Clear project search" title="Clear search" hidden>×</button>
+          </div>
+          <small>Try “music”, “physics”, “pixel” or “mystery”.</small>
+        </div>
       </section>
       <hr class="section-rule">
-      <div class="rooms-label"><span>Explore the collections</span><span>Open a project window to begin</span></div>
+      <section class="discovery-section" id="discoveryChoices" aria-labelledby="discoveryTitle">
+        <div class="discovery-heading">
+          <div><p class="discovery-kicker">PICK A DIRECTION</p><h2 id="discoveryTitle">What are you in the mood for?</h2></div>
+          <p>One click opens a collection. The good stuff is just inside.</p>
+        </div>
+        <div class="discovery-grid">
+          <button class="discovery-card" type="button" data-browse-category="tiny-games" data-tone="play" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">▣</span><span class="discovery-title">PLAY</span><span class="discovery-description">Tiny games, odd rules and unexpected challenges.</span><span class="discovery-meta">TINY GAMES <b>08</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="digital-art" data-tone="make" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">✺</span><span class="discovery-title">MAKE</span><span class="discovery-description">Generative art, images and visual experiments.</span><span class="discovery-meta">DIGITAL ART <b>09</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="sound-motion" data-tone="listen" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">〰</span><span class="discovery-title">LISTEN</span><span class="discovery-description">Play with sound, rhythm and strange instruments.</span><span class="discovery-meta">MUSIC &amp; AUDIO <b>05</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="web-experiments" data-tone="explore" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">◉</span><span class="discovery-title">EXPLORE</span><span class="discovery-description">Interactive oddities, simulations and living systems.</span><span class="discovery-meta">WEB EXPERIMENTS <b>08</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="operating-systems" data-tone="worlds" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">◈</span><span class="discovery-title">WORLDS</span><span class="discovery-description">Six independent desktops with their own apps and personalities.</span><span class="discovery-meta">DIGITAL WORLDS <b>07</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="strange-archives" data-tone="archive" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">⌑</span><span class="discovery-title">ARCHIVES</span><span class="discovery-description">Unusual stories, impossible objects and lost fragments.</span><span class="discovery-meta">STRANGE ARCHIVES <b>05</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="creative-tools" data-tone="tools" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">⌘</span><span class="discovery-title">TOOLS</span><span class="discovery-description">Clever creative utilities for making and tinkering.</span><span class="discovery-meta">CREATIVE TOOLS <b>17</b></span></button>
+          <button class="discovery-card discovery-card-build" type="button" data-build-project="sandbox-os" data-tone="build"><span class="discovery-glyph" aria-hidden="true">✳</span><span class="discovery-title">BUILD</span><span class="discovery-description">Design a digital world and make it your own.</span><span class="discovery-meta">MAKE YOUR OWN WORLD <b>↗</b></span></button>
+          <button class="discovery-card discovery-card-all" type="button" data-browse-all aria-pressed="false" data-tone="all"><span class="discovery-glyph" aria-hidden="true">↗</span><span class="discovery-title">ALL</span><span class="discovery-description">See every project, all seven collections, one big rabbit hole.</span><span class="discovery-meta">ALL 59 PROJECTS <b>59</b></span></button>
+        </div>
+      </section>
+      <div class="rooms-label" id="catalogLabel" hidden><span id="catalogTitle">All projects</span><span id="catalogHint">FEATURED FIRST · BROWSE EVERY COLLECTION</span></div>
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
-      <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word.</div>
-      <div class="category-stack" id="categorySections" aria-label="Project collections"></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.327</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
+      <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word or tag.</div>
+      <div class="category-stack" id="categorySections" aria-label="Project collections" hidden></div>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.334</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
     </div>
   </main>
 
@@ -911,7 +1113,7 @@
     </section>
     <section class="site-control-health" aria-labelledby="controlPanelHealthTitle">
       <div class="site-control-health-head"><div><h3 id="controlPanelHealthTitle">CURIOID HEALTH CHECK</h3><p>Run deep local checks for every project bundle, styling, offline delivery, storage transactions, lifecycle cleanup and browser capabilities. Safe maintenance runs automatically; saved work is never deleted and nothing is uploaded.</p></div><span data-health-state>NOT RUN</span></div>
-      <div class="site-control-health-actions"><button type="button" class="site-control-small-action" data-health-run>Run full diagnostics + safe fixes</button><a class="site-control-small-action" data-health-download aria-hidden="true" aria-disabled="true" tabindex="-1" aria-label="Prepared TXT health report download">Download report (.txt)</a><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
+      <div class="site-control-health-actions"><a href="#" role="button" class="site-control-small-action" data-health-run data-health-download aria-disabled="false" aria-label="Run full diagnostics and safe fixes">Run full diagnostics + safe fixes</a><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
       <p class="site-control-health-status" data-health-status role="status" aria-live="polite">Diagnostics run only when requested. The report contains technical status and error details, not saved project contents or passwords.</p>
       <details class="site-control-health-details" data-health-details>
         <summary data-health-details-summary>View detailed results</summary>
@@ -948,7 +1150,7 @@
             <div class="personal-shortcuts-head">
               <span>Saved in this browser</span>
               <div class="personal-shortcuts-actions">
-                <button type="button" data-restore-site-session aria-label="Restore previously open CURIOID project windows" title="Reopen up to eight project windows from your last saved session" disabled>Restore last session</button>
+                <button type="button" data-restore-site-session aria-label="Restore previously open CURIOID experiences" title="Reopen up to eight experiences from your last saved session" disabled>Restore last session</button>
                 <button type="button" data-clear-site-favorites aria-label="Clear all CURIOID favorites" disabled>Clear favorites</button>
                 <button type="button" data-clear-site-recents aria-label="Clear recently opened projects" disabled>Clear recent</button>
               </div>
@@ -962,7 +1164,7 @@
     <section class="site-control-preferences" aria-label="Site-wide preferences and shortcuts">
       <h3>WEBSITE PREFERENCES</h3>
       <label class="global-volume-control" title="Master volume"><span>MASTER VOLUME</span><input data-global-volume-mirror type="range" min="0" max="100" value="70" aria-label="Master volume"><output data-global-volume-mirror-value>70%</output></label>
-      <div class="site-control-preference-actions"><button type="button" class="site-control-small-action" data-motion-toggle-mirror aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button type="button" class="site-control-small-action" id="commandPaletteOpen" aria-label="Open command palette" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">Command palette · Ctrl+K</button><button type="button" class="site-control-small-action" id="openShortcutsHelp" title="Show keyboard shortcuts (?)" aria-keyshortcuts="Shift+Slash">Keyboard shortcuts · ?</button><button type="button" class="site-control-small-action" data-close-all-mirror hidden>Close all open projects</button></div><span class="status-live" data-open-status-mirror aria-live="polite">0 windows open</span>
+      <div class="site-control-preference-actions"><button type="button" class="site-control-small-action" data-motion-toggle-mirror aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button type="button" class="site-control-small-action" id="commandPaletteOpen" aria-label="Open command palette" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">Command palette · Ctrl+K</button><button type="button" class="site-control-small-action" id="openShortcutsHelp" title="Show keyboard shortcuts (?)" aria-keyshortcuts="Shift+Slash">Keyboard shortcuts · ?</button><button type="button" class="site-control-small-action" data-close-all-mirror hidden>Close all open projects</button></div><span class="status-live" data-open-status-mirror aria-live="polite">0 experiences open</span>
     </section>
     <section class="site-control-about" aria-label="About CURIOID and creator">
       <div class="sidebar-note"><div class="sidebar-note-title">THE CURIOID UNIVERSE</div><p>Six independent worlds plus Sandbox OS, where you build your own. Your work stays in this browser. Connect Downloads only when you approve it.</p></div>
@@ -986,6 +1188,6 @@
 
 
 
-  <script src="site-runtime-current.js?v=sha256-d6a5d0c3be8b24dc638736de8fb625abdec399a3877023337660c0175eabc6a0" defer integrity="sha384-zBsQ+cV/NBQfDwaXVdimtSE/nXz7uJBVrP7XSr+TX9Lo4PvrtSXVCN4IeWqrbgvK" crossorigin="anonymous" data-cfasync="false"></script>
+  <script src="site-runtime-current.js?v=sha256-3aef8dc4a421c00ba3e5ce08ddee556fd54cfe263327af93c5746a28c5ce1b6f" defer integrity="sha384-ADoRJQJZt4XuomOFhMs5r4XbG9sQPuC1keeEsKxMjH2LeEDBFGHmOaIymuwCGhPx" crossorigin="anonymous" data-cfasync="false"></script>
 </body>
 </html>

@@ -484,7 +484,7 @@
       curioidAppLayer.setAttribute('aria-label','Fullscreen project workspace');
       const curioidAppSwitcher = document.createElement('nav');
       curioidAppSwitcher.className = 'curioid-app-switcher';
-      curioidAppSwitcher.setAttribute('aria-label','Open project windows');
+      curioidAppSwitcher.setAttribute('aria-label','Switch between open experiences');
       curioidAppSwitcher.setAttribute('role','tablist');
       curioidAppLayer.appendChild(curioidAppSwitcher);
       document.body.appendChild(curioidAppLayer);
@@ -584,16 +584,17 @@
         }
       }
       const CATEGORIES = [
-        { id: "operating-systems", title: "Operating Systems", kicker: "00 / INDEPENDENT WORLDS", description: "Six independent environments plus Sandbox OS, a workshop for building your own Basic, Advanced or Hybrid world. Keep each OS local and independent.", rooms: ["dead-interface", "food-alchemy", "echonoise-os", "umbra-os", "aura-synthesis", "aether-os", "sandbox-os"] },
-        { id: "strange-archives", title: "Strange Archives", kicker: "01 / COLLECTIONS", description: "Invented histories, impossible objects and fragments from other timelines.", rooms: ["museum-almost", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
-        { id: "web-experiments", title: "Web Experiments", kicker: "02 / INTERACTIVE", description: "Curious machines, interactive systems and things to explore.", rooms: ["kineta-hyperion", "oddity-lab", "gravity-garden", "pattern-engine", "impossible-objects", "pixel-weather", "dream-index", "pendulum-choir"] },
-        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", rooms: ["curioids", "pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers", "unreliable-lift", "moth-census"] },
-        { id: "digital-art", title: "Digital Art", kicker: "04 / VISUAL", description: "Generative images, strange compositions, motion drawings and visual worlds.", rooms: ["chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather", "strata-loom", "motion-residue", "negative-space"] },
-        { id: "sound-motion", title: "Music & Audio", kicker: "05 / MUSIC", description: "Instruments, rhythm makers, audio experiments and sound-responsive worlds.", rooms: ["dark-looper", "frequency-garden", "listening-room", "orbit-choir", "tide-signal"] },
-        { id: "creative-tools", title: "Applications & Tools", kicker: "06 / STUDIO", description: "Standalone creative tools, generators and useful experiments that work without a separate operating system.", rooms: ["vanta-deck", "devtoys", "color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio", "print-room", "poster-press"] }
+        { id: "operating-systems", title: "Digital Worlds", kicker: "00 / INDEPENDENT DESKTOPS", description: "Six independent desktops, each with its own apps and atmosphere. Step inside one, or build a world of your own in Sandbox OS.", featured: ["dead-interface", "aether-os"], rooms: ["dead-interface", "food-alchemy", "echonoise-os", "umbra-os", "aura-synthesis", "aether-os", "sandbox-os"] },
+        { id: "strange-archives", title: "Strange Archives", kicker: "01 / THE UNUSUAL", description: "Invented histories, impossible objects and fragments from other timelines.", featured: ["museum-almost", "unbuilt-tomorrow"], rooms: ["museum-almost", "unbuilt-tomorrow", "missing-minutes", "unreturned-doors", "atlas-unclaimed"] },
+        { id: "web-experiments", title: "Web Experiments", kicker: "02 / INTERACTIVE", description: "Curious machines, strange physics and interactive systems to explore.", featured: ["kineta-hyperion", "gravity-garden"], rooms: ["kineta-hyperion", "oddity-lab", "gravity-garden", "pattern-engine", "impossible-objects", "pixel-weather", "dream-index", "pendulum-choir"] },
+        { id: "tiny-games", title: "Tiny Games", kicker: "03 / PLAY", description: "Small playable ideas, unusual rules and miniature challenges.", featured: ["curioids", "one-button-ritual"], rooms: ["curioids", "pocket-universe", "one-button-ritual", "last-corridor", "borrowed-gravity", "room-remembers", "unreliable-lift", "moth-census"] },
+        { id: "digital-art", title: "Digital Art", kicker: "04 / MAKE", description: "Generative images, strange compositions, motion drawings and visual worlds.", featured: ["chroma-loom", "afterimage-studio"], rooms: ["chroma-loom", "chromatic-fossils", "organic-errors", "afterimage-studio", "faultline-portrait", "velvet-weather", "strata-loom", "motion-residue", "negative-space"] },
+        { id: "sound-motion", title: "Music & Audio", kicker: "05 / LISTEN", description: "Instruments, rhythm makers, audio experiments and sound-responsive worlds.", featured: ["dark-looper", "frequency-garden"], rooms: ["dark-looper", "frequency-garden", "listening-room", "orbit-choir", "tide-signal"] },
+        { id: "creative-tools", title: "Creative Tools", kicker: "06 / MAKE SOMETHING", description: "Clever utilities, generators and focused workbenches for creative experiments.", featured: ["vanta-deck", "devtoys"], rooms: ["vanta-deck", "devtoys", "color-alchemist", "type-foundry", "idea-tumbler", "texture-press", "sprite-sheet-studio", "vector-mark-studio", "layout-composer", "palette-extractor", "gradient-atlas", "contact-sheet", "pixel-sort-lab", "shape-composer", "icon-set-studio", "print-room", "poster-press"] }
       ];
 
       const ROOM_INFO = {
+        "chroma-loom": { title: "Chroma Loom", mark: "00", icon: "✺", description: "A tactical colour-flood game with procedural woven patterns, special tiles and exportable artwork", copy: "Expand a living colour field with limited moves. Choose palettes and weave styles, discover prism and anchor tiles, and export your completed pattern as a PNG. Runs locally in an isolated game frame.", category: "digital-art" },
         "sandbox-os": { title: "Sandbox OS", mark: "07", icon: "✳", description: "Build your own operating system in Basic, Advanced or Hybrid mode", copy: "Start with a blank OS or a starter recipe. Add modules one by one, create your own private tools, or switch to Advanced and Hybrid when you want more control. Your OS packages and data stay in this browser. Open the workshop to build, test, save, export and manage your personal operating systems.", category: "operating-systems" },
         "aether-os": { title: "Aether / Cognitive Field", mark: "06", icon: "✧", description: "A local cognitive environment for semantic constellations, evidence synthesis and temporal knowledge mapping", copy: "Aether is a local-first cognitive field for notes, links, code, files and connected ideas. Its Dream Engine proposes explainable semantic relationships; Synthesis creates traceable extractive briefs from your own source cards; Chronoscope arranges knowledge by time. It does not claim sentience or invent facts. Processing stays on-device, with a local worker, IndexedDB and OPFS when supported. WebGPU is optional and not required. No cloud model or remote service is used.", category: "operating-systems" },
         "kineta-hyperion": { title: "KINETA // HYPERION", mark: "01", icon: "⚙", description: "Evolve creatures, play with ragdoll physics and master a wobbly walking challenge", copy: "A six-mode artificial-life laboratory: evolve creatures, manipulate ragdoll physics, master Stride Trial, design cellular automata, tune inter-species particle forces and intervene in a living micro-biosphere. Start with one creature, edit genetic and simulation rules, save champion DNA and experiment locally without an account or external engine.", category: "web-experiments" },
@@ -669,6 +670,7 @@
 
       // Semantic project marks. These are deliberately chosen by project subject, not by list position.
       const ROOM_ICON_BY_ID = {
+        "chroma-loom": "✺",
         "aether-os":"✧", "sandbox-os":"✳", "kineta-hyperion":"⚙", "oddity-lab":"◉", "gravity-garden":"⊙", "pattern-engine":"▦", "impossible-objects":"◇", "pixel-weather":"☼", "dream-index":"☾", "pendulum-choir":"⚖",
         "umbra-os":"◐", "chromatic-fossils":"◈", "organic-errors":"✿", "afterimage-studio":"▤", "faultline-portrait":"◍", "velvet-weather":"☁", "strata-loom":"▧", "negative-space":"◩",
         "curioids":"✹", "pocket-universe":"◎", "one-button-ritual":"⦿", "last-corridor":"▭", "borrowed-gravity":"↕", "room-remembers":"▧", "unreliable-lift":"⇅", "moth-census":"✦", "food-alchemy":"♨",
@@ -895,7 +897,23 @@
       const notificationBell = $("#notificationBell");
       const notificationPanel = $("#notificationPanel");
       const notificationList = $("[data-notification-list]");
+      const notificationActivityView = $("#notificationActivityView");
+      const notificationUpdatesView = $("#notificationUpdatesView");
       const notificationCount = $("#notificationCount");
+      let activeNotificationTab = "activity";
+      function setNotificationTab(tab) {
+        activeNotificationTab = tab === "updates" ? "updates" : "activity";
+        const updates = activeNotificationTab === "updates";
+        if (notificationActivityView) notificationActivityView.hidden = updates;
+        if (notificationUpdatesView) notificationUpdatesView.hidden = !updates;
+        notificationPanel?.querySelectorAll("[data-notification-tab]").forEach(button => {
+          const selected = button.dataset.notificationTab === activeNotificationTab;
+          button.setAttribute("aria-selected", String(selected));
+          button.tabIndex = selected ? 0 : -1;
+        });
+        const actions = notificationPanel?.querySelector(":scope > header > div:last-child");
+        if (actions) actions.hidden = updates;
+      }
       function renderSiteNotifications() {
         if (!notificationList) return;
         notificationList.replaceChildren();
@@ -942,8 +960,11 @@
         notificationBell.setAttribute('aria-expanded', String(Boolean(open)));
         if (open) renderSiteNotifications();
       }
+      setNotificationTab("activity");
       notificationBell?.addEventListener('click', () => setNotificationPanel(notificationPanel.hidden));
       notificationPanel?.addEventListener('click', event => {
+        const tab = event.target.closest('[data-notification-tab]');
+        if (tab) { setNotificationTab(tab.dataset.notificationTab); return; }
         const action = event.target.closest('[data-notification-read-all],[data-notification-clear],[data-notification-id]');
         if (!action) return;
         if (action.matches('[data-notification-read-all]')) {
@@ -956,6 +977,21 @@
           renderSiteNotifications(); setNotificationPanel(false);
           if (item.sourceId && typeof openUniverseProject === 'function') openUniverseProject(item.sourceId);
         }
+      });
+      notificationPanel?.addEventListener('keydown', event => {
+        const current = event.target.closest?.('[data-notification-tab]');
+        if (!current) return;
+        const tabs = [...notificationPanel.querySelectorAll('[data-notification-tab]')];
+        const index = tabs.indexOf(current);
+        let next = index;
+        if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (index + tabs.length - 1) % tabs.length;
+        else if (event.key === 'Home') next = 0;
+        else if (event.key === 'End') next = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        setNotificationTab(tabs[next].dataset.notificationTab);
+        tabs[next].focus();
       });
       document.addEventListener('pointerdown', event => {
         if (notificationPanel && !notificationPanel.hidden && !event.target?.closest?.('.topbar-notification-wrap')) setNotificationPanel(false);
@@ -1052,8 +1088,8 @@
       const healthDownloadButton = $('[data-health-download]', controlCenter);
       const healthDetails = $('[data-health-details]', controlCenter);
       const healthDetailsSummary = $('[data-health-details-summary]', controlCenter);
-      const HEALTH_MODULE_HASH = 'd3381757f7d4b7bd455c37b57fd9122c4d6e5a75d04de19547c94e3d5e931570';
-      const HEALTH_MODULE_SRI = 'sha384-jDprzO6eB/AlgkYSoyElij06m65sMAY+nt1qvRPw22VE2L2QNYDyH28hxDoYdoQZ';
+      const HEALTH_MODULE_HASH = '4916aa4d6944d40135c4777d398f8ffbf0eafc2bac92fad15342d9512f17a217';
+      const HEALTH_MODULE_SRI = 'sha384-RBcmw1nl1D7Stdll5eAiDnkxZ4TKgSRIdk6gsdnYuIoxEWVbtCMQLDR+wfxKx2nQ';
       let healthApi = null, healthModulePromise = null, healthFailureReportUrl = null, healthFailureReportFilename = ''; 
       window.addEventListener('pagehide',()=>{if(healthFailureReportUrl){try{URL.revokeObjectURL(healthFailureReportUrl);}catch(_){}healthFailureReportUrl=null;}},{once:true});
       const createHealthApi = () => window.CurioidHealthCheck.create({runButton:healthRunButton,repairButton:healthRepairButton,status:healthStatus,state:healthState,results:healthResults,downloadButton:healthDownloadButton,details:healthDetails,detailsSummary:healthDetailsSummary,formatStorageSize,expectedHealthHash:HEALTH_MODULE_HASH});
@@ -1066,7 +1102,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.327', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.334', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1098,7 +1134,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.327','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.334','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1110,7 +1146,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.327') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.334') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1133,6 +1169,7 @@
             const url=new URL('health-check.js',new URL('.',canonicalBase));
             url.searchParams.set('v',`sha256-${HEALTH_MODULE_HASH}`);
             script.async=true; script.crossOrigin='anonymous'; script.integrity=HEALTH_MODULE_SRI;
+            try { script.fetchPriority='high'; } catch (_) {}
             script.referrerPolicy='strict-origin-when-cross-origin'; script.setAttribute('data-cfasync','false');
             const timer=window.setTimeout(()=>{script.remove();reject(new Error('Health Check module request timed out'));},12000);
             script.addEventListener('load',()=>{window.clearTimeout(timer);try{if(!window.CurioidHealthCheck?.create)throw new Error('Health Check module did not initialize');healthApi=createHealthApi();resolve(healthApi);}catch(error){reject(error);}},{once:true});
@@ -1165,22 +1202,23 @@
             healthDownloadButton.setAttribute('aria-disabled','false');
             healthDownloadButton.removeAttribute('tabindex');
             healthDownloadButton.setAttribute('aria-label',`Download ${healthFailureReportFilename}`);
+            if(healthRunButton===healthDownloadButton){healthReportReady=true;healthRunButton.textContent='Download TXT report';healthRunButton.setAttribute('aria-disabled','false');healthRunButton.removeAttribute('data-running');}
           }
         } catch(_) {}
       };
       let healthReportReady=false;
-      healthRunButton?.addEventListener('click',async()=>{
+      healthRunButton?.addEventListener('click',async(event)=>{
         if(healthReportReady){
-          // The user's second click is still a real gesture. Invoke the prepared
-          // same-origin Blob download synchronously from this handler; the
-          // hidden anchor never appears as a second visible button.
-          if(healthDownloadButton instanceof HTMLAnchorElement&&healthDownloadButton.href&&healthDownloadButton.getAttribute('aria-disabled')==='false'){
-            try{healthDownloadButton.click();healthStatus&&(healthStatus.textContent='TXT report download requested. If the browser blocks downloads, allow downloads for this site and run the check again.');}
-            catch(error){healthStatus&&(healthStatus.textContent=`The browser rejected the TXT download request: ${String(error?.message||error).slice(0,160)}`);}
-          }
-          healthReportReady=false;healthRunButton.textContent='Run diagnostics again';return;
+          // Keep this as a native anchor activation. projects-core explicitly
+          // exempts data-health-download from its Browser Vault download router.
+          // Do not preventDefault, replace the href, or revoke the Blob URL here.
+          if(healthStatus)healthStatus.textContent='Your browser has been asked to download the TXT report. The download control remains available until you run diagnostics again.';
+          return;
         }
-        healthRunButton.disabled=true;healthRunButton.textContent='Loading checks…';
+        event.preventDefault();
+        if(healthRunButton.getAttribute('data-running')==='true')return;
+        healthRunButton.setAttribute('data-running','true');healthRunButton.setAttribute('aria-disabled','true');
+        healthRunButton.textContent='Loading checks…';
         // Request persistent storage synchronously inside the diagnostic button's
         // user gesture, before awaiting the lazy Health Check module import.
         let persistencePromise=null;
@@ -1189,11 +1227,16 @@
         try{const api=await ensureHealthApi();await api.run({persistencePromise});}
         catch(error){try{await recoverStaleWorkerAfterAssetFailure();}catch(recoveryError){if(recoveryError?.code==='CURIOID_SW_RECOVERY_RELOAD')return;}showHealthModuleError(error);}
         finally{
-          healthRunButton.disabled=false;
-          const reportReady=healthDownloadButton instanceof HTMLAnchorElement&&Boolean(healthDownloadButton.href)&&healthDownloadButton.getAttribute('aria-disabled')==='false';
+          healthRunButton.removeAttribute('data-running');
+          const reportReady=healthDownloadButton===healthRunButton&&healthRunButton instanceof HTMLAnchorElement&&Boolean(healthRunButton.href)&&healthRunButton.getAttribute('aria-disabled')==='false'&&Boolean(healthRunButton.download);
           healthReportReady=reportReady;
+          healthRunButton.setAttribute('aria-disabled','false');
+          healthRunButton.removeAttribute('tabindex');
           healthRunButton.textContent=reportReady?'Download TXT report':'Run diagnostics';
-          if(reportReady&&healthStatus)healthStatus.textContent='Diagnostics complete. Press this same button to download the TXT report. No second download button is needed.';
+          if(reportReady){
+            healthRunButton.title='Click to download the generated plain-text report using your browser';
+            if(healthStatus)healthStatus.textContent='Diagnostics complete. The same button is now the TXT download. Click it to download the report.';
+          }
         }
       });
       healthRepairButton?.addEventListener('click',async()=>{
@@ -1330,9 +1373,9 @@
           const raw=localStorage.getItem(SITE_SESSION_KEY);
           SITE_SESSION_STATE.raw=raw;SITE_SESSION_STATE.hasStored=raw!==null;
           if(raw===null)return SITE_SESSION_STATE;
-          if(typeof raw!=='string'||raw.length>4096)throw new Error('The saved window session exceeds its safe size limit.');
+          if(typeof raw!=='string'||raw.length>4096)throw new Error('The saved session exceeds its safe size limit.');
           const value=normalizeSiteSessionData(JSON.parse(raw),ROOM_INFO,SITE_SESSION_LIMIT);
-          if(!value)throw new Error('The saved window session has invalid project IDs or structure.');
+          if(!value)throw new Error('The saved session has invalid project IDs or structure.');
           SITE_SESSION_STATE.rooms=value.rooms;SITE_SESSION_STATE.activeRoomId=value.activeRoomId;
         }catch(error){SITE_SESSION_STATE.readOnly=true;SITE_SESSION_STATE.reason=String(error?.message||error).slice(0,180);}
         return SITE_SESSION_STATE;
@@ -1343,7 +1386,7 @@
         const count=SITE_SESSION_STATE.rooms.length;
         button.disabled=SITE_SESSION_STATE.readOnly||!SITE_SESSION_STATE.hasStored||count===0;
         button.textContent=count?`Restore last session (${count})`:'Restore last session';
-        button.title=SITE_SESSION_STATE.readOnly?`Session restore is read-only: ${SITE_SESSION_STATE.reason}`:count?`Reopen ${count} project window${count===1?'':'s'} from your last saved session`:'No previous project session is saved.';
+        button.title=SITE_SESSION_STATE.readOnly?`Session restore is read-only: ${SITE_SESSION_STATE.reason}`:count?`Reopen ${count} experience${count===1?'':'s'} from your last saved session`:'No previous project session is saved.';
       }
       function saveSiteSession(activeRoomId=''){
         if(SITE_SESSION_STATE.readOnly)return false;
@@ -1354,24 +1397,25 @@
         let previous;
         try{
           previous=localStorage.getItem(SITE_SESSION_KEY);
-          if(previous!==SITE_SESSION_STATE.raw){SITE_SESSION_STATE.readOnly=true;SITE_SESSION_STATE.reason='Another tab changed the saved window session. Reload before changing it.';updateSiteSessionButton();return false;}
+          if(previous!==SITE_SESSION_STATE.raw){SITE_SESSION_STATE.readOnly=true;SITE_SESSION_STATE.reason='Another tab changed the saved session. Reload before changing it.';updateSiteSessionButton();return false;}
           localStorage.setItem(SITE_SESSION_KEY,serialized);
-          if(localStorage.getItem(SITE_SESSION_KEY)!==serialized)throw new Error('The window session failed read-back verification.');
+          if(localStorage.getItem(SITE_SESSION_KEY)!==serialized)throw new Error('The saved session failed read-back verification.');
           SITE_SESSION_STATE.raw=serialized;SITE_SESSION_STATE.hasStored=true;SITE_SESSION_STATE.rooms=rooms;SITE_SESSION_STATE.activeRoomId=active;updateSiteSessionButton();return true;
         }catch(error){
           SITE_SESSION_STATE.readOnly=true;SITE_SESSION_STATE.reason=String(error?.message||error).slice(0,180);updateSiteSessionButton();return false;
         }
       }
       function restoreSiteSession(){
-        if(SITE_SESSION_STATE.readOnly){showToast(`Saved window session is read-only. ${SITE_SESSION_STATE.reason}`);return;}
+        if(SITE_SESSION_STATE.readOnly){showToast(`Saved session is read-only. ${SITE_SESSION_STATE.reason}`);return;}
         const ids=[...SITE_SESSION_STATE.rooms].filter(id=>Object.prototype.hasOwnProperty.call(ROOM_INFO,id));
-        if(!ids.length){showToast('There are no saved project windows to restore.');updateSiteSessionButton();return;}
+        if(!ids.length){showToast('There are no saved experiences to restore.');updateSiteSessionButton();return;}
         const activeId=SITE_SESSION_STATE.activeRoomId||ids[ids.length-1];
+        showAllProjects({scroll:false});
         let restored=0;
         for(const id of ids){const room=$(`#room-${CSS.escape(id)}`);if(room&&!room.classList.contains('open')){setRoomOpen(room,true,false);restored++;}}
         const activeRoom=$(`#room-${CSS.escape(activeId)}`);
-        if(activeRoom){const section=activeRoom.closest('[data-category-section]');if(section)setActiveCategory(section.dataset.categorySection);requestAnimationFrame(()=>activeRoom.scrollIntoView({behavior:scrollBehavior(),block:'start'}));}
-        saveSiteSession(activeId);showToast(restored?`${restored} project window${restored===1?'':'s'} restored from your last session.`:'Your last session is already open.');
+        if(activeRoom){requestAnimationFrame(()=>activeRoom.scrollIntoView({behavior:scrollBehavior(),block:'start'}));}
+        saveSiteSession(activeId);showToast(restored?`${restored} experience${restored===1?'':'s'} restored from your last session.`:'Your last session is already open.');
       }
       function readSiteIds(key, limit=24) {
         let raw=null;
@@ -1461,10 +1505,39 @@
         updateSiteSessionButton();
       }
 
+      const PROJECT_CATEGORY_TAG = Object.freeze({
+        "operating-systems": "Desktop", "strange-archives": "Mystery", "web-experiments": "Interactive",
+        "tiny-games": "Game", "digital-art": "Visual", "sound-motion": "Audio", "creative-tools": "Tool"
+      });
+      const PROJECT_TAG_RULES = Object.freeze([
+        ["Physics", /\bphysics|gravity|ragdoll|orbit|planet|pendulum|force|motion\b/],
+        ["Simulation", /simulat|evolv|ecosystem|cellular|biosphere|particle|artificial life/],
+        ["Puzzle", /puzzle|pattern|memory|sequence|logic|challenge|ritual/],
+        ["Arcade", /game|battler|creature|collect|runner|corridor|arcade/],
+        ["Generative", /generat|procedural|algorithm|randomiz|mutat|evolv|branching/],
+        ["Art", /artwork|visual|image|portrait|composition|draw|paint|illustrat/],
+        ["Colour", /colou?r|palette|chromatic|gradient|hue/],
+        ["Music", /sound|audio|music|rhythm|frequency|looper|listen|choir|signal/],
+        ["Code", /code|developer|javascript|html|css|json|regex|api|debug/],
+        ["Design", /design|layout|typography|typeface|poster|print|vector|icon/],
+        ["Writing", /write|note|idea|story|journal|text|copy|archive/],
+        ["Image", /image|photo|pixel|sprite|texture|contact sheet/],
+        ["Memory", /memory|dream|remember|missing|time|timeline/]
+      ]);
+      function projectTagsFor(roomId, info, category) {
+        const source = `${info.title || roomId} ${info.description || ""} ${info.copy || ""}`.toLocaleLowerCase();
+        const tags = [PROJECT_CATEGORY_TAG[category.id] || "Explore"];
+        for (const [tag, pattern] of PROJECT_TAG_RULES) {
+          if (pattern.test(source) && !tags.includes(tag)) tags.push(tag);
+          if (tags.length >= 3) break;
+        }
+        return tags;
+      }
+
       function createRoomCard(roomId, index) {
         const info = ROOM_INFO[roomId];
         const projectProfile = CURIOID_PROJECT_PROFILES.get(roomId);
-        const isOpen = false; // Project rooms stay closed until the visitor explicitly opens one.
+        const isOpen = false; // Project previews stay lightweight until the visitor chooses to enter one.
         const article = document.createElement("article");
         article.className = `room-window${isOpen ? " open" : ""}`;
         article.id = `room-${roomId}`;
@@ -1477,7 +1550,7 @@
         heading.type = "button";
         heading.setAttribute("aria-expanded", String(isOpen));
         heading.setAttribute("aria-controls", `body-${roomId}`);
-        heading.setAttribute("aria-label", `${info.title}. ${info.description}. ${isOpen ? "Open" : "Closed"}.`);
+        heading.setAttribute("aria-label", `${info.title}. ${info.description}. Select to enter this experience.`);
         const roomIcon = document.createElement("span");
         roomIcon.className = "room-icon";
         roomIcon.setAttribute("aria-hidden", "true");
@@ -1494,15 +1567,11 @@
         roomDescription.className = "room-description";
         roomDescription.textContent = info.description;
         nameWrap.append(roomName, roomDescription);
-        const roomState = document.createElement("span");
-        roomState.className = `room-state ${isOpen ? "open" : "closed"}`;
-        roomState.setAttribute("aria-label", isOpen ? "Project open" : "Project closed");
-        roomState.textContent = isOpen ? "OPEN" : "CLOSED";
         const roomChevron = document.createElement("span");
         roomChevron.className = "room-chevron";
         roomChevron.setAttribute("aria-hidden", "true");
         roomChevron.textContent = "⌄";
-        heading.append(roomIcon, roomNumber, nameWrap, roomState, roomChevron);
+        heading.append(roomIcon, roomNumber, nameWrap, roomChevron);
         const cardHead = document.createElement('div'); cardHead.className = 'room-card-head';
         const favorite = document.createElement('button'); favorite.type = 'button'; favorite.className = 'room-favorite'; favorite.dataset.roomFavorite = roomId; favorite.textContent = '☆'; favorite.setAttribute('aria-pressed', 'false'); favorite.title = 'Add to favorites'; favorite.setAttribute('aria-label', `Add ${info.title} to favorites`);
         const share = document.createElement('button'); share.type = 'button'; share.className = 'room-share'; share.dataset.roomShare = roomId; share.textContent = '↗'; share.title = `Copy a direct link to ${info.title}`; share.setAttribute('aria-label', `Copy a direct link to ${info.title}`);
@@ -1512,6 +1581,27 @@
         share.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();copyProjectLink(roomId);});
         close.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();setRoomOpen(article,false);});
         cardHead.append(heading, favorite, share, close);
+        const roomTags = document.createElement("div");
+        roomTags.className = "room-tags";
+        roomTags.setAttribute("aria-label", "Project tags. Select a tag to search the catalogue.");
+        const parentCategory = CATEGORIES.find(category => category.rooms.includes(roomId));
+        const isFeatured = Boolean(parentCategory?.featured?.includes(roomId));
+        if (isFeatured) {
+          const featured = document.createElement("span");
+          featured.className = "room-tag room-tag-featured";
+          featured.textContent = "FEATURED";
+          roomTags.appendChild(featured);
+        }
+        const projectTags = parentCategory ? projectTagsFor(roomId, info, parentCategory) : [];
+        projectTags.forEach(tag => {
+          const tagButton = document.createElement("button");
+          tagButton.type = "button";
+          tagButton.className = "room-tag";
+          tagButton.dataset.projectTag = tag;
+          tagButton.textContent = tag;
+          tagButton.setAttribute("aria-label", `Search all projects tagged ${tag}`);
+          roomTags.appendChild(tagButton);
+        });
         const body = document.createElement("div");
         body.className = "room-body";
         body.id = `body-${roomId}`;
@@ -1547,7 +1637,7 @@
           });
           if (links.childElementCount) { related.append(label, links); body.appendChild(related); }
         }
-        article.append(cardHead, body);
+        article.append(cardHead, roomTags, body);
         syncRoomFavoriteButtons(roomId);
         return article;
       }
@@ -1637,13 +1727,26 @@
           list.className = "room-list";
           list.id = `list-${category.id}`;
           list.setAttribute("aria-label", `${category.title} projects`);
-          category.rooms.forEach((roomId,index) => {
+          const featuredIds = new Set(category.featured || []);
+          const orderedRoomIds = [
+            ...category.rooms.filter(roomId => featuredIds.has(roomId)),
+            ...category.rooms.filter(roomId => !featuredIds.has(roomId))
+          ];
+          orderedRoomIds.forEach((roomId,index) => {
+            if (index === featuredIds.size && featuredIds.size > 0) {
+              const divider = document.createElement("div");
+              divider.className = "room-list-divider";
+              divider.dataset.categoryMoreDivider = category.id;
+              divider.textContent = "MORE TO EXPLORE";
+              list.appendChild(divider);
+            }
             const card = createRoomCard(roomId,index);
             ROOM_CARD_BY_ID.set(roomId, card);
             const info = ROOM_INFO[roomId];
             const profile = CURIOID_PROJECT_PROFILES.get(roomId);
             const relatedNames = (profile?.relatedProjectIds || []).map(relatedId => projectDisplayTitle(relatedId, ROOM_INFO[relatedId]?.title || relatedId)).join(' ');
-            ROOM_SEARCH_TEXT_BY_ID.set(roomId, `${projectDisplayTitle(roomId, info.title)} ${info.title} ${info.description} ${info.copy || ""} ${category.title} ${profile?.role || ''} ${relatedNames}`.toLocaleLowerCase());
+            const tags = projectTagsFor(roomId, info, category);
+            ROOM_SEARCH_TEXT_BY_ID.set(roomId, `${projectDisplayTitle(roomId, info.title)} ${info.title} ${info.description} ${info.copy || ""} ${category.title} ${profile?.role || ''} ${relatedNames} ${tags.join(' ')}`.toLocaleLowerCase());
             list.appendChild(card);
           });
           if (category.id === "creative-tools") section.append(heading, renderStudioToolFilters(), list);
@@ -1682,13 +1785,13 @@
       // core owns storage, Kernel, navigation and lifecycle APIs; modules are
       // evaluated only after a visitor opens a project in that category.
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
-        "operating-systems": { file: "projects-category-operating-systems.js", hash: "3ef88e0b2af064bd6de259eab384e2cd5726d03a52b47ea65942057eb0335f01", integrity: "sha384-gR/9OVAuWwLMu3nKYxV1chQLF7LGgkz2VIRJPOkFjuuFO6IdMkb6sTzfYC7GPXw+" },
-        "strange-archives": { file: "projects-category-strange-archives.js", hash: "daed6cdec514093867dc85c009ede32fbde1aef03ac4a80a3f17a92377302316", integrity: "sha384-YeR1Fwj0bMY3wPy3iKph54rlf17yVe3Gh6jWF1bFihmezdxbu6qzn7BGSE4TWnZ4" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "0215bde235233ae03ab070649dea1cfbcb5a9f3089e9dca52a4300d514ccaa8e", integrity: "sha384-gjlQ60fu1KYPCgdeD8XolfLjl1zjImTZoL57zXypAeA0LVVRqBbBvzeXxyH6kI7Q" },
-        "tiny-games": { file: "projects-category-tiny-games.js", hash: "39ad375e8f3b0263be2c987e59d836968fd69a4e748c379cb30e8f2c7ab8b796", integrity: "sha384-AqdgEuM9DkrAYA40dMPzd8ij/TgadeZKc+3ZNyDNoCt/PEj+41r28J8355H6xKBj" },
-        "digital-art": { file: "projects-category-digital-art.js", hash: "03c99ab3504464e82eb109069d3256628bed80a7a81c468ee1a0569842372016", integrity: "sha384-LX/6m5cmmQRZf4tp+JYUKpDa3QGJssZmCTngo11PXZhX39Z5zmsqwfIABczrH0sg" },
-        "sound-motion": { file: "projects-category-sound-motion.js", hash: "c621b4645b21798900ae17e9d11993d0dff729116959389bdf0d4b09ff788a6e", integrity: "sha384-OdL5wjMV8vXOa3X/qXpSS6dmMl8jleHPkjRMepXHiWnJFpQz0SEV8D7DL2ImoHEy" },
-        "creative-tools": { file: "projects-category-creative-tools.js", hash: "fdf7b5511a3bd556833f34b2802132e55ea469a537e13d7e662d7d64dfdd10b6", integrity: "sha384-oqIFuk3OASc+lRdINfm2Gea/pxDL4DvsofyZ7VML4MClIhq9woMGtLRzvWPzwmrT" }
+        "operating-systems": { file: "projects-category-operating-systems.js", hash: "31a29489a59a423a931e82079912934a52d2e1904602cd1fbeabbc9f91c86703", integrity: "sha384-xbABRfyVDFtVY9NR4o54A6CREgJr8uk7pRa/FibqE92dGi7usOnxZOCcXRgrSbwa" },
+        "strange-archives": { file: "projects-category-strange-archives.js", hash: "c436fc2d70528c6f969139ad5ca3d827395aef1161e30bdee10e58574f2ae00e", integrity: "sha384-S7VtgXxlIwB/MvfBK8s1wKKFz4wcZj716ByY8SaGeyZotHR+WyX2nLT80fvzASDi" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "4967263cee2f5b952a7c1a611ca1b1b11e2207565af328cb2bd9f6dbd7b09ea8", integrity: "sha384-nBYCUy12b3RYbCfPUZPbXAjBkbbKAvyxmnTB6w3Xvt+s9SDOq3AZvo45dKXh/orO" },
+        "tiny-games": { file: "projects-category-tiny-games.js", hash: "8851ac598b44544de56eaf4d6984b88d5d0a4c0b16c8afe94c5d9389ccee18b1", integrity: "sha384-fKEY31QHjCr4hIF7n8u1W5W4pQe8zVH9wTCRqePPHUrMm6ADedcBiTdyr2pCFW9I" },
+        "digital-art": { file: "projects-category-digital-art.js", hash: "e3f715aefbcf029ddcb08c2c93969a39e2c60ae01e1b27d524cd64428ad15538", integrity: "sha384-Cajq27fiJwnZUbCCCuWY5HWkCP/mJLLRO/Mc/WDjlkultWyWQlQbw5PAGQ3W4Gbc" },
+        "sound-motion": { file: "projects-category-sound-motion.js", hash: "129173b387660f7bd81847c172d0ca34989bca88fe7d2504a618107e4b3a8e7a", integrity: "sha384-w3xqqnLJspWIPmZVWGABmMd/pPm4a8ge6VqlORZ7j4disKRVOQ+OsXLGRRyGIxQ0" },
+        "creative-tools": { file: "projects-category-creative-tools.js", hash: "0843d957f364080ccc9330219d8b00f2bcc95e8c00844b68b57e4b4936e2270b", integrity: "sha384-XJiTZVgM/+o8j1bTcwG2nzaUNvMUECcQfw6X5+U09F4+M19xm40yNeB0Ad5Wtt1z" }
       });
       function ensureProjectAssets() {
         // A file:// page has an opaque origin in modern browsers. Do not try to
@@ -1771,8 +1874,10 @@
               if (type === "link") {
                 element.rel = "stylesheet";
                 element.dataset.curioidProjectCss = "true";
+                try { element.fetchPriority = "high"; } catch (_) {}
               } else {
                 element.async = true;
+                try { element.fetchPriority = "high"; } catch (_) {}
               }
               const assetUrl = new URL(urls[index]);
               // SRI must use a CORS-enabled request if an edge redirect changes host.
@@ -1820,8 +1925,9 @@
           return attempt(0);
         };
 
-        const PROJECT_STYLES_FILE = "projects-styles.txt";
-        const PROJECT_STYLES_SHA256 = "694ca5863b946f565219dd76858f636858d80ba47c419aee9d0368b341515b3f";
+        const PROJECT_STYLES_FILE = "projects-styles.css";
+        const PROJECT_STYLES_SHA256 = "4d30563c63090405a52e2d5e54bf10447de386f7dcfd2007a29814674c94767d";
+        const PROJECT_STYLES_SRI = "sha384-7PCB00nPrGfGA/RkdAvzoGZHWFlbvAdfIotbfPxo/9SMUJd6ycnvyRP2TpA5Ctwp";
         const loadProjectCss = ({ retry = false } = {}) => {
           if (document.querySelector('[data-curioid-project-css][data-loaded="true"]')) {
             projectCssError = null;
@@ -1829,12 +1935,11 @@
           }
           if (projectCssPromise && !retry) return projectCssPromise;
           if (retry) projectCssPromise = null;
-          const previous = document.querySelector('[data-curioid-project-css]');
-          if (previous) previous.remove();
+          document.querySelectorAll('[data-curioid-project-css]:not([data-loaded="true"])').forEach(node => node.remove());
           const cssTiming = startCurioidAssetTiming('project-css');
           const urls = getProjectAssetUrls(PROJECT_STYLES_FILE, PROJECT_STYLES_SHA256);
           const failures = [];
-          const loadFrom = async index => {
+          const loadFrom = index => new Promise((resolve, reject) => {
             if (index >= urls.length) {
               const details = failures.map(item => `${item.url}: ${item.reason}`).join('; ');
               const error = new Error(`Project styles could not be verified. Tried ${details || urls.join(', ')}. Check ${PROJECT_STYLES_FILE} beside index.html and deploy the matching release.`);
@@ -1842,31 +1947,40 @@
               error.attemptedUrls = urls.slice();
               error.failures = failures.slice();
               window.__CURIOID_LAST_ASSET_LOAD_FAILURE = {file:PROJECT_STYLES_FILE,urls:urls.slice(),failures:failures.slice(),page:location.href,time:new Date().toISOString()};
-              throw error;
+              reject(error);
+              return;
             }
-            const url = urls[index];
-            try {
-              const response = await fetch(url, {method:'GET',mode:'same-origin',credentials:'same-origin',cache:'no-store',redirect:'follow'});
-              if (!response.ok) throw new Error(`HTTP ${response.status}`);
-              const bytes = await response.arrayBuffer();
-              if (!crypto?.subtle?.digest) throw new Error('Web Crypto SHA-256 is unavailable');
-              const digest = await crypto.subtle.digest('SHA-256', bytes);
-              const actual = [...new Uint8Array(digest)].map(value=>value.toString(16).padStart(2,'0')).join('');
-              if (actual !== PROJECT_STYLES_SHA256) throw new Error(`SHA-256 mismatch (expected ${PROJECT_STYLES_SHA256}, received ${actual}; ${bytes.byteLength.toLocaleString()} bytes)`);
-              const source = new TextDecoder('utf-8', {fatal:true}).decode(bytes);
-              const style = document.createElement('style');
-              style.dataset.curioidProjectCss = 'true';
-              style.dataset.loaded = 'true';
-              style.dataset.source = PROJECT_STYLES_FILE;
-              style.textContent = source;
-              document.head.appendChild(style);
-              if (!style.sheet) { style.remove(); throw new Error('The browser did not create a usable stylesheet under the current Content Security Policy'); }
-              return style;
-            } catch (error) {
-              failures.push({url,reason:String(error?.message||error).slice(0,240)});
-              return loadFrom(index+1);
-            }
-          };
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.dataset.curioidProjectCss = 'true';
+            link.href = urls[index];
+            link.integrity = PROJECT_STYLES_SRI;
+            link.crossOrigin = 'anonymous';
+            link.referrerPolicy = 'strict-origin-when-cross-origin';
+            link.setAttribute('data-cfasync', 'false');
+            let settled = false;
+            const timeout = setTimeout(() => finish(new Error('stylesheet request timed out')), 12000);
+            const cleanup = () => { clearTimeout(timeout); link.removeEventListener('load', onLoad); link.removeEventListener('error', onError); };
+            const finish = error => {
+              if (settled) return;
+              settled = true;
+              cleanup();
+              if (error || !link.sheet) {
+                failures.push({url:urls[index],reason:String(error?.message || (!link.sheet ? 'stylesheet loaded without a usable CSSStyleSheet' : 'stylesheet load failed')).slice(0,240)});
+                link.remove();
+                loadFrom(index + 1).then(resolve, reject);
+                return;
+              }
+              link.dataset.loaded = 'true';
+              resolve(link);
+            };
+            const onLoad = () => finish();
+            const onError = () => finish(new Error('HTTP, Content Security Policy, Subresource Integrity, or stylesheet parsing failure'));
+            link.addEventListener('load', onLoad, {once:true});
+            link.addEventListener('error', onError, {once:true});
+            try { document.head.appendChild(link); }
+            catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
+          });
           projectCssPromise = loadFrom(0).then(() => {
             finishCurioidAssetTiming(cssTiming);
             projectCssError = null;
@@ -1891,7 +2005,7 @@
           const jsTiming = startCurioidAssetTiming('project-js');
           return loadAssetWithFallback({
             type: "script",
-            file: "projects-core.js", hash: "84b86bcb70b7382bed3a4e94cc3b790a02366305befcbadc326e824c2f862ad6", integrity: "sha384-8Z1oZnveM6Yw2Pjj47aSJaFrRTBRZEYy4zDRrcoh5Pm0Q5k0EhN5VZwaLqq6GwKz",
+            file: "projects-core.js", hash: "ec883c4a574ab72df936574d62860d96369f4a5013684c95bc2bfbb2d8a52dd0", integrity: "sha384-B05LWfF6HKMOQRMn2wZfVM4qSz+R0ndXv5gbK05spCXhkCspBKX3IiI4zLjAtrR7",
             expected: "Project code",
             isReady: () => Boolean(window.CurioidProjects),
             markReady: element => {
@@ -1967,7 +2081,7 @@
           // Refresh the registration metadata without activating a waiting worker.
           // This ensures the current release can receive the diagnostic pre-cache
           // command even when the site was opened before its update finished.
-          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.327", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
+          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.334", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
           await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Service-worker update check timed out")), Math.min(timeoutMs,15000)))]);
         } catch (error) {
           try { registration = await serviceWorker.getRegistration(serviceRoot.href); } catch (_) {}
@@ -1976,7 +2090,7 @@
         const isCurrent = worker => {
           try {
             const url = new URL(worker?.scriptURL || "");
-            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.327";
+            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.334";
           } catch (_) { return false; }
         };
         if (!isCurrent(registration?.waiting) && isCurrent(registration?.installing)) {
@@ -1993,7 +2107,7 @@
           try { registration = await serviceWorker.getRegistration(serviceRoot.href) || registration; } catch (_) {}
         }
         const worker = isCurrent(registration?.waiting) ? registration.waiting : isCurrent(registration?.active) ? registration.active : null;
-        if (!worker) return { available:false, reason:"No current v1.327 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
+        if (!worker) return { available:false, reason:"No current v1.334 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
         const send = (command, limit) => new Promise((resolve, reject) => {
           const channel = new MessageChannel();
           let settled = false;
@@ -2008,7 +2122,7 @@
           const timer = setTimeout(() => finish(new Error(`${command} timed out`)), limit);
           channel.port1.onmessage = event => finish(null, event.data || { ok:false, reason:"Worker returned an empty response." });
           channel.port1.onmessageerror = () => finish(new Error(`${command} response could not be decoded`));
-          try { worker.postMessage({ type:command, release:"v1.327" }, [channel.port2]); }
+          try { worker.postMessage({ type:command, release:"v1.334" }, [channel.port2]); }
           catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
         });
         if (worker === registration?.active && !serviceWorker.controller) {
@@ -2083,8 +2197,8 @@
       // executes the 1.29 MB bundle while the visitor is only browsing cards.
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
-        { file: "projects-core.js", hash: "84b86bcb70b7382bed3a4e94cc3b790a02366305befcbadc326e824c2f862ad6", as: "script" },
-        { file: "projects-styles.txt", hash: "694ca5863b946f565219dd76858f636858d80ba47c419aee9d0368b341515b3f", as: "fetch" }
+        { file: "projects-core.js", hash: "ec883c4a574ab72df936574d62860d96369f4a5013684c95bc2bfbb2d8a52dd0", as: "script" },
+        { file: "projects-styles.css", hash: "4d30563c63090405a52e2d5e54bf10447de386f7dcfd2007a29814674c94767d", as: "style" }
       ]);
       let projectPrefetchScheduled = false;
       const projectPrefetchHints = new Set();
@@ -2155,8 +2269,8 @@
         warning.dataset.projectStyleWarning = "true";
         warning.setAttribute("role", "status");
         const message = document.createElement("p");
-        const failedUrls = projectCssError.attemptedUrls?.join("; ") || "the configured projects-styles.txt URL";
-        message.textContent = `The app runtime loaded, but its visual stylesheet did not. Tried: ${failedUrls}. Check that projects-styles.txt is in the same deployment folder as index.html, then retry.`;
+        const failedUrls = projectCssError.attemptedUrls?.join("; ") || "the configured projects-styles.css URL";
+        message.textContent = `The app runtime loaded, but its visual stylesheet did not. Tried: ${failedUrls}. Check that projects-styles.css is in the same deployment folder as index.html, then retry.`;
         const retry = document.createElement("button");
         retry.type = "button";
         retry.textContent = "Retry styles";
@@ -2437,10 +2551,9 @@
         const roomId = room.dataset.room;
         const heading = $(".room-heading", room);
         const body = $(".room-body", room);
-        const state = $(".room-state", room);
         room.classList.toggle("open", open);
         heading.setAttribute("aria-expanded", String(open));
-        heading.setAttribute("aria-label", `${ROOM_INFO[roomId]?.title || roomId}. ${ROOM_INFO[roomId]?.description || "Project"}. ${open ? "Open" : "Closed"}.`);
+        heading.setAttribute("aria-label", `${ROOM_INFO[roomId]?.title || roomId}. ${ROOM_INFO[roomId]?.description || "Project"}. ${open ? "Collapse this experience." : "Select to enter this experience."}`);
         body.hidden = !open;
         if (open) {
           const nativeOs = ROOM_INFO[roomId]?.category === 'operating-systems';
@@ -2459,12 +2572,6 @@
           }
           recordSiteRecent(roomId);
           loadRoom(room);
-          if (state) {
-            state.textContent = "OPEN";
-            state.classList.remove("closed");
-            state.classList.add("open");
-            state.setAttribute("aria-label", "Project open");
-          }
         } else {
           unloadRoom(room);
           curioidRestoreRoom(room);
@@ -2472,12 +2579,6 @@
           const stillActive=remainingApps.find(item=>item.dataset.room===curioidActiveRoomId);
           const nextApp=stillActive||remainingApps.reduce((best,item)=>!best||Number(item.style.zIndex||0)>Number(best.style.zIndex||0)?item:best,null);
           if(nextApp)curioidActivateRoom(nextApp);else curioidRenderAppSwitcher();
-          if (state) {
-            state.textContent = "CLOSED";
-            state.classList.remove("open");
-            state.classList.add("closed");
-            state.setAttribute("aria-label", "Project closed");
-          }
         }
         updateOpenStatus();
         saveSiteSession(open?roomId:'');
@@ -2493,9 +2594,10 @@
 
       function updateOpenStatus() {
         const openCount = $$(".room-window.open").length;
-        $("#topStatus").textContent = `${openCount} window${openCount === 1 ? "" : "s"} open`;
+        const activeLabel = openCount === 0 ? '0 experiences open' : `${openCount} experience${openCount === 1 ? '' : 's'} open`;
+        $("#topStatus").textContent = activeLabel;
         const statusMirror = $('[data-open-status-mirror]');
-        if (statusMirror) statusMirror.textContent = `${openCount} window${openCount === 1 ? "" : "s"} open`;
+        if (statusMirror) statusMirror.textContent = activeLabel;
         const closeAll = $("#closeAllRooms");
         const closeAllMirror = $('[data-close-all-mirror]');
         if (closeAll) closeAll.hidden = openCount < 1;
@@ -2503,24 +2605,123 @@
       }
 
       let activeCategoryId = null;
+      let browseMode = "home";
+      let browseCategoryId = null;
+      let browseReturnMode = "home";
+      let browseReturnCategoryId = null;
       function setActiveCategory(categoryId) {
-        if (!CATEGORY_NAV_BY_ID.has(categoryId) || activeCategoryId === categoryId) return;
-        activeCategoryId = categoryId;
+        activeCategoryId = categoryId || null;
         let activeButton = null;
         for (const [id, button] of CATEGORY_NAV_BY_ID) {
-          const active = id === categoryId;
+          const active = id === activeCategoryId;
           button.classList.toggle("active", active);
           if (active) { button.setAttribute("aria-current", "location"); activeButton = button; }
           else button.removeAttribute("aria-current");
         }
-        // Keep the active category visible inside the scrollable sidebar without moving the page.
+        const allButton = $('#categoryNav [data-browse-all]');
+        if (allButton) {
+          const active = browseMode === "all";
+          allButton.classList.toggle("active", active);
+          allButton.setAttribute("aria-pressed", String(active));
+          if (active) allButton.setAttribute("aria-current", "location");
+          else allButton.removeAttribute("aria-current");
+        }
+        // Keep the selected collection visible inside the scrollable sidebar without moving the page.
         if (activeButton) {
           const sidebar = $("#sidebar");
-          const sideRect = sidebar.getBoundingClientRect();
-          const itemRect = activeButton.getBoundingClientRect();
-          if (itemRect.top < sideRect.top + 8) sidebar.scrollTop -= (sideRect.top + 8 - itemRect.top);
-          else if (itemRect.bottom > sideRect.bottom - 8) sidebar.scrollTop += (itemRect.bottom - (sideRect.bottom - 8));
+          const collectionDisclosure = activeButton.closest('details');
+          if (!collectionDisclosure || collectionDisclosure.open) {
+            const sideRect = sidebar.getBoundingClientRect();
+            const itemRect = activeButton.getBoundingClientRect();
+            if (itemRect.width && itemRect.height && itemRect.top < sideRect.top + 8) sidebar.scrollTop -= (sideRect.top + 8 - itemRect.top);
+            else if (itemRect.width && itemRect.height && itemRect.bottom > sideRect.bottom - 8) sidebar.scrollTop += (itemRect.bottom - (sideRect.bottom - 8));
+          }
         }
+      }
+      function setBrowsePresentation(mode, categoryId = null, options = {}) {
+        browseMode = mode;
+        browseCategoryId = mode === "category" ? categoryId : null;
+        const home = mode === "home";
+        const searching = mode === "search";
+        const host = $("#categorySections");
+        const discovery = $("#discoveryChoices");
+        const label = $("#catalogLabel");
+        host.hidden = home;
+        discovery.hidden = !home;
+        label.hidden = home;
+        host.classList.toggle("is-single-category", mode === "category");
+        for (const category of CATEGORIES) {
+          const section = CATEGORY_SECTION_BY_ID.get(category.id);
+          if (section) section.hidden = mode === "category" && category.id !== categoryId;
+          for (const roomId of category.rooms) {
+            const card = ROOM_CARD_BY_ID.get(roomId);
+            if (card) card.hidden = false;
+          }
+          const divider = section?.querySelector('[data-category-more-divider]');
+          if (divider) divider.hidden = false;
+          const navButton = CATEGORY_NAV_BY_ID.get(category.id);
+          if (navButton) navButton.hidden = false;
+        }
+        if (home) {
+          setActiveCategory(null);
+          if ($('#catalogTitle')) $('#catalogTitle').textContent = 'All projects';
+          if ($('#catalogHint')) $('#catalogHint').textContent = 'FEATURED FIRST · BROWSE EVERY COLLECTION';
+        } else if (mode === "all") {
+          setActiveCategory(null);
+          if ($('#catalogTitle')) $('#catalogTitle').textContent = 'All projects';
+          if ($('#catalogHint')) $('#catalogHint').textContent = 'FEATURED FIRST · BROWSE EVERY COLLECTION';
+        } else if (mode === "category") {
+          setActiveCategory(categoryId);
+          const category = CATEGORIES.find(item => item.id === categoryId);
+          if ($('#catalogTitle')) $('#catalogTitle').textContent = category?.title || 'Projects';
+          if ($('#catalogHint')) $('#catalogHint').textContent = `${category?.featured?.length || 0} FEATURED · ${category?.rooms?.length || 0} PROJECTS`;
+        } else if (searching) {
+          setActiveCategory(null);
+          if ($('#catalogTitle')) $('#catalogTitle').textContent = 'Search results';
+          if ($('#catalogHint')) $('#catalogHint').textContent = 'MATCHING NAMES, IDEAS AND PROJECT TAGS';
+        }
+        document.querySelectorAll('[data-browse-category]').forEach(button => {
+          const selected = mode === "category" && button.dataset.browseCategory === categoryId;
+          button.classList.toggle("is-selected", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+        document.querySelectorAll('#discoveryChoices [data-browse-all]').forEach(button => {
+          const selected = mode === "all";
+          button.classList.toggle("is-selected", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+        if (options.scroll && !home) {
+          const target = mode === "category" ? CATEGORY_SECTION_BY_ID.get(categoryId) : host;
+          requestAnimationFrame(() => target?.scrollIntoView({ behavior: scrollBehavior(), block: "start" }));
+        }
+      }
+      function showCategory(categoryId, options = {}) {
+        if (!CATEGORY_SECTION_BY_ID.has(categoryId)) return;
+        if (projectSearch?.value) {
+          projectSearch.value = "";
+          clearProjectSearch.hidden = true;
+        }
+        searchResultsStatus.hidden = true;
+        searchEmpty.hidden = true;
+        setBrowsePresentation("category", categoryId, { scroll: options.scroll !== false });
+        if (!['sound-motion', 'creative-tools'].includes(categoryId)) scheduleSharedRuntimePrefetch(categoryId);
+      }
+      function showAllProjects(options = {}) {
+        if (projectSearch?.value) projectSearch.value = "";
+        if (clearProjectSearch) clearProjectSearch.hidden = true;
+        searchResultsStatus.hidden = true;
+        searchEmpty.hidden = true;
+        setBrowsePresentation("all", null, { scroll: options.scroll !== false });
+      }
+      function showDiscoveryHome(options = {}) {
+        if (projectSearch?.value) projectSearch.value = "";
+        if (clearProjectSearch) clearProjectSearch.hidden = true;
+        searchResultsStatus.hidden = true;
+        searchEmpty.hidden = true;
+        browseReturnMode = "home";
+        browseReturnCategoryId = null;
+        setBrowsePresentation("home", null, { scroll: false });
+        if (options.scroll !== false) window.scrollTo({ top: 0, behavior: scrollBehavior() });
       }
 
       function closeMenu(restoreFocus = false) {
@@ -2532,23 +2733,26 @@
       }
 
       $("#categoryNav").addEventListener("click", event => {
-        const nav = event.target.closest(".nav-item[data-category]");
-        if (!nav) return;
-        const categoryId = nav.dataset.category;
-        const category = CATEGORY_SECTION_BY_ID.get(categoryId) || $(`[data-category-section="${categoryId}"]`);
-        if (category) {
-          // Selection is deliberate browsing intent. Warm the shared runtime and
-          // only this category's verified module, in the background, on good links.
-          // Standalone-led categories keep their lighter iframe fast path.
-          if (!['sound-motion', 'creative-tools'].includes(categoryId)) scheduleSharedRuntimePrefetch(categoryId);
-          setActiveCategory(categoryId);
-          category.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+        const all = event.target.closest("[data-browse-all]");
+        if (all) showAllProjects();
+        else {
+          const nav = event.target.closest(".nav-item[data-category]");
+          if (!nav) return;
+          showCategory(nav.dataset.category);
         }
         if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
       });
+      $("#discoveryChoices").addEventListener("click", event => {
+        const all = event.target.closest("[data-browse-all]");
+        if (all) { showAllProjects(); return; }
+        const build = event.target.closest("[data-build-project]");
+        if (build) { openUniverseProject(build.dataset.buildProject); return; }
+        const choice = event.target.closest("[data-browse-category]");
+        if (choice) showCategory(choice.dataset.browseCategory);
+      });
       $("#brandHome").addEventListener("click", event => {
         event.preventDefault();
-        window.scrollTo({ top: 0, behavior: scrollBehavior() });
+        showDiscoveryHome();
         if (window.matchMedia("(max-width: 900px)").matches) closeMenu();
       });
       $("#menuToggle").addEventListener("click", () => {
@@ -2561,7 +2765,7 @@
       $("#closeAllRooms").addEventListener("click", () => {
         $$(".room-window.open").forEach(room => setRoomOpen(room, false));
         updateOpenStatus();
-        showToast("All project windows are closed.");
+        showToast("All open experiences are closed.");
       });
       $('[data-close-all-mirror]')?.addEventListener('click', () => $('#closeAllRooms')?.click());
       document.addEventListener("keydown", event => {
@@ -2587,7 +2791,10 @@
         if (!target) return;
         if (projectSearch && projectSearch.value) { projectSearch.value = ''; applyProjectSearch(); }
         const section = target.closest('[data-category-section]');
-        if (section) setActiveCategory(section.dataset.categorySection);
+        if (section) {
+          const categoryId = section.dataset.categorySection;
+          if (browseMode !== "all" && !(browseMode === "category" && browseCategoryId === categoryId)) setBrowsePresentation("category", categoryId, { scroll: false });
+        }
         setRoomOpen(target, true, false);
         requestAnimationFrame(() => target.querySelector('.room-heading')?.focus({preventScroll:true}));
       }
@@ -2725,6 +2932,14 @@
       $('#categorySections').addEventListener('pointerdown', maybeWarmForProjectIntent, { passive: true });
       $('#categorySections').addEventListener('focusin', maybeWarmForProjectIntent);
       $('#categorySections').addEventListener('click', event => {
+        const tag = event.target.closest('[data-project-tag]');
+        if (tag) {
+          if (browseMode !== "search") { browseReturnMode = browseMode; browseReturnCategoryId = browseCategoryId; }
+          projectSearch.value = tag.dataset.projectTag || "";
+          applyProjectSearch();
+          $('#catalogLabel')?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
+          return;
+        }
         const studioFilter = event.target.closest('[data-studio-filter]');
         if (studioFilter) {
           activeStudioToolFilter = STUDIO_TOOL_FILTERS.some(item => item.id === studioFilter.dataset.studioFilter) ? studioFilter.dataset.studioFilter : "all";
@@ -2748,7 +2963,7 @@
       if (location.hash.startsWith("#aether=")) {
         const sharedRoom = $("#room-aether-os");
         if (sharedRoom) {
-          setActiveCategory("operating-systems");
+          setBrowsePresentation("category", "operating-systems", { scroll: false });
           setRoomOpen(sharedRoom, true, false);
           requestAnimationFrame(() => sharedRoom.scrollIntoView({ behavior: "auto", block: "start" }));
         }
@@ -2771,6 +2986,17 @@
       const searchEmpty = $("#searchEmpty");
       function applyProjectSearch() {
         const query = (projectSearch.value || "").trim().toLocaleLowerCase();
+        if (query) {
+          if (browseMode !== "search") {
+            browseReturnMode = browseMode;
+            browseReturnCategoryId = browseCategoryId;
+          }
+          if (browseMode !== "search") setBrowsePresentation("search", null, { scroll: false });
+        } else if (browseMode === "search") {
+          const returnMode = browseReturnMode || "home";
+          const returnCategory = browseReturnCategoryId;
+          setBrowsePresentation(returnMode, returnCategory, { scroll: false });
+        }
         if (query && activeStudioToolFilter !== "all") {
           activeStudioToolFilter = "all";
           syncStudioToolFilters();
@@ -2791,9 +3017,14 @@
             room.hidden = !match;
             if (match) { matches++; categoryMatches++; }
           });
-          if (section) section.hidden = categoryMatches === 0;
+          if (section) section.hidden = query ? categoryMatches === 0 : (browseMode === "category" && category.id !== browseCategoryId);
+          const divider = section?.querySelector('[data-category-more-divider]');
+          if (divider) {
+            const featuredIds = new Set(category.featured || []);
+            divider.hidden = !category.rooms.some(id => !featuredIds.has(id) && !ROOM_CARD_BY_ID.get(id)?.hidden);
+          }
           const navButton = CATEGORY_NAV_BY_ID.get(category.id);
-          if (navButton) navButton.hidden = categoryMatches === 0;
+          if (navButton) navButton.hidden = false;
         });
         clearProjectSearch.hidden = !query;
         searchEmpty.hidden = !query || matches > 0;
@@ -2803,6 +3034,11 @@
           const first = CATEGORIES.find(category => category.rooms.some(id => !ROOM_CARD_BY_ID.get(id)?.hidden));
           if (first) setActiveCategory(first.id);
         } else if (!query) {
+          CATEGORIES.forEach(category => {
+            const section = CATEGORY_SECTION_BY_ID.get(category.id);
+            const divider = section?.querySelector('[data-category-more-divider]');
+            if (divider) divider.hidden = false;
+          });
           scheduleScrollUIUpdate();
         }
       }
@@ -2892,10 +3128,10 @@
         {id:'keyboard-help',title:'Keyboard shortcuts',description:'Show the quick keyboard guide for navigating CURIOID.',icon:'⌨',keywords:'help hotkeys keys slash question mark',run:openKeyboardShortcuts},
         {id:'vault',title:'Browser Vault',description:'Open locally saved outputs and recovery copies.',icon:'▤',keywords:'files exports backups packages local storage',target:'openBrowserVault'},
         {id:'shortcuts',title:'Favorites and recent projects',description:'Show your saved shortcuts and recently opened worlds.',icon:'★',keywords:'favorite recent history saved projects',run:()=>{const panel=$('#personalShortcuts');if(panel){panel.open=true;panel.scrollIntoView({behavior:scrollBehavior(),block:'nearest'});}}},
-        {id:'restore-session',title:'Restore last session',description:'Reopen the project windows saved from your previous visit.',icon:'↶',keywords:'resume reopen restore windows',run:()=> $('[data-restore-site-session]')?.click(),enabled:()=>!!$('[data-restore-site-session]')&&!$('[data-restore-site-session]').disabled},
-        {id:'close-all',title:'Close all project windows',description:'Close every currently open project window.',icon:'×',keywords:'close quit dismiss windows',run:()=>$('#closeAllRooms')?.click(),enabled:()=>$$('.room-window.open').length>0},
+        {id:'restore-session',title:'Restore last session',description:'Reopen the experiences saved from your previous visit.',icon:'↶',keywords:'resume reopen restore experiences',run:()=> $('[data-restore-site-session]')?.click(),enabled:()=>!!$('[data-restore-site-session]')&&!$('[data-restore-site-session]').disabled},
+        {id:'close-all',title:'Close all open experiences',description:'Close every currently open experience.',icon:'×',keywords:'close quit dismiss experiences',run:()=>$('#closeAllRooms')?.click(),enabled:()=>$$('.room-window.open').length>0},
         {id:'motion',title:'Toggle project motion',description:'Pause or resume animated project backgrounds.',icon:'◌',keywords:'animation movement reduce motion',run:()=>$('#motionToggle')?.click()},
-        {id:'home',title:'Back to CURIOID home',description:'Return to the top of the project catalogue.',icon:'⌂',keywords:'home top start',run:()=>{window.scrollTo({top:0,behavior:scrollBehavior()});closeMenu();}}
+        {id:'home',title:'Back to CURIOID home',description:'Return to the top of the project catalogue.',icon:'⌂',keywords:'home top start',run:()=>{showDiscoveryHome();closeMenu();}}
       ];
       let commandItems = [];
       let commandActiveIndex = -1;
@@ -2904,7 +3140,7 @@
       function buildCommandItems(){
         const items=[];
         for(const category of CATEGORIES){
-          items.push({id:`category:${category.id}`,kind:'category',title:category.title,description:category.description||category.kicker||'Browse this project category',icon:'◈',keywords:`${category.kicker||''} ${category.id}`,categoryId:category.id,search:`${category.title} ${category.description||''} ${category.kicker||''} ${category.id}`,run:()=>{const section=CATEGORY_SECTION_BY_ID.get(category.id);if(section){if(projectSearch?.value){projectSearch.value='';applyProjectSearch();}setActiveCategory(category.id);section.scrollIntoView({behavior:scrollBehavior(),block:'start'});if(window.matchMedia('(max-width: 900px)').matches)closeMenu();}}});
+          items.push({id:`category:${category.id}`,kind:'category',title:category.title,description:category.description||category.kicker||'Browse this project category',icon:'◈',keywords:`${category.kicker||''} ${category.id}`,categoryId:category.id,search:`${category.title} ${category.description||''} ${category.kicker||''} ${category.id}`,run:()=>{showCategory(category.id);if(window.matchMedia('(max-width: 900px)').matches)closeMenu();}});
           for(const id of category.rooms){
             const info=ROOM_INFO[id];if(!info)continue;
             const profile=CURIOID_PROJECT_PROFILES.get(id);
@@ -3135,7 +3371,7 @@
           if (section.getBoundingClientRect().top <= readingLine) active = section;
           else break;
         }
-        if (firstVisible) {
+        if (firstVisible && browseMode === "all") {
           active ||= firstVisible;
           const atPageBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
           if (atPageBottom) {
@@ -3187,7 +3423,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.327", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.334", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {

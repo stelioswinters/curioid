@@ -1,7 +1,7 @@
-/* CURIOID v1.327 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.334 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.327';
+  const EXPECTED_RELEASE = 'v1.334';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -161,7 +161,8 @@
   }
   function expectedKindForAsset(file) {
     if (/\.js$/i.test(file)) return 'js';
-    if (file === 'projects-styles.txt') return 'styles';
+    if (file === 'projects-styles.css') return 'styles';
+    if (file === 'vocal-lexicon-data.json') return 'json';
     if (/\.html?$/i.test(file)) return 'html';
     if (/\.png$/i.test(file)) return 'png';
     if (/\.svg$/i.test(file)) return 'svg';
@@ -170,13 +171,13 @@
   }
   function labelForAsset(file) {
     const known = {
-      'health-check.js':'Health Check module', 'projects-core.js':'Shared project core',
-      'projects-styles.txt':'Project stylesheet source', 'projects-category-operating-systems.js':'Operating Systems category bundle',
+      'health-check.js':'Health Check module', 'vanta-deck-app.js':'VANTA DECK app script', 'glitchyard-app.js':'GLITCHYARD app script', 'dark-looper-app.js':'D4RK L00PER app script', 'chroma-loom.html':'Chroma Loom standalone app', 'projects-core.js':'Shared project core',
+      'projects-styles.css':'Project stylesheet source', 'projects-category-operating-systems.js':'Operating Systems category bundle',
       'projects-category-strange-archives.js':'Strange Archives category bundle', 'projects-category-web-experiments.js':'Web Experiments category bundle',
       'projects-category-tiny-games.js':'Tiny Games category bundle', 'projects-category-digital-art.js':'Digital Art category bundle',
       'projects-category-sound-motion.js':'Sound Motion category bundle', 'projects-category-creative-tools.js':'Creative Tools category bundle',
       'music-audio-apps.html':'Music & Audio apps page', 'applications-tools-apps.html':'Applications & Tools apps page',
-      'vocal-lexicon.js':'Vocal Lexicon asset', 'curioids.html':'Curioids page', 'manifest.webmanifest':'PWA manifest',
+      'vocal-lexicon.js':'Vocal Lexicon loader', 'vocal-lexicon-data.json':'Vocal Lexicon data tables', 'curioids.html':'Curioids page', 'manifest.webmanifest':'PWA manifest',
       'curioid-icon.svg':'Brand SVG icon', 'curioid-icon-192.png':'192px app icon', 'curioid-icon-512.png':'512px app icon',
       'social-preview.png':'Social preview image', 'robots.txt':'Robots policy', 'sitemap.xml':'XML sitemap', 'index.html':'Homepage document'
     };
@@ -382,7 +383,7 @@
       {file:'index.html',strict:false},{file:'manifest.webmanifest',strict:false},
       {file:'curioid-icon.svg',strict:false},{file:'curioid-icon-192.png',strict:false},{file:'curioid-icon-512.png',strict:false}
     ];
-    const criticalOfflineAssets=['site-runtime-current.js','projects-core.js','projects-styles.txt','health-check.js',
+    const criticalOfflineAssets=['site-runtime-current.js','projects-core.js','projects-styles.css','health-check.js',
       'projects-category-operating-systems.js','projects-category-strange-archives.js','projects-category-web-experiments.js',
       'projects-category-tiny-games.js','projects-category-digital-art.js','projects-category-sound-motion.js','projects-category-creative-tools.js'];
     for(const file of criticalOfflineAssets) if(manifest?.[file]) required.push({file,hash:manifest[file],strict:true});
@@ -548,9 +549,9 @@
       const digest = await crypto.subtle.digest('SHA-256', bytes);
       const actual = [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
       const matches = actual === expectedHash;
-      const strictIntegrity = expectedKind === 'js' || expectedKind === 'styles';
+      const strictIntegrity = expectedKind === 'js' || expectedKind === 'styles' || expectedKind === 'json';
       let actualSha384 = null;
-      if (strictIntegrity) {
+      if (expectedKind === 'js' || expectedKind === 'styles') {
         const sha384 = await crypto.subtle.digest('SHA-384', bytes);
         actualSha384 = 'sha384-' + btoa(String.fromCharCode(...new Uint8Array(sha384)));
       }
@@ -592,6 +593,7 @@
         : expectedKind === 'svg' ? /image\/svg\+xml|text\/xml/i.test(contentType)
         : expectedKind === 'png' ? /image\/png/i.test(contentType)
         : expectedKind === 'manifest' ? /manifest\+json|application\/json/i.test(contentType)
+        : expectedKind === 'json' ? /application\/json|application\/[^;]+\+json/i.test(contentType)
         : expectedKind === 'text' ? /text\/|application\/xml/i.test(contentType)
         : true;
       const expectedPngDimensions = file === 'social-preview.png' ? {width:1200,height:630} : file === 'curioid-icon-192.png' ? {width:192,height:192} : file === 'curioid-icon-512.png' ? {width:512,height:512} : null;
@@ -601,6 +603,7 @@
         : expectedKind === 'png' ? pngSignature && pngDimensionsMatch
         : expectedKind === 'manifest' ? !!parsedManifest?.name && !!parsedManifest?.start_url
         : expectedKind === 'styles' ? !looksLikeHtml && size > 10000 && Number(cssRuleCount) > 100
+        : expectedKind === 'json' ? !looksLikeHtml && size > 10000 && size <= 4 * 1024 * 1024
         : !looksLikeHtml;
       const headers = {cacheControl:response.headers.get('cache-control'),etag:response.headers.get('etag'),age:response.headers.get('age'),cfCacheStatus:response.headers.get('cf-cache-status'),server:response.headers.get('server'),xCache:response.headers.get('x-cache'),contentLength:response.headers.get('content-length')};
       const dimensions = pngDimensions ? `; ${pngDimensions.width}×${pngDimensions.height}px` : '';
@@ -613,7 +616,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.327',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.334',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -667,7 +670,7 @@
       const metadataAligned=iconDeclarationsAligned&&socialCountAligned&&socialTextAligned&&canonicalAligned&&projectCountAligned&&categoryCountAligned&&brandMarkMatches&&runtimeSRIValid&&runtimePreloadSRIValid;
       const siteSnapshot={url:deploymentBase.origin+deploymentBase.pathname,release:publishedRelease,expectedRelease,releaseMatches:publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE,title:shellDoc.title||null,description:meta('description')||null,canonical:canonicalUrl,canonicalAligned,projectCount:count,expectedProjectCount:expectedCount,projectCountAligned,categoryCount,expectedCategoryCount:expectedCategories,categoryCountAligned,operatingSystemCount:Number(meta('curioid-os-count'))||6,ogTitle:ogTitle||null,ogDescription:ogDescription||null,twitterTitle:twitterTitle||null,twitterDescription:twitterDescription||null,ogImage:ogImage?new URL(ogImage,pageUrl).pathname:null,twitterImage:twitterImage?new URL(twitterImage,pageUrl).pathname:null,sameSocialImage,socialCountAligned,socialTextAligned,brandMarkMatches,runtimeSRIValid,runtimePreloadSRIValid,iconSvg,iconPng,iconDeclarationsAligned,headers:{cacheControl:response.headers.get('cache-control'),age:response.headers.get('age'),etag:response.headers.get('etag'),cfCacheStatus:response.headers.get('cf-cache-status'),lastModified:response.headers.get('last-modified')}};
       const releaseAligned=publishedRelease===expectedRelease&&publishedRelease===EXPECTED_RELEASE;
-      return {ok:releaseAligned&&runtimeSRIValid&&runtimePreloadSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected v1.327; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; preload/script SRI ${runtimePreloadSRIValid?'aligned':'mismatched or missing'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
+      return {ok:releaseAligned&&runtimeSRIValid&&runtimePreloadSRIValid,warning:releaseAligned&&!metadataAligned,detail:`Homepage HTTP ${response.status}; ${bytes.byteLength.toLocaleString()} bytes; release ${publishedRelease} vs expected ${EXPECTED_RELEASE}; runtime SRI ${runtimeSRIValid?'configured':'missing or invalid'}; preload/script SRI ${runtimePreloadSRIValid?'aligned':'mismatched or missing'}; ${count??'unknown'} project windows; ${categoryCount??'unknown'} categories; canonical ${canonicalAligned?'aligned':'needs review'}; social metadata ${socialTextAligned?'aligned':'needs review'}; header/favicon geometry ${brandMarkMatches?'MATCH':'needs review'}. HTML byte hashes are not enforced because the edge may rewrite non-SRI-bound documents.`,meta:{file:'index.html',url:pageUrl.href,status:response.status,contentType:response.headers.get('content-type')||'not supplied',bytes:bytes.byteLength,releaseMarkerMatches:releaseAligned,hashMatches:null,siteSnapshot}};
     }catch(error){return {ok:false,detail:String(error?.message||error).slice(0,240)}}
   }
   function safeJson(value) {
@@ -812,9 +815,9 @@
     return report;
   }
   let lastReportObjectUrl = null;
-  window.addEventListener('pagehide',()=>{
-    if(lastReportObjectUrl){try{URL.revokeObjectURL(lastReportObjectUrl);}catch(_){}lastReportObjectUrl=null;}
-  },{once:true});
+  // Blob URLs are released when the document is destroyed. Keep the current
+  // report URL alive for the whole page session so slow download managers can
+  // resolve it after the user clicks the ready report link.
   function clearPreparedReportDownload() {
     if (lastReportObjectUrl) { try { URL.revokeObjectURL(lastReportObjectUrl); } catch (_) {} lastReportObjectUrl = null; }
     if (healthDownloadButton instanceof HTMLAnchorElement) {
@@ -931,6 +934,28 @@
     maintenance.categorySmokeResults = projectSmoke?.results?.map(item => ({category:item.category,ok:Boolean(item.ok),durationMs:item.durationMs||null,error:item.error||null})) || null;
     maintenance.offlineAssetPrecache = projectSmoke?.precache || null;
     const projects = window.CurioidProjects;
+    // Inspect every registered application template without mounting or activating it.
+    // This includes every generated button, option, input, link and binder contract.
+    try {
+      const uiCensus = projects?.inspectProjectInterfaces?.();
+      window.__CURIOID_HEALTH_UI_CENSUS = uiCensus || null;
+      if (!uiCensus) throw new Error('The project runtime does not expose the read-only interface inspector.');
+      const issues = uiCensus.issues || {};
+      const hardIssues = Number(issues.renderFailures||0)+Number(issues.inlineHandlers||0)+Number(issues.javascriptUrls||0)+Number(issues.unsafeBlankLinks||0)+Number(issues.unsandboxedFrames||0)+Number(issues.sameOriginRelaxationFrames||0);
+      const softIssues = Number(issues.unlabeled||0)+Number(uiCensus.totals?.duplicateIds||0)+Number(uiCensus.totals?.duplicateOptionValues||0)+Number(uiCensus.totals?.emptyOptionLabels||0)+Number(uiCensus.totals?.formButtonsWithoutType||0)+Number(issues.brokenAriaReferences||0)+Number(issues.crossProjectDuplicateIds||0);
+      const interactionHistory=window.CurioidInteractionDiagnostics?.snapshot?.()||[];
+      const interactionProjects=interactionHistory.filter(item=>item.totalEvents>0);
+      const interactionEvents=interactionHistory.reduce((sum,item)=>sum+item.totalEvents,0);
+      const interactionSummary=interactionProjects.length
+        ?` Privacy-safe real-interaction observer has seen ${interactionEvents} trusted event(s) across ${interactionProjects.length} project(s): ${interactionProjects.map(item=>`${item.projectId} (${item.totalEvents})`).slice(0,12).join(', ')}. It records event types and element IDs only—never text, keys or field values.`
+        :' No real project-control interaction has been observed in this tab yet; opening and using projects will populate privacy-safe counters.';
+      add('All project buttons, options & interaction wiring — read-only audit',hardIssues===0&&uiCensus.checked===uiCensus.projectCount
+        ?{ok:true,warning:softIssues>0,detail:`${uiCensus.detail} ${softIssues?`${softIssues} accessibility/consistency item(s) are candidates for review.`:'No structural UI/security issues were detected.'} Event handlers are inspected as source contracts; destructive controls are intentionally never clicked. Dynamically generated controls are separately reported as source hints and should be verified when their project is opened.${interactionSummary}`}
+        :{ok:false,detail:`${uiCensus.detail} ${hardIssues} unsafe/render issue(s) detected; inspect the per-project census stored in window.__CURIOID_HEALTH_UI_CENSUS.${interactionSummary}`});
+    } catch(error) {
+      window.__CURIOID_HEALTH_UI_CENSUS = null;
+      add('All project buttons, options & interaction wiring — read-only audit',{ok:false,warning:true,detail:String(error?.message||error).slice(0,240)});
+    }
     const roomCount = document.querySelectorAll('.room-window[data-room]').length;
     const osIds = ['dead-interface','food-alchemy','echonoise-os','umbra-os','aether-os','aura-synthesis'];
     const osBootReady = osIds.every(id => projects?.ids?.includes(id));
@@ -1048,7 +1073,14 @@
       .filter(([file]) => file !== 'index.html')
       .sort(([a],[b]) => a.localeCompare(b))
       .map(([file,hash]) => ({label:labelForAsset(file),file,hash,kind:expectedKindForAsset(file)})) : [];
-    const releaseResults = await mapWithConcurrency(releaseAssets, 4, async asset => ({
+    const auditConnection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+    const auditConnectionType = String(auditConnection?.effectiveType || '').toLowerCase();
+    const auditMemoryGb = Number(navigator.deviceMemory) || 0;
+    const auditCpuCount = Number(navigator.hardwareConcurrency) || 0;
+    const releaseAuditConcurrency = auditMemoryGb > 0 && auditMemoryGb <= 2 ? 1
+      : auditConnection?.saveData || ['slow-2g','2g'].includes(auditConnectionType) ? 1
+      : (auditMemoryGb > 0 && auditMemoryGb <= 4) || (auditCpuCount > 0 && auditCpuCount <= 4) ? 2 : 3;
+    const releaseResults = await mapWithConcurrency(releaseAssets, releaseAuditConcurrency, async asset => ({
       ...asset, result:await probeReleaseAsset(asset.file, asset.hash, asset.kind)
     }));
     for (const {label,file,result} of releaseResults) {
@@ -1063,47 +1095,185 @@
     add('Static HTML/JavaScript security-sink inventory',sinkTotal===0
       ? {ok:true,detail:'No common dynamic HTML/script sink patterns, inline event handlers, or javascript: URLs were found in the HTML and JavaScript assets scanned.'}
       : {ok:false,warning:true,detail:`Static inventory across external JS and inline HTML scripts/attributes (not a vulnerability verdict): ${JSON.stringify(sinkTotals)}. Constant/template-controlled and sanitized uses may be safe; source review is needed before changing any sink.`});
-    // Verify the exact embedded app scripts that are dynamically executed by
-    // standalone pages are authorized by each page's own CSP hash list.
+    // Verify standalone studio bootstrap CSP hashes and each external app script's SRI.
     try {
-      async function auditEmbeddedCsp(path, scriptIds) {
-        const response=await healthTimeout(fetch(new URL(path, deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${path} CSP audit`);
+      async function auditStandalone(path, bootstrapId, appFiles) {
+        const response=await healthTimeout(fetch(new URL(path,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${path} CSP audit`);
         if(!response.ok)throw new Error(`${path} returned HTTP ${response.status}`);
         const source=await response.text(),doc=new DOMParser().parseFromString(source,'text/html');
         const policy=doc.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content||'';
         const scriptSrc=policy.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1]||'';
         const missing=[],checked=[];
-        if(!scriptSrc.includes("'strict-dynamic'"))missing.push('script-src lacks strict-dynamic; dynamically inserted app payloads may be blocked');
-        for(const id of scriptIds){
-          const node=doc.getElementById(id);
-          if(!node){missing.push(`${id}: expected packaged script block is missing`);continue;}
-          if(id.startsWith('studio-source-') && node.type!=='text/plain'){
-            missing.push(`${id}: embedded source block has an unexpected script type`);continue;
-          }
+        if(!scriptSrc.includes("'strict-dynamic'"))missing.push('script-src lacks strict-dynamic');
+        const executableTypes=new Set(['','text/javascript','application/javascript','application/ecmascript','text/ecmascript']);
+        for(const node of [...doc.querySelectorAll('script:not([src])')]){
+          const type=(node.getAttribute('type')||'').trim().toLowerCase();
+          if(!executableTypes.has(type)||!(node.textContent||'').trim())continue;
           const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(node.textContent||''));
           const hash=`'sha256-${btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''))}'`;
-          if(!scriptSrc.includes(hash))missing.push(`${id}: CSP hash missing`);
-          else checked.push(id);
+          if(!scriptSrc.includes(hash))missing.push(`${node.id||'inline script'}: CSP hash missing`);
+          else checked.push(node.id||'inline script');
         }
-        const executableTypes=new Set(['','text/javascript','application/javascript','application/ecmascript','text/ecmascript']);
-        const unownedInline=[...doc.querySelectorAll('script:not([src])')].filter(node=>{
-          const type=(node.getAttribute('type')||'').trim().toLowerCase();
-          return (node.textContent||'').trim()&&executableTypes.has(type)&&!scriptIds.includes(node.id);
-        });
-        return {path,missing,checked,unownedInlineCount:unownedInline.length};
+        const bootstrap=doc.getElementById(bootstrapId);
+        if(!bootstrap)missing.push(`${bootstrapId}: bootstrap missing`);
+        else if(!/script\.integrity\s*=\s*integrity/.test(bootstrap.textContent||''))missing.push(`${bootstrapId}: external script SRI is not assigned`);
+        const appResults=[];
+        for(const file of appFiles){
+          const appResponse=await healthTimeout(fetch(new URL(file,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${file} SRI audit`);
+          if(!appResponse.ok){missing.push(`${file}: HTTP ${appResponse.status}`);continue;}
+          const bytes=await appResponse.arrayBuffer(),digest=await crypto.subtle.digest('SHA-384',bytes);
+          const sri=`sha384-${btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''))}`;
+          if(!(bootstrap?.textContent||'').includes(sri))missing.push(`${file}: page bootstrap SRI does not match downloaded bytes`);
+          else appResults.push(`${file} SRI matched`);
+        }
+        return {path,missing,checked,appResults};
       }
-      const standaloneCsp=await Promise.all([
-        auditEmbeddedCsp('music-audio-apps.html',['studio-source-looper','curioid-music-audio-bootstrap']),
-        auditEmbeddedCsp('applications-tools-apps.html',['studio-source-vanta','studio-source-glitchyard','curioid-applications-tools-bootstrap'])
+      const standalone=await Promise.all([
+        auditStandalone('music-audio-apps.html','curioid-music-audio-bootstrap',['dark-looper-app.js']),
+        auditStandalone('applications-tools-apps.html','curioid-applications-tools-bootstrap',['vanta-deck-app.js','glitchyard-app.js'])
       ]);
-      const missing=standaloneCsp.flatMap(item=>item.missing.map(issue=>`${item.path} / ${issue}`));
-      const unowned=standaloneCsp.reduce((sum,item)=>sum+item.unownedInlineCount,0);
-      add('Standalone studio CSP boot contracts',missing.length
+      const missing=standalone.flatMap(item=>item.missing.map(issue=>`${item.path} / ${issue}`));
+      const verified=standalone.flatMap(item=>[...item.checked,...item.appResults]);
+      add('Standalone studio CSP and external SRI boot contracts',missing.length
         ?{ok:false,detail:missing.join('; ')}
-        :unowned
-          ?{ok:true,warning:true,detail:`All packaged app payloads and launchers have exact SHA-256 CSP authorization, and strict-dynamic allows only those trusted launchers to execute the child scripts they create. ${unowned} additional executable inline block(s) appeared in the edge-transformed responses and are not part of the packaged release; browser CSP violation events are tracked separately. No unsafe-inline or unsafe-eval exception is used.`}
-          :{ok:true,detail:'All packaged app payloads and launchers have exact SHA-256 CSP authorization. No unowned inline blocks were found and no unsafe-inline or unsafe-eval exception is used.'});
-    } catch(error) { add('Standalone studio CSP boot contracts',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
+        :{ok:true,detail:`Both standalone pages authorize their exact inline launchers with CSP hashes and strict-dynamic. All ${verified.filter(item=>item.endsWith('SRI matched')).length} external studio payloads match their declared SHA-384 integrity; no inert script-text injection remains.`});
+    } catch(error) { add('Standalone studio CSP and external SRI boot contracts',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
+    // Audit inline executable script hashes on the other separately published HTML
+    // documents too. JSON-LD is data, not executable JavaScript, and is excluded.
+    try {
+      const inlinePolicyResults=await Promise.all(['curioids.html','chroma-loom.html'].map(async file=>{
+        const response=await healthTimeout(fetch(new URL(file,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${file} inline CSP audit`);
+        if(!response.ok)throw new Error(`${file} returned HTTP ${response.status}`);
+        const html=await response.text(),doc=new DOMParser().parseFromString(html,'text/html'),policy=doc.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content||'';
+        const scriptSrc=policy.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1]||'',bad=[];let checked=0;
+        if(!scriptSrc||scriptSrc.includes("'unsafe-inline'")||scriptSrc.includes("'unsafe-eval'"))bad.push('strict script-src policy missing or weakened');
+        for(const script of [...doc.querySelectorAll('script:not([src])')]){
+          const type=(script.getAttribute('type')||'').trim().toLowerCase();
+          if(['application/ld+json','application/json','text/plain'].includes(type)||!(script.textContent||'').trim())continue;
+          const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(script.textContent||''));
+          const hash=`'sha256-${btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''))}'`;
+          checked++;if(!scriptSrc.includes(hash))bad.push(`${script.id||'inline script'} CSP hash mismatch`);
+        }
+        return {file,bad,checked};
+      }));
+      const failures=inlinePolicyResults.flatMap(result=>result.bad.map(issue=>`${result.file}: ${issue}`));
+      add('Published HTML inline-script CSP hashes',failures.length?{ok:false,detail:failures.join('; ')}:{ok:true,detail:inlinePolicyResults.map(result=>`${result.file}: ${result.checked} executable inline script(s) matched exact CSP hashes`).join('; ')+'. No unsafe-inline or unsafe-eval script exception is used.'});
+    } catch(error) { add('Published HTML inline-script CSP hashes',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
+    // A meta CSP cannot set frame-ancestors, so each published page has a small
+    // same-origin-aware guard. This verifies its presence and exact script hash.
+    try {
+      const guardedPages=['index.html','curioids.html','chroma-loom.html','music-audio-apps.html','applications-tools-apps.html'];
+      const guardResults=await Promise.all(guardedPages.map(async file=>{
+        const response=await healthTimeout(fetch(new URL(file,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${file} frame guard audit`);
+        if(!response.ok)throw new Error(`${file} returned HTTP ${response.status}`);
+        const doc=new DOMParser().parseFromString(await response.text(),'text/html');
+        const guard=doc.getElementById('curioid-frame-guard');
+        const policy=doc.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content||'';
+        const scriptSrc=policy.match(/(?:^|;)\s*script-src\s+([^;]+)/i)?.[1]||'';
+        if(!guard) return {file,ok:false,reason:'frame guard missing'};
+        const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(guard.textContent||''));
+        const encoded=btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''));
+        const hash=`'sha256-${encoded}'`;
+        const source=guard.textContent||'';
+        const sourceSafe=source.includes('window.top.location.origin')&&source.includes('stopImmediatePropagation')&&source.includes('document.body.inert = true')&&source.includes('Open CURIOID directly');
+        return {file,ok:scriptSrc.includes(hash)&&sourceSafe,reason:!scriptSrc.includes(hash)?'CSP hash mismatch':!sourceSafe?'guard behaviour contract incomplete':'guard + CSP hash verified'};
+      }));
+      const failures=guardResults.filter(result=>!result.ok);
+      add('Cross-origin framing and clickjacking guard',failures.length
+        ?{ok:false,detail:failures.map(result=>`${result.file}: ${result.reason}`).join('; ')}
+        :{ok:true,detail:`All ${guardResults.length} published HTML pages contain the same-origin-aware anti-framing guard, block framed-page interaction, and authorize its exact inline bytes with CSP SHA-256 hashes. CURIOID's own same-origin frames remain supported.`});
+    } catch(error) { add('Cross-origin framing and clickjacking guard',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
+    // Exercise the published Language Studio security contract from source.
+    try {
+      const response=await healthTimeout(fetch(new URL('projects-category-operating-systems.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'Language Studio Worker security audit');
+      if(!response.ok)throw new Error(`Operating Systems bundle returned HTTP ${response.status}`);
+      const source=await response.text();
+      const languageStart=source.indexOf("if(app==='language-studio')"),languageEnd=source.indexOf("if(app==='snippet-vault')",languageStart);
+      const runner=languageStart>=0&&languageEnd>languageStart?source.slice(languageStart,languageEnd):'';
+      const checks={sourceCap:runner.includes('code.length>250000'),opaqueFrame:runner.includes("preview.setAttribute('sandbox','allow-scripts')"),opaqueOriginCsp:runner.includes("connect-src 'none'"),nestedWorkersBlocked:runner.includes("'Worker','SharedWorker'"),binaryMemoryApisBlocked:runner.includes("'WebAssembly','SharedArrayBuffer','Atomics'"),networkApisBlocked:runner.includes("'WebSocket','EventSource','XMLHttpRequest'"),messageSourceBound:runner.includes("e.origin!=='null'")&&runner.includes('e.source!==preview.contentWindow'),tokenBound:runner.includes('e.data?.token!==token'),workerWatchdog:runner.includes('14000')&&runner.includes('15000'),timerCountCap:runner.includes('timerRecords.size>=128'),timerCallbackCap:runner.includes('timerCallbacks>20000'),nativeWatchdogTimer:runner.includes('NativeSetTimeout(()=>{if(!finished)done();},14000)')};
+      add('Language Studio Worker isolation and resource budgets',Object.values(checks).every(Boolean)
+        ?{ok:true,detail:'The editor caps source at 250 KB, runs JavaScript inside an opaque-origin frame and short-lived Worker, blocks network and nested-worker APIs, validates opaque origin + exact frame source + token, terminates at 14/15 seconds, caps output and timers at 128 active / 20,000 callbacks; WebAssembly, SharedArrayBuffer and Atomics are disabled. Browsers do not expose a portable hard Worker heap quota.'}
+        :{ok:false,detail:`Language Studio source contract missing: ${Object.entries(checks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+    } catch(error) { add('Language Studio Worker isolation and resource budgets',{ok:false,detail:String(error?.message||error).slice(0,240)}); }
+    // Count static controls in the three separate app documents in addition to the
+    // 58 registered project templates. The catalogue has 59 rooms because Sandbox
+    // OS is a native workshop room rather than a registered project template.
+    // DOMParser never executes the page scripts it parses.
+    try {
+      const standalonePages=['applications-tools-apps.html','music-audio-apps.html','chroma-loom.html'];
+      const standaloneAudit=await Promise.all(standalonePages.map(async file=>{
+        const response=await healthTimeout(fetch(new URL(file,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${file} interface inventory`);
+        if(!response.ok)throw new Error(`${file} returned HTTP ${response.status}`);
+        const doc=new DOMParser().parseFromString(await response.text(),'text/html');
+        const controls=[...doc.querySelectorAll('button,input:not([type="hidden"]),select,textarea,a[href],[role="button"],[role="tab"],[role="switch"]')];
+        const counts={buttons:0,inputs:0,selects:0,textareas:0,links:0,options:0,unlabeled:0,duplicateIds:0,inlineHandlers:0,javascriptUrls:0,unsafeBlankLinks:0};
+        const ids=[...doc.querySelectorAll('[id]')].map(node=>node.id).filter(Boolean);
+        counts.duplicateIds=ids.length-new Set(ids).size;
+        for(const node of doc.querySelectorAll('*'))for(const attr of [...node.attributes]){
+          if(/^on[a-z]+$/i.test(attr.name))counts.inlineHandlers++;
+          if(['href','src','action','formaction','xlink:href'].includes(attr.name)&&/^\s*javascript:/i.test(attr.value||''))counts.javascriptUrls++;
+        }
+        for(const node of controls){
+          const tag=node.tagName.toLowerCase();
+          if(tag==='button')counts.buttons++;else if(tag==='input')counts.inputs++;else if(tag==='select'){counts.selects++;counts.options+=node.querySelectorAll('option').length;}else if(tag==='textarea')counts.textareas++;else if(tag==='a'){counts.links++;if(node.target==='_blank'&&!/(^|\s)(noopener|noreferrer)(\s|$)/i.test(node.rel||''))counts.unsafeBlankLinks++;}
+          const named=Boolean((node.getAttribute('aria-label')||node.getAttribute('aria-labelledby')||node.getAttribute('title')||'').trim()||node.textContent?.trim()||node.labels?.length||node.closest('label'));
+          if(!named)counts.unlabeled++;
+        }
+        return {file,counts,frames:doc.querySelectorAll('iframe').length};
+      }));
+      const total=standaloneAudit.reduce((acc,item)=>{for(const [key,value] of Object.entries(item.counts))acc[key]=(acc[key]||0)+value;acc.frames+=item.frames;return acc;},{frames:0});
+      const hard=total.duplicateIds+total.inlineHandlers+total.javascriptUrls+total.unsafeBlankLinks;
+      add('Standalone studios and Chroma Loom — control inventory',hard?{ok:false,detail:`Static standalone documents: ${JSON.stringify(total)}. Review inline handlers, javascript URLs, duplicate IDs and unsafe external links.`}:{ok:true,detail:`Read-only DOMParser inventory across ${standaloneAudit.length} standalone documents: ${total.buttons} buttons, ${total.inputs} inputs, ${total.selects} selects, ${total.textareas} textareas, ${total.links} links and ${total.options} select options; ${total.unlabeled} naming candidates; ${total.frames} iframe(s). ${standaloneAudit.map(item=>item.file+': '+item.counts.buttons+' buttons / '+item.counts.options+' options').join('; ')}. Scripts are not executed and dynamically generated controls are covered separately by the project runtime census and SRI checks.`});
+    } catch(error) { add('Standalone studios and Chroma Loom — control inventory',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
+    // Review security-sensitive DOM construction and the custom-OS sanitizer.
+    // These checks verify the intended safe-output contracts without injecting
+    // payloads into the live page or opening an app window.
+    try {
+      async function readSecuritySource(file) {
+        const response=await healthTimeout(fetch(new URL(file,deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),10000,`${file} security review`);
+        if(!response.ok)throw new Error(`${file} returned HTTP ${response.status}`);
+        return response.text();
+      }
+      const [vantaSecurity,darkSecurity,glitchSecurity,coreSecurity,appsPageSecurity,musicPageSecurity]=await Promise.all([
+        readSecuritySource('vanta-deck-app.js'),readSecuritySource('dark-looper-app.js'),readSecuritySource('glitchyard-app.js'),
+        readSecuritySource('projects-core.js'),readSecuritySource('applications-tools-apps.html'),readSecuritySource('music-audio-apps.html')
+      ]);
+      const securityContracts={
+        vantaDynamicTextEscaped:vantaSecurity.includes('const escapeHTML = value =>')&&vantaSecurity.includes('escapeHTML(m.label)')&&vantaSecurity.includes('escapeHTML(m.value)')&&vantaSecurity.includes('escapeHTML(r.body)')&&vantaSecurity.includes('safeRecommendationLevel(r.level)'),
+        darkLooperDynamicRowsUseTextNodes:darkSecurity.includes('row.replaceChildren(nameLabel, categoryLabel)')&&!/row\.innerHTML\s*=\s*[^;]+(?:name|category)/i.test(darkSecurity),
+        glitchyardMarkdownEscapesRawHTML:glitchSecurity.includes('function markdownToHtml(text){let escaped=html(text);')&&glitchSecurity.includes('rel="noopener noreferrer"')&&glitchSecurity.includes('const dtEsc = value =>'),
+        customOsSanitizerRemovesActiveContent:coreSecurity.includes("script,iframe,frame,object,embed,applet")&&coreSecurity.includes("if(name.startsWith('on')")&&coreSecurity.includes('curioidOsSafeResourceUrl(value,context)')&&coreSecurity.includes('CURIOID_OS_SOURCE_LIMITS.html'),
+        sandboxMessagesBindSourceAndToken:coreSecurity.includes("if(event.origin!=='null')return;const frame=[...frameRegistry.values()].find(item=>item.iframe.contentWindow===event.source)")&&coreSecurity.includes('event.data.token!==frame.token'),
+        sandboxChildMessagesUseExactHostOrigin:coreSecurity.includes('safeHostOrigin=inlineSafeJson(String(hostOrigin||window.location.origin))')&&coreSecurity.includes('event.origin!==hostOrigin')&&coreSecurity.includes('type:\'request\',id,method,payload},hostOrigin)'),
+        customOsWorkerDisablesWasmAndSharedMemory:coreSecurity.includes("'WebAssembly','SharedArrayBuffer','Atomics'")&&coreSecurity.includes('webAssembly:false,sharedMemory:false'),
+        legacyOsSourceNeverRuns:coreSecurity.includes('legacy JavaScript that is preserved for migration but is never executed')&&coreSecurity.includes('data-cos-js readonly')&&!coreSecurity.includes("${pkg.source.workerJs?'':userJs}"),
+        applicationsPageUsesStrictCsp:applicationsPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(applicationsPageSecurity),
+        musicPageUsesStrictCsp:musicPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(musicPageSecurity),
+        noDynamicCodeExecution:/\beval\s*\(|new\s+Function\s*\(/.test(vantaSecurity+darkSecurity+glitchSecurity+coreSecurity)===false,
+        privacySafeInteractionObserver:coreSecurity.includes('event.isTrusted !== true')&&coreSecurity.includes('privacy-safe-interaction-observer')&&coreSecurity.includes('curioidInteractionHistory')&&!/event\.target\.value|event\.key|innerText.*interaction/i.test(coreSecurity.slice(coreSecurity.indexOf('Privacy-safe interaction observations'),coreSecurity.indexOf('window.CurioidProjects')))
+      };
+      add('DOM injection, custom-OS and messaging security review',Object.values(securityContracts).every(Boolean)
+        ?{ok:true,detail:'VANTA DECK escapes dynamic text and whitelists CSS classes; Dark Looper uses text nodes for dynamic library labels; GLITCHYARD escapes raw Markdown HTML and constrains external links; custom OS previews remove active content/event attributes and restrict resource URLs; child-to-parent sandbox messages use the exact host origin and the host validates opaque origin, exact frame source and per-frame token; custom OS Workers disable WebAssembly and shared-memory APIs; legacy custom-OS source is preserved for migration but never executed; standalone pages retain strict CSP; trusted interaction telemetry records only event types and element identifiers in memory, not entered values or text; no eval/new Function execution path was found in the reviewed application/runtime sources.'}
+        :{ok:false,detail:`Security source contract needs attention: ${Object.entries(securityContracts).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+    } catch(error) { add('DOM injection, custom-OS and messaging security review',{ok:false,warning:true,detail:String(error?.message||error).slice(0,240)}); }
+    // Verify the newly uploaded Chroma Loom app is first in Digital Art and
+    // isolated in its own same-origin deployment document.
+    try {
+      const digitalDescriptor=siteRuntimeSource.match(/id:\s*"digital-art"[\s\S]*?rooms:\s*\[([^\]]+)\]/);
+      const digitalFirst=Boolean(digitalDescriptor&&/^\s*"chroma-loom"/.test(digitalDescriptor[1]));
+      const [coreResponse,digitalResponse]=await Promise.all([
+        healthTimeout(fetch(new URL('projects-core.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'Chroma Loom registry audit'),
+        healthTimeout(fetch(new URL('projects-category-digital-art.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'Chroma Loom category audit')
+      ]);
+      if(!coreResponse.ok||!digitalResponse.ok)throw new Error(`Chroma source fetch failed: core ${coreResponse.status}, digital art ${digitalResponse.status}`);
+      const [projectsCoreSource,projectsDigitalArtSource]=await Promise.all([coreResponse.text(),digitalResponse.text()]);
+      const roomRegistered=projectsCoreSource.includes('"chroma-loom":')&&projectsCoreSource.includes('"chroma-loom":"digital-art"');
+      const frameIsolation=projectsDigitalArtSource.includes('sandbox="allow-scripts allow-downloads"')&&projectsDigitalArtSource.includes('src="./chroma-loom.html"');
+      const filePresent=await fetch(new URL('chroma-loom.html',deploymentBase).href,{method:'HEAD',cache:'no-store',credentials:'same-origin'}).then(response=>response.ok).catch(()=>false);
+      add('Chroma Loom first Digital Art app',digitalFirst&&roomRegistered&&frameIsolation&&filePresent
+        ?{ok:true,detail:'Chroma Loom is the first Digital Art room, registered in the category module, and runs from its own sandboxed local HTML file with script and download permissions only.'}
+        :{ok:false,detail:`Digital Art first=${digitalFirst}; room registry=${roomRegistered}; sandboxed local frame=${frameIsolation}; file available=${filePresent}.`});
+    } catch(error) { add('Chroma Loom first Digital Art app',{ok:false,detail:String(error?.message||error).slice(0,200)}); }
     // Verify the distinct built-in Phoneme Singer synthesis path and the
     // desktop group-drag implementation from the published source files.
     try {
@@ -1113,10 +1283,10 @@
       ]);
       if(!osResponse.ok||!coreResponse.ok)throw new Error(`Source fetch failed: OS ${osResponse.status}, core ${coreResponse.status}`);
       const [osSource,coreSource]=await Promise.all([osResponse.text(),coreResponse.text()]);
-      const singerChecks={dedicatedVowel:osSource.includes('function synthSingerVowel('),harmonicSource:osSource.includes('function getSingerPeriodicWave('),modeRouting:osSource.includes("state.vocalMode==='singer')synthSingerVowel"),consonantProjection:osSource.includes("singerProjection=state.vocalMode==='singer'?1.28:1")};
+      const singerChecks={dedicatedVowel:osSource.includes('function synthSingerVowel('),harmonicSource:osSource.includes('function getSingerPeriodicWave('),modeRouting:osSource.includes("state.vocalMode==='singer')synthSingerVowel"),consonantProjection:osSource.includes("singerProjection=state.vocalMode==='singer'?.42:1"),vowelTiming:osSource.includes('function allocatePhonemeDurations(')&&osSource.includes('return /1$/.test(String(phone))?2.55:2.15')};
       const singerOk=Object.values(singerChecks).every(Boolean);
       add('Echonoise Phoneme Singer synthesis contract',singerOk
-        ?{ok:true,detail:'The built-in Singer uses a separate harmonic source, dedicated formant/singer-formant resonators, ARPABET vowel routing and stronger consonant projection. This verifies implementation presence, not subjective audio quality or a recorded voicebank.'}
+        ?{ok:true,detail:'The built-in Singer has a separate harmonic source, singer-formant resonators, ARPABET vowel routing, longer stressed-vowel allocation and restrained consonant projection. This source check cannot judge subjective audio quality; a realistic recorded singer timbre still requires an imported compatible voicebank.'}
         :{ok:false,detail:`Dedicated singer path is incomplete: ${Object.entries(singerChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
       const nourishGroupStart=osSource.indexOf("root.addEventListener('curioid:desktop-group-move'");
       const nourishGroupEnd=nourishGroupStart>=0?osSource.indexOf("root.addEventListener('contextmenu'",nourishGroupStart):-1;
@@ -1130,6 +1300,50 @@
       add('Nourish protected Free Move',nourishSessionOnly
         ?{ok:true,detail:'Free Move remains interactive even when saved layout storage is read-only. Changes are session-only and the protected saved layout is not overwritten.'}
         :{ok:false,detail:'The source contract for session-only movement in read-only storage mode is missing.'});
+      const umbraSet=osSource.match(/UMBRA_PIXEL_EFFECTS=new Set\(\[([^\]]+)\]\)/);
+      const umbraNames=umbraSet?[...umbraSet[1].matchAll(/'([a-z-]+)'/g)].map(match=>match[1]):[];
+      const umbraBody=osSource.slice(osSource.indexOf('function umbraApplyPixelEffect'),osSource.indexOf('function handleCanvasDown',osSource.indexOf('function umbraApplyPixelEffect')));
+      const umbraToolsOk=umbraNames.length>=23&&umbraNames.every(name=>umbraBody.includes(`mode==='${name}'`))&&umbraNames.every(name=>osSource.includes(`data-u-tool-option=\"${name}\"`));
+      add('UMBRA advanced left-rail tool coverage',umbraToolsOk
+        ?{ok:true,detail:`${umbraNames.length} implemented, selectable local pixel effects are present in the UMBRA tool rail, including tonal, print, colour-treatment and display-style effects. Each listed mode has a corresponding pixel-processing branch.`}
+        :{ok:false,detail:`UMBRA effect registry contains ${umbraNames.length} modes; every mode must have a real processing branch and a matching left-rail button.`});
+      const kinetaResponse=await healthTimeout(fetch(new URL('projects-category-web-experiments.js',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'Kineta performance contract audit');
+      if(!kinetaResponse.ok)throw new Error(`Web Experiments bundle returned HTTP ${kinetaResponse.status}`);
+      const kinetaSource=await kinetaResponse.text();
+      const kinetaChecks={adaptiveDpr:kinetaSource.includes('adaptiveQualityScale')&&(/const nextDpr\s*=\s*Math\.max\(\.72,\s*baseDpr\s*\*\s*adaptiveQualityScale\)/.test(kinetaSource)),lowResourceBudget:kinetaSource.includes('deviceMemoryGb')&&kinetaSource.includes('const particleCap = lowResourceDevice'),hiddenPause:kinetaSource.includes('new IntersectionObserver')&&kinetaSource.includes('document.hidden||!kinetaInView'),fixedStep:kinetaSource.includes('while (accumulator >= FIXED_DT && steps < 8)'),particleCompaction:kinetaSource.includes('function updateParticles(dt)')&&kinetaSource.includes('particles.length = write;')&&!/particles\.splice\(i,1\)/.test(kinetaSource)};
+      add('Kineta adaptive performance safeguards',Object.values(kinetaChecks).every(Boolean)
+        ?{ok:true,detail:'Kineta uses adaptive canvas pixel ratio, hardware-aware population/particle/ecosystem budgets, visibility-based loop suspension, bounded fixed-step catch-up and in-place particle compaction.'}
+        :{ok:false,detail:`Kineta performance contract missing: ${Object.entries(kinetaChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+      const taskbarChecks={observer:osSource.includes("new ResizeObserver(scheduleRetroTray)"),deferredControls:osSource.includes('retroOverflowItems.prepend(entry.node)'),restoreOrder:osSource.includes('entry.marker.parentNode?.insertBefore(entry.node,entry.marker.nextSibling)'),cleanup:osSource.includes('retroTrayCleanup=()=>')};
+      add('Doors98 responsive taskbar overflow',Object.values(taskbarChecks).every(Boolean)
+        ?{ok:true,detail:'Doors98 measures the live taskbar, moves low-priority controls into a scrollable More menu, restores them in their original order when space returns, and disconnects observers on cleanup.'}
+        :{ok:false,detail:`Doors98 taskbar overflow contract missing: ${Object.entries(taskbarChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+      const sandboxChecks={minimize:coreSource.includes("button.matches('[data-cos-window-minimize],[data-cos-window-close],[data-cos-window-hide]')"),maximize:coreSource.includes("button.matches('[data-cos-window-maximize]')"),close:coreSource.includes("button.matches('[data-cos-window-minimize],[data-cos-window-close],[data-cos-window-hide]')"),themeApply:coreSource.includes("shellStage?.setAttribute('data-wallpaper',theme)"),themeChange:coreSource.includes("shellRoot.addEventListener('change'")};
+      add('Sandbox Notes window controls and theme wiring',Object.values(sandboxChecks).every(Boolean)
+        ?{ok:true,detail:'The primary Sandbox Notes window exposes independent minimize, maximize and close controls; the theme picker applies wallpaper state immediately and saves through the guarded desktop store.'}
+        :{ok:false,detail:`Sandbox desktop control contract missing: ${Object.entries(sandboxChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+      const echonoiseChecks={fullscreenListener:osSource.includes("document.addEventListener('fullscreenchange',onEchonoiseFullscreenChange)"),mainRestore:osSource.includes("main.style.display='flex'"),mainVisibility:osSource.includes("main.hidden=false"),taskbarRestore:osSource.includes('function restoreMainStudio(){focusMainStudio();}')};
+      add('Echonoise fullscreen Sound Studio visibility',Object.values(echonoiseChecks).every(Boolean)
+        ?{ok:true,detail:'Echonoise tracks fullscreen transitions, keeps the desktop/taskbar rows available, and restores the Sound Studio by clearing hidden/minimized/closed state.'}
+        :{ok:false,detail:`Echonoise fullscreen contract missing: ${Object.entries(echonoiseChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}.`});
+      const downloadExemption=coreSource.includes("if (anchor.matches('[data-health-download]')) return;");
+      const nativeReady=siteRuntimeSource.includes('if(healthReportReady)')&&!/healthRunButton\.click\s*\(/.test(siteRuntimeSource);
+      add('Health Check native download routing',downloadExemption&&nativeReady
+        ?{ok:true,detail:'The global Browser Vault download interceptor explicitly leaves the Health Check link native. The ready-state click does not synthesize or recurse; the browser receives the Blob URL and download filename directly.'}
+        :{ok:false,detail:'The Health Check report is still intercepted by artifact routing or a synthetic click path remains.'});
+      const styleResponse=await healthTimeout(fetch(new URL('projects-styles.css',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),12000,'OS window presentation contract audit');
+      if(!styleResponse.ok)throw new Error(`Project stylesheet returned HTTP ${styleResponse.status}`);
+      const styleSource=await styleResponse.text();
+      const wallpaperNames=[...new Set([...styleSource.matchAll(/\.cos-desktop-stage\[data-wallpaper=\"([^\"]+)\"\]/g)].map(match=>match[1]))];
+      const projectLayoutGuard=styleSource.includes('CURIOID v1.333 universal project content guard')&&styleSource.includes('.room-window .room-mount :is(button,input,select,textarea)')&&styleSource.includes('overflow-wrap:anywhere');
+      const pageLayoutGuard=Boolean(document.getElementById('curioid-v1-329-responsive-overflow-guard'));
+      add('Sitewide responsive layout and overflow safeguards',projectLayoutGuard&&pageLayoutGuard
+        ?{ok:true,detail:'Additive responsive guards are present in both the homepage and shared project stylesheet. They allow text/buttons to wrap and preserve scrollable code/table content without hiding interface elements.'}
+        :{ok:false,warning:true,detail:`Responsive layout guards are incomplete: project stylesheet ${projectLayoutGuard?'present':'missing'}, homepage style ${pageLayoutGuard?'present':'missing'}.`});
+      const popupChecks={doors98:styleSource.includes('.room-window.open:is([data-room=\"dead-interface\"'),aura:styleSource.includes('[data-room=\"aura-synthesis\"]'),aether:styleSource.includes('[data-room=\"aether-os\"]'),sandbox:styleSource.includes('.curioid-os-runtime{inset:3vh 3vw!important'),themeCount:wallpaperNames.length>=25};
+      add('Large OS popup windows and Sandbox theme coverage',Object.values(popupChecks).every(Boolean)
+        ?{ok:true,detail:`Doors98, AURA and Aether have room-sized popup presentation; Sandbox has a centered, dismissible window shell and ${wallpaperNames.length} CSS-backed desktop themes.`}
+        :{ok:false,detail:`OS presentation source contract missing: ${Object.entries(popupChecks).filter(([,ok])=>!ok).map(([name])=>name).join(', ')}; detected ${wallpaperNames.length} wallpaper styles.`});
     } catch(error) {
       add('Echonoise and desktop interaction source contracts',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)});
     }
@@ -1184,20 +1398,50 @@
     const styleRuntimeHash=siteRuntimeSource.match(/const PROJECT_STYLES_SHA256\s*=\s*["']([a-f0-9]{64})["']/i)?.[1]||'';
     const sharedPrefetchBlock=siteRuntimeSource.match(/const SHARED_PREFETCH_ASSETS\s*=\s*Object\.freeze\(\[([\s\S]*?)\]\);/)?.[1]||'';
     const prefetchCoreHash=sharedPrefetchBlock.match(/file:\s*["']projects-core\.js["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1]||'';
-    const prefetchStyleHash=sharedPrefetchBlock.match(/file:\s*["']projects-styles\.txt["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1]||'';
-    const styleAssetMeta=assetMeta.find(item=>item.file==='projects-styles.txt');
+    const prefetchStyleHash=sharedPrefetchBlock.match(/file:\s*["']projects-styles\.css["'][^}]*hash:\s*["']([a-f0-9]{64})["']/i)?.[1]||'';
+    const styleAssetMeta=assetMeta.find(item=>item.file==='projects-styles.css');
     const sharedHashProblems=[];
-    if(!styleRuntimeHash||styleRuntimeHash!==releaseManifest?.manifest?.['projects-styles.txt']||!styleAssetMeta?.hashMatches)sharedHashProblems.push('project stylesheet loader hash');
-    if(!prefetchStyleHash||prefetchStyleHash!==releaseManifest?.manifest?.['projects-styles.txt'])sharedHashProblems.push('project stylesheet prefetch hash');
+    const styleRuntimeSri=siteRuntimeSource.match(/const PROJECT_STYLES_SRI\s*=\s*["'](sha384-[A-Za-z0-9+/=]+)["']/i)?.[1]||'';
+    if(!styleRuntimeHash||styleRuntimeHash!==releaseManifest?.manifest?.['projects-styles.css']||!styleAssetMeta?.hashMatches||styleRuntimeSri!==styleAssetMeta?.actualSha384)sharedHashProblems.push('project stylesheet loader SHA-256/SHA-384 integrity');
+    if(!prefetchStyleHash||prefetchStyleHash!==releaseManifest?.manifest?.['projects-styles.css'])sharedHashProblems.push('project stylesheet prefetch hash');
     if(!prefetchCoreHash||prefetchCoreHash!==releaseManifest?.manifest?.['projects-core.js']||!coreAssetMeta?.hashMatches)sharedHashProblems.push('shared core prefetch hash');
     add('Runtime shared-core and stylesheet hash alignment',sharedHashProblems.length
       ?{ok:false,detail:`Runtime-to-manifest shared-asset hash mismatch: ${sharedHashProblems.join(', ')}. Project launch or offline pre-cache can fail even when the files themselves are valid.`}
       :{ok:true,detail:'The runtime stylesheet loader, stylesheet prefetch, shared-core prefetch and worker manifest all declare the exact SHA-256 hashes of the deployed files.'});
     try {
+      const lexiconMeta = assetMeta.find(item => item.file === 'vocal-lexicon-data.json');
+      const lexiconLoaderUrl = new URL('vocal-lexicon.js', deploymentBase);
+      lexiconLoaderUrl.searchParams.set('v', `sha256-${releaseManifest?.manifest?.['vocal-lexicon.js'] || ''}`);
+      const lexiconLoaderResponse = await healthTimeout(fetch(lexiconLoaderUrl.href, {cache:'no-store', credentials:'same-origin'}), 8000, 'Vocal Lexicon loader integrity descriptor');
+      if (!lexiconLoaderResponse.ok) throw new Error(`Vocal Lexicon loader returned HTTP ${lexiconLoaderResponse.status}`);
+      const lexiconLoaderSource = await lexiconLoaderResponse.text();
+      const dataHash = lexiconLoaderSource.match(/const DATA_SHA256\s*=\s*['"]([a-f0-9]{64})['"]/i)?.[1] || '';
+      const dataSri = lexiconLoaderSource.match(/const DATA_SRI\s*=\s*['"](sha256-[A-Za-z0-9+/=]+)['"]/i)?.[1] || '';
+      const actualSri = lexiconMeta?.actualHash && /^[a-f0-9]{64}$/i.test(lexiconMeta.actualHash)
+        ? 'sha256-' + btoa(String.fromCharCode(...new Uint8Array(lexiconMeta.actualHash.match(/../g).map(pair => parseInt(pair, 16))))) : '';
+      const aligned = Boolean(dataHash && dataHash === releaseManifest?.manifest?.['vocal-lexicon-data.json'] && lexiconMeta?.hashMatches && dataSri && dataSri === actualSri);
+      add('Vocal Lexicon loader-to-data integrity', aligned
+        ? {ok:true, detail:'The lazy JSON loader SHA-256 URL, native Fetch SRI descriptor and downloaded dictionary bytes agree with the service-worker release manifest.'}
+        : {ok:false, detail:'The Vocal Lexicon loader, native Fetch SRI descriptor, dictionary download and service-worker manifest do not all declare the same bytes.'});
+      const packedIndexReady = lexiconLoaderSource.includes('new Uint32Array(expectedCount + 1)') &&
+        lexiconLoaderSource.includes('comparePackedWordAt') &&
+        lexiconLoaderSource.includes('cache.size >= 2048') &&
+        lexiconLoaderSource.includes('const data = await response.json()');
+      add('Vocal Lexicon packed-index memory safeguards', packedIndexReady
+        ? {ok:true, detail:'Pronunciation tables stay packed in source strings, typed offsets replace large per-word arrays, lookup compares without temporary midpoint strings, decoded entries use a bounded 2,048-item cache, and the lazy JSON response uses the native parser.'}
+        : {ok:false, detail:'The expected packed lexicon index, direct comparator, bounded pronunciation cache or JSON parser path is missing from the deployed loader.'});
+    } catch (error) {
+      add('Vocal Lexicon loader-to-data integrity', {ok:false, detail:String(error?.message || error).slice(0,220)});
+    }
+    try {
       const swUrl = new URL(`service-worker-current.js?release=${EXPECTED_RELEASE}`, deploymentBase);
       const swResponse = await healthTimeout(fetch(swUrl.href, {cache:'no-store',credentials:'same-origin'}), 8000, 'Service-worker file request');
       const swText = swResponse.ok ? await swResponse.text() : '';
       const swValid = swResponse.ok && new RegExp('const\\s+RELEASE_ID\\s*=\\s*[\"\\\']'+EXPECTED_RELEASE.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[\"\\\']').test(swText) && swText.includes('CACHE_NAME');
+      const memoryAwarePrecache = swText.includes('const concurrency = limitedDevice ? 1 : 2') && swText.includes('navigator?.deviceMemory') && swText.includes('connection?.saveData');
+      add('Low-memory offline cache scheduling', memoryAwarePrecache
+        ? {ok:true,detail:'The explicit offline pre-cache uses one in-flight asset on low-memory, Data Saver and slow-2G/2G devices, and never exceeds two concurrent downloads.'}
+        : {ok:false,detail:'The service worker does not contain the expected memory- and connection-aware pre-cache concurrency limit.'});
       add('Service-worker file delivery', swValid ? {ok:true,detail:`HTTP ${swResponse.status}; release marker ${EXPECTED_RELEASE} found; ${swText.length.toLocaleString()} characters.`} : {ok:false,detail:`HTTP ${swResponse.status}; release marker missing or response was not a valid ${EXPECTED_RELEASE} service worker; ${swResponse.headers.get('content-type')||'content type not supplied'}.`});
     } catch(error) { add('Service-worker file delivery',{ok:false,warning:true,detail:String(error?.message||error).slice(0,220)}); }
     const shellIntegrity=await probePublishedShell();
@@ -1252,7 +1496,31 @@
     add('Web Audio', (window.AudioContext||window.webkitAudioContext) ? {ok:true,detail:'Web Audio API is available; no audio context was started by this probe.'} : {ok:false,warning:true,detail:'Web Audio API is unavailable.'});
     add('WebAssembly capability', typeof WebAssembly==='object' ? {ok:true,detail:'WebAssembly API is available; execution is validated separately by the minimal compile/instantiate canary.'} : {ok:false,warning:true,detail:'WebAssembly is unavailable.'});
     const csp = document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || '';
-    add('Content Security Policy', csp && csp.includes("object-src 'none'") && csp.includes("base-uri 'none'") && csp.includes("script-src 'self'") && !csp.includes("'unsafe-eval'") ? {ok:true,detail:'A restrictive meta CSP is present; object-src, base-uri and script execution are constrained.'} : {ok:false,warning:true,detail:'The expected restrictive Content-Security-Policy was not found or has been weakened.'});
+    const cspDirectives=Object.fromEntries(csp.split(';').map(part=>part.trim()).filter(Boolean).map(part=>{const [name,...values]=part.split(/\s+/);return[name.toLowerCase(),values.join(' ')];}));
+    const scriptPolicy=cspDirectives['script-src']||cspDirectives['default-src']||'';
+    const cspWeaknesses=[];
+    if(!cspDirectives['object-src']?.includes("'none'"))cspWeaknesses.push('object-src is not none');
+    if(!cspDirectives['base-uri']?.includes("'none'"))cspWeaknesses.push('base-uri is not none');
+    if(!cspDirectives['form-action'])cspWeaknesses.push('form-action is missing');
+    if(!scriptPolicy.includes("'self'"))cspWeaknesses.push('script-src does not allow same-origin release scripts');
+    if(scriptPolicy.includes("'unsafe-inline'")||scriptPolicy.includes("'unsafe-eval'"))cspWeaknesses.push('script-src contains an unsafe execution exception');
+    const liveJsUrls=[...document.querySelectorAll('a[href],form[action],[src]')].filter(node=>['href','action','src'].some(attr=>/^\s*javascript:/i.test(node.getAttribute(attr)||'')));
+    const liveInlineHandlers=[...document.querySelectorAll('*')].reduce((count,node)=>count+[...node.attributes].filter(attribute=>/^on[a-z]+$/i.test(attribute.name)).length,0);
+    const unsafeNewTabs=[...document.querySelectorAll('a[target="_blank"]')].filter(node=>!/(^|\s)(noopener|noreferrer)(\s|$)/i.test(node.rel||''));
+    const unsandboxedFrames=[...document.querySelectorAll('iframe:not([sandbox]):not([data-curioid-embedded-frame])')];
+    const trustedFirstPartyFrames=[...document.querySelectorAll('iframe[data-curioid-embedded-frame]')];
+    const scriptsMissingIntegrity=[...document.querySelectorAll('script[src]')].filter(script=>!script.integrity);
+    const externalScriptsMissingIntegrity=scriptsMissingIntegrity.filter(script=>{try{return new URL(script.src,location.href).origin!==location.origin;}catch(_){return true;}});
+    const missingReferrerPolicy=!document.querySelector('meta[name="referrer"][content]');
+    if(liveJsUrls.length)cspWeaknesses.push(`${liveJsUrls.length} javascript: URL(s) in the live DOM`);
+    if(liveInlineHandlers)cspWeaknesses.push(`${liveInlineHandlers} inline event handler(s) in the live DOM`);
+    if(unsafeNewTabs.length)cspWeaknesses.push(`${unsafeNewTabs.length} target=_blank link(s) lack noopener/noreferrer`);
+    if(unsandboxedFrames.length)cspWeaknesses.push(`${unsandboxedFrames.length} iframe(s) have no sandbox attribute`);
+    if(externalScriptsMissingIntegrity.length)cspWeaknesses.push(`${externalScriptsMissingIntegrity.length} cross-origin script(s) lack SRI`);
+    if(missingReferrerPolicy)cspWeaknesses.push('a document referrer policy meta tag is missing');
+    add('Content Security Policy & live DOM hardening',csp&&!cspWeaknesses.length
+      ?{ok:true,detail:`script-src contains no unsafe-inline/unsafe-eval exception; object-src and base-uri are restricted; form-action is defined; live DOM has no javascript: URLs, inline event handlers, unsafe new-tab links or untrusted unsandboxed iframes; ${trustedFirstPartyFrames.length} fixed same-origin CURIOID studio frame(s) are separately checked for restrictive CSP and script SRI; cross-origin scripts are SRI-bound and a strict referrer policy is present.`}
+      :{ok:false,warning:true,detail:`CSP/live-DOM hardening needs review: ${cspWeaknesses.join('; ')||'the expected CSP meta policy is missing'}.`});
     const manifestResponse = await (async()=>{try{return await healthTimeout(fetch(new URL('manifest.webmanifest',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),6000,'PWA manifest');}catch(error){return {ok:false,error};}})();
     if (manifestResponse?.ok === false) add('PWA manifest',{ok:false,warning:true,detail:String(manifestResponse.error?.message||manifestResponse.error||'Manifest request failed').slice(0,220)});
     else {
@@ -1297,6 +1565,24 @@
       return constrained&&button.clientWidth>0&&button.scrollWidth>button.clientWidth+4;
     });
     add('Visible button label clipping',clippedButtons.length?{ok:false,warning:true,detail:`${clippedButtons.length} visible button(s) may clip horizontally: ${clippedButtons.slice(0,10).map(node=>(node.getAttribute('aria-label')||node.title||node.textContent||'unnamed').trim().replace(/\s+/g,' ').slice(0,48)).join(' · ')}. Resize the window or inspect the listed controls.`}:{ok:true,detail:`${buttons.length} buttons checked; no obvious horizontal label clipping detected in the current viewport. This does not replace manual visual review.`});
+    const visibleInteractive=[...document.querySelectorAll('button,input:not([type=hidden]),select,textarea,a[href],[role="button"],[role="tab"],[role="switch"]')].filter(node=>node.getClientRects().length);
+    const visibleText=[...document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,small,strong,b,li,dt,dd,label,legend,summary,figcaption')].filter(node=>node.getClientRects().length);
+    const liveOverflow=[];
+    const inspectOverflow=(node,kind)=>{
+      try{
+        const style=getComputedStyle(node),rect=node.getBoundingClientRect();
+        const horizontalClip=node.clientWidth>0&&node.scrollWidth>node.clientWidth+4&&(style.overflowX==='hidden'||style.textOverflow==='ellipsis'||style.whiteSpace==='nowrap');
+        const verticalClip=node.clientHeight>0&&node.scrollHeight>node.clientHeight+4&&style.overflowY==='hidden';
+        const outside=rect.width>0&&(rect.right< -3||rect.left>innerWidth+3);
+        if(horizontalClip||verticalClip||outside)liveOverflow.push({kind,label:(node.getAttribute('aria-label')||node.title||node.textContent||node.getAttribute('placeholder')||node.tagName).trim().replace(/\s+/g,' ').slice(0,48),horizontalClip,verticalClip,outside});
+      }catch(_){}
+    };
+    for(const node of visibleInteractive)inspectOverflow(node,'control');
+    for(const node of visibleText)inspectOverflow(node,'text');
+    const pageHorizontalOverflow=document.documentElement.scrollWidth>document.documentElement.clientWidth+4;
+    add('Live control labels, text layout & responsive overflow',liveOverflow.length||pageHorizontalOverflow
+      ?{ok:false,warning:true,detail:`${visibleInteractive.length} visible interactive controls and ${visibleText.length} text elements inspected. ${liveOverflow.length} element(s) show measurable clipping/offscreen placement${pageHorizontalOverflow?' and the page itself exceeds the viewport width':''}: ${liveOverflow.slice(0,12).map(item=>`${item.kind}: ${item.label}`).join(' · ')}. No elements were removed.`}
+      :{ok:true,detail:`${visibleInteractive.length} visible interactive controls and ${visibleText.length} text elements checked at the current viewport; no measurable label clipping, hidden vertical text or page-level horizontal overflow detected. Repeat after resizing to check other viewport widths.`});
     // Font readiness is useful when a layout looks broken because a web font is still pending.
     if(document.fonts?.ready){
       try{await healthTimeout(document.fonts.ready,5000,'document font readiness');add('Font loading readiness',document.fonts.status==='loaded'?{ok:true,detail:'The document font set reports loaded. This does not prove every requested font family exists or matches the intended design.'}:{ok:false,warning:true,detail:`Document font loading state is ${document.fonts.status}. Some text may still be using fallback fonts.`});}
@@ -1354,10 +1640,10 @@
     const downloadCanary = await probeDownloadCanary();
     add('Report/download preparation canary',downloadCanary);
     const reportRunControl=document.querySelector('[data-health-run]'),reportLink=document.querySelector('[data-health-download]');
-    const singleReportControl=Boolean(reportRunControl&&reportLink instanceof HTMLAnchorElement&&getComputedStyle(reportLink).display==='none');
+    const singleReportControl=Boolean(reportRunControl&&reportRunControl===reportLink&&reportLink instanceof HTMLAnchorElement&&getComputedStyle(reportLink).display!=='none'&&reportLink.getAttribute('role')==='button'&&!/health(?:Run|Download)Button\.click\s*\(/.test(siteRuntimeSource));
     add('Single-control TXT report download',singleReportControl
-      ?{ok:true,detail:'Only one visible Health Check control is used. It runs diagnostics first, then changes into the TXT download action; the native Blob anchor is hidden and triggered synchronously from the next user click. Browser/OS save prompts cannot be verified by page JavaScript.'}
-      :{ok:false,detail:'The single-control report download UI is incomplete or the hidden native download anchor is missing.'});
+      ?{ok:true,detail:'The same visible anchor runs diagnostics and becomes the TXT download link. The completed Blob URL and download filename are assigned to that element; the next direct user click uses the browser native download action. No synthetic or recursive click is used. The operating-system save result is not observable by page JavaScript.'}
+      :{ok:false,detail:'The single visible control is not the same anchor used for the native Blob download, or a synthetic recursive click remains in the runtime.'});
     const brokenImages = [...document.images].filter(image=>image.complete&&image.naturalWidth===0&&image.currentSrc);
     const brokenStylesheets = [...document.querySelectorAll('link[rel="stylesheet"]')].filter(link=>link.href&&!link.sheet);
     add('Live document resource health',brokenImages.length||brokenStylesheets.length

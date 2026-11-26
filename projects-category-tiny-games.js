@@ -1,4 +1,4 @@
-/* CURIOID v1.324 category bundle: tiny-games. */
+/* CURIOID v1.333 category bundle: tiny-games. */
 (() => {
   'use strict';
   const window = globalThis.window;

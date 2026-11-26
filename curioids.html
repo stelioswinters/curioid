@@ -5,8 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
   <meta name="description" content="Curioids: a local full-body creature auto-battler and CURIOID website exploration game." />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-/V8EtGGNHBq3i3PGNvWdeWaOOljm1fnIedA+BjRkbaw=' 'sha256-G84nYhCcFe3jPJoZrYr2GvAIYNp6rtdH08IDGjcXN24='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
-  <meta name="curioids-build" content="v1.325" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M=' 'sha256-G84nYhCcFe3jPJoZrYr2GvAIYNp6rtdH08IDGjcXN24='; style-src 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'" />
+  <script id="curioid-frame-guard">
+(() => {
+  let blocked = false;
+  try {
+    blocked = window.top !== window.self && window.top.location.origin !== window.location.origin;
+  } catch (_) {
+    blocked = true;
+  }
+  if (!blocked) return;
+
+  const cancelInteraction = event => {
+    if (event.cancelable) event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+  const blockedEvents = [
+    'click', 'auxclick', 'dblclick', 'contextmenu', 'submit', 'reset',
+    'beforeinput', 'input', 'change', 'focus', 'focusin', 'keydown', 'keypress', 'keyup',
+    'pointerdown', 'pointerup', 'pointermove', 'mousedown', 'mouseup',
+    'touchstart', 'touchend', 'dragstart', 'drop'
+  ];
+  for (const type of blockedEvents) {
+    window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
+  }
+
+  const showFrameWarning = () => {
+    if (document.body) document.body.inert = true;
+    if (document.getElementById('curioid-frame-warning')) return;
+    const panel = document.createElement('section');
+    panel.id = 'curioid-frame-warning';
+    panel.setAttribute('role', 'alert');
+    panel.setAttribute('aria-live', 'assertive');
+    panel.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:grid;place-content:center;justify-items:center;gap:12px;box-sizing:border-box;padding:32px;background:#101014;color:#f8f7ff;font:16px/1.55 system-ui,sans-serif;text-align:center;pointer-events:auto;isolation:isolate;';
+    const heading = document.createElement('h1');
+    heading.textContent = 'Open CURIOID directly';
+    heading.style.cssText = 'max-width:24ch;margin:0;font-size:clamp(24px,5vw,38px);line-height:1.15;';
+    const message = document.createElement('p');
+    message.textContent = 'For your safety, this page is disabled inside another website. Open it in its own tab to use CURIOID.';
+    message.style.cssText = 'max-width:48ch;margin:0;color:#d2d0dc;';
+    panel.append(heading, message);
+    document.documentElement.append(panel);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
+  } else {
+    showFrameWarning();
+  }
+})();
+  </script>
+  <meta name="curioids-build" content="v1.334" />
   <title>CURIOID</title>
   <style>
     :root {

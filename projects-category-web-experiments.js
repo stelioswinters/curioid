@@ -1,4 +1,4 @@
-/* CURIOID v1.324 category bundle: web-experiments. */
+/* CURIOID v1.333 category bundle: web-experiments. */
 (() => {
   'use strict';
   const window = globalThis.window;
@@ -1500,12 +1500,13 @@ function bindKineta(root, api = {}) {
   const TAU = Math.PI * 2;
   const FIXED_DT = 1 / 60;
   const coarseDevice = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
-  const maxPopulation = (() => {
-    const cores = Number(navigator.hardwareConcurrency || 0);
-    return coarseDevice ? 16 : cores > 0 && cores <= 4 ? 20 : 32;
-  })();
-  const particleCap = coarseDevice ? 120 : 220;
-  const ecoCap = coarseDevice ? 48 : 96;
+  const cpuCores = Number(navigator.hardwareConcurrency || 0);
+  const deviceMemoryGb = Number(navigator.deviceMemory || 0);
+  const lowResourceDevice = coarseDevice || (cpuCores > 0 && cpuCores <= 4) || (deviceMemoryGb > 0 && deviceMemoryGb <= 4);
+  const maxPopulation = lowResourceDevice ? (coarseDevice ? 12 : 18) : cpuCores > 0 && cpuCores <= 8 ? 24 : 32;
+  const particleCap = lowResourceDevice ? 96 : cpuCores > 0 && cpuCores <= 8 ? 160 : 220;
+  const ecoCap = lowResourceDevice ? 36 : cpuCores > 0 && cpuCores <= 8 ? 64 : 96;
+  const maxOrbs = lowResourceDevice ? 36 : 60;
   const settings = {
     population: 1, generation: 12, mutation: 30, speed: 1,
     runTime: 45, stride: 44, course: 'mixed', gravity: 0.70,
@@ -1537,8 +1538,9 @@ function bindKineta(root, api = {}) {
   let mode = 'none';
   let paused = false;
   let disposed = false;
-  let width = 1, height = 1, dpr = 1;
-  let cameraX = 0, simulationTime = 0, accumulator = 0, lastFrame = 0, rafId = 0;
+  let width = 1, height = 1, dpr = 1, adaptiveQualityScale = 1;
+  let qualityWindowFrames = 0, slowQualityWindows = 0, fastQualityWindows = 0;
+  let cameraX = 0, simulationTime = 0, accumulator = 0, lastFrame = 0, rafId = 0, lastRenderAt = 0, frameTimeEma = 16.7;
   let generation = 1, generationLeft = settings.generation;
   let bestDistance = 0, topFitness = 0;
   let creatures = [];
@@ -1560,6 +1562,8 @@ function bindKineta(root, api = {}) {
   let savedChampions = [];
   const lifeState = { cols: 0, rows: 0, a: new Uint8Array(0), b: new Uint8Array(0), age: new Uint8Array(0), accumulator: 0, ticks: 0, alive: 0, paint: 1 };
   const particleState = { items: [], matrix: [], species: 4, steps: 0 };
+  const particleBuckets = new Map();
+  let hudFrameCounter = 0;
   const ecoState = { agents: [], food: [], births: 0, extinctions: 0, season: 'SPRING', foodAccumulator: 0, populationPeak: 0, tick: 0 };
   const lifeRules = {
     life: { birth: [3], survive: [2,3], label: 'Conway B3/S23' },
@@ -1785,7 +1789,10 @@ function bindKineta(root, api = {}) {
     const rect = canvas.getBoundingClientRect();
     const nextWidth = Math.max(260, rect.width || canvas.clientWidth || 640);
     const nextHeight = Math.max(190, rect.height || canvas.clientHeight || 360);
-    const nextDpr = Math.min(1.6, window.devicePixelRatio || 1);
+    const lowMemory = Number(navigator.deviceMemory || 0) > 0 && Number(navigator.deviceMemory) <= 4;
+    const lowCpu = Number(navigator.hardwareConcurrency || 0) > 0 && Number(navigator.hardwareConcurrency) <= 4;
+    const baseDpr = Math.min((coarseDevice || lowMemory || lowCpu) ? 1.12 : 1.38, window.devicePixelRatio || 1);
+    const nextDpr = Math.max(.72, baseDpr * adaptiveQualityScale);
     const changed = Math.abs(nextWidth - width) > .5 || Math.abs(nextHeight - height) > .5 || nextDpr !== dpr;
     width = nextWidth; height = nextHeight; dpr = nextDpr;
     const pixelWidth = Math.max(1, Math.round(width * dpr));
@@ -1814,27 +1821,31 @@ function bindKineta(root, api = {}) {
   }
 
   function createParticles(x, y, color, count = 9, speed = 1) {
-    for (let i = 0; i < count && particles.length < 220; i++) {
+    for (let i = 0; i < count && particles.length < particleCap; i++) {
       const angle = randK(0, TAU), velocity = randK(40, 165) * speed;
       particles.push({ x, y, vx: Math.cos(angle) * velocity, vy: Math.sin(angle) * velocity - 25, life: randK(.32, .7), max: .7, color });
     }
   }
   function updateParticles(dt) {
-    for (let i = particles.length - 1; i >= 0; i--) {
+    // Compact in-place instead of splicing the array once per expired particle.
+    // This keeps transient bursts allocation-light on slower mobile browsers.
+    let write = 0;
+    for (let i = 0; i < particles.length; i++) {
       const particle = particles[i];
       particle.x += particle.vx * dt; particle.y += particle.vy * dt; particle.vy += 260 * dt; particle.life -= dt;
-      if (particle.life <= 0) particles.splice(i, 1);
+      if (particle.life > 0) particles[write++] = particle;
     }
+    particles.length = write;
   }
   function addOrb(x, y) {
-    if (orbs.length >= 60) { toast(api, 'The energy field is full. Collect a few orbs first.'); return; }
+    if (orbs.length >= maxOrbs) { toast(api, 'The energy field is full. Collect a few orbs first.'); return; }
     const ox = Number.isFinite(x) ? x : 170 + Math.random() * 700;
     const oy = Number.isFinite(y) ? y : terrainY(ox) - randK(45, 130);
     orbs.push({ x: ox, y: oy, r: 7, phase: randK(0, TAU) });
   }
   function resetOrbs() {
     orbs = [];
-    for (let i = 0; i < 14; i++) addOrb(190 + i * 115 + randK(-20, 20));
+    for (let i = 0; i < Math.min(14, maxOrbs); i++) addOrb(190 + i * 115 + randK(-20, 20));
   }
   function resizeLifeGrid(preserve = false) {
     const cols = clampK(Math.floor(width / 6), 48, 160);
@@ -1955,13 +1966,13 @@ function bindKineta(root, api = {}) {
   }
   function particleStep(dt) {
     const items=particleState.items,n=particleState.species,radius=settings.particleRadius,cell=radius;
-    const buckets=new Map();
-    for(let i=0;i<items.length;i++){const p=items[i],key=`${Math.floor(p.x/cell)}:${Math.floor(p.y/cell)}`;let list=buckets.get(key);if(!list)buckets.set(key,list=[]);list.push(i);}
+    const buckets=particleBuckets;for(const list of buckets.values())list.length=0;
+    for(let i=0;i<items.length;i++){const p=items[i],cx=Math.floor(p.x/cell),cy=Math.floor(p.y/cell),key=cx*65536+cy;let list=buckets.get(key);if(!list)buckets.set(key,list=[]);list.push(i);}
     const matrix=particleState.matrix;
     for(let i=0;i<items.length;i++) {
       const p=items[i],cx=Math.floor(p.x/cell),cy=Math.floor(p.y/cell);let ax=0,ay=0;
       for(let oy=-1;oy<=1;oy++) for(let ox=-1;ox<=1;ox++) {
-        const list=buckets.get(`${cx+ox}:${cy+oy}`);if(!list)continue;
+        const list=buckets.get((cx+ox)*65536+(cy+oy));if(!list)continue;
         for(let qidx=0;qidx<list.length;qidx++) {const j=list[qidx];if(i===j)continue;const q=items[j];let dx=q.x-p.x,dy=q.y-p.y;const d2=dx*dx+dy*dy;
           if(d2<.001||d2>radius*radius)continue;const d=Math.sqrt(d2),strength=matrix[p.type][q.type];
           const core=d<8?-1.35:strength*(1-d/radius);ax+=(dx/d)*core*118;ay+=(dy/d)*core*118;
@@ -2736,9 +2747,19 @@ function bindKineta(root, api = {}) {
   }
 
   function frame(now) {
-    if (disposed) return;
-    const raw = lastFrame ? clampK((now - lastFrame) / 1000, 0, .05) : 1 / 60;
+    if (disposed || document.hidden || !kinetaInView) { rafId = 0; accumulator = 0; lastFrame = 0; return; }
+    const elapsedMs = lastFrame ? Math.max(0, now - lastFrame) : 16.7;
+    const raw = clampK(elapsedMs / 1000, 0, .05);
     lastFrame = now;
+    frameTimeEma = frameTimeEma * .92 + elapsedMs * .08;
+    if (++qualityWindowFrames >= 120) {
+      qualityWindowFrames = 0;
+      if (frameTimeEma > 29) { slowQualityWindows++; fastQualityWindows = 0; }
+      else if (frameTimeEma < 19.5) { fastQualityWindows++; slowQualityWindows = 0; }
+      else { slowQualityWindows = 0; fastQualityWindows = 0; }
+      if (slowQualityWindows >= 1 && adaptiveQualityScale > .72) { adaptiveQualityScale = Math.max(.72, adaptiveQualityScale - .10); slowQualityWindows = 0; fitCanvas(); lastRenderAt = 0; }
+      else if (fastQualityWindows >= 4 && adaptiveQualityScale < 1) { adaptiveQualityScale = Math.min(1, adaptiveQualityScale + .05); fastQualityWindows = 0; fitCanvas(); lastRenderAt = 0; }
+    }
     if (!width || !height) fitCanvas();
     if (!paused && !document.hidden) {
       let timeScale = mode === 'stride' && focusHeld && focusEnergy > 0 ? .42 : 1;
@@ -2753,7 +2774,15 @@ function bindKineta(root, api = {}) {
       accumulator = 0;
       if (mode === 'stride' && focusHeld) { focusHeld = false; focusActive = false; }
     }
-    updateHud(); render();
+    if ((++hudFrameCounter % 4) === 0) updateHud();
+    // Keep simulation fixed at 60 Hz, but avoid painting on every callback of
+    // high-refresh displays. Reduce render pressure on weaker devices while
+    // preserving the simulation timestep and input handling.
+    const renderInterval = frameTimeEma > 34 ? 40 : (coarseDevice || frameTimeEma > 23.5) ? 25 : 16.7;
+    if (!lastRenderAt || now - lastRenderAt >= renderInterval) {
+      render();
+      lastRenderAt = now;
+    }
     rafId = requestAnimationFrame(frame);
   }
 
@@ -2761,7 +2790,10 @@ function bindKineta(root, api = {}) {
   const resizeObserver = typeof ResizeObserver === 'function' ? new ResizeObserver(onResize) : null;
   resizeObserver?.observe(canvas);
   if (!resizeObserver) listen(window, 'resize', onResize);
-  listen(document, 'visibilitychange', () => { lastFrame = 0; accumulator = 0; });
+  let kinetaInView=true;
+  const kinetaVisibilityObserver=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{const entry=entries[0];kinetaInView=Boolean(entry?.isIntersecting&&entry.intersectionRatio>0);lastFrame=0;lastRenderAt=0;accumulator=0;if(!kinetaInView){if(rafId)cancelAnimationFrame(rafId);rafId=0;}else if(!disposed&&!document.hidden&&!rafId){rafId=requestAnimationFrame(frame);}} ,{threshold:0.01}):null;
+  kinetaVisibilityObserver?.observe(root);
+  listen(document, 'visibilitychange', () => { lastFrame = 0; lastRenderAt = 0; frameTimeEma = 16.7; accumulator = 0; if(document.hidden||!kinetaInView){if(rafId)cancelAnimationFrame(rafId);rafId=0;}else if(!disposed&&!rafId){rafId=requestAnimationFrame(frame);} });
 
   // Initialise one creature only. Population growth is always user-controlled.
   creatures = [new KCreature(makeGenome(), 100)];
@@ -2776,7 +2808,7 @@ function bindKineta(root, api = {}) {
 
   function cleanup() {
     if (disposed) return;
-    disposed = true; cancelAnimationFrame(rafId); resizeObserver?.disconnect(); onAbort.abort();
+    disposed = true; cancelAnimationFrame(rafId); resizeObserver?.disconnect(); kinetaVisibilityObserver?.disconnect(); onAbort.abort();
     grabbed = null; pointer.down = false; focusHeld = false; creatures.length = 0; particles.length = 0; orbs.length = 0;
   }
   api.registerCleanup?.(cleanup, 'kineta-hyperion-render-loop');
