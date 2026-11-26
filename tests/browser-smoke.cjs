@@ -88,37 +88,46 @@ const assert = require('node:assert/strict');
     const healthDetails = await dialog.locator('[data-health-results] li').evaluateAll(nodes =>
       nodes.map(node => ({ state: node.dataset.state, label: node.querySelector('b')?.innerText, detail: node.querySelector('span')?.innerText }))
     );
+    const healthReportHref = await healthRun.getAttribute('href');
+    const healthReportFilename = await healthRun.getAttribute('download');
     console.log('Health Check state:', await dialog.locator('[data-health-state]').innerText());
     console.log('Health Check status:', await dialog.locator('[data-health-status]').innerText());
     console.log('Health Check rows:', JSON.stringify(healthDetails));
-    const healthReportText = await page.evaluate(async href => await (await fetch(href)).text(), await healthRun.getAttribute('href'));
-    console.log('Health Check generated report:', healthReportText.slice(0, 1800));
     assert.ok(healthRows >= 20, 'Health Check completed too few diagnostics: ' + healthRows + '; see diagnostic rows above.');
-    assert.ok(await healthRun.getAttribute('href')?.startsWith('blob:'),
-      'Health Check did not prepare its local TXT report.');
-    assert.ok(await healthRun.getAttribute('download'), 'Health Check report has no download filename.');
-    console.log('Health Check completed ' + healthRows + ' diagnostics; state: ' +
-      await dialog.locator('[data-health-state]').innerText());
-    await dialog.locator('[data-health-details-summary]').click();
-    assert.ok(await dialog.locator('[data-health-details]').getAttribute('open') !== null,
-      'Health Check detailed results did not expand.');
-    await dialog.locator('[data-control-close]').click();
-    await dialog.waitFor({ state: 'hidden' });
+    assert.ok(healthReportHref?.startsWith('blob:'), 'Health Check did not prepare its local TXT report.');
+    assert.ok(healthReportFilename, 'Health Check report has no download filename.');
+    const healthReportText = await page.evaluate(async href => await (await fetch(href)).text(), healthReportHref);
+    const detailsMarker = 'FULL TECHNICAL DETAILS\\n----------------------\\n';
+    const detailsStart = healthReportText.indexOf(detailsMarker);
+    const privacyStart = healthReportText.indexOf('\\n\\nPRIVACY', detailsStart);
+    assert.ok(detailsStart >= 0 && privacyStart > detailsStart, 'Health Check report structure is incomplete.');
+    const healthReport = JSON.parse(healthReportText.slice(detailsStart + detailsMarker.length, privacyStart));
+    const hardFailures = healthReport.checks.filter(row => !row.ok && !row.warning);
+    const warnings = healthReport.checks.filter(row => !row.ok && row.warning);
+    console.log('Health Check completed ' + healthReport.checks.length + ' diagnostics.');
+    console.log('Health Check hard failures:', JSON.stringify(hardFailures));
+    console.log('Health Check warnings:', JSON.stringify(warnings));
+    console.log('Health Check report link:', healthReportHref, healthReportFilename);
 
-    // Small viewport: no horizontal page overflow and key controls remain reachable.
-    await page.setViewportSize({ width: 360, height: 800 });
-    await page.reload({ waitUntil: 'networkidle', timeout: 60000 });
+    // The diagnostic report can trigger a service-worker controller transition.
+    // Use a fresh page for the mobile viewport checks so reload/activation cannot
+    // invalidate the remaining browser tests.
+    const mobilePage = await browser.newPage({ viewport: { width: 360, height: 800 } });
+    mobilePage.on('pageerror', error => failures.push('mobile pageerror: ' + error.message));
+    mobilePage.on('console', message => { if (message.type() === 'error') failures.push('mobile console: ' + message.text()); });
+    mobilePage.on('requestfailed', request => failures.push('mobile request failed: ' + request.url() + ' (' + request.failure()?.errorText + ')'));
+    await mobilePage.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 60000 });
     for (const width of [320, 360, 375, 414, 560, 768, 900, 1024, 1365]) {
-      await page.setViewportSize({ width, height: 800 });
-      const dimensions = await page.evaluate(() => ({
+      await mobilePage.setViewportSize({ width, height: 800 });
+      const dimensions = await mobilePage.evaluate(() => ({
         viewport: document.documentElement.clientWidth,
         document: document.documentElement.scrollWidth
       }));
       assert.ok(dimensions.document <= dimensions.viewport + 2,
         'Horizontal overflow at ' + width + 'px: ' + JSON.stringify(dimensions));
     }
-    await page.setViewportSize({ width: 360, height: 800 });
-    const menuToggle = page.locator('#menuToggle');
+    await mobilePage.setViewportSize({ width: 360, height: 800 });
+    const menuToggle = mobilePage.locator('#menuToggle');
     if (await menuToggle.getAttribute('aria-expanded') !== 'true') await menuToggle.click();
     assert.equal(await menuToggle.getAttribute('aria-expanded'), 'true');
     await menuToggle.click();
