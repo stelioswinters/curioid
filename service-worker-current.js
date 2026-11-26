@@ -28,7 +28,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "projects-core.js": "3cff172090e97408435c2a8453ea67977ccbad7c4ece0be6f174dbb9322e3438",
   "projects-styles.css": "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "dba0a710752c9782472e62429780a10adf1ec136ac39a945ac0512cf998da565",
+  "site-runtime-current.js": "b3e3a4d59b11c46e6e5d5e7a22cd85d3299156a6f8676e4d54ae8cdfd19a90c0",
   "sitemap.xml": "e2635e23146209aa3ea5c9bb84e7edabd9ecca73a18c7f3c5ade6199153bf63a",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
   "vanta-deck-app.js": "47b25c2ec7e4d05028579eee4111d647817a3004ddb1092089df767276fd7705",
