@@ -75,7 +75,25 @@ const assert = require('node:assert/strict');
     const dialog = page.locator('#siteControlCenter');
     await dialog.waitFor({ state: 'visible' });
     assert.ok(await dialog.locator('[data-control-runtime]').count());
-    assert.ok(await dialog.locator('[data-health-run]').count());
+    const healthRun = dialog.locator('[data-health-run]');
+    assert.equal(await healthRun.count(), 1);
+    await healthRun.click();
+    await page.waitForFunction(() => {
+      const button = document.querySelector('#siteControlCenter [data-health-run]');
+      const state = document.querySelector('#siteControlCenter [data-health-state]')?.textContent?.trim();
+      return button && button.getAttribute('data-running') !== 'true'
+        && state && !['NOT RUN', 'CHECKING'].includes(state);
+    }, null, { timeout: 180000 });
+    const healthRows = await dialog.locator('[data-health-results] li').count();
+    assert.ok(healthRows >= 20, 'Health Check completed too few diagnostics: ' + healthRows);
+    assert.ok(await healthRun.getAttribute('href')?.startsWith('blob:'),
+      'Health Check did not prepare its local TXT report.');
+    assert.ok(await healthRun.getAttribute('download'), 'Health Check report has no download filename.');
+    console.log('Health Check completed ' + healthRows + ' diagnostics; state: ' +
+      await dialog.locator('[data-health-state]').innerText());
+    await dialog.locator('[data-health-details-summary]').click();
+    assert.ok(await dialog.locator('[data-health-details]').getAttribute('open') !== null,
+      'Health Check detailed results did not expand.');
     await dialog.locator('[data-control-close]').click();
     await dialog.waitFor({ state: 'hidden' });
 
