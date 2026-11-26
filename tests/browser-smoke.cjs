@@ -16,6 +16,13 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator('meta[name="curioid-release"]').getAttribute('content'), 'v1.344');
     assert.equal(await page.locator('[data-category]').count(), 7);
 
+    // First-visit notes are modal and intentionally block the page until acknowledged.
+    const notesDialog = page.locator('#curioid-important-notes');
+    if (await notesDialog.count() && await notesDialog.evaluate(node => node.open)) {
+      await notesDialog.getByRole('button', { name: /got it/i }).click();
+      await notesDialog.waitFor({ state: 'hidden' });
+    }
+
     // Every collection must switch to its own view and expose a non-empty catalogue.
     await page.locator('#browseCollections > summary').click();
     for (const category of await page.locator('[data-category]').evaluateAll(nodes => nodes.map(node => node.dataset.category))) {
