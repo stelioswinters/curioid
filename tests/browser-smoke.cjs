@@ -10,7 +10,7 @@ const assert = require('node:assert/strict');
   page.on('requestfailed', request => failures.push('request failed: ' + request.url() + ' (' + request.failure()?.errorText + ')'));
 
   try {
-    await page.goto('http://127.0.0.1:4173/curioid/', { waitUntil: 'networkidle', timeout: 60000 });
+    await page.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForFunction(() => document.querySelectorAll('[data-category]').length === 7);
     assert.match(await page.title(), /CURIOID/i);
     assert.equal(await page.locator('meta[name="curioid-release"]').getAttribute('content'), 'v1.344');
