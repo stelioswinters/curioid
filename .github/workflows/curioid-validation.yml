@@ -85,6 +85,8 @@ jobs:
 
           const runtimeHash = crypto.createHash('sha256').update(fs.readFileSync('site-runtime-current.js')).digest('hex');
           const runtimeSri = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync('site-runtime-current.js')).digest('base64');
+          console.log(`Computed runtime SHA-256: ${runtimeHash}`);
+          console.log(`Computed runtime SRI: ${runtimeSri}`);
           const runtimeTags = index.match(/<(?:link|script)\b[^>]*(?:href|src)="site-runtime-current\.js\?v=sha256-[a-f0-9]{64}"[^>]*>/g) || [];
           assert(runtimeTags.length === 2, `Expected runtime preload and script tags, found ${runtimeTags.length}.`);
           for (const tag of runtimeTags) {
