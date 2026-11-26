@@ -28,23 +28,16 @@ const assert = require('node:assert/strict');
       assert.ok(await page.locator('#categorySections .category-section:not([hidden])').count() >= 1, category + ' did not render');
     }
 
-    // Exercise every lazy category bundle and each independent desktop at least once.
-    const projectsToOpen = [
-      ['operating-systems', 'dead-interface'],
-      ['operating-systems', 'food-alchemy'],
-      ['operating-systems', 'echonoise-os'],
-      ['operating-systems', 'umbra-os'],
-      ['operating-systems', 'aura-synthesis'],
-      ['operating-systems', 'aether-os'],
-      ['operating-systems', 'sandbox-os'],
-      ['strange-archives', 'museum-almost'],
-      ['web-experiments', 'kineta-hyperion'],
-      ['tiny-games', 'curioids'],
-      ['digital-art', 'chroma-loom'],
-      ['sound-motion', 'dark-looper'],
-      ['creative-tools', 'vanta-deck']
-    ];
-    for (const [category, project] of projectsToOpen) {
+    // Open and close every catalogue project, not just one representative per category.
+    const projectsToOpen = await page.locator('#categorySections [data-category-section]').evaluateAll(sections =>
+      sections.flatMap(section => Array.from(section.querySelectorAll('.room-window[data-room]'), room => ({
+        category: section.dataset.categorySection,
+        project: room.dataset.room
+      })))
+    );
+    assert.ok(projectsToOpen.length >= 59, 'Expected at least 59 catalogue projects, found ' + projectsToOpen.length);
+
+    for (const { category, project } of projectsToOpen) {
       await page.locator('[data-category="' + category + '"]').click();
       const room = page.locator('#room-' + project);
       await room.locator('.room-heading').click();
@@ -65,6 +58,7 @@ const assert = require('node:assert/strict');
       await room.locator('.room-heading').click();
       await page.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'false', project);
     }
+    console.log('Mounted and cleanly closed ' + projectsToOpen.length + ' catalogue projects.');
 
     // Search should filter the catalogue and clear should restore it.
     const search = page.locator('#projectSearch');
@@ -105,7 +99,7 @@ const assert = require('node:assert/strict');
     assert.equal(await menuToggle.getAttribute('aria-expanded'), 'false');
 
     if (failures.length) throw new Error('Browser errors:\\n' + failures.join('\\n'));
-    console.log('CURIOID browser smoke tests passed: release, 7 collections, search, Control Panel, mobile overflow and menu.');
+    console.log('CURIOID browser smoke tests passed: all catalogue projects, 7 collections, search, Control Panel, 9 viewport widths and mobile menu.');
   } finally {
     await browser.close();
   }
