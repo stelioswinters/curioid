@@ -1956,8 +1956,8 @@
         };
 
         const PROJECT_STYLES_FILE = "projects-styles.css";
-        const PROJECT_STYLES_SHA256 = "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e";
-        const PROJECT_STYLES_SRI = "sha384-wKBgjOa4ggmty+/bjyqjvxsFFKOOnxBEK9dCFD85RcdBKIRQB02BXI1/Ivoao8nM";
+        const PROJECT_STYLES_SHA256 = 'b0fe98f57d22d20206f174d71fe883a96dca51c817b837bfe8ac925f6f13864d';
+        const PROJECT_STYLES_SRI = 'sha384-fv3GxeQIklh+JEnWnWqwuLOUM5H22CyjXpAfo/Jzzi8ZA0rCApkUYAcdNRJQ6Jnw';
         const loadProjectCss = ({ retry = false } = {}) => {
           if (document.querySelector('[data-curioid-project-css][data-loaded="true"]')) {
             projectCssError = null;
