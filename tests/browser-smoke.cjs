@@ -86,7 +86,7 @@ const assert = require('node:assert/strict');
     }, null, { timeout: 180000 });
     const healthRows = await dialog.locator('[data-health-results] li').count();
     const healthDetails = await dialog.locator('[data-health-results] li').evaluateAll(nodes =>
-      nodes.map(node => ({ state: node.dataset.state, label: node.querySelector('b')?.innerText, detail: node.querySelector('span')?.innerText }))
+      nodes.map(node => ({ state: node.dataset.state, label: node.querySelector('b')?.textContent, detail: node.querySelector('span')?.textContent }))
     );
     const healthReportHref = await healthRun.getAttribute('href');
     const healthReportFilename = await healthRun.getAttribute('download');
@@ -97,13 +97,18 @@ const assert = require('node:assert/strict');
     const projectInterfaceIssues = await page.evaluate(() => window.__CURIOID_HEALTH_UI_CENSUS?.issues || null);
     console.log('Health Check whole-site census:', JSON.stringify(wholeSiteCensus));
     console.log('Health Check project interface issues:', JSON.stringify(projectInterfaceIssues));
+    assert.ok(wholeSiteCensus && wholeSiteCensus.hardIssues === 0,
+      'Health Check found hard site security/render issues: ' + JSON.stringify(wholeSiteCensus));
+    assert.equal(projectInterfaceIssues?.unsandboxedFrames, 0,
+      'A project template still contains an unapproved unsandboxed iframe.');
+    assert.equal(projectInterfaceIssues?.renderFailures, 0, 'Project template render failures were detected.');
     assert.ok(healthRows >= 20, 'Health Check completed too few diagnostics: ' + healthRows + '; see diagnostic rows above.');
     assert.ok(healthReportHref?.startsWith('blob:'), 'Health Check did not prepare its local TXT report.');
     assert.ok(healthReportFilename, 'Health Check report has no download filename.');
     const healthReportText = await page.evaluate(async href => await (await fetch(href)).text(), healthReportHref);
-    const detailsMarker = 'FULL TECHNICAL DETAILS\\n----------------------\\n';
+    const detailsMarker = 'FULL TECHNICAL DETAILS\n----------------------\n';
     const detailsStart = healthReportText.indexOf(detailsMarker);
-    const privacyStart = healthReportText.indexOf('\\n\\nPRIVACY', detailsStart);
+    const privacyStart = healthReportText.indexOf('\n\nPRIVACY', detailsStart);
     assert.ok(detailsStart >= 0 && privacyStart > detailsStart, 'Health Check report structure is incomplete.');
     const healthReport = JSON.parse(healthReportText.slice(detailsStart + detailsMarker.length, privacyStart));
     const hardFailures = healthReport.checks.filter(row => !row.ok && !row.warning);

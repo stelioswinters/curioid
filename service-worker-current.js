@@ -15,7 +15,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "dark-looper-app.js": "d5b1969d36162f8e019c618f67d56dba2ac2d034e3b6d1b91c1f9f11ce2656dd",
   "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
   "health-check.js": "fcb7b789afcdd5ae344f2894cf75761ba8627d014624292b22cac389d5972f25",
-  "index.html": "bbe652cd96666f424fbdc736899450aa8936787c31be325e2e26a0624e743b3b",
+  "index.html": "52832f1286ca48c3893048be17598fa16042d4ea231bbb9bb2350cc41619157a",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
   "music-audio-apps.html": "0711844de6cde112b5e7d8e60d303142351ce858f52a5d390e76aedded4b2e1e",
   "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
