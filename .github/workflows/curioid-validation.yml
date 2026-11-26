@@ -1,0 +1,120 @@
+name: CURIOID Static Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: curioid-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Syntax, release and integrity checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Parse every JavaScript file
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' file; do
+            node --check "$file"
+            count=$((count + 1))
+          done < <(find . -type f -name '*.js' -not -path './.git/*' -print0)
+          echo "Successfully parsed $count JavaScript files."
+
+      - name: Verify release alignment and every offline asset hash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import crypto from 'node:crypto';
+
+          const read = file => fs.readFileSync(file, 'utf8');
+          const fail = message => { console.error('FAIL:', message); process.exitCode = 1; };
+          const assert = (condition, message) => { if (!condition) fail(message); };
+          const index = read('index.html');
+          const health = read('health-check.js');
+          const worker = read('service-worker-current.js');
+          const runtime = read('site-runtime-current.js');
+
+          const release = worker.match(/const RELEASE_ID\s*=\s*['"]([^'"]+)['"]/)?.[1];
+          const healthRelease = health.match(/EXPECTED_RELEASE\s*=\s*['"]([^'"]+)['"]/)?.[1];
+          const pageRelease = index.match(/<meta\s+name="curioid-release"\s+content="([^"]+)"/)?.[1];
+          assert(Boolean(release), 'Service worker release ID is missing.');
+          assert(release === healthRelease, `Health Check expects ${healthRelease}, worker is ${release}.`);
+          assert(release === pageRelease, `Homepage expects ${pageRelease}, worker is ${release}.`);
+
+          const runtimeVersions = [...runtime.matchAll(/v1\.\d+/g)].map(match => match[0]);
+          assert(runtimeVersions.length > 0, 'Runtime contains no explicit worker release references.');
+          assert(runtimeVersions.every(version => version === release), 'Runtime contains stale or mixed release references.');
+
+          const manifestMatch = worker.match(/const EXPECTED_SHA256\s*=\s*Object\.freeze\((\{[\s\S]*?\})\);/);
+          assert(Boolean(manifestMatch), 'Offline SHA-256 manifest is missing.');
+          if (manifestMatch) {
+            let manifest;
+            try { manifest = JSON.parse(manifestMatch[1].replace(/,\s*}/g, '}')); }
+            catch (error) { fail(`Offline SHA-256 manifest is invalid JSON: ${error.message}`); }
+            if (manifest) {
+              for (const [file, expected] of Object.entries(manifest)) {
+                if (!fs.existsSync(file)) { fail(`Manifest asset is missing: ${file}`); continue; }
+                const actual = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+                if (actual !== expected) fail(`SHA-256 mismatch for ${file}: expected ${expected}, got ${actual}`);
+              }
+              console.log(`Verified ${Object.keys(manifest).length} offline asset hashes.`);
+              for (const required of ['index.html', 'health-check.js', 'site-runtime-current.js']) {
+                assert(Boolean(manifest[required]), `Required asset is absent from offline manifest: ${required}`);
+              }
+            }
+          }
+
+          const runtimeHash = crypto.createHash('sha256').update(fs.readFileSync('site-runtime-current.js')).digest('hex');
+          const runtimeSri = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync('site-runtime-current.js')).digest('base64');
+          const runtimeTags = index.match(/<(?:link|script)\b[^>]*(?:href|src)="site-runtime-current\.js\?v=sha256-[a-f0-9]{64}"[^>]*>/g) || [];
+          assert(runtimeTags.length === 2, `Expected runtime preload and script tags, found ${runtimeTags.length}.`);
+          for (const tag of runtimeTags) {
+            assert(tag.includes(`sha256-${runtimeHash}`), 'Runtime URL cache hash is stale.');
+            assert(tag.includes(`integrity="${runtimeSri}"`), 'Runtime SRI does not match the deployed runtime bytes.');
+          }
+          assert(manifestMatch && (() => {
+            try { const manifest = JSON.parse(manifestMatch[1].replace(/,\s*}/g, '}')); return manifest['site-runtime-current.js'] === runtimeHash; }
+            catch { return false; }
+          })(), 'Offline manifest runtime hash does not match runtime bytes.');
+
+          const categoryDescriptors = [...runtime.matchAll(/"([^"]+)": \{ file: "([^"]+)", hash: "([a-f0-9]{64})", integrity: "(sha384-[^"]+)" \}/g)];
+          assert(categoryDescriptors.length === 7, `Expected 7 category integrity descriptors, found ${categoryDescriptors.length}.`);
+          for (const [, category, file, expectedHash, expectedSri] of categoryDescriptors) {
+            if (!fs.existsSync(file)) { fail(`${category} category bundle is missing: ${file}`); continue; }
+            const bytes = fs.readFileSync(file);
+            const hash = crypto.createHash('sha256').update(bytes).digest('hex');
+            const sri = 'sha384-' + crypto.createHash('sha384').update(bytes).digest('base64');
+            assert(hash === expectedHash, `${category} category SHA-256 descriptor is stale.`);
+            assert(sri === expectedSri, `${category} category SRI descriptor is stale.`);
+          }
+
+          const cssHash = runtime.match(/const PROJECT_STYLES_SHA256\s*=\s*["']([a-f0-9]{64})["']/)?.[1];
+          const cssSri = runtime.match(/const PROJECT_STYLES_SRI\s*=\s*["'](sha384-[^"']+)["']/)?.[1];
+          if (cssHash && cssSri && fs.existsSync('projects-styles.css')) {
+            const css = fs.readFileSync('projects-styles.css');
+            assert(crypto.createHash('sha256').update(css).digest('hex') === cssHash, 'Project stylesheet SHA-256 descriptor is stale.');
+            assert('sha384-' + crypto.createHash('sha384').update(css).digest('base64') === cssSri, 'Project stylesheet SRI descriptor is stale.');
+          } else fail('Project stylesheet integrity descriptors or file are missing.');
+
+          console.log(`Release ${release}: release markers, runtime SRI, category SRI and offline hashes checked.`);
+          NODE
