@@ -62,6 +62,7 @@
   let noiseBuffers = new Map();
 
   const initAudio = async () => {
+    if (appDisposed) throw new Error('This app instance has been closed.');
     if (!AudioContextClass) throw new Error('Web Audio is not supported in this browser. Try an up-to-date browser with audio enabled.');
     if (!audioContext) {
       audioContext = new AudioContextClass();
@@ -100,10 +101,20 @@
     return buffer;
   };
 
-  const playSoundEngine = (type, requestedTime = audioContext.currentTime) => {
-    const now = Math.max(audioContext.currentTime, requestedTime);
+  const playSoundEngine = (type, requestedTime) => {
+    if (appDisposed || !audioContext || audioContext.state === 'closed') return;
+    const now = Math.max(audioContext.currentTime, Number.isFinite(requestedTime) ? requestedTime : audioContext.currentTime);
     const voice = audioContext.createGain();
     voice.connect(masterGain);
+    activeVoices.add(voice);
+    // Disconnect each short-lived voice branch after its longest scheduled sound.
+    const cleanupDelay = Math.max(0, (now - audioContext.currentTime) * 1000) + 1200;
+    const cleanupTimer = window.setTimeout(() => {
+      voiceCleanupTimers.delete(voice);
+      activeVoices.delete(voice);
+      try { voice.disconnect(); } catch (_) {}
+    }, cleanupDelay);
+    voiceCleanupTimers.set(voice, cleanupTimer);
 
     const noise = (kind, duration, target = voice) => {
       const source = audioContext.createBufferSource();
@@ -250,6 +261,10 @@
   let recordedChunks = [];
   let recordingTimeout = null;
   let pendingRecordingBlob = null;
+  let pendingRecordingExtension = 'webm';
+  let appDisposed = false;
+  const activeVoices = new Set();
+  const voiceCleanupTimers = new Map();
 
   const stepStrip = $('#stepStrip');
   const mpcStatus = $('#mpcStatus');
@@ -270,10 +285,17 @@
     const pip = document.createElement('div');
     pip.className = 'step-pip';
     pip.dataset.step = i;
-    pip.addEventListener('click', () => {
+    pip.setAttribute('role', 'button');
+    pip.tabIndex = 0;
+    pip.setAttribute('aria-label', `Clear step ${i + 1}`);
+    const clearStep = () => {
       loopGrid[i].clear();
       renderStepVisuals(isPlaying ? step : -1);
       setSamplerStatus(`CLEARED STEP ${String(i + 1).padStart(2, '0')}`);
+    };
+    pip.addEventListener('click', clearStep);
+    pip.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); clearStep(); }
     });
     stepStrip.appendChild(pip);
     stepPips.push(pip);
@@ -445,6 +467,10 @@
       sounds.forEach(snd => {
         const row = document.createElement('div');
         row.className = `sound-item-row ${selectedSoundIdInModal === snd.id ? 'selected' : ''}`;
+        row.setAttribute('role', 'button');
+        row.tabIndex = 0;
+        row.setAttribute('aria-pressed', String(selectedSoundIdInModal === snd.id));
+        row.setAttribute('aria-label', `Select ${snd.name} (${snd.category})`);
         const nameLabel = document.createElement('span');
         nameLabel.textContent = String(snd.name || 'Untitled sound');
         const categoryLabel = document.createElement('span');
@@ -452,11 +478,16 @@
         categoryLabel.style.fontSize = '0.65rem';
         categoryLabel.style.color = 'var(--muted)';
         row.replaceChildren(nameLabel, categoryLabel);
-        row.addEventListener('click', () => {
+        const selectSound = () => {
           selectedSoundIdInModal = snd.id;
           playSoundEngine(snd.id);
-          $$('.sound-item-row', soundListContainer).forEach(r => r.classList.remove('selected'));
+          $('.sound-item-row', soundListContainer).forEach(r => { r.classList.remove('selected'); r.setAttribute('aria-pressed', 'false'); });
           row.classList.add('selected');
+          row.setAttribute('aria-pressed', 'true');
+        };
+        row.addEventListener('click', selectSound);
+        row.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectSound(); }
         });
         soundListContainer.appendChild(row);
       });
@@ -466,6 +497,7 @@
   soundSearch?.addEventListener('input', (e) => renderSoundList(e.target.value));
   modalClose?.addEventListener('click', closeSoundModal);
   soundModal?.addEventListener('click', (e) => { if (e.target === soundModal) closeSoundModal(); });
+  soundModal?.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); closeSoundModal(); } });
 
   modalSelectBtn?.addEventListener('click', () => {
     if (activePadIndexForEditing !== null && selectedSoundIdInModal !== null) {
@@ -573,21 +605,27 @@
       recordedChunks = [];
       const preferred = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/ogg'];
       const mimeType = preferred.find(type => MediaRecorder.isTypeSupported?.(type));
-      mediaRecorder = new MediaRecorder(mediaStreamDestination.stream, mimeType ? { mimeType } : {});
+      const recorder = new MediaRecorder(mediaStreamDestination.stream, mimeType ? { mimeType } : {});
+      mediaRecorder = recorder;
+      const chunks = [];
+      recordedChunks = chunks;
 
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) recordedChunks.push(event.data);
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) chunks.push(event.data);
       };
 
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
-        pendingRecordingBlob = blob;
+      recorder.onstop = () => {
+        if (appDisposed) { chunks.length = 0; if (recordedChunks === chunks) recordedChunks = []; return; }
+        const actualMimeType = recorder.mimeType || chunks.find(chunk => chunk.type)?.type || 'application/octet-stream';
+        pendingRecordingExtension = actualMimeType.includes('ogg') ? 'ogg' : actualMimeType.includes('mp4') ? 'm4a' : 'webm';
+        pendingRecordingBlob = new Blob(chunks, { type: actualMimeType });
+        if (recordedChunks === chunks) recordedChunks = [];
         recPopup.classList.add('is-open');
         recPopup.setAttribute('aria-hidden', 'false');
         setSamplerStatus('RECORDING STOPPED - CHOOSE ACTION');
       };
 
-      mediaRecorder.start();
+      recorder.start();
       isLiveRecording = true;
       syncTransportUI();
       setSamplerStatus('LIVE RECORDING ACTIVE... PLAY YOUR MUSIC!');
@@ -625,7 +663,7 @@
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `d4rk-l00p3r-recording-${Date.now()}.webm`;
+      a.download = `d4rk-l00p3r-recording-${Date.now()}.${pendingRecordingExtension}`;
       document.body.appendChild(a);
       a.click();
       window.setTimeout(() => {
@@ -635,12 +673,14 @@
       setSamplerStatus('RECORDING DOWNLOADED SUCCESSFULLY');
     }
     pendingRecordingBlob = null;
+    pendingRecordingExtension = 'webm';
     recPopup.classList.remove('is-open');
     recPopup.setAttribute('aria-hidden', 'true');
   });
 
   recDiscardBtn?.addEventListener('click', () => {
     pendingRecordingBlob = null;
+    pendingRecordingExtension = 'webm';
     recPopup.classList.remove('is-open');
     recPopup.setAttribute('aria-hidden', 'true');
     setSamplerStatus('RECORDING DISCARDED');
@@ -651,9 +691,27 @@
   updateTempoUI();
 
   window.addEventListener('curioid-app-dispose', () => {
+    appDisposed = true;
     try { stopLoop(); } catch (_) {}
-    try { if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop(); } catch (_) {}
+    if (recordingTimeout) window.clearTimeout(recordingTimeout);
+    recordingTimeout = null;
+    try {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.ondataavailable = null;
+        mediaRecorder.onstop = null;
+        mediaRecorder.stop();
+      }
+    } catch (_) {}
+    isLiveRecording = false;
+    recordedChunks = [];
+    pendingRecordingBlob = null;
+    pendingRecordingExtension = 'webm';
     try { mediaStreamDestination?.stream?.getTracks?.().forEach(track => track.stop()); } catch (_) {}
+    for (const timer of voiceCleanupTimers.values()) window.clearTimeout(timer);
+    voiceCleanupTimers.clear();
+    activeVoices.forEach(voice => { try { voice.disconnect(); } catch (_) {} });
+    activeVoices.clear();
+    noiseBuffers.clear();
     try { audioContext?.close?.(); } catch (_) {}
   }, { once: true });
 })();
