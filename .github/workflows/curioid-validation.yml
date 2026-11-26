@@ -131,3 +131,21 @@ jobs:
 
           console.log(`Release ${release}: release markers, runtime SRI, category SRI and offline hashes checked.`);
           NODE
+
+      - name: Install Chromium for real-browser smoke tests
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Run CURIOID browser smoke tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 4173 --directory . >/tmp/curioid-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node tests/browser-smoke.cjs
