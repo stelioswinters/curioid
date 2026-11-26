@@ -115,21 +115,19 @@ jobs:
           // Verify the exact inline bootstrap hashes protected by each app page CSP.
           for (const file of ['music-audio-apps.html', 'applications-tools-apps.html']) {
             const html = read(file);
-            const cspTag = html.match(/<meta\\b[^>]*http-equiv="Content-Security-Policy"[^>]*>/i)
-              || html.match(/<meta\\b[^>]*content="[^"]*"[^>]*http-equiv="Content-Security-Policy"[^>]*>/i);
-            const policy = cspTag?.[0].match(/\\bcontent="([^"]+)"/i)?.[1] || '';
+            const cspTag = html.match(/<meta\b[^>]*http-equiv="Content-Security-Policy"[^>]*>/i)
+              || html.match(/<meta\b[^>]*content="[^"]*"[^>]*http-equiv="Content-Security-Policy"[^>]*>/i);
+            const policy = cspTag?.[0].match(/\bcontent="([^"]+)"/i)?.[1] || '';
             const scriptSrc = policy.split(';').map(part => part.trim()).find(part => part.startsWith('script-src')) || '';
             const approved = new Set([...scriptSrc.matchAll(/'sha256-([^']+)'/g)].map(match => match[1]));
-            const inlineScripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)]
-              .filter(match => !/\\bsrc\\s*=/i.test(match[1]));
-            assert(inlineScripts.length >= 2, `${file} has fewer inline bootstrap scripts than expected.`);
+            const inlineScripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)];
+            assert(inlineScripts.length >= 2, file + ' has fewer inline bootstrap scripts than expected.');
             inlineScripts.forEach((match, index) => {
-              const hash = crypto.createHash('sha256').update(match[2]).digest('base64');
-              assert(approved.has(hash), `${file} inline script ${index + 1} is blocked by its own Content Security Policy (SHA-256 ${hash}).`);
+              const hash = crypto.createHash('sha256').update(match[1]).digest('base64');
+              assert(approved.has(hash), file + ' inline script ' + (index + 1) + ' is blocked by its own Content Security Policy (SHA-256 ' + hash + ').');
             });
-            console.log(`${file}: ${inlineScripts.length} CSP-approved inline scripts.`);
+            console.log(file + ': ' + inlineScripts.length + ' CSP-approved inline scripts.');
           }
-
           for (const [file, scriptPath] of [['music-audio-apps.html', 'dark-looper-app.js'], ['applications-tools-apps.html', 'vanta-deck-app.js']]) {
             const html = read(file);
             const appSri = html.match(/const integrity='(sha384-[^']+)'/)?.[1]
