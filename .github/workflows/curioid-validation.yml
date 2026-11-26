@@ -99,6 +99,8 @@ jobs:
           const healthBytes = fs.readFileSync('health-check.js');
           const healthHash = crypto.createHash('sha256').update(healthBytes).digest('hex');
           const healthSri = 'sha384-' + crypto.createHash('sha384').update(healthBytes).digest('base64');
+          console.log(`Computed health-check.js SHA-256: ${healthHash}`);
+          console.log(`Computed health-check.js SRI: ${healthSri}`);
           const healthHashDescriptor = runtime.match(/const HEALTH_MODULE_HASH\s*=\s*['"]([a-f0-9]{64})['"]/)?.[1];
           const healthSriDescriptor = runtime.match(/const HEALTH_MODULE_SRI\s*=\s*['"](sha384-[^'"]+)['"]/)?.[1];
           assert(healthHashDescriptor === healthHash, 'Health Check lazy-loader SHA-256 descriptor does not match health-check.js.');
