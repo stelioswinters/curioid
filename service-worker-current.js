@@ -26,7 +26,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "projects-category-tiny-games.js": "fcec73cfca4acae789de6a070e0770be426e3a94e2375a7a89a64408e48dfe26",
   "projects-category-web-experiments.js": "497be3e77f20adadeb03025662be9d4871439b026b079d3546ee2c3c49fbd5fc",
   "projects-core.js": "af961b333e3633aab2bc7aecf2551a87aab9de222c9c056f7f21bf83a15fdf6f",
-  "projects-styles.css": "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e",
+  "projects-styles.css": "b0fe98f57d22d20206f174d71fe883a96dca51c817b837bfe8ac925f6f13864d",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
   "site-runtime-current.js": "7b80cc6c79e2334aa405fad43bd8575df751f1da65f47a3bdc11fbfa2049853a",
   "sitemap.xml": "e2635e23146209aa3ea5c9bb84e7edabd9ecca73a18c7f3c5ade6199153bf63a",
