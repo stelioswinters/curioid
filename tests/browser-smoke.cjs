@@ -144,7 +144,10 @@ const assert = require('node:assert/strict');
     const agentFailures = [];
     const installAudioProbe = async agentPage => {
       await agentPage.addInitScript(() => {
-        const probe = window.__curioidAudioProbe = { context: null, oscillatorStarts: 0, bufferStarts: 0, analyser: null, routed: false };
+        const probe = window.__curioidAudioProbe = { context: null, oscillatorStarts: 0, bufferStarts: 0, analyser: null, routed: false, vaultNotices: [] };
+        window.addEventListener('curioid:vault-notice', event => {
+          probe.vaultNotices.push(String(event.detail?.message || 'Browser Vault event').slice(0,240));
+        });
         const NativeAudioContext = window.AudioContext || window.webkitAudioContext;
         if (NativeAudioContext) {
           const WrappedAudioContext = class extends NativeAudioContext {
@@ -279,6 +282,11 @@ const assert = require('node:assert/strict');
         assert.equal(await frame.locator('#loopToggle').getAttribute('aria-pressed'), 'true');
         await frame.locator('#loopToggle').click();
         await frame.waitForFunction(() => document.getElementById('mpcStatus')?.textContent.includes('LOOP STOPPED'), null, { timeout: 10000 });
+        assert.equal(await frame.locator('#loopToggle').getAttribute('aria-pressed'), 'false');
+        await frame.locator('#recToggle').click();
+        assert.equal(await frame.locator('#recToggle').getAttribute('aria-pressed'), 'true');
+        await frame.locator('#recToggle').click();
+        assert.equal(await frame.locator('#recToggle').getAttribute('aria-pressed'), 'false');
 
         await frame.locator('#editModeToggle').click();
         await frame.locator('.pad[data-index="1"]').click();
@@ -349,16 +357,25 @@ const assert = require('node:assert/strict');
         assert.ok(audio.rms > 0.00001 || audio.peak > 0.0001, 'Advanced Phoneme Singer produced no measurable audio signal: ' + JSON.stringify(audio));
         await vocal.locator('[data-eno-action="stop"]').click();
 
-        const [phonemeExport] = await Promise.all([
-          agent.page.waitForEvent('download'),
-          vocal.locator('[data-eno-action="export-phonemes"]').click()
-        ]);
-        assert.match(phonemeExport.suggestedFilename(), /phoneme-sheet\.json$/i);
-        const [midiExport] = await Promise.all([
-          agent.page.waitForEvent('download'),
-          vocal.locator('[data-eno-action="export-vocal-midi"]').click()
-        ]);
-        assert.match(midiExport.suggestedFilename(), /\.mid$/i);
+        const beforePhonemeExports = await agent.page.evaluate(() => window.__curioidAudioProbe?.vaultNotices?.length || 0);
+        await vocal.locator('[data-eno-action="export-phonemes"]').click();
+        await agent.page.waitForFunction(before => {
+          const notices = window.__curioidAudioProbe?.vaultNotices || [];
+          return notices.length > before && notices.slice(before).some(message => /phoneme-sheet\.json/i.test(message));
+        }, beforePhonemeExports, { timeout: 15000 });
+        const phonemeNotice = await agent.page.evaluate(() => window.__curioidAudioProbe.vaultNotices.at(-1));
+        assert.match(phonemeNotice, /saved in Browser Vault|saved for this tab only/i,
+          'Phoneme sheet was not stored in Browser Vault: ' + phonemeNotice);
+
+        const beforeMidiExports = await agent.page.evaluate(() => window.__curioidAudioProbe?.vaultNotices?.length || 0);
+        await vocal.locator('[data-eno-action="export-vocal-midi"]').click();
+        await agent.page.waitForFunction(before => {
+          const notices = window.__curioidAudioProbe?.vaultNotices || [];
+          return notices.length > before && notices.slice(before).some(message => /echonoise-vocal-melody\.mid/i.test(message));
+        }, beforeMidiExports, { timeout: 15000 });
+        const midiNotice = await agent.page.evaluate(() => window.__curioidAudioProbe.vaultNotices.at(-1));
+        assert.match(midiNotice, /saved in Browser Vault|saved for this tab only/i,
+          'Vocal MIDI was not stored in Browser Vault: ' + midiNotice);
 
         await vocal.locator('[data-eno-launch="voicebank"]').click();
         const voicebank = eno.locator('.eno-window[data-eno-window="voicebank"]');
