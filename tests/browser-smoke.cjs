@@ -16,16 +16,6 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator('meta[name="curioid-release"]').getAttribute('content'), 'v1.344');
     assert.equal(await page.locator('[data-category]').count(), 7);
 
-    // First-visit notes are modal and intentionally block the page until acknowledged.
-    const notesDialog = page.locator('#curioid-important-notes');
-    await page.waitForFunction(() => document.getElementById('curioid-important-notes')?.open === true,
-      null, { timeout: 10000 }).catch(() => {});
-    if (await notesDialog.count() && await notesDialog.evaluate(node => node.open)) {
-      const acknowledge = notesDialog.getByText(/got it/i).last();
-      if (await acknowledge.count()) await acknowledge.click();
-      else await notesDialog.locator('button').last().click();
-      await notesDialog.waitFor({ state: 'hidden', timeout: 10000 });
-    }
 
     // Every collection must switch to its own view and expose a non-empty catalogue.
     await page.locator('#browseCollections > summary').click();
@@ -63,6 +53,15 @@ const assert = require('node:assert/strict');
         return node?.dataset.loaded === 'true' || Boolean(node?.querySelector('.project-load-error'));
       }, project, { timeout: 90000 });
       assert.equal(await room.getAttribute('data-loaded'), 'true', project + ' failed to mount');
+
+      // Some desktops show a first-use security note after mounting.
+      const notesDialog = page.locator('#curioid-important-notes');
+      if (await notesDialog.count() && await notesDialog.evaluate(node => node.open)) {
+        const acknowledge = notesDialog.getByText(/got it/i).last();
+        if (await acknowledge.count()) await acknowledge.click();
+        else await notesDialog.locator('button').last().click();
+        await notesDialog.waitFor({ state: 'hidden', timeout: 10000 });
+      }
       await room.locator('.room-heading').click();
       await page.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'false', project);
     }
