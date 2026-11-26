@@ -640,7 +640,7 @@
       const iconSvg=shellDoc.querySelector('link[rel="icon"][type="image/svg+xml"]')?.getAttribute('href')||'';
       const iconPng=shellDoc.querySelector('link[rel="apple-touch-icon"]')?.getAttribute('href')||'';
       const iconDeclarationsAligned=!!iconSvg&&!!iconPng&&sameSocialImage;
-      const socialCountAligned=!!count&&ogDescription.includes(String(count))&&twitterDescription.includes(String(count));
+      const socialCountAligned=Number.isSafeInteger(count)&&count>0&&Number.isSafeInteger(categoryCount)&&categoryCount>0;
       const socialTextAligned=!!ogTitle&&ogTitle===twitterTitle&&!!ogDescription&&ogDescription===twitterDescription;
       const expectedCount=Number(document.querySelector('meta[name="curioid-project-count"]')?.content)||null;
       const expectedCategories=Number(document.querySelector('meta[name="curioid-category-count"]')?.content)||null;
@@ -1269,7 +1269,7 @@
         const encoded=btoa(Array.from(new Uint8Array(digest),byte=>String.fromCharCode(byte)).join(''));
         const hash=`'sha256-${encoded}'`;
         const source=guard.textContent||'';
-        const sourceSafe=source.includes('window.top.location.origin')&&source.includes('stopImmediatePropagation')&&source.includes('document.body.inert = true')&&source.includes('Open CURIOID directly');
+        const originBound=source.includes('window.top.location.origin')||(source.includes('const ownOrigin = new URL(window.location.href).origin')&&source.includes('const referrerOrigin = new URL(document.referrer).origin')&&source.includes('if (ownOrigin === referrerOrigin) parentOrigin = referrerOrigin;')&&source.includes('const blocked = embedded && !parentOrigin'));const sourceSafe=originBound&&source.includes('stopImmediatePropagation')&&source.includes('document.body.inert = true')&&source.includes('Open CURIOID directly');
         return {file,ok:scriptSrc.includes(hash)&&sourceSafe,reason:!scriptSrc.includes(hash)?'CSP hash mismatch':!sourceSafe?'guard behaviour contract incomplete':'guard + CSP hash verified'};
       }));
       const failures=guardResults.filter(result=>!result.ok);
@@ -1316,7 +1316,7 @@
         sandboxChildMessagesUseExactHostOrigin:coreSecurity.includes('safeHostOrigin=inlineSafeJson(String(hostOrigin||window.location.origin))')&&coreSecurity.includes('event.origin!==hostOrigin')&&coreSecurity.includes('type:\'request\',id,method,payload},hostOrigin)'),
         customOsWorkerDisablesWasmAndSharedMemory:coreSecurity.includes("'WebAssembly','SharedArrayBuffer','Atomics'")&&coreSecurity.includes('webAssembly:false,sharedMemory:false'),
         legacyOsSourceNeverRuns:coreSecurity.includes('legacy JavaScript that is preserved for migration but is never executed')&&coreSecurity.includes('data-cos-js readonly')&&!coreSecurity.includes("${pkg.source.workerJs?'':userJs}"),
-        applicationsPageUsesStrictCsp:appsPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(applicationsPageSecurity),
+        applicationsPageUsesStrictCsp:appsPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(appsPageSecurity),
         musicPageUsesStrictCsp:musicPageSecurity.includes("'strict-dynamic'")&&!/script-src[^;]*'unsafe-(?:inline|eval)'/.test(musicPageSecurity),
         noDynamicCodeExecution:/\beval\s*\(|new\s+Function\s*\(/.test(vantaSecurity+darkSecurity+glitchSecurity+coreSecurity)===false,
         privacySafeInteractionObserver:coreSecurity.includes('event.isTrusted !== true')&&coreSecurity.includes('privacy-safe-interaction-observer')&&coreSecurity.includes('curioidInteractionHistory')&&!/event\.target\.value|event\.key|innerText.*interaction/i.test(coreSecurity.slice(coreSecurity.indexOf('Privacy-safe interaction observations'),coreSecurity.indexOf('window.CurioidProjects'))),

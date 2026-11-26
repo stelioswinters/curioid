@@ -166,7 +166,7 @@ jobs:
               def do_GET(self):
                   # Keep the canonical deployment base local so lazy modules and
                   # same-origin diagnostics are tested against this checkout.
-                  if self.path.split("?", 1)[0] in ("/", "/index.html"):
+                  if self.path.split("?", 1)[0] == "/":
                       with open("index.html", "rb") as source:
                           html = source.read().replace(
                               b'href="https://stelioswinters.com/curioid/"',
