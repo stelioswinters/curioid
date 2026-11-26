@@ -49,6 +49,8 @@ jobs:
           const fail = message => { console.error('FAIL:', message); process.exitCode = 1; };
           const assert = (condition, message) => { if (!condition) fail(message); };
           const index = read('index.html');
+          const homepageHash = crypto.createHash('sha256').update(fs.readFileSync('index.html')).digest('hex');
+          console.log(`Computed homepage SHA-256: ${homepageHash}`);
           const health = read('health-check.js');
           const worker = read('service-worker-current.js');
           const runtime = read('site-runtime-current.js');
