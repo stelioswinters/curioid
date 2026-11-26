@@ -141,7 +141,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -m http.server 4173 --directory . >/tmp/curioid-http.log 2>&1 &
+          python3 - <<'PY' >/tmp/curioid-http.log 2>&1 &
+          from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+          class PagesLikeHandler(SimpleHTTPRequestHandler):
+              def end_headers(self):
+                  # GitHub Pages serves public static assets with wildcard CORS.
+                  self.send_header("Access-Control-Allow-Origin", "*")
+                  super().end_headers()
+          ThreadingHTTPServer(("127.0.0.1", 4173), PagesLikeHandler).serve_forever()
+          PY
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           for attempt in {1..30}; do
