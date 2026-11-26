@@ -168,7 +168,7 @@ const assert = require('node:assert/strict');
       return { context, page: agentPage };
     };
     const openAgentRoom = async (agentPage, category, project) => {
-      await agentPage.locator('[data-category="' + category + '"]').click();
+      await agentPage.locator('[data-category="' + category + '"]').evaluate(node => node.click());
       const room = agentPage.locator('#room-' + project);
       await room.locator('.room-heading').click();
       await agentPage.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'true',
@@ -211,7 +211,7 @@ const assert = require('node:assert/strict');
           embeddedCount: node.querySelectorAll('[data-curioid-embedded-shell]').length
         }));
         console.log('D4RK L00PER room mount:', JSON.stringify(mountState));
-        const iframe = room.locator('iframe[data-curioid-embedded-frame]');
+        const iframe = room.locator('.room-mount iframe.standalone-project-frame');
         await iframe.waitFor({ state: 'attached', timeout: 30000 });
         const frameHandle = await iframe.elementHandle();
         const frame = await frameHandle.contentFrame();
