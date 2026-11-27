@@ -346,6 +346,17 @@
   }
   async function probeWasmExecution() {
     if(typeof WebAssembly!=='object')return {ok:false,warning:true,detail:'WebAssembly is unavailable.'};
+    // CURIOID deliberately omits wasm-unsafe-eval from its script CSP. Do not
+    // trigger a known policy violation just to prove that the policy is working.
+    const policies=[...document.querySelectorAll('meta[http-equiv]')]
+      .filter(meta=>/^content-security-policy$/i.test(meta.httpEquiv||''))
+      .map(meta=>meta.content||'');
+    const wasmCompilationAllowed=policies.length>0&&policies.every(policy=>{
+      const directives=policy.split(';').map(part=>part.trim());
+      const script=directives.find(part=>/^script-src(?:\s|$)/i.test(part))||directives.find(part=>/^default-src(?:\s|$)/i.test(part))||'';
+      return /(?:^|\s)'(?:wasm-unsafe-eval|unsafe-eval)'(?:\s|$)/i.test(script);
+    });
+    if(policies.length&&!wasmCompilationAllowed)return {ok:true,detail:'WebAssembly APIs are present, but CURIOID’s Content Security Policy intentionally blocks WebAssembly compilation. The security boundary is active; no compilation probe was run.'};
     try {
       const module=await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0]));
       const instance=await WebAssembly.instantiate(module);
@@ -1598,7 +1609,7 @@
     try { const glCanvas=document.createElement('canvas'); const gl=glCanvas.getContext('webgl2')||glCanvas.getContext('webgl'); webgl=!!gl; gl?.getExtension('WEBGL_lose_context')?.loseContext(); } catch (_) {}
     add('WebGL graphics',webgl ? {ok:true,detail:'WebGL context creation succeeded.'} : {ok:false,warning:true,detail:'WebGL is unavailable or disabled. Some visual projects may use 2D fallbacks.'});
     add('Web Audio', (window.AudioContext||window.webkitAudioContext) ? {ok:true,detail:'Web Audio API is available; no audio context was started by this probe.'} : {ok:false,warning:true,detail:'Web Audio API is unavailable.'});
-    add('WebAssembly capability', typeof WebAssembly==='object' ? {ok:true,detail:'WebAssembly API is available; execution is validated separately by the minimal compile/instantiate canary.'} : {ok:false,warning:true,detail:'WebAssembly is unavailable.'});
+    add('WebAssembly capability', typeof WebAssembly==='object' ? {ok:true,detail:'WebAssembly API is available; compilation is intentionally blocked by the page’s restrictive CSP, and the Health Check now recognises that policy without triggering a violation.'} : {ok:false,warning:true,detail:'WebAssembly is unavailable.'});
     const csp = document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || '';
     const cspDirectives=Object.fromEntries(csp.split(';').map(part=>part.trim()).filter(Boolean).map(part=>{const [name,...values]=part.split(/\s+/);return[name.toLowerCase(),values.join(' ')];}));
     const scriptPolicy=cspDirectives['script-src']||cspDirectives['default-src']||'';
