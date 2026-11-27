@@ -81,7 +81,7 @@ const fs = require('node:fs');
           return rect.width > 0 && rect.height > 0 && node.scrollWidth > node.clientWidth + 1;
         }).map(node => ({
           className: typeof node.className === 'string' ? node.className : node.tagName,
-          text: (node.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 70),
+          text: (node.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 70),
           clientWidth: node.clientWidth,
           scrollWidth: node.scrollWidth
         }));
