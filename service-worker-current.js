@@ -81,11 +81,11 @@ async function responseHasCurrentPageIdentity(response, path = 'index.html') {
   if (!response?.ok || !response.clone || typeof path !== 'string' || !CACHEABLE_DOCUMENTS.has(path)) return false;
   try {
     const html = await response.clone().text();
-    const safeRelease = RELEASE_ID.replace(/\./g, '\\.');
-    const safePath = path.replace(/\./g, '\\.');
-    const marker = new RegExp('<meta\\b(?=[^>]*\\bname=["\']curioid-release["\'])(?=[^>]*\\bcontent=["\']' + safeRelease + '["\'])[^>]*>', 'i').test(html);
-    const documentMarker = new RegExp('<meta\\b(?=[^>]*\\bname=["\']curioid-document["\'])(?=[^>]*\\bcontent=["\']' + safePath + '["\'])[^>]*>', 'i').test(html);
-    const hasPolicy = /<meta\\b[^>]*http-equiv=["']Content-Security-Policy["']/i.test(html);
+    const tags = html.match(/<meta\b[^>]*>/gi) || [];
+    const metaValue = (tag, name) => tag.match(new RegExp('\\b' + name + '\\s*=\\s*["\']([^"\']+)["\']', 'i'))?.[1] || '';
+    const marker = tags.some(tag => metaValue(tag, 'name') === 'curioid-release' && metaValue(tag, 'content') === RELEASE_ID);
+    const documentMarker = tags.some(tag => metaValue(tag, 'name') === 'curioid-document' && metaValue(tag, 'content') === path);
+    const hasPolicy = tags.some(tag => /\bhttp-equiv\s*=\s*["']Content-Security-Policy["']/i.test(tag));
     const runtimeMatches = path !== 'index.html' || html.includes('site-runtime-current.js?v=sha256-' + RUNTIME_HASH);
     return marker && documentMarker && hasPolicy && runtimeMatches;
   } catch (_) { return false; }
