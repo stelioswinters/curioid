@@ -54,7 +54,11 @@ index = index.replace(/(<link rel="preload" href="site-runtime-current\.js\?v=sh
 // Refresh every cached file hash, including the final HTML and runtime bytes.
 const updatedExpected = expectedMatch[1].replace(/("([^"]+)": ")[a-f0-9]{64}(")/g, (whole, prefix, file, suffix) => {
   if (!fs.existsSync(file)) throw new Error('Missing cached asset during hash refresh: ' + file);
-  return prefix + sha256(file) + suffix;
+  // Hash the final in-memory bytes for files this script is rewriting.
+  const bytes = file === 'index.html' ? Buffer.from(index)
+    : file === 'site-runtime-current.js' ? Buffer.from(runtime)
+    : read(file);
+  return prefix + hash('sha256', bytes) + suffix;
 });
 worker = worker.replace(expectedMatch[1], updatedExpected);
 worker = worker.replace(/const RELEASE_ID = 'v1\.\d+';/, "const RELEASE_ID = '" + nextRelease + "';");
