@@ -64,7 +64,7 @@ function bindOrganic(root){
       if(fracture>.3){ctx.save();ctx.globalAlpha=fracture*.24;ctx.strokeStyle=colors[2];ctx.lineWidth=1;for(let i=0;i<9;i++){const y=h*(.12+i*.095)+Math.sin(phase+i)*14;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y+Math.sin(i*3+seed)*fracture*70);ctx.stroke();}ctx.restore();}
     },true);
     $('[data-action="organic-mutate"]',root).addEventListener('click',mutate);$('[data-action="organic-extreme"]',root).addEventListener('click',()=>{$('[data-range="mutation"]',root).value='220';$('[data-range="branching"]',root).value='24';$('[data-range="pulse"]',root).value='180';$('[data-range="organic-fracture"]',root).value='100';$('[data-range="organic-colony"]',root).value='95';$('[data-select="organic-surface"]',root).value=pick(['crystalline','fungal','oil','charcoal']);mutate();});
-    $('[data-action="organic-pause"]',root).addEventListener('click',e=>{paused=!paused;e.currentTarget.textContent=paused?'▶ Resume movement':'Ⅱ Pause movement';});$('[data-action="organic-export"]',root).addEventListener('click',()=>saveCanvas(canvas,'organic-error.png'));
+    $('[data-action="organic-pause"]',root).addEventListener('click',e=>{paused=!paused;if(paused)sim.stop();else sim.start();e.currentTarget.textContent=paused?'▶ Resume movement':'Ⅱ Pause movement';});$('[data-action="organic-export"]',root).addEventListener('click',()=>saveCanvas(canvas,'organic-error.png'));
     ['mutation','branching','pulse','organic-fracture','organic-colony'].forEach(k=>$(`[data-range="${k}"]`,root).addEventListener('input',()=>sim.redraw()));$('[data-select="organic-surface"]',root).addEventListener('change',()=>sim.redraw());mutate();return()=>sim.stop();
   }
 

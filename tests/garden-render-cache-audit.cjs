@@ -8,6 +8,7 @@ const gravityEnd = gravitySource.indexOf('\nfunction patternMarkup', gravityStar
 assert.ok(gravityStart >= 0 && gravityEnd > gravityStart, 'Gravity Garden binder could not be located');
 const gravity = gravitySource.slice(gravityStart, gravityEnd);
 assert.match(gravity, /const gravitySprites=new WeakMap\(\)/, 'Gravity flower sprites must be cached by body');
+assert.match(gravity, /if\(paused\)sim\.stop\(\);else sim\.start\(\)/, 'Gravity pause must stop the animation scheduler and resume must restart it');
 assert.match(gravity, /function paintGravityGrid/, 'Gravity static grid cache is missing');
 assert.match(gravity, /ctx\.drawImage\(gravityGrid,0,0,w,h\)/, 'Gravity grid must be blitted from its cache');
 assert.match(gravity, /ctx\.drawImage\(sprite\.canvas,-sprite\.pad,-sprite\.pad\)/, 'Gravity bodies must be painted from cached sprites');

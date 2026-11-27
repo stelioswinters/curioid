@@ -11,6 +11,7 @@ assert.match(organic, /const lowResourceMotion=Boolean/, 'Organic Errors must de
 assert.match(organic, /const membraneSamples=lowResourceMotion\?144:220/, 'Mobile membrane sampling should be reduced while desktop detail stays unchanged');
 assert.match(organic, /t-lastOrganicPaint<1\/30/, 'Organic mobile renderer must cap paints at 30 FPS');
 assert.match(organic, /if\(!initial&&paused\)return/, 'Paused Organic Errors must stop repainting');
+assert.match(organic, /if\(paused\)sim\.stop\(\);else sim\.start\(\)/, 'Organic Errors pause must suspend the animation scheduler and resume must restart it');
 const phaseIndex = organic.indexOf("phase+=dt*");
 const pauseIndex = organic.indexOf("if(!initial&&paused)return");
 const capIndex = organic.indexOf("t-lastOrganicPaint<1/30");

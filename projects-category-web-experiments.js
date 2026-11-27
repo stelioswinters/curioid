@@ -117,7 +117,7 @@ function bindGravity(root) {
       bodies.push(body);updateCount();sim.redraw();toast(null,isBlackHole?'A rare black-hole flower has entered the garden. Keep it away from the central bloom.':'A new body entered the field.');
     }
     $('[data-action="add-planet"]',root).addEventListener('click',()=>{const a=rand(0,Math.PI*2),r=rand(.17,.43);addBodyAt({x:.5+Math.cos(a)*r,y:.5+Math.sin(a)*r});});
-    $('[data-action="pause-gravity"]',root).addEventListener('click',e=>{paused=!paused;e.currentTarget.textContent=paused?'▶ Resume':'Ⅱ Pause';state.textContent=paused?'FIELD PAUSED':'FIELD ACTIVE';});
+    $('[data-action="pause-gravity"]',root).addEventListener('click',e=>{paused=!paused;if(paused)sim.stop();else sim.start();e.currentTarget.textContent=paused?'▶ Resume':'Ⅱ Pause';state.textContent=paused?'FIELD PAUSED':'FIELD ACTIVE';});
     $('[data-action="reset-gravity"]',root).addEventListener('click',reset);
     $('[data-action="clear-trails"]',root).addEventListener('click',()=>bodies.forEach(b=>b.trail=[]));
     function pos(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
