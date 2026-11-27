@@ -1937,7 +1937,7 @@ function bindKineta(root, api = {}) {
       if(next===1){age[idx]=current===1?Math.min(255,age[idx]+1):1;alive++;} else age[idx]=0;
     }
     lifeState.a=b; lifeState.b=a; lifeState.alive=alive; lifeState.ticks++;
-    updateHud(); render();
+    // Canvas painting and HUD updates are batched by the main frame loop.
   }
   function renderLife() {
     ctx.fillStyle='#050d18';ctx.fillRect(0,0,width,height);
