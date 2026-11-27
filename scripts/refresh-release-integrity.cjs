@@ -53,7 +53,7 @@ if (!changed) {
 }
 
 const nextRelease = 'v1.' + (Number(releaseMatch[1]) + 1);
-runtime = runtime.replace(/v1\\.\\d+/g, nextRelease);
+runtime = runtime.replace(/v1\.\d+/g, nextRelease);
 for (const [file, source] of html) {
   let next = source.replace(/(<meta[^>]+name="curioid-release"[^>]+content=")v1\.\d+(")/, '$1' + nextRelease + '$2');
   if (file === 'index.html') {
