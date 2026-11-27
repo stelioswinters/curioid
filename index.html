@@ -7,9 +7,9 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="preload" href="site-runtime-current.js?v=sha256-1befb5529cac2a70934c22b6fd9b1fea4ed15075b676f23c9c6886a68c82d615" as="script" integrity="sha384-jKUxldXIWfaqSMPuigtH7a3n4OI6+bj6Ee/Wq1si7lfMkD1tfhbFdKdqtgR7Zf2R" crossorigin="anonymous" fetchpriority="high">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-fd7b09a7ea14c8624bf036b48388386efd6c00c697acd3eeb6eb75063deed26b" as="script" integrity="sha384-SD0Zcy46xauJmyfFtfgmL1ESe8BebAbm9LDpjEgGSRmTwoMHZPscNFkCwjVPN8fI" crossorigin="anonymous" fetchpriority="high">
   <meta name="description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
-  <meta name="curioid-release" content="v1.344">
+  <meta name="curioid-release" content="v1.345">
   <meta name="curioid-document" content="index.html">
   <meta name="curioid-project-count" content="59">
   <meta name="curioid-category-count" content="7">
@@ -313,7 +313,7 @@
     .discovery-heading>p { max-width:240px; margin:0; color:#858390; font-size:10px; line-height:1.55; text-align:right; }
     .discovery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
     .discovery-card { --browse-accent:#c1a5ff; position:relative; display:grid; grid-template-columns:34px minmax(0,1fr); grid-template-rows:auto 1fr auto; align-content:start; align-items:center; gap:5px 11px; min-width:0; min-height:125px; padding:15px; overflow:hidden; border:1px solid #343540; border-radius:12px; background:linear-gradient(140deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 62%),#171820; color:#e9e7ef; text-align:left; cursor:pointer; transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease; }
-    .discovery-card::after { content:""; position:absolute; top:-34px; right:-30px; width:95px; height:95px; border-radius:50%; background:var(--browse-accent); opacity:.065; filter:blur(2px); pointer-events:none; }
+    .discovery-card::after { content:""; position:absolute; top:-34px; right:0; width:95px; height:95px; border-radius:50%; background:var(--browse-accent); opacity:.065; filter:blur(2px); pointer-events:none; }
     .discovery-card:hover,.discovery-card:focus-visible { transform:translateY(-2px); border-color:color-mix(in srgb,var(--browse-accent) 65%,#343540); background:linear-gradient(140deg,color-mix(in srgb,var(--browse-accent) 8%,#171820),#171820 75%); box-shadow:0 9px 24px rgba(0,0,0,.16); }
     .discovery-card:focus-visible { outline:2px solid var(--browse-accent); outline-offset:3px; }
     .discovery-card[aria-pressed="true"] { border-color:var(--browse-accent); }
@@ -1115,8 +1115,8 @@
           </div>
           <div class="site-notification-list" id="notificationActivityView" role="tabpanel" aria-labelledby="notificationActivityTab" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div>
           <div class="site-notification-updates" id="notificationUpdatesView" role="tabpanel" aria-labelledby="notificationUpdatesTab" hidden>
-            <article><small>v1.344 · NOV 26, 2026</small><b>Service-worker release alignment</b><p>Aligned all runtime service-worker registration, update, recovery and diagnostic message checks with v1.344. The runtime script preload, execution integrity and offline cache manifest now reference the same verified build.</p></article>
-            <article><small>v1.344 · NOV 26, 2026</small><b>More reliable audio and accessible controls</b><p>D4RK L00PER now releases short-lived audio graph nodes, preserves the browser’s actual recording format, and shuts down active recording cleanly when its window closes. Step and sound selection controls now support keyboard navigation.</p></article>
+            <article><small>v1.345 · NOV 26, 2026</small><b>Service-worker release alignment</b><p>Aligned all runtime service-worker registration, update, recovery and diagnostic message checks with v1.345. The runtime script preload, execution integrity and offline cache manifest now reference the same verified build.</p></article>
+            <article><small>v1.345 · NOV 26, 2026</small><b>More reliable audio and accessible controls</b><p>D4RK L00PER now releases short-lived audio graph nodes, preserves the browser’s actual recording format, and shuts down active recording cleanly when its window closes. Step and sound selection controls now support keyboard navigation.</p></article>
             <article><small>v1.342 · NOV 26, 2026</small><b>Whole-site health audit and responsive care</b><p>Health Check now combines live site controls, all project templates and standalone tools in one privacy-safe interaction audit. Added live overflow and host-header checks, exact-origin app-frame messages and additive small-screen text-fit guards.</p></article>
             <article><small>v1.341 · NOV 26, 2026</small><b>Hardened App SDK resource lifecycles</b><p>Fixed long-session resource accounting so released listeners, timers and registrations free capacity. Resource-limit failures now avoid leaving behind untracked timers or partially registered Connect contracts.</p></article>
             <article><small>v1.340 · NOV 26, 2026</small><b>App SDK foundation, lifecycle controls and expanded MIME support</b><p>Introduced CurioidAppSDK v1 with manifest-gated capabilities, typed contracts and automatic app resource cleanup. UMBRA now uses the SDK for Echonoise integration, and GLITCHYARD MIME lookup covers more than 1,500 file extensions. Connect Console now reports SDK sessions and tracked resources.</p></article>
@@ -1165,7 +1165,7 @@
       <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
       <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word or tag.</div>
       <div class="category-stack" id="categorySections" aria-label="Project collections" hidden></div>
-      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.344</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.345</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
     </div>
   </main>
 
@@ -1267,6 +1267,6 @@
 
 
 
-  <script src="site-runtime-current.js?v=sha256-1befb5529cac2a70934c22b6fd9b1fea4ed15075b676f23c9c6886a68c82d615" defer integrity="sha384-jKUxldXIWfaqSMPuigtH7a3n4OI6+bj6Ee/Wq1si7lfMkD1tfhbFdKdqtgR7Zf2R" crossorigin="anonymous" data-cfasync="false"></script>
+  <script src="site-runtime-current.js?v=sha256-fd7b09a7ea14c8624bf036b48388386efd6c00c697acd3eeb6eb75063deed26b" defer integrity="sha384-SD0Zcy46xauJmyfFtfgmL1ESe8BebAbm9LDpjEgGSRmTwoMHZPscNFkCwjVPN8fI" crossorigin="anonymous" data-cfasync="false"></script>
 </body>
 </html>

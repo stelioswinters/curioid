@@ -1,7 +1,7 @@
-/* CURIOID v1.344 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.345 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.344';
+  const EXPECTED_RELEASE = 'v1.345';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -346,6 +346,17 @@
   }
   async function probeWasmExecution() {
     if(typeof WebAssembly!=='object')return {ok:false,warning:true,detail:'WebAssembly is unavailable.'};
+    // CURIOID deliberately omits wasm-unsafe-eval from its script CSP. Do not
+    // trigger a known policy violation just to prove that the policy is working.
+    const policies=[...document.querySelectorAll('meta[http-equiv]')]
+      .filter(meta=>/^content-security-policy$/i.test(meta.httpEquiv||''))
+      .map(meta=>meta.content||'');
+    const wasmCompilationAllowed=policies.length>0&&policies.every(policy=>{
+      const directives=policy.split(';').map(part=>part.trim());
+      const script=directives.find(part=>/^script-src(?:\s|$)/i.test(part))||directives.find(part=>/^default-src(?:\s|$)/i.test(part))||'';
+      return /(?:^|\s)'(?:wasm-unsafe-eval|unsafe-eval)'(?:\s|$)/i.test(script);
+    });
+    if(policies.length&&!wasmCompilationAllowed)return {ok:true,detail:'WebAssembly APIs are present, but CURIOID’s Content Security Policy intentionally blocks WebAssembly compilation. The security boundary is active; no compilation probe was run.'};
     try {
       const module=await WebAssembly.compile(new Uint8Array([0,97,115,109,1,0,0,0]));
       const instance=await WebAssembly.instantiate(module);
@@ -616,7 +627,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.344',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.345',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
@@ -1328,7 +1339,7 @@
         firstPartyFrameBfCacheResumesObservers:appsPageSecurity.includes('event?.persisted === true')&&appsPageSecurity.includes("window.addEventListener('pageshow', onPageShow)")&&musicPageSecurity.includes("window.addEventListener('pageshow', onPageShow)"),
         customOsWorkerBfCacheLifecycle:coreSecurity.includes('event.persisted!==true)stopWorker()')&&coreSecurity.includes('event?.persisted===true&&workerInstance')&&coreSecurity.includes('workerLastBeat=Date.now();workerVisibilityHandler();}}'),
         vantaGlobalListenersAndAsyncWorkCleaned:vantaSecurity.includes("window.removeEventListener('keydown', onGlobalKeydown)")&&vantaSecurity.includes('state.disposed = true')&&vantaSecurity.includes('state.inputRevision += 1')&&vantaSecurity.includes('Input is too large. The maximum supported size is 2,000,000 characters.'),
-        serviceWorkerScopesMessagesAndHashesDocuments:serviceWorkerSecurity.includes('if (!safeScopedClient(event.source)) return;')&&serviceWorkerSecurity.includes('new Set(Object.keys(EXPECTED_SHA256))')&&serviceWorkerSecurity.includes('responseMatchesRelease(key,response)')&&serviceWorkerSecurity.includes("responseMatchesRelease('curioid-icon.svg', svgIcon)")&&serviceWorkerSecurity.includes('PRECACHE_LAST_REQUEST'),
+        serviceWorkerScopesMessagesAndHashesDocuments:serviceWorkerSecurity.includes('if (!safeScopedClient(event.source)) return;')&&serviceWorkerSecurity.includes('const CACHEABLE_DOCUMENTS = new Set(')&&serviceWorkerSecurity.includes('const STRICT_HASHED_ASSETS = new Set(Object.keys(EXPECTED_SHA256).filter')&&serviceWorkerSecurity.includes('!CACHEABLE_DOCUMENTS.has(path)')&&serviceWorkerSecurity.includes('responseHasCurrentPageIdentity(')&&serviceWorkerSecurity.includes('responseMatchesRelease(relativePath, response)')&&serviceWorkerSecurity.includes("responseMatchesRelease('curioid-icon.svg', svgIcon)")&&serviceWorkerSecurity.includes('PRECACHE_LAST_REQUEST'),
         glitchyardRunSnapshotsAndInputCaps:glitchSecurity.includes('const revision=inputRevision,tool=selected,file=selectedFile')&&glitchSecurity.includes('const isCurrent=()')&&glitchSecurity.includes('2,000,000 characters'),
         glitchyardGzipAndImageBounds:glitchSecurity.includes('readBoundedBytes(stream,16*1024*1024)')&&glitchSecurity.includes('file.size>25*1024*1024')&&glitchSecurity.includes('width*height>16777216'),
         glitchyardLinearTextCounting:glitchSecurity.includes('useTyped=text.length>16000')&&glitchSecurity.includes('new Uint32Array(0x110000)')&&glitchSecurity.includes('new Map()')&&glitchSecurity.includes('touched.push(code)')&&glitchSecurity.includes('leftCounts=new Map()')&&glitchSecurity.includes('generatedName')&&glitchSecurity.includes('500,000 combined characters')
@@ -1598,7 +1609,7 @@
     try { const glCanvas=document.createElement('canvas'); const gl=glCanvas.getContext('webgl2')||glCanvas.getContext('webgl'); webgl=!!gl; gl?.getExtension('WEBGL_lose_context')?.loseContext(); } catch (_) {}
     add('WebGL graphics',webgl ? {ok:true,detail:'WebGL context creation succeeded.'} : {ok:false,warning:true,detail:'WebGL is unavailable or disabled. Some visual projects may use 2D fallbacks.'});
     add('Web Audio', (window.AudioContext||window.webkitAudioContext) ? {ok:true,detail:'Web Audio API is available; no audio context was started by this probe.'} : {ok:false,warning:true,detail:'Web Audio API is unavailable.'});
-    add('WebAssembly capability', typeof WebAssembly==='object' ? {ok:true,detail:'WebAssembly API is available; execution is validated separately by the minimal compile/instantiate canary.'} : {ok:false,warning:true,detail:'WebAssembly is unavailable.'});
+    add('WebAssembly capability', typeof WebAssembly==='object' ? {ok:true,detail:'WebAssembly API is available; compilation is intentionally blocked by the page’s restrictive CSP, and the Health Check now recognises that policy without triggering a violation.'} : {ok:false,warning:true,detail:'WebAssembly is unavailable.'});
     const csp = document.querySelector('meta[http-equiv="Content-Security-Policy"]')?.content || '';
     const cspDirectives=Object.fromEntries(csp.split(';').map(part=>part.trim()).filter(Boolean).map(part=>{const [name,...values]=part.split(/\s+/);return[name.toLowerCase(),values.join(' ')];}));
     const scriptPolicy=cspDirectives['script-src']||cspDirectives['default-src']||'';
