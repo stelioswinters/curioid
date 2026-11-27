@@ -59,6 +59,9 @@ jobs:
       - name: Run KINETA rendering regression audit
         run: node tests/kineta-static-audit.cjs
 
+      - name: Run animated garden rendering cache audit
+        run: node tests/garden-render-cache-audit.cjs
+
       - name: Run full browser smoke suite
         run: node tests/browser-smoke.cjs
 

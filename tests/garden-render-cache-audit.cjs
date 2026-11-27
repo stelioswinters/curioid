@@ -1,0 +1,38 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+
+const gravitySource = fs.readFileSync('projects-category-web-experiments.js', 'utf8');
+const gravityStart = gravitySource.indexOf('function bindGravity(root)');
+const gravityEnd = gravitySource.indexOf('\nfunction patternMarkup', gravityStart);
+assert.ok(gravityStart >= 0 && gravityEnd > gravityStart, 'Gravity Garden binder could not be located');
+const gravity = gravitySource.slice(gravityStart, gravityEnd);
+assert.match(gravity, /const gravitySprites=new WeakMap\(\)/, 'Gravity flower sprites must be cached by body');
+assert.match(gravity, /function paintGravityGrid/, 'Gravity static grid cache is missing');
+assert.match(gravity, /ctx\.drawImage\(gravityGrid,0,0,w,h\)/, 'Gravity grid must be blitted from its cache');
+assert.match(gravity, /ctx\.drawImage\(sprite\.canvas,-sprite\.pad,-sprite\.pad\)/, 'Gravity bodies must be painted from cached sprites');
+assert.match(gravity, /1\/\(d2\*Math\.sqrt\(d2\)\)/, 'Gravity force denominator should avoid repeated general-purpose exponentiation');
+const gravityFrameStart = gravity.indexOf('let sim = fitCanvas(canvas,');
+const gravityFrameEnd = gravity.indexOf('\n    reset();', gravityFrameStart);
+assert.ok(gravityFrameStart >= 0 && gravityFrameEnd > gravityFrameStart, 'Gravity animation frame could not be isolated');
+const gravityFrame = gravity.slice(gravityFrameStart, gravityFrameEnd);
+const physicsIndex = gravityFrame.indexOf('if(!initial && !paused && dt>0)');
+const paintGateIndex = gravityFrame.indexOf('if(!initial && lastGravityPaint && t-lastGravityPaint<1/30)return;');
+assert.ok(physicsIndex >= 0 && paintGateIndex > physicsIndex, 'Gravity paint throttling must not skip physics updates');
+assert.doesNotMatch(gravityFrame, /for\(let p=0;p<count;p\+\+\)/, 'Gravity petal geometry should not be rebuilt during every animation frame');
+
+const frequencySource = fs.readFileSync('projects-category-sound-motion.js', 'utf8');
+const frequencyStart = frequencySource.indexOf('function bindFrequency(root)');
+const frequencyEnd = frequencySource.indexOf('\nfunction listeningRoomMarkup', frequencyStart);
+assert.ok(frequencyStart >= 0 && frequencyEnd > frequencyStart, 'Frequency Garden binder could not be located');
+const frequency = frequencySource.slice(frequencyStart, frequencyEnd);
+assert.match(frequency, /const bloomSprites=new Map\(\)/, 'Frequency bloom sprite cache is missing');
+assert.match(frequency, /function getBloomSprite/, 'Frequency bloom sprite builder is missing');
+assert.match(frequency, /ctx\.drawImage\(bloom\.canvas,-bloom\.pad,-bloom\.pad\)/, 'Frequency flowers must use cached bloom sprites');
+const drawStart = frequency.indexOf('function draw(ctx,w,h,t,dt,initial){');
+const drawEnd = frequency.indexOf('const sim=fitCanvas(canvas,draw,true)', drawStart);
+assert.ok(drawStart >= 0 && drawEnd > drawStart, 'Frequency animation draw function could not be isolated');
+const draw = frequency.slice(drawStart, drawEnd);
+assert.doesNotMatch(draw, /for\(let petal=0;petal<petals;petal\+\+\)/, 'Frequency petals should not be rebuilt for each frame');
+assert.doesNotMatch(draw, /createRadialGradient/, 'Frequency bloom gradients should be created once when their cached sprite is built');
+console.log('Garden rendering audit passed: static grid and flower artwork are cached; frame-rate paint throttling no longer drops Gravity physics steps.');
