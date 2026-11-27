@@ -304,7 +304,7 @@ self.addEventListener('fetch', event => {
     };
     if (cache) {
       try {
-        const hit = await cache.match(cacheKey);
+        const hit = await cache.match(cacheKey, {ignoreSearch: !documentRequest && !releaseQuery});
         // Documents use their release marker, document identity and CSP contract.
         if (hit?.ok && documentRequest && await responseHasCurrentPageIdentity(hit, relativePath)) return hit;
         // Hashed non-document assets are verified once per worker lifetime.
