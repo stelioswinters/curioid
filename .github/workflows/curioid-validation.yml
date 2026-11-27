@@ -39,6 +39,9 @@ jobs:
           done < <(find . -type f -name '*.js' -not -path './.git/*' -print0)
           echo "Successfully parsed $count JavaScript files."
 
+      - name: Inspect Echonoise voice synthesis and audio pipeline
+        run: node tests/echonoise-static-audit.cjs
+
       - name: Verify release alignment and every offline asset hash
         run: |
           node --input-type=module <<'NODE'
