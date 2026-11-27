@@ -50,7 +50,7 @@ const assert = require('node:assert/strict');
       ['devtoys', 'applications-tools-apps.html', 'devtoys']
     ];
     for (const [app, file, hash] of standaloneRoutes) {
-      const standalone = await page.context().newPage();
+      const standalone = await browser.newPage({ viewport: { width: 1365, height: 900 } });
       const standaloneErrors = [];
       standalone.on('pageerror', error => standaloneErrors.push(error.message));
       standalone.on('console', message => { if (message.type() === 'error') standaloneErrors.push(message.text()); });
