@@ -14,9 +14,9 @@ const runtime = readText('site-runtime-current.js');
 const health = readText('health-check.js');
 const index = readText('index.html');
 
-const release = worker.match(/const RELEASE_ID\s*=\s*['"](v\d+)['"]/)?.[1];
+const release = worker.match(/const RELEASE_ID\s*=\s*['"](v1\.\d+)['"]/)?.[1];
 assert.ok(release, 'service worker must declare a release ID');
-assert.equal(index.match(/<meta[^>]+name="curioid-release"[^>]+content="(v\d+)"/)?.[1], release,
+assert.equal(index.match(/<meta[^>]+name="curioid-release"[^>]+content="(v1\.\d+)"/)?.[1], release,
   'homepage and service worker release IDs must match');
 
 const manifestMatch = worker.match(/const EXPECTED_SHA256\s*=\s*Object\.freeze\((\{[\s\S]*?\})\);/);
@@ -101,7 +101,7 @@ assert.ok(index.includes('integrity="' + runtimeSri + '"'),
 const htmlFiles = fs.readdirSync('.').filter(file => file.endsWith('.html'));
 for (const file of htmlFiles) {
   const source = readText(file);
-  const pageRelease = source.match(/<meta[^>]+name="curioid-release"[^>]+content="(v\d+)"/)?.[1];
+  const pageRelease = source.match(/<meta[^>]+name="curioid-release"[^>]+content="(v1\.\d+)"/)?.[1];
   if (pageRelease) assert.equal(pageRelease, release, file + ' release ID differs from service worker');
 }
 
