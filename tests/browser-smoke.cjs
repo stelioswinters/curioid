@@ -43,6 +43,34 @@ const assert = require('node:assert/strict');
     assert.equal(await page.locator('[data-category]').count(), 7);
 
 
+    // Exercise the standalone frame loader directly as well as catalogue mounting.
+    const standaloneRoutes = [
+      ['dark-looper', 'music-audio-apps.html', 'dark-looper'],
+      ['vanta-deck', 'applications-tools-apps.html', 'vanta-deck'],
+      ['devtoys', 'applications-tools-apps.html', 'devtoys']
+    ];
+    for (const [app, file, hash] of standaloneRoutes) {
+      const standalone = await page.context().newPage();
+      const standaloneErrors = [];
+      standalone.on('pageerror', error => standaloneErrors.push(error.message));
+      standalone.on('console', message => { if (message.type() === 'error') standaloneErrors.push(message.text()); });
+      await standalone.goto('http://127.0.0.1:4173/' + file + '#' + hash, { waitUntil: 'networkidle', timeout: 60000 });
+      await standalone.waitForFunction(expected => document.body?.dataset.app === expected, app);
+      if (app === 'dark-looper') {
+        await standalone.locator('#studio-looper').waitFor({ state: 'visible' });
+        assert.equal(await standalone.locator('#padsGrid .pad').count(), 12);
+      } else if (app === 'vanta-deck') {
+        await standalone.locator('#studio-vanta').waitFor({ state: 'visible' });
+        assert.equal(await standalone.locator('[data-zt-tab]').count(), 3);
+      } else {
+        await standalone.locator('[data-glitchyard-app]').waitFor({ state: 'visible' });
+        assert.ok(await standalone.locator('.dt-tool-link').count() >= 30);
+      }
+      assert.equal(standaloneErrors.length, 0, app + ' direct standalone launch errors: ' + standaloneErrors.join(' | '));
+      console.log('Direct standalone launch passed:', app);
+      await standalone.close();
+    }
+
     // Every collection must switch to its own view and expose a non-empty catalogue.
     await page.locator('#browseCollections > summary').click();
     for (const category of await page.locator('[data-category]').evaluateAll(nodes => nodes.map(node => node.dataset.category))) {
