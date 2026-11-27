@@ -1,0 +1,73 @@
+name: Package CURIOID v1.356
+
+on:
+  push:
+    branches: [curioid-v1.356-package]
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Synchronize release metadata and verify repeatability
+        run: |
+          node scripts/refresh-release-integrity.cjs
+          before="$(git diff --binary | sha256sum | cut -d' ' -f1)"
+          node scripts/refresh-release-integrity.cjs
+          after="$(git diff --binary | sha256sum | cut -d' ' -f1)"
+          test "$before" = "$after"
+
+      - name: Run static source audits
+        run: |
+          node tests/echonoise-static-audit.cjs
+          node tests/kineta-static-audit.cjs
+          node tests/garden-render-cache-audit.cjs
+
+      - name: Package the website runtime
+        run: |
+          cat > RUN-LOCAL.txt <<'EOF'
+          CURIOID v1.356
+
+          To run locally on Windows:
+          1. Extract this ZIP into a folder.
+          2. Open that folder in File Explorer.
+          3. Click the address bar, type cmd, and press Enter.
+          4. Run: py -m http.server 8000
+          5. Open: http://localhost:8000
+
+          To deploy, upload the contents of this folder to your static web host,
+          preserving the file names and folder layout.
+
+          No npm install or build step is required.
+          EOF
+          zip -q curioid-v1.356-site.zip \
+            RUN-LOCAL.txt _headers robots.txt sitemap.xml social-preview.png \
+            index.html site-runtime-current.js service-worker-current.js manifest.webmanifest \
+            curioid-icon.svg curioid-icon-192.png curioid-icon-512.png \
+            health-check.js projects-core.js projects-styles.css \
+            projects-category-creative-tools.js projects-category-digital-art.js \
+            projects-category-operating-systems.js projects-category-sound-motion.js \
+            projects-category-strange-archives.js projects-category-tiny-games.js \
+            projects-category-web-experiments.js \
+            music-audio-apps.html applications-tools-apps.html chroma-loom.html curioids.html \
+            dark-looper-app.js glitchyard-app.js vanta-deck-app.js \
+            vocal-lexicon.js vocal-lexicon-data.json
+
+      - name: Upload CURIOID website ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: curioid-v1.356-site
+          path: curioid-v1.356-site.zip
+          if-no-files-found: error
+          retention-days: 30
