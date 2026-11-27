@@ -75,7 +75,11 @@ for (const [file, source] of html) {
   if (match && match[1] !== oldRelease) changed = true;
 }
 if (!html.has('index.html')) throw new Error('index.html is missing from the release');
-if (!html.get('index.html').includes('<small class="site-version">' + oldRelease + '</small>')) changed = true;
+const footerVersion = html.get('index.html').match(/<small class="site-version">(v1\.\d+)<\/small>/)?.[1];
+if (!footerVersion) throw new Error('The homepage footer must contain the master CURIOID release number.');
+// The visible footer version is the single source of truth. All runtime,
+// document and service-worker release markers are generated from this value.
+if (footerVersion !== oldRelease) changed = true;
 
 function inspectHtmlAssetTags(source, update, runtimeBytes) {
   return source.replace(/<(?:script|link)\b[^>]*>/gi, tag => {
@@ -111,7 +115,9 @@ if (!changed) {
   process.exit(0);
 }
 
-const nextRelease = 'v1.' + (Number(releaseMatch[1]) + 1);
+const nextRelease = footerVersion !== oldRelease
+  ? footerVersion
+  : 'v1.' + (Number(footerVersion.slice(3)) + 1);
 runtime = runtime.replace(/v1\.\d+/g, nextRelease);
 for (const [file, source] of html) {
   let next = source.replace(/(<meta[^>]+name="curioid-release"[^>]+content=")v1\.\d+(")/, '$1' + nextRelease + '$2');

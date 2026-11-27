@@ -16,6 +16,10 @@ const index = readText('index.html');
 
 const release = worker.match(/const RELEASE_ID\s*=\s*['"](v1\.\d+)['"]/)?.[1];
 assert.ok(release, 'service worker must declare a release ID');
+const footerRelease = index.match(/<small class="site-version">(v1\.\d+)<\/small>/)?.[1];
+assert.ok(footerRelease, 'homepage footer must declare the master release ID');
+assert.equal(footerRelease, release,
+  'homepage footer is the master version and must match the generated service-worker release');
 assert.equal(index.match(/<meta[^>]+name="curioid-release"[^>]+content="(v1\.\d+)"/)?.[1], release,
   'homepage and service worker release IDs must match');
 
