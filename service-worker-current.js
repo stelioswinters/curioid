@@ -6,18 +6,18 @@ const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const EXPECTED_SHA256 = Object.freeze({
-  "applications-tools-apps.html": "27e8bf944a4ab4c66f3101ac64879565743090e82b49297133ad0b8686271108",
-  "chroma-loom.html": "e564f0d169985807b4ac87099c336c4928cbf959ef40d744942879df139fc348",
+  "applications-tools-apps.html": "1218b9065746c29da4d69a5879019c8e8aee6fffa9c100ad66433e1f74e6ae34",
+  "chroma-loom.html": "bf3216b10f3e019d5b2950976468069f79afe700f61da4fb848ef1239c2ea4d4",
   "curioid-icon-192.png": "32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887",
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
-  "curioids.html": "8108bf964fa813592a213f1500b10ccaadff4e6daaa5444737cc6870a1b63fad",
+  "curioids.html": "22328eba2ebcbbd4da03d50ea218986f79d4f067fd77e60fea4adf105af81f84",
   "dark-looper-app.js": "470251adba5b3f82c4c768b561fdc7490d4f9accda867a2fd7a8282761cd85a5",
   "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
   "health-check.js": "58854069af5b9d288b72370e2df5925e25f417f0f3f6c5fb77516e900093c47d",
-  "index.html": "4fdb2f427e941b86bb8ac31c642524d83c7de7e7f768c83be872d190a7cc838d",
+  "index.html": "beb76524a617fe6c3623a48d4c018dba26f3f65265a5d1b4df282f48c4226a5d",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
-  "music-audio-apps.html": "e60ab17771941ca199f311480284dbc1d9e41eeb51bb9abb8a6c025abd5572c9",
+  "music-audio-apps.html": "202559a91de81af04ec699e3a91893e9e0e671620b9ccae5404bbcaad56b0162",
   "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
   "projects-category-digital-art.js": "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3",
   "projects-category-operating-systems.js": "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946",
@@ -77,13 +77,34 @@ async function responseMatchesRelease(path, response) {
     return actual === expected;
   } catch (_) { return false; }
 }
-async function responseHasCurrentPageIdentity(response) {
+async function responseHasCurrentPageIdentity(response, path = 'index.html') {
+  if (!response?.ok || !response.clone || typeof path !== 'string') return false;
+  try {
+    const html = await response.clone().text();
+    const releasePattern = `<meta\\s+name=[\"']curioid-release[\"']\\s+content=[\"']${RELEASE_ID.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\async function responseHasCurrentPageIdentity(response) {
   if (!response?.ok || !response.clone) return false;
   try {
     const html = await response.clone().text();
     const marker = new RegExp(`<meta\\s+name=[\"']curioid-release[\"']\\s+content=[\"']${RELEASE_ID.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\"']`, 'i').test(html);
     const runtime = html.includes(`site-runtime-current.js?v=sha256-${RUNTIME_HASH}`);
     return marker && runtime;
+  } catch (_) { return false; }
+}')}[\"']`;
+    const escapedPath = path.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\async function responseHasCurrentPageIdentity(response) {
+  if (!response?.ok || !response.clone) return false;
+  try {
+    const html = await response.clone().text();
+    const marker = new RegExp(`<meta\\s+name=[\"']curioid-release[\"']\\s+content=[\"']${RELEASE_ID.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\"']`, 'i').test(html);
+    const runtime = html.includes(`site-runtime-current.js?v=sha256-${RUNTIME_HASH}`);
+    return marker && runtime;
+  } catch (_) { return false; }
+}');
+    const documentPattern = `<meta\\s+name=[\"']curioid-document[\"']\\s+content=[\"']${escapedPath}[\"']`;
+    const releaseMatches = new RegExp(releasePattern, 'i').test(html);
+    const documentMatches = new RegExp(documentPattern, 'i').test(html);
+    const hasPolicy = /<meta\\b[^>]*http-equiv=[\"']Content-Security-Policy[\"']/i.test(html);
+    const runtimeMatches = path !== 'index.html' || html.includes(`site-runtime-current.js?v=sha256-${RUNTIME_HASH}`);
+    return releaseMatches && documentMatches && hasPolicy && runtimeMatches;
   } catch (_) { return false; }
 }
 async function responseLooksLikeImage(response, mime) {
@@ -100,7 +121,7 @@ async function installShellIsValid(cache) {
   const page = await cache.match(absolute('index.html'));
   // Cloudflare may transform HTML at the edge, so its byte hash is not a stable deployment identity.
   // The release marker and exact SRI-versioned runtime URL identify the current shell instead.
-  if (!await responseHasCurrentPageIdentity(page)) throw new Error('The homepage failed its release marker or runtime URL check.');
+  if (!await responseHasCurrentPageIdentity(page, 'index.html')) throw new Error('The homepage failed its release marker, document identity or runtime URL check.');
   const runtimeRequest = new URL(SHELL_PATHS[1], SCOPE_URL);
   const runtime = await cache.match(runtimeRequest.href);
   if (!await responseMatchesRelease(RUNTIME_PATH, runtime)) throw new Error('The main runtime failed its exact release hash check.');
@@ -168,7 +189,12 @@ async function precacheCurrentReleaseAssets() {
       try {
         const response = await fetch(new Request(url.href, {method:'GET', cache:'no-store', credentials:'same-origin'}));
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        if (!await responseMatchesRelease(file, response)) throw new Error('Downloaded bytes did not match the current release SHA-256.');
+        const validDocument = CACHEABLE_DOCUMENTS.has(file)
+          ? await responseHasCurrentPageIdentity(response,file)
+          : await responseMatchesRelease(file,response);
+        if (!validDocument) throw new Error(CACHEABLE_DOCUMENTS.has(file)
+          ? 'Downloaded HTML did not match the current release/document identity.'
+          : 'Downloaded bytes did not match the current release SHA-256.');
         await cache.put(url.href, response.clone());
         results.push({file,ok:true,bytes:Number(response.headers.get('content-length'))||null});
       } catch (error) { results.push({file,ok:false,error:String(error?.message||error).slice(0,220)}); }
@@ -247,9 +273,7 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch(request);
         if (response?.ok && response.type === 'basic' && CACHEABLE_DOCUMENTS.has(key)) {
-          const documentValid = key === 'index.html'
-            ? await responseHasCurrentPageIdentity(response)
-            : await responseMatchesRelease(key,response);
+          const documentValid = !CACHEABLE_DOCUMENTS.has(key) || await responseHasCurrentPageIdentity(response,key);
           if (!documentValid) return new Response('This CURIOID document failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
           if (cache) { try { await cache.put(absolute(key), response.clone()); } catch (_) {} }
         }
@@ -258,14 +282,12 @@ self.addEventListener('fetch', event => {
         if (cache) {
           try {
             const exact = await cache.match(absolute(key), {ignoreSearch:true});
-            const documentValid = !CACHEABLE_DOCUMENTS.has(key) || (key === 'index.html'
-              ? await responseHasCurrentPageIdentity(exact)
-              : await responseMatchesRelease(key,exact));
+            const documentValid = !CACHEABLE_DOCUMENTS.has(key) || await responseHasCurrentPageIdentity(exact,key);
             if (exact?.ok && documentValid) return exact;
             if (exact) await cache.delete(absolute(key));
             if (!key.includes('.') || key === 'index.html') {
               const shell = await cache.match(absolute('index.html'));
-              if (shell && await responseHasCurrentPageIdentity(shell)) return shell;
+              if (shell && await responseHasCurrentPageIdentity(shell,'index.html')) return shell;
             }
           } catch (_) {}
         }

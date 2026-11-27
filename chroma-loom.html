@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="curioid-release" content="v1.344">
+<meta name="curioid-document" content="chroma-loom.html">
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src 'self' 'sha256-P/38yGAfRlPMxJs3DQUfV7R6jVihNOKZI8YbqELEvHg=' 'sha256-snKrmA3/x7ip8bO0fgCmgIfzjLEF9Y3LOzq7tXzHGqI='; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
-  <script id="curioid-frame-guard">
+  <script data-cfasync="false" id="curioid-frame-guard">
 (() => {
   let blocked = false;
   const requestsCurioidEmbed = new URLSearchParams(window.location.search).get('curioid-embed') === '1';
@@ -237,7 +240,7 @@
   </div>
 </div>
 
-<script>
+<script data-cfasync="false">
 (() => {
   const COLORS = 8;
   const START_MOVES = 13;
