@@ -51,14 +51,27 @@ const fs = require('node:fs');
       'Runtime preload and executable script SRI differ: ' + JSON.stringify(runtimeIntegrity));
     assert.equal(runtimeIntegrity.preloadUrl, runtimeIntegrity.scriptUrl,
       'Runtime preload and executable script URLs differ: ' + JSON.stringify(runtimeIntegrity));
+    const indexSource = fs.readFileSync('index.html', 'utf8');
+    const footerRelease = indexSource.match(/<small class="site-version">(v\d+\.\d+)<\/small>/)?.[1];
+    assert.match(footerRelease || '', /^v\d+\.\d+$/, 'The bottom footer is missing its single source release version.');
     const release = await page.locator('meta[name="curioid-release"]').getAttribute('content');
-    assert.match(release || '', /^v1\.\d+$/, 'The page release marker is missing or malformed.');
+    assert.equal(release, footerRelease, 'The homepage release marker is not controlled by the bottom footer.');
+    assert.match(release || '', /^v\d+\.\d+$/, 'The page release marker is missing or malformed.');
     const workerSource = fs.readFileSync('service-worker-current.js', 'utf8');
     const runtimeSource = fs.readFileSync('site-runtime-current.js', 'utf8');
     assert.equal(workerSource.match(/const RELEASE_ID = '(v1\.\d+)'/)?.[1], release,
       'The page and service-worker release IDs do not match.');
     assert.ok(runtimeSource.includes('service-worker-current.js?release=' + release),
       'The runtime registers a different service-worker release.');
+    const healthSource = fs.readFileSync('health-check.js', 'utf8');
+    assert.ok(healthSource.includes("const EXPECTED_RELEASE = '" + release + "';"),
+      'Health Check expected release does not match the footer release.');
+    assert.ok(!/service-worker-current\.js\?release=v\d+\.\d+/.test(healthSource),
+      'Health Check contains a separately hard-coded service-worker release.');
+    const projectCount = Number(await page.locator('meta[name="curioid-project-count"]').getAttribute('content'));
+    const manifest = JSON.parse(fs.readFileSync('manifest.webmanifest', 'utf8'));
+    assert.ok(manifest.description.includes(projectCount + ' browser-native project windows'),
+      'PWA manifest project count is not synchronized with the homepage.');
     const runtimeVersions = [...runtimeSource.matchAll(/v1\.\d+/g)].map(match => match[0]);
     assert.ok(runtimeVersions.length > 0 && runtimeVersions.every(version => version === release),
       'Embedded runtime worker versions are not synchronized: ' + JSON.stringify(runtimeVersions));
@@ -128,7 +141,7 @@ const fs = require('node:fs');
         project: room.dataset.room
       })))
     );
-    assert.ok(projectsToOpen.length >= 59, 'Expected at least 59 catalogue projects, found ' + projectsToOpen.length);
+    assert.ok(projectsToOpen.length >= projectCount, 'Expected at least ' + projectCount + ' catalogue projects, found ' + projectsToOpen.length);
 
     const unlabeledProjectControls = [];
     const windowLayoutFindings = [];
