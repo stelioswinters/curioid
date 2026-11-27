@@ -51,12 +51,16 @@ health = replaceRequired(
   "const EXPECTED_RELEASE = '" + release + "';",
   'Health Check expected release'
 );
-health = replaceRequired(
-  health,
-  /new URL\(['"]service-worker-current\.js\?release=v\d+\.\d+['"],\s*deploymentBase\)/,
-  "new URL('service-worker-current.js?release=' + EXPECTED_RELEASE, deploymentBase)",
-  'Health Check worker probe URL'
-);
+const oldWorkerProbeUrl = /new URL\(['"]service-worker-current\.js\?release=v\d+\.\d+['"],\s*deploymentBase\)/;
+const currentWorkerProbeUrl = /new URL\(['"]service-worker-current\.js\?release=['"]\s*\+\s*EXPECTED_RELEASE\s*,\s*deploymentBase\)/;
+if (oldWorkerProbeUrl.test(health)) {
+  health = health.replace(
+    oldWorkerProbeUrl,
+    "new URL('service-worker-current.js?release=' + EXPECTED_RELEASE, deploymentBase)"
+  );
+} else if (!currentWorkerProbeUrl.test(health)) {
+  throw new Error('Could not locate a valid Health Check worker probe URL.');
+}
 if (/service-worker-current\.js\?release=v\d+\.\d+/.test(health)) {
   throw new Error('Health Check still contains a hard-coded service-worker release URL.');
 }
