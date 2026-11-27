@@ -62,6 +62,9 @@ jobs:
       - name: Run animated garden rendering cache audit
         run: node tests/garden-render-cache-audit.cjs
 
+      - name: Run Organic Errors adaptive rendering audit
+        run: node tests/organic-mobile-render-audit.cjs
+
       - name: Run full browser smoke suite
         run: node tests/browser-smoke.cjs
 

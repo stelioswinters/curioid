@@ -70,6 +70,25 @@ const fs = require('node:fs');
     }
     assert.equal(await page.locator('[data-category]').count(), 7);
 
+    // Check discovery-card copy at the narrow and zoom-like viewport widths
+    // where users previously reported clipped category labels.
+    for (const width of [320, 360, 375, 414, 560, 768, 900, 1024, 1365]) {
+      await page.setViewportSize({ width, height: 800 });
+      const clipping = await page.evaluate(() => {
+        const selectors = '.discovery-title,.discovery-description,.discovery-meta,.nav-label';
+        return [...document.querySelectorAll(selectors)].filter(node => {
+          const rect = node.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0 && node.scrollWidth > node.clientWidth + 1;
+        }).map(node => ({
+          className: typeof node.className === 'string' ? node.className : node.tagName,
+          text: (node.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 70),
+          clientWidth: node.clientWidth,
+          scrollWidth: node.scrollWidth
+        }));
+      });
+      assert.deepEqual(clipping, [], 'Discovery card or category label clipped at ' + width + 'px: ' + JSON.stringify(clipping));
+    }
+    await page.setViewportSize({ width: 1365, height: 900 });
 
     // Exercise the standalone frame loader directly as well as catalogue mounting.
     const standaloneRoutes = [
