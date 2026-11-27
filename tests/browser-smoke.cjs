@@ -39,6 +39,7 @@ const fs = require('node:fs');
   try {
     await page.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForFunction(() => document.querySelectorAll('[data-category]').length === 7);
+    await page.waitForFunction(() => typeof window.CurioidNavigateToProject === 'function', null, { timeout: 30000 });
     assert.match(await page.title(), /CURIOID/i);
     const release = await page.locator('meta[name="curioid-release"]').getAttribute('content');
     assert.match(release || '', /^v1\.\d+$/, 'The page release marker is missing or malformed.');
@@ -105,7 +106,7 @@ const fs = require('node:fs');
           matchingSections: [...document.querySelectorAll('[data-category-section]')].filter(node => node.dataset.categorySection === id)
             .map(node => ({ hidden: node.hidden, classes: node.className }))
         }), category);
-        throw new Error('Collection did not become visible: ' + category + ' / ' + JSON.stringify(diagnostic) + ' / ' + error.message);
+        throw new Error('Collection did not become visible: ' + category + ' / ' + JSON.stringify(diagnostic) + ' / page errors: ' + JSON.stringify(failures) + ' / ' + error.message);
       }
       assert.ok(await page.locator('#categorySections .category-section:not([hidden])').count() >= 1, category + ' did not render');
     }
