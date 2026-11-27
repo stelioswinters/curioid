@@ -1,6 +1,6 @@
-/* CURIOID v1.347 offline shell. Exact release hashes for every cached deployment asset. */
+/* CURIOID v1.348 offline shell. Exact release hashes for every cached deployment asset. */
 'use strict';
-const RELEASE_ID = 'v1.347';
+const RELEASE_ID = 'v1.348';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
@@ -15,7 +15,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "dark-looper-app.js": "470251adba5b3f82c4c768b561fdc7490d4f9accda867a2fd7a8282761cd85a5",
   "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
   "health-check.js": "cc42adc57d6a1a6b848b457b2c793aeea7e87f226277e3bb6e7908b286f6794c",
-  "index.html": "05c27e3f44482e37c11c066cb0df9e59d8b56d3a4bc8c189d14d9fdd40faea17",
+  "index.html": "bf4c1a62e8fd1e0cef30f95486f78c35647da90e8554a49c67acb40cecea72b2",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
   "music-audio-apps.html": "c015666969b66fedb1678cfbe6d32ebaf25152af64cbb82f8285f596dfc9f887",
   "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
@@ -28,7 +28,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "projects-core.js": "af961b333e3633aab2bc7aecf2551a87aab9de222c9c056f7f21bf83a15fdf6f",
   "projects-styles.css": "b0fe98f57d22d20206f174d71fe883a96dca51c817b837bfe8ac925f6f13864d",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "793444e35aad809eb0a110bbfd2a420c3ee4394a6b028ecf9db33a08c632d86b",
+  "site-runtime-current.js": "6e90530a6232be18ef7f327017985a75d0e3883bfe213cad82a9dbcc96e45a34",
   "sitemap.xml": "e2635e23146209aa3ea5c9bb84e7edabd9ecca73a18c7f3c5ade6199153bf63a",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
   "vanta-deck-app.js": "47b25c2ec7e4d05028579eee4111d647817a3004ddb1092089df767276fd7705",
