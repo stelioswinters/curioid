@@ -2823,6 +2823,7 @@
       });
 
       function openUniverseProject(projectId) {
+        ensureCategoriesRendered();
         const target = document.getElementById(`room-${projectId}`);
         if (!target) return;
         if (projectSearch && projectSearch.value) { projectSearch.value = ''; applyProjectSearch(); }
@@ -3001,6 +3002,7 @@
       // Aether share URLs open the Web Experiments project directly, then the app
       // consumes its compact #aether= state and restores the shared workspace.
       if (location.hash.startsWith("#aether=")) {
+        ensureCategoriesRendered();
         const sharedRoom = $("#room-aether-os");
         if (sharedRoom) {
           setBrowsePresentation("category", "operating-systems", { scroll: false });
