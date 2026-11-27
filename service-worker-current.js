@@ -53,7 +53,9 @@ const ON_DEMAND_CACHEABLE = new Set([
   'curioids.html', 'robots.txt', 'sitemap.xml', 'social-preview.png', 'chroma-loom.html', 'dark-looper-app.js', 'glitchyard-app.js', 'vanta-deck-app.js'
 ]);
 const CACHEABLE_DOCUMENTS = new Set(['index.html', 'curioids.html', 'music-audio-apps.html', 'applications-tools-apps.html', 'chroma-loom.html']);
-const STRICT_HASHED_ASSETS = new Set(Object.keys(EXPECTED_SHA256));
+// HTML is checked by its release/document/CSP identity, not its raw bytes.
+// CDNs may rewrite document bytes while preserving the deployed page contract.
+const STRICT_HASHED_ASSETS = new Set(Object.keys(EXPECTED_SHA256).filter(path => !CACHEABLE_DOCUMENTS.has(path)));
 const VERIFIED_CACHE_KEYS = new Set();
 const PRECACHE_LAST_REQUEST = new Map();
 let precachePromise = null;
@@ -178,7 +180,7 @@ async function precacheCurrentReleaseAssets() {
         if (!validDocument) throw new Error(CACHEABLE_DOCUMENTS.has(file)
           ? 'Downloaded HTML did not match the current release/document identity.'
           : 'Downloaded bytes did not match the current release SHA-256.');
-        await cache.put(url.href, response.clone());
+        await cache.put(CACHEABLE_DOCUMENTS.has(file) ? absolute(file) : url.href, response.clone());
         results.push({file,ok:true,bytes:Number(response.headers.get('content-length'))||null});
       } catch (error) { results.push({file,ok:false,error:String(error?.message||error).slice(0,220)}); }
     }
@@ -285,29 +287,56 @@ self.addEventListener('fetch', event => {
   event.respondWith((async () => {
     const cache = await openCacheSafely();
     const releaseQuery = /^sha256-[a-f0-9]{64}$/i.test(url.searchParams.get('v') || '');
-    const cacheKey = releaseQuery ? request : absolute(relativePath);
+    const documentRequest = CACHEABLE_DOCUMENTS.has(relativePath);
+    // Versioned HTML requests share the same identity-checked cache entry as
+    // normal navigation. A query-string SHA-256 is not a valid HTML byte check
+    // because edge/CDN transformations can legitimately change document bytes.
+    const cacheKey = documentRequest ? absolute(relativePath) : (releaseQuery ? request : absolute(relativePath));
     const strict = STRICT_HASHED_ASSETS.has(relativePath);
+    const readCurrentDocumentCache = async () => {
+      if (!cache || !documentRequest) return null;
+      try {
+        const cached = await cache.match(absolute(relativePath));
+        if (cached?.ok && await responseHasCurrentPageIdentity(cached, relativePath)) return cached;
+        if (cached) await cache.delete(absolute(relativePath));
+      } catch (_) {}
+      return null;
+    };
     if (cache) {
       try {
-        const hit = await cache.match(cacheKey, {ignoreSearch: !releaseQuery});
-        // Verify each strict cache entry on its first use after this worker
-        // starts. This detects corrupted or externally modified persistent cache
-        // bytes without re-hashing multi-megabyte assets on every later request.
-        const verifiedKey = cacheKey.url;
-        if (hit?.ok && (!strict || VERIFIED_CACHE_KEYS.has(verifiedKey))) return hit;
-        if (hit?.ok && strict && await responseMatchesRelease(relativePath, hit)) { VERIFIED_CACHE_KEYS.add(verifiedKey); return hit; }
+        const hit = await cache.match(cacheKey);
+        // Documents use their release marker, document identity and CSP contract.
+        if (hit?.ok && documentRequest && await responseHasCurrentPageIdentity(hit, relativePath)) return hit;
+        // Hashed non-document assets are verified once per worker lifetime.
+        const verifiedKey = cacheKey.url || String(cacheKey);
+        if (hit?.ok && !documentRequest && (!strict || VERIFIED_CACHE_KEYS.has(verifiedKey))) return hit;
+        if (hit?.ok && !documentRequest && strict && await responseMatchesRelease(relativePath, hit)) {
+          VERIFIED_CACHE_KEYS.add(verifiedKey);
+          return hit;
+        }
         if (hit) { await cache.delete(cacheKey); VERIFIED_CACHE_KEYS.delete(verifiedKey); }
       } catch (_) {}
     }
     try {
       const response = await fetch(request);
       if (response?.ok && response.type === 'basic') {
-        const valid = !strict || await responseMatchesRelease(relativePath, response);
-        if (!valid && strict) return new Response('This CURIOID asset failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
-        if (valid && cache) { try { await cache.put(cacheKey, response.clone()); if(strict)VERIFIED_CACHE_KEYS.add(cacheKey.url); } catch (_) {} }
+        const valid = documentRequest
+          ? await responseHasCurrentPageIdentity(response, relativePath)
+          : !strict || await responseMatchesRelease(relativePath, response);
+        if (!valid && strict && !documentRequest) return new Response('This CURIOID asset failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
+        if (valid && cache) {
+          try { await cache.put(cacheKey, response.clone()); if(strict)VERIFIED_CACHE_KEYS.add(cacheKey.url || String(cacheKey)); } catch (_) {}
+        }
+      } else if (documentRequest) {
+        const cached = await readCurrentDocumentCache();
+        if (cached) return cached;
       }
       return response;
     } catch (_) {
+      if (documentRequest) {
+        const cached = await readCurrentDocumentCache();
+        if (cached) return cached;
+      }
       return new Response('CURIOID is offline and this resource has not been cached for the current release.', {status:503, headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
     }
   })());
