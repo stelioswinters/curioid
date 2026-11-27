@@ -2,7 +2,7 @@ name: CURIOID browser quality
 
 on:
   push:
-    branches: [main]
+    branches: [main, curioid-v1.356-cleanup]
   pull_request:
     branches: [main]
   workflow_dispatch:
