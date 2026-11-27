@@ -16,11 +16,11 @@ const htmlFiles = fs.readdirSync('.').filter(name => name.endsWith('.html'));
 const html = new Map(htmlFiles.map(name => [name, fs.readFileSync(name, 'utf8')]));
 
 let changed = false;
-function syncRuntimeConstant(name, file) {
+function syncRuntimeConstant(hashName, sriName, file) {
   if (!fs.existsSync(file)) throw new Error('Missing runtime asset: ' + file);
   const nextHash = sha256(file), nextSri = sha384(file);
-  const hashPattern = new RegExp("(const " + name + " = ')[a-f0-9]{64}(';)");
-  const sriPattern = new RegExp("(const " + name.replace(/_HASH$/, '_SRI') + " = ')sha384-[^']+(';)");
+  const hashPattern = new RegExp("(const " + hashName + " = ')[a-f0-9]{64}(';)");
+  const sriPattern = new RegExp("(const " + sriName + " = ')sha384-[^']+(';)");
   const currentHash = runtime.match(hashPattern)?.[0];
   const currentSri = runtime.match(sriPattern)?.[0];
   if (!currentHash || !currentSri) throw new Error('Missing runtime integrity constants for ' + file);
@@ -28,8 +28,8 @@ function syncRuntimeConstant(name, file) {
   runtime = runtime.replace(hashPattern, '$1' + nextHash + '$2');
   runtime = runtime.replace(sriPattern, '$1' + nextSri + '$2');
 }
-syncRuntimeConstant('HEALTH_MODULE_HASH', 'health-check.js');
-syncRuntimeConstant('PROJECT_STYLES_SHA256', 'projects-styles.css');
+syncRuntimeConstant('HEALTH_MODULE_HASH', 'HEALTH_MODULE_SRI', 'health-check.js');
+syncRuntimeConstant('PROJECT_STYLES_SHA256', 'PROJECT_STYLES_SRI', 'projects-styles.css');
 
 const coreHash = sha256('projects-core.js'), coreSri = sha384('projects-core.js');
 const corePattern = /(file: "projects-core\.js", hash: ")[a-f0-9]{64}(", integrity: ")sha384-[^"]+(")/;
@@ -45,7 +45,7 @@ runtime = runtime.replace(modulePattern, (whole, key, file, oldHash, oldSri) => 
   const nextHash = sha256(file), nextSri = sha384(file);
   moduleCount++;
   if (nextHash !== oldHash || nextSri !== oldSri) changed = true;
-  return \`"\${key}": { file: "\${file}", hash: "\${nextHash}", integrity: "\${nextSri}" }\`;
+  return '"' + key + '": { file: "' + file + '", hash: "' + nextHash + '", integrity: "' + nextSri + '" }';
 });
 if (moduleCount !== 7) throw new Error('Expected 7 category integrity entries, found ' + moduleCount);
 
