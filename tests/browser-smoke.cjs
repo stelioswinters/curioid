@@ -41,10 +41,10 @@ const fs = require('node:fs');
     await page.waitForFunction(() => document.querySelectorAll('[data-category]').length === 7);
     assert.match(await page.title(), /CURIOID/i);
     const release = await page.locator('meta[name="curioid-release"]').getAttribute('content');
-    assert.match(release || '', /^v1\\.\\d+$/, 'The page release marker is missing or malformed.');
+    assert.match(release || '', /^v1\.\d+$/, 'The page release marker is missing or malformed.');
     const workerSource = fs.readFileSync('service-worker-current.js', 'utf8');
     const runtimeSource = fs.readFileSync('site-runtime-current.js', 'utf8');
-    assert.equal(workerSource.match(/const RELEASE_ID = '(v1\\.\\d+)'/)?.[1], release,
+    assert.equal(workerSource.match(/const RELEASE_ID = '(v1\.\d+)'/)?.[1], release,
       'The page and service-worker release IDs do not match.');
     assert.ok(runtimeSource.includes('service-worker-current.js?release=' + release),
       'The runtime registers a different service-worker release.');
