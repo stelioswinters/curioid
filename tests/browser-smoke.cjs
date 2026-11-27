@@ -250,6 +250,27 @@ const fs = require('node:fs');
       }
 
       await sweepButtons(room.locator('.room-mount'), page, project);
+
+      // Verify that pause really suspends each canvas loop and that resume
+      // restarts it, even when the broad control sweep already toggled it.
+      for (const selector of ['[data-action="pause-gravity"]','[data-action="organic-pause"]']) {
+        const pauseControl = room.locator('.room-mount').locator(selector).first();
+        if (await pauseControl.count() && await pauseControl.isVisible()) {
+          const initialLabel = (await pauseControl.innerText()).trim();
+          await pauseControl.click();
+          await page.waitForFunction(({ projectId, selector, initialLabel }) => {
+            const roomNode = document.getElementById('room-' + projectId);
+            const button = roomNode?.querySelector('.room-mount ' + selector);
+            return button && button.textContent.trim() !== initialLabel;
+          }, { projectId: project, selector, initialLabel });
+          await pauseControl.click();
+          await page.waitForFunction(({ projectId, selector, initialLabel }) => {
+            const roomNode = document.getElementById('room-' + projectId);
+            const button = roomNode?.querySelector('.room-mount ' + selector);
+            return button && button.textContent.trim() === initialLabel;
+          }, { projectId: project, selector, initialLabel });
+        }
+      }
       await restoreFullscreen(page);
       const projectFrames = await room.locator('.room-mount iframe').elementHandles();
       for (const projectFrame of projectFrames) {
