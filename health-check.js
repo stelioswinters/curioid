@@ -1,7 +1,7 @@
-/* CURIOID v1.344 lazy Health Check module. Runs only when requested. */
+/* CURIOID v1.345 lazy Health Check module. Runs only when requested. */
 (function (root) {
   'use strict';
-  const EXPECTED_RELEASE = 'v1.344';
+  const EXPECTED_RELEASE = 'v1.345';
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {
     const {
@@ -616,7 +616,7 @@
   }
   async function probePublishedShell() {
     try {
-      const swUrl=new URL('service-worker-current.js?release=v1.344',deploymentBase);
+      const swUrl=new URL('service-worker-current.js?release=v1.345',deploymentBase);
       const swResponse=await healthTimeout(fetch(swUrl.href,{cache:'no-store',credentials:'same-origin'}),8000,'release manifest request');
       if(!swResponse.ok)throw new Error(`Service worker returned HTTP ${swResponse.status}`);
       const swText=await swResponse.text();
