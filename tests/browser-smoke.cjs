@@ -182,6 +182,15 @@ const assert = require('node:assert/strict');
       }, project, { timeout: 90000 });
       assert.equal(await room.getAttribute('data-loaded'), 'true', project + ' failed to mount');
 
+      // Some desktops show a first-use security note after mounting.
+      const notesDialog = page.locator('#curioid-important-notes');
+      if (await notesDialog.count() && await notesDialog.evaluate(node => node.open)) {
+        const acknowledge = notesDialog.getByText(/got it/i).last();
+        if (await acknowledge.count()) await acknowledge.click();
+        else await notesDialog.locator('button').last().click();
+        await notesDialog.waitFor({ state: 'hidden', timeout: 10000 });
+      }
+
       await sweepButtons(room.locator('.room-mount'), page, project);
       await restoreFullscreen(page);
       const projectFrames = await room.locator('.room-mount iframe').elementHandles();
@@ -292,14 +301,6 @@ const assert = require('node:assert/strict');
       });
       unlabeledProjectControls.push(...projectLabels.map(item => ({ project, ...item })));
 
-      // Some desktops show a first-use security note after mounting.
-      const notesDialog = page.locator('#curioid-important-notes');
-      if (await notesDialog.count() && await notesDialog.evaluate(node => node.open)) {
-        const acknowledge = notesDialog.getByText(/got it/i).last();
-        if (await acknowledge.count()) await acknowledge.click();
-        else await notesDialog.locator('button').last().click();
-        await notesDialog.waitFor({ state: 'hidden', timeout: 10000 });
-      }
       await room.locator('.room-heading').click();
       await page.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'false', project);
       await restoreFullscreen(page);
