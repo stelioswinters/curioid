@@ -256,7 +256,21 @@ self.addEventListener('fetch', event => {
       const key = relativePath || 'index.html';
       const cache = await openCacheSafely();
       try {
-        const response = await fetch(request);
+        // Do not let a browser or edge cache serve an older homepage beside
+        // this worker. The release query separates shell generations; no-store
+        // forces revalidation even when a stale URL was previously cached.
+        const navigationUrl = new URL(request.url);
+        navigationUrl.searchParams.set('__curioid_release', RELEASE_ID);
+        const navigationRequest = new Request(navigationUrl.href, {
+          method: 'GET',
+          headers: request.headers,
+          credentials: request.credentials || 'same-origin',
+          cache: 'no-store',
+          redirect: 'follow',
+          referrer: request.referrer,
+          referrerPolicy: request.referrerPolicy
+        });
+        const response = await fetch(navigationRequest);
         if (response?.ok && response.type === 'basic' && CACHEABLE_DOCUMENTS.has(key)) {
           // HTML may be rewritten by the CDN even when it is the correct live
           // document. Do not turn a successful origin response into a synthetic

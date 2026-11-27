@@ -35,6 +35,9 @@ jobs:
           after="$(git diff --binary | sha256sum | cut -d' ' -f1)"
           test "$before" = "$after"
 
+      - name: Audit cross-file release coherence
+        run: node tests/release-coherence-audit.cjs
+
       - name: Install Playwright
         run: npm install --no-save --no-package-lock playwright
 
