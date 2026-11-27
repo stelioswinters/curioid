@@ -5,6 +5,31 @@ const assert = require('node:assert/strict');
   const browser = await chromium.launch({ headless: true });
   const failures = [];
   const page = await browser.newPage({ viewport: { width: 1365, height: 900 } });
+  await page.addInitScript(() => {
+    const probe = window.__curioidAudioProbe = {
+      contexts: 0, resumes: 0, oscillators: 0, bufferSources: 0, gains: 0, compressors: 0
+    };
+    for (const Constructor of [window.AudioContext, window.webkitAudioContext].filter(Boolean)) {
+      const prototype = Constructor.prototype;
+      for (const [method, key] of [
+        ['resume', 'resumes'],
+        ['createOscillator', 'oscillators'],
+        ['createBufferSource', 'bufferSources'],
+        ['createGain', 'gains'],
+        ['createDynamicsCompressor', 'compressors']
+      ]) {
+        const original = prototype[method];
+        if (typeof original !== 'function' || original.__curioidProbeWrapped) continue;
+        const wrapped = function (...args) {
+          probe[key]++;
+          if (method === 'resume') probe.contexts++;
+          return original.apply(this, args);
+        };
+        Object.defineProperty(wrapped, '__curioidProbeWrapped', { value: true });
+        try { Object.defineProperty(prototype, method, { configurable: true, writable: true, value: wrapped }); } catch (_) {}
+      }
+    }
+  });
   page.on('dialog', dialog => { console.log('Site dialog: ' + dialog.type() + ' / ' + dialog.message().slice(0,120)); dialog.accept().catch(() => {}); });
   page.on('pageerror', error => failures.push('pageerror: ' + error.message));
   page.on('console', message => { if (message.type() === 'error') failures.push('console: ' + message.text()); });
@@ -119,6 +144,7 @@ const assert = require('node:assert/strict');
 
     for (const { category, project } of projectsToOpen) {
       await page.locator('[data-category="' + category + '"]').click();
+      await restoreFullscreen(page);
       await page.setViewportSize({ width: 360, height: 800 });
       const room = page.locator('#room-' + project);
       await room.locator('.room-heading').click();
@@ -136,6 +162,69 @@ const assert = require('node:assert/strict');
         if (!child) continue;
         try {
           await child.waitForLoadState('domcontentloaded', { timeout: 15000 });
+          const standaloneApps = {
+            'dark-looper': { app: 'dark-looper', section: '#studio-looper' },
+            'vanta-deck': { app: 'vanta-deck', section: '#studio-vanta' },
+            'devtoys': { app: 'devtoys', section: '#studio-glitchyard' }
+          };
+          const expectedApp = standaloneApps[project];
+          if (expectedApp) {
+            await child.waitForFunction(({ app, section }) => {
+              const root = document.querySelector(section);
+              return document.body?.dataset.app === app && root && !root.hidden && root.getClientRects().length > 0;
+            }, expectedApp, { timeout: 30000 });
+            const boot = await child.evaluate(({ app, section }) => ({
+              app: document.body.dataset.app,
+              title: document.title,
+              sectionVisible: Boolean(document.querySelector(section)?.getClientRects().length),
+              frameGuardVisible: Boolean(document.querySelector('#curioid-frame-warning')),
+              alerts: [...document.querySelectorAll('[role="alert"]')].map(node => node.innerText.trim()).filter(Boolean),
+              scriptUrls: [...document.scripts].map(script => new URL(script.src || location.href).pathname).filter(path => /-app\.js$/.test(path)),
+              bodyText: (document.body.innerText || '').trim().slice(0, 420)
+            }), expectedApp);
+            console.log('Standalone app boot:', project, JSON.stringify(boot));
+            assert.equal(boot.app, expectedApp.app, project + ' selected the wrong standalone app.');
+            assert.equal(boot.sectionVisible, true, project + ' app section is not actually visible.');
+            assert.equal(boot.frameGuardVisible, false, project + ' frame guard disabled the app.');
+            assert.ok(boot.bodyText.length > 100, project + ' rendered an empty/black application body.');
+            assert.ok(boot.scriptUrls.some(url => url.endsWith(project === 'devtoys' ? 'glitchyard-app.js' : project + '-app.js')),
+              project + ' verified application script did not execute/load.');
+
+            if (project === 'dark-looper') {
+              const pads = child.locator('#padsGrid .pad');
+              assert.equal(await pads.count(), 12, 'D4RK L00PER must render twelve pads.');
+              const initialStatus = (await child.locator('#mpcStatus').innerText()).trim();
+              await pads.first().click();
+              await child.waitForFunction(() => /^PAD HIT:/.test(document.querySelector('#mpcStatus')?.textContent || '')
+                || (document.querySelector('#mpcStatus')?.textContent || '').includes('AUDIO READY REQUIRED'), null, { timeout: 10000 });
+              const playback = await child.evaluate(() => ({
+                status: document.querySelector('#mpcStatus')?.textContent || '',
+                probe: window.__curioidAudioProbe || null
+              }));
+              assert.notEqual(playback.status, initialStatus, 'D4RK L00PER pad click did not change its status.');
+              assert.ok(playback.probe && playback.probe.resumes > 0, 'D4RK L00PER never resumed its AudioContext after a pad click.');
+              assert.ok(playback.probe.oscillators + playback.probe.bufferSources > 0,
+                'D4RK L00PER did not create any sound-source nodes.');
+              console.log('D4RK L00PER audio graph:', JSON.stringify(playback));
+            } else if (project === 'vanta-deck') {
+              assert.equal(await child.locator('[data-zt-tab]').count(), 3, 'VANTA DECK must expose all three workbench tabs.');
+              for (const tab of ['life', 'tools', 'pc']) {
+                await child.locator('[data-zt-tab="' + tab + '"]').click();
+                assert.equal(await child.locator('#zt-panel-' + tab).evaluate(node => !node.classList.contains('zt-hidden')),
+                  true, 'VANTA DECK tab did not reveal its ' + tab + ' panel.');
+              }
+            } else if (project === 'devtoys') {
+              assert.ok(await child.locator('[data-glitchyard-app]').count(), 'GLITCHYARD application root is missing.');
+              assert.ok(await child.locator('.dt-tool-link').count() >= 30, 'GLITCHYARD did not render its tool catalogue.');
+              await child.locator('[data-dt-input]').fill('{"curioid":"alive","items":[1,2,3]}');
+              await child.locator('[data-dt-run]').click();
+              await child.waitForFunction(() => (document.querySelector('[data-dt-output]')?.textContent || '').includes('"curioid"'), null, { timeout: 10000 });
+              const formatted = await child.locator('[data-dt-output]').innerText();
+              assert.equal(JSON.parse(formatted).curioid, 'alive', 'GLITCHYARD JSON tool returned incorrect output.');
+              await child.locator('[data-dt-clear]').click();
+              assert.equal((await child.locator('[data-dt-input]').inputValue()), '', 'GLITCHYARD Clear did not clear the input.');
+            }
+          }
           await sweepButtons(child.locator('body'), page, project + ' iframe');
           await restoreFullscreen(page);
         } catch (error) {
