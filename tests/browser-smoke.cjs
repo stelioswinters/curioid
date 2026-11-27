@@ -1,5 +1,6 @@
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
@@ -39,7 +40,14 @@ const assert = require('node:assert/strict');
     await page.goto('http://127.0.0.1:4173/', { waitUntil: 'networkidle', timeout: 60000 });
     await page.waitForFunction(() => document.querySelectorAll('[data-category]').length === 7);
     assert.match(await page.title(), /CURIOID/i);
-    assert.equal(await page.locator('meta[name="curioid-release"]').getAttribute('content'), 'v1.345');
+    const release = await page.locator('meta[name="curioid-release"]').getAttribute('content');
+    assert.match(release || '', /^v1\\.\\d+$/, 'The page release marker is missing or malformed.');
+    const workerSource = fs.readFileSync('service-worker-current.js', 'utf8');
+    const runtimeSource = fs.readFileSync('site-runtime-current.js', 'utf8');
+    assert.equal(workerSource.match(/const RELEASE_ID = '(v1\\.\\d+)'/)?.[1], release,
+      'The page and service-worker release IDs do not match.');
+    assert.ok(runtimeSource.includes('service-worker-current.js?release=' + release),
+      'The runtime registers a different service-worker release.');
     assert.equal(await page.locator('[data-category]').count(), 7);
 
 
