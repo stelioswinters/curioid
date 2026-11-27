@@ -45,7 +45,14 @@ for (const [file, source] of html) {
   if (match && match[1] !== oldRelease) changed = true;
 }
 if (!html.has('index.html')) throw new Error('index.html is missing from the release');
-if (!html.get('index.html').includes('<small class="site-version">' + oldRelease + '</small>')) changed = true;
+const currentIndex = html.get('index.html');
+if (!currentIndex.includes('<small class="site-version">' + oldRelease + '</small>')) changed = true;
+const currentRuntimeHash = hash('sha256', Buffer.from(runtime));
+const currentRuntimeSri = 'sha384-' + hash('sha384', Buffer.from(runtime), 'base64');
+if (!currentIndex.includes('site-runtime-current.js?v=sha256-' + currentRuntimeHash)) changed = true;
+const preloadSri = currentIndex.match(/<link[^>]+href="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
+const scriptSri = currentIndex.match(/<script[^>]+src="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
+if (preloadSri !== currentRuntimeSri || scriptSri !== currentRuntimeSri) changed = true;
 
 if (!changed) {
   console.log('Release integrity metadata is already current; no changes needed.');
@@ -67,6 +74,7 @@ const runtimeHash = hash('sha256', Buffer.from(runtime));
 const runtimeSri = 'sha384-' + hash('sha384', Buffer.from(runtime), 'base64');
 index = index.replace(/(site-runtime-current\.js\?v=sha256-)[a-f0-9]{64}/g, '$1' + runtimeHash);
 index = index.replace(/(<link rel="preload" href="site-runtime-current\.js\?v=sha256-[^"]+" as="script" integrity=")sha384-[^"]+/, '$1' + runtimeSri);
+index = index.replace(/(<script src="site-runtime-current\.js\?v=sha256-[^"]+" defer integrity=")sha384-[^"]+/, '$1' + runtimeSri);
 html.set('index.html', index);
 
 // Refresh every cached file hash using final in-memory bytes for rewritten files.
