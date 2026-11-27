@@ -1,0 +1,38 @@
+name: Refresh CURIOID release integrity
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: curioid-release-integrity
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Refresh hashes and commit generated metadata
+        run: |
+          node scripts/refresh-release-integrity.cjs
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html site-runtime-current.js service-worker-current.js
+            git commit -m "chore: refresh release integrity metadata"
+            git push
+          fi

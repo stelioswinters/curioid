@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: curioid-browser-quality-${{ github.ref }}
@@ -27,16 +27,8 @@ jobs:
         with:
           node-version: 22
 
-      - name: Refresh release integrity metadata
-        run: |
-          node scripts/refresh-release-integrity.cjs
-          if ! git diff --quiet; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add index.html site-runtime-current.js service-worker-current.js
-            git commit -m "chore: refresh release integrity metadata"
-            git push
-          fi
+      - name: Validate and refresh release integrity in test workspace
+        run: node scripts/refresh-release-integrity.cjs
 
       - name: Install Playwright
         run: npm install --no-save --no-package-lock playwright
