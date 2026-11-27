@@ -1,0 +1,62 @@
+name: CURIOID browser quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: curioid-browser-quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install Playwright
+        run: npm install --no-save --no-package-lock playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local static server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/curioid-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/curioid-http.log
+          exit 1
+
+      - name: Run Echonoise source audit
+        run: node tests/echonoise-static-audit.cjs
+
+      - name: Run full browser smoke suite
+        run: node tests/browser-smoke.cjs
+
+      - name: Upload local server log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: curioid-static-server-log
+          path: /tmp/curioid-http.log
+          if-no-files-found: ignore
