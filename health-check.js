@@ -1614,7 +1614,17 @@
     const unsandboxedFrames=[...document.querySelectorAll('iframe:not([sandbox]):not([data-curioid-embedded-frame])')];
     const trustedFirstPartyFrames=[...document.querySelectorAll('iframe[data-curioid-embedded-frame]')];
     const scriptsMissingIntegrity=[...document.querySelectorAll('script[src]')].filter(script=>!script.integrity);
-    const externalScriptsMissingIntegrity=scriptsMissingIntegrity.filter(script=>{try{return new URL(script.src,location.href).origin!==location.origin;}catch(_){return true;}});
+    const externalScriptsMissingIntegrity=[],browserExtensionScriptsMissingIntegrity=[];
+    for(const script of scriptsMissingIntegrity){
+      try{
+        const scriptUrl=new URL(script.src,location.href);
+        if((scriptUrl.protocol==='http:'||scriptUrl.protocol==='https:')&&scriptUrl.origin!==location.origin)externalScriptsMissingIntegrity.push(script);
+        else if(/^(?:chrome-extension|moz-extension|safari-web-extension|ms-browser-extension):$/.test(scriptUrl.protocol))browserExtensionScriptsMissingIntegrity.push(script);
+      }catch(_){externalScriptsMissingIntegrity.push(script);}
+    }
+    const browserExtensionScriptNote=browserExtensionScriptsMissingIntegrity.length
+      ?` ${browserExtensionScriptsMissingIntegrity.length} browser-extension script(s) without page-controlled SRI were detected; extension code is outside CURIOID's control.`
+      :'';
     const missingReferrerPolicy=!document.querySelector('meta[name="referrer"][content]');
     if(liveJsUrls.length)cspWeaknesses.push(`${liveJsUrls.length} javascript: URL(s) in the live DOM`);
     if(liveInlineHandlers)cspWeaknesses.push(`${liveInlineHandlers} inline event handler(s) in the live DOM`);
@@ -1623,7 +1633,7 @@
     if(externalScriptsMissingIntegrity.length)cspWeaknesses.push(`${externalScriptsMissingIntegrity.length} cross-origin script(s) lack SRI`);
     if(missingReferrerPolicy)cspWeaknesses.push('a document referrer policy meta tag is missing');
     add('Content Security Policy & live DOM hardening',csp&&!cspWeaknesses.length
-      ?{ok:true,detail:`script-src contains no unsafe-inline/unsafe-eval exception; object-src and base-uri are restricted; form-action is defined; live DOM has no javascript: URLs, inline event handlers, unsafe new-tab links or untrusted unsandboxed iframes; ${trustedFirstPartyFrames.length} fixed same-origin CURIOID studio frame(s) are separately checked for restrictive CSP and script SRI; cross-origin scripts are SRI-bound and a strict referrer policy is present.`}
+      ?{ok:true,detail:`script-src contains no unsafe-inline/unsafe-eval exception; object-src and base-uri are restricted; form-action is defined; live DOM has no javascript: URLs, inline event handlers, unsafe new-tab links or untrusted unsandboxed iframes; ${trustedFirstPartyFrames.length} fixed same-origin CURIOID studio frame(s) are separately checked for restrictive CSP and script SRI; cross-origin web scripts are SRI-bound and a strict referrer policy is present.${browserExtensionScriptNote}`}
       :{ok:false,warning:true,detail:`CSP/live-DOM hardening needs review: ${cspWeaknesses.join('; ')||'the expected CSP meta policy is missing'}.`});
     const manifestResponse = await (async()=>{try{return await healthTimeout(fetch(new URL('manifest.webmanifest',deploymentBase).href,{cache:'no-store',credentials:'same-origin'}),6000,'PWA manifest');}catch(error){return {ok:false,error};}})();
     if (manifestResponse?.ok === false) add('PWA manifest',{ok:false,warning:true,detail:String(manifestResponse.error?.message||manifestResponse.error||'Manifest request failed').slice(0,220)});
