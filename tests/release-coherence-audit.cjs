@@ -31,6 +31,8 @@ for (const [file, expected] of Object.entries(manifest)) {
 
 assert.match(health, /const EXPECTED_RELEASE = \(\(\) => \{[\s\S]{0,400}meta\[name="curioid-release"\]/,
   'Health Check must read its expected release from the active homepage');
+assert.ok(health.includes("return /^v\\d+\\.\\d+$/.test(release) ? release : 'unknown';"),
+  'Health Check must accept CURIOID dotted release IDs such as v1.355');
 assert.match(health, /service-worker-current\.js\?release=\$\{EXPECTED_RELEASE\}/,
   'Health Check must request the service worker using the shell release');
 assert.doesNotMatch(health, /service-worker-current\.js\?release=v\d+/,

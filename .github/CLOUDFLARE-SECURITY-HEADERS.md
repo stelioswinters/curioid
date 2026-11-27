@@ -4,21 +4,6 @@ CURIOID is published as a static GitHub Pages site. GitHub Pages does not read t
 
 Apply the following at Cloudflare for `stelioswinters.com`.
 
-
-## 0. Keep the HTML shell and service worker out of edge cache
-
-Create a **Cache Rule** for CURIOID and place it above any broader rule that caches all HTML or static content.
-
-Expression:
-
-```
-(http.host eq "stelioswinters.com" and starts_with(http.request.uri.path, "/curioid/") and (http.request.uri.path eq "/curioid/" or http.request.uri.path eq "/curioid/index.html" or ends_with(http.request.uri.path, ".html") or ends_with(http.request.uri.path, "/service-worker-current.js")))
-```
-
-Action: **Bypass cache**.
-
-This prevents a cached homepage or standalone HTML document from remaining on an older release after GitHub Pages has deployed a new service worker. The worker also adds a release-specific navigation query and fetches navigations with `cache: no-store`, but the edge rule is still required where Cloudflare proxy caching is enabled.
-
 ## 1. Enable the managed security-header transform
 
 In **Cloudflare Dashboard → stelioswinters.com → Rules → Transform Rules → Managed Transforms**, enable **Add security headers**.

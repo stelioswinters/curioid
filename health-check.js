@@ -3,7 +3,7 @@
   'use strict';
   const EXPECTED_RELEASE = (() => {
     const release = document.querySelector('meta[name="curioid-release"]')?.content?.trim() || '';
-    return /^v\d+$/.test(release) ? release : 'unknown';
+    return /^v\d+\.\d+$/.test(release) ? release : 'unknown';
   })();
   const HEALTH_PROBE_PREFIX = '__curioid_health_probe_';
   function create(options) {

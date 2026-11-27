@@ -17,6 +17,7 @@ const html = new Map(htmlFiles.map(name => [name, fs.readFileSync(name, 'utf8')]
 const healthSource = fs.readFileSync('health-check.js', 'utf8');
 if (!/const EXPECTED_RELEASE = \(\(\) => \{/.test(healthSource) ||
     !/meta\[name="curioid-release"\]/.test(healthSource) ||
+    !healthSource.includes("return /^v\\d+\\.\\d+$/.test(release) ? release : 'unknown';") ||
     /service-worker-current\.js\?release=v1\.\d+/.test(healthSource)) {
   throw new Error('Health Check must derive its expected release from the active homepage; hard-coded release pins are not supported.');
 }
