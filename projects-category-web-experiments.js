@@ -63,7 +63,7 @@ function bindGravity(root) {
           const b=bodies[i]; let ax=0,ay=0;
           for(let j=0;j<bodies.length;j++){
             if(i===j)continue;
-            const a=bodies[j],dx=(a.x-b.x)*aspect,dy=a.y-b.y,d2=dx*dx+dy*dy+soft*soft,inv=1/Math.pow(d2,1.5);
+            const a=bodies[j],dx=(a.x-b.x)*aspect,dy=a.y-b.y,d2=dx*dx+dy*dy+soft*soft,inv=1/(d2*Math.sqrt(d2));
             ax+=G*a.m*dx*inv; ay+=G*a.m*dy*inv;
           }
           // Rotating-frame inertial terms: outward centrifugal acceleration Ω²r
