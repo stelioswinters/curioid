@@ -143,6 +143,27 @@ jobs:
             catch { return false; }
           })(), 'Offline manifest Health Check hash does not match health-check.js.');
 
+          const standaloneScripts = [
+            { file:'dark-looper-app.js', parent:'music-audio-apps.html', expression:/const integrity\\s*=\\s*['"](sha384-[^'"]+)['"]/ },
+            { file:'vanta-deck-app.js', parent:'applications-tools-apps.html', expression:/['"]vanta-deck-app\\.js['"]\\s*:\\s*['"](sha384-[^'"]+)['"]/ },
+            { file:'glitchyard-app.js', parent:'applications-tools-apps.html', expression:/['"]glitchyard-app\\.js['"]\\s*:\\s*['"](sha384-[^'"]+)['"]/ }
+          ];
+          for (const app of standaloneScripts) {
+            if (!fs.existsSync(app.file) || !fs.existsSync(app.parent)) { fail(`Standalone app integrity target missing: ${app.file} / ${app.parent}`); continue; }
+            const parent = read(app.parent);
+            const expected = parent.match(app.expression)?.[1];
+            const actual = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync(app.file)).digest('base64');
+            assert(Boolean(expected), `${app.parent} has no SRI descriptor for ${app.file}.`);
+            assert(expected === actual, `${app.file} SRI mismatch in ${app.parent}: expected ${expected || 'missing'}, actual ${actual}.`);
+            const sha256 = crypto.createHash('sha256').update(fs.readFileSync(app.file)).digest('hex');
+            if (manifestMatch) {
+              try {
+                const manifest = JSON.parse(manifestMatch[1].replace(/,\\s*}/g, '}'));
+                assert(manifest[app.file] === sha256, `Offline manifest SHA-256 is stale for ${app.file}.`);
+              } catch (error) { fail(`Offline manifest could not validate ${app.file}: ${error.message}`); }
+            }
+          }
+
           const categoryDescriptors = [...runtime.matchAll(/"([^"]+)": \{ file: "([^"]+)", hash: "([a-f0-9]{64})", integrity: "(sha384-[^"]+)" \}/g)];
           assert(categoryDescriptors.length === 7, `Expected 7 category integrity descriptors, found ${categoryDescriptors.length}.`);
           for (const [, category, file, expectedHash, expectedSri] of categoryDescriptors) {
