@@ -13,7 +13,7 @@ let runtime = fs.readFileSync('site-runtime-current.js', 'utf8');
 let worker = fs.readFileSync('service-worker-current.js', 'utf8');
 let index = fs.readFileSync('index.html', 'utf8');
 
-const modulePattern = /"([^"]+)": \{ file: "([^"]+\\.js)", hash: "([a-f0-9]{64})", integrity: "(sha384-[A-Za-z0-9+/=]+)" \}/g;
+const modulePattern = /"([^"]+)": \{ file: "([^"]+\.js)", hash: "([a-f0-9]{64})", integrity: "(sha384-[A-Za-z0-9+/=]+)" \}/g;
 let moduleCount = 0, changed = false;
 runtime = runtime.replace(modulePattern, (whole, key, file, oldHash, oldSri) => {
   if (!fs.existsSync(file)) throw new Error('Missing category bundle: ' + file);
@@ -24,7 +24,7 @@ runtime = runtime.replace(modulePattern, (whole, key, file, oldHash, oldSri) => 
 });
 if (moduleCount !== 7) throw new Error('Expected 7 category integrity entries, found ' + moduleCount);
 
-const expectedMatch = worker.match(/const EXPECTED_SHA256 = Object\\.freeze\\(\\{([\\s\\S]*?)\\n\\}\\);/);
+const expectedMatch = worker.match(/const EXPECTED_SHA256 = Object\.freeze\(\{([\s\S]*?)\n\}\);/);
 if (!expectedMatch) throw new Error('Could not locate service-worker integrity table');
 const expectedEntries = [...expectedMatch[1].matchAll(/"([^"]+)": "([a-f0-9]{64})"/g)];
 if (expectedEntries.length < 20) throw new Error('Service-worker integrity table looks incomplete');
@@ -32,7 +32,7 @@ for (const [, file, oldHash] of expectedEntries) {
   if (!fs.existsSync(file)) throw new Error('Missing cached asset: ' + file);
   if (sha256(file) !== oldHash) changed = true;
 }
-const releaseMatch = worker.match(/const RELEASE_ID = 'v1\\.(\\d+)';/);
+const releaseMatch = worker.match(/const RELEASE_ID = 'v1\.(\d+)';/);
 if (!releaseMatch) throw new Error('Could not read service-worker release ID');
 const oldRelease = 'v1.' + releaseMatch[1];
 if (!runtime.includes('service-worker-current.js?release=' + oldRelease)) changed = true;
@@ -43,13 +43,13 @@ if (!changed) {
 }
 const nextRelease = 'v1.' + (Number(releaseMatch[1]) + 1);
 runtime = runtime.replace('service-worker-current.js?release=' + oldRelease, 'service-worker-current.js?release=' + nextRelease);
-index = index.replace(/(<meta name="curioid-release" content=")v1\\.\\d+(")/, '$1' + nextRelease + '$2');
+index = index.replace(/(<meta name="curioid-release" content=")v1\.\d+(")/, '$1' + nextRelease + '$2');
 
 // Runtime's own digest is included by the HTML preload and offline shell.
 const runtimeHash = hash('sha256', Buffer.from(runtime));
 const runtimeSri = 'sha384-' + hash('sha384', Buffer.from(runtime), 'base64');
-index = index.replace(/(site-runtime-current\\.js\\?v=sha256-)[a-f0-9]{64}/g, '$1' + runtimeHash);
-index = index.replace(/(<link rel="preload" href="site-runtime-current\\.js\\?v=sha256-[^"]+" as="script" integrity=")sha384-[^"]+/, '$1' + runtimeSri);
+index = index.replace(/(site-runtime-current\.js\?v=sha256-)[a-f0-9]{64}/g, '$1' + runtimeHash);
+index = index.replace(/(<link rel="preload" href="site-runtime-current\.js\?v=sha256-[^"]+" as="script" integrity=")sha384-[^"]+/, '$1' + runtimeSri);
 
 // Refresh every cached file hash, including the final HTML and runtime bytes.
 const updatedExpected = expectedMatch[1].replace(/("([^"]+)": ")[a-f0-9]{64}(")/g, (whole, prefix, file, suffix) => {
@@ -57,8 +57,8 @@ const updatedExpected = expectedMatch[1].replace(/("([^"]+)": ")[a-f0-9]{64}(")/
   return prefix + sha256(file) + suffix;
 });
 worker = worker.replace(expectedMatch[1], updatedExpected);
-worker = worker.replace(/const RELEASE_ID = 'v1\\.\\d+';/, "const RELEASE_ID = '" + nextRelease + "';");
-worker = worker.replace(/CURIOID v1\\.\\d+ offline shell/, 'CURIOID ' + nextRelease + ' offline shell');
+worker = worker.replace(/const RELEASE_ID = 'v1\.\d+';/, "const RELEASE_ID = '" + nextRelease + "';");
+worker = worker.replace(/CURIOID v1\.\d+ offline shell/, 'CURIOID ' + nextRelease + ' offline shell');
 
 write('site-runtime-current.js', runtime);
 write('index.html', index);
