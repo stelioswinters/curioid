@@ -2228,7 +2228,7 @@
       // The real app-open path still performs SHA-256/SRI verification before use.
       const SHARED_PREFETCH_ASSETS = Object.freeze([
         { file: "projects-core.js", hash: "af961b333e3633aab2bc7aecf2551a87aab9de222c9c056f7f21bf83a15fdf6f", as: "script" },
-        { file: "projects-styles.css", hash: "51ffb3aa7dfc0d6d80307d3c8cc9abdcdee0630bfe2a4a17e817adb22012531e", as: "style" }
+        { file: "projects-styles.css", hash: "b0fe98f57d22d20206f174d71fe883a96dca51c817b837bfe8ac925f6f13864d", as: "style" }
       ]);
       let projectPrefetchScheduled = false;
       const projectPrefetchHints = new Set();
