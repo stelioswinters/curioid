@@ -64,6 +64,15 @@ const assert = require('node:assert/strict');
       }).filter(item => item.outsideMount || item.unscrollableOverflow);
     });
     const buttonSweep = { clicked: 0, skipped: 0, failures: [], capped: false };
+    const restoreFullscreen = async (targetPage) => {
+      await targetPage.keyboard.press('Escape').catch(() => {});
+      for (const frame of targetPage.frames()) {
+        await frame.evaluate(async () => {
+          try { if (document.fullscreenElement && document.exitFullscreen) await document.exitFullscreen(); } catch (_) {}
+        }).catch(() => {});
+      }
+      await targetPage.waitForTimeout(60);
+    };
     const sweepButtons = async (scope, sweepPage, projectLabel) => {
       const visited = new Set();
       for (let round = 0; round < 4; round++) {
@@ -120,6 +129,7 @@ const assert = require('node:assert/strict');
       assert.equal(await room.getAttribute('data-loaded'), 'true', project + ' failed to mount');
 
       await sweepButtons(room.locator('.room-mount'), page, project);
+      await restoreFullscreen(page);
       const projectFrames = await room.locator('.room-mount iframe').elementHandles();
       for (const projectFrame of projectFrames) {
         const child = await projectFrame.contentFrame();
@@ -127,16 +137,19 @@ const assert = require('node:assert/strict');
         try {
           await child.waitForLoadState('domcontentloaded', { timeout: 15000 });
           await sweepButtons(child.locator('body'), page, project + ' iframe');
+          await restoreFullscreen(page);
         } catch (error) {
           buttonSweep.failures.push({ project, button: 'standalone iframe bootstrap', reason: String(error?.message || error).slice(0,220) });
         }
       }
       for (const width of [320, 360, 375, 414, 560, 768, 1024, 1365]) {
+        await restoreFullscreen(page);
         await page.setViewportSize({ width, height: 800 });
         await page.waitForTimeout(45);
         const layoutIssues = await inspectRoomLayout(room);
         if (layoutIssues.length) windowLayoutFindings.push({ project, width, issues: layoutIssues.slice(0,12) });
       }
+      await restoreFullscreen(page);
       await page.setViewportSize({ width: 360, height: 800 });
       const projectLabels = await room.locator('.room-mount').evaluate(root => {
         const selector = 'button,input:not([type="hidden"]),select,textarea,a[href],summary,[contenteditable="true"],[role="button"],[role="switch"],[role="tab"],[role="checkbox"],[role="radio"],[role="menuitem"],[role="menuitemcheckbox"],[role="menuitemradio"],[role="option"],[role="link"],[role="slider"],[role="spinbutton"],[role="combobox"],[role="listbox"],[role="treeitem"]';
@@ -172,6 +185,7 @@ const assert = require('node:assert/strict');
       }
       await room.locator('.room-heading').click();
       await page.waitForFunction(id => document.getElementById('room-' + id)?.dataset.loaded === 'false', project);
+      await restoreFullscreen(page);
       await page.setViewportSize({ width: 1365, height: 900 });
     }
     console.log('Mounted and cleanly closed ' + projectsToOpen.length + ' catalogue projects.');
