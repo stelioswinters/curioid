@@ -41,6 +41,16 @@ const fs = require('node:fs');
     await page.waitForFunction(() => document.querySelectorAll('[data-category]').length === 7);
     await page.waitForFunction(() => typeof window.CurioidNavigateToProject === 'function', null, { timeout: 30000 });
     assert.match(await page.title(), /CURIOID/i);
+    const runtimeIntegrity = await page.evaluate(() => ({
+      preload: document.querySelector('link[rel="preload"][href^="site-runtime-current.js"]')?.getAttribute('integrity') || null,
+      script: document.querySelector('script[src^="site-runtime-current.js"]')?.getAttribute('integrity') || null,
+      preloadUrl: document.querySelector('link[rel="preload"][href^="site-runtime-current.js"]')?.getAttribute('href') || null,
+      scriptUrl: document.querySelector('script[src^="site-runtime-current.js"]')?.getAttribute('src') || null
+    }));
+    assert.ok(runtimeIntegrity.preload && runtimeIntegrity.preload === runtimeIntegrity.script,
+      'Runtime preload and executable script SRI differ: ' + JSON.stringify(runtimeIntegrity));
+    assert.equal(runtimeIntegrity.preloadUrl, runtimeIntegrity.scriptUrl,
+      'Runtime preload and executable script URLs differ: ' + JSON.stringify(runtimeIntegrity));
     const release = await page.locator('meta[name="curioid-release"]').getAttribute('content');
     assert.match(release || '', /^v1\.\d+$/, 'The page release marker is missing or malformed.');
     const workerSource = fs.readFileSync('service-worker-current.js', 'utf8');
