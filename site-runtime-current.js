@@ -1380,6 +1380,8 @@
       const CATEGORY_SECTION_BY_ID = new Map();
       const CATEGORY_NAV_BY_ID = new Map();
       const ROOM_SEARCH_TEXT_BY_ID = new Map();
+      let categoriesRendered = false;
+      let CATEGORY_SCROLL_SECTIONS = [];
       const SITE_FAVORITES_KEY = 'curioid-site-favorites-v1';
       const SITE_RECENTS_KEY = 'curioid-site-recents-v1';
       function normalizeSiteSessionData(value,knownIds,limit=8){
@@ -1722,6 +1724,7 @@
       }
 
       function renderCategories() {
+        if (categoriesRendered) return;
         updateProjectCount();
         const host = $("#categorySections");
         host.replaceChildren();
@@ -1785,6 +1788,13 @@
           host.appendChild(section);
         });
         renderPersonalShortcuts();
+        categoriesRendered = true;
+        CATEGORY_SCROLL_SECTIONS = CATEGORIES
+          .map(category => CATEGORY_SECTION_BY_ID.get(category.id))
+          .filter(Boolean);
+      }
+      function ensureCategoriesRendered() {
+        if (!categoriesRendered) renderCategories();
       }
 
       const markCurioidPerformance = name => { try { performance.mark(name); } catch (_) {} };
@@ -2655,6 +2665,7 @@
         }
       }
       function setBrowsePresentation(mode, categoryId = null, options = {}) {
+        if (mode !== "home") ensureCategoriesRendered();
         browseMode = mode;
         browseCategoryId = mode === "category" ? categoryId : null;
         const home = mode === "home";
@@ -2717,6 +2728,7 @@
         }
       }
       function showCategory(categoryId, options = {}) {
+        ensureCategoriesRendered();
         if (!CATEGORY_SECTION_BY_ID.has(categoryId)) return;
         if (projectSearch?.value) {
           projectSearch.value = "";
@@ -2975,13 +2987,17 @@
         // an open card is moved into the fullscreen app layer.
       });
 
-      // Render lightweight category/project headings before observing their scroll positions.
-      renderCategories();
-      // Category sections are static after this point; keep a stable list for the
-      // scroll tracker rather than allocating a fresh query result on every frame.
-      const CATEGORY_SCROLL_SECTIONS = CATEGORIES
-        .map(category => CATEGORY_SECTION_BY_ID.get(category.id))
-        .filter(Boolean);
+      // Favorites/recent controls use compact metadata and can be prepared immediately.
+      // Build the 59 project cards during idle time, or immediately on first browse/search.
+      renderPersonalShortcuts();
+      const warmCatalogueWhenIdle = () => {
+        if (!document.hidden) ensureCategoriesRendered();
+      };
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(warmCatalogueWhenIdle, { timeout: 4000 });
+      } else {
+        window.setTimeout(warmCatalogueWhenIdle, 1100);
+      }
       // Aether share URLs open the Web Experiments project directly, then the app
       // consumes its compact #aether= state and restores the shared workspace.
       if (location.hash.startsWith("#aether=")) {
@@ -3009,6 +3025,7 @@
       const searchResultsStatus = $("#searchResultsStatus");
       const searchEmpty = $("#searchEmpty");
       function applyProjectSearch() {
+        if ((projectSearch.value || "").trim()) ensureCategoriesRendered();
         const query = (projectSearch.value || "").trim().toLocaleLowerCase();
         if (query) {
           if (browseMode !== "search") {
