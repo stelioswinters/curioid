@@ -256,9 +256,11 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch(request);
         if (response?.ok && response.type === 'basic' && CACHEABLE_DOCUMENTS.has(key)) {
-          const documentValid = !CACHEABLE_DOCUMENTS.has(key) || await responseHasCurrentPageIdentity(response,key);
-          if (!documentValid) return new Response('This CURIOID document failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
-          if (cache) { try { await cache.put(absolute(key), response.clone()); } catch (_) {} }
+          // HTML may be rewritten by the CDN even when it is the correct live
+          // document. Do not turn a successful origin response into a synthetic
+          // 502: identity is required only before storing it for offline use.
+          const documentValid = await responseHasCurrentPageIdentity(response,key);
+          if (cache && documentValid) { try { await cache.put(absolute(key), response.clone()); } catch (_) {} }
         }
         return response;
       } catch (_) {
