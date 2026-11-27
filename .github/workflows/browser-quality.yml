@@ -56,6 +56,9 @@ jobs:
       - name: Run Echonoise source audit
         run: node tests/echonoise-static-audit.cjs
 
+      - name: Run KINETA rendering regression audit
+        run: node tests/kineta-static-audit.cjs
+
       - name: Run full browser smoke suite
         run: node tests/browser-smoke.cjs
 
