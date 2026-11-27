@@ -1,4 +1,4 @@
-name: Keep Latest Workflow Run Only
+name: Prune Old Completed Workflow Runs Safely
 
 on:
   workflow_dispatch:
@@ -9,13 +9,17 @@ permissions:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Delete old workflow runs
+      - name: Keep the newest completed run for each workflow
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
-          runs=$(gh api "repos/$REPO/actions/runs?per_page=100" --jq '.workflow_runs[].id')
-          echo "$runs" | tail -n +2 | while read -r id; do
-            [ -n "$id" ] && gh api -X DELETE "repos/$REPO/actions/runs/$id" --silent
-          done
+          gh api --paginate "repos/$REPO/actions/runs?per_page=100" \
+            --jq '.workflow_runs[] | select(.status == "completed") | [.workflow_id, .id] | @tsv' \
+          | awk -F '\t' '!seen[$1]++ { next } { print $2 }' \
+          | while IFS= read -r id; do
+              [ -n "$id" ] || continue
+              gh api -X DELETE "repos/$REPO/actions/runs/$id" --silent
+            done
