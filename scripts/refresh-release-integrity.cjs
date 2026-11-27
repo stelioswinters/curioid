@@ -1,76 +1,122 @@
 'use strict';
-// Rebuild all current-release integrity references after static assets change.
-// Run from the repository root with Node.js 20+.
+// CURIOID release builder.
+// The version shown in the very bottom site footer is the only editable
+// release-version source. This script propagates it to every generated marker,
+// updates all SHA-256/SHA-384 integrity references, and refreshes the offline
+// cache manifest. Run from the repository root with Node.js 20+.
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 
 const read = name => fs.readFileSync(name);
+const readText = name => fs.readFileSync(name, 'utf8');
 const hash = (algorithm, bytes, encoding = 'hex') => crypto.createHash(algorithm).update(bytes).digest(encoding);
-const sha256 = name => hash('sha256', read(name));
-const sha384 = name => 'sha384-' + hash('sha384', read(name), 'base64');
-const write = (name, value) => fs.writeFileSync(name, value);
+const sha256 = bytes => hash('sha256', bytes);
+const sha384 = bytes => 'sha384-' + hash('sha384', bytes, 'base64');
+const writeIfChanged = (name, value) => {
+  const next = Buffer.isBuffer(value) ? value : Buffer.from(value, 'utf8');
+  if (fs.existsSync(name) && read(name).equals(next)) return false;
+  fs.writeFileSync(name, next);
+  return true;
+};
+const replaceRequired = (source, pattern, replacement, label) => {
+  if (!pattern.test(source)) throw new Error('Could not locate ' + label);
+  return source.replace(pattern, replacement);
+};
 
-let runtime = fs.readFileSync('site-runtime-current.js', 'utf8');
-let worker = fs.readFileSync('service-worker-current.js', 'utf8');
-const htmlFiles = fs.readdirSync('.').filter(name => name.endsWith('.html'));
-const html = new Map(htmlFiles.map(name => [name, fs.readFileSync(name, 'utf8')]));
+const htmlFiles = fs.readdirSync('.').filter(name => name.endsWith('.html')).sort();
+const html = new Map(htmlFiles.map(name => [name, readText(name)]));
+if (!html.has('index.html')) throw new Error('index.html is missing from the release.');
 
-let changed = false;
-function syncRuntimeConstant(hashName, sriName, file) {
-  if (!fs.existsSync(file)) throw new Error('Missing runtime asset: ' + file);
-  const nextHash = sha256(file), nextSri = sha384(file);
-  const hashPattern = new RegExp("(const " + hashName + " = ')[a-f0-9]{64}(';)");
-  const sriPattern = new RegExp("(const " + sriName + " = ')sha384-[^']+(';)");
-  const currentHash = runtime.match(hashPattern)?.[0];
-  const currentSri = runtime.match(sriPattern)?.[0];
-  if (!currentHash || !currentSri) throw new Error('Missing runtime integrity constants for ' + file);
-  if (!currentHash.includes(nextHash) || !currentSri.includes(nextSri)) changed = true;
+const indexOriginal = html.get('index.html');
+const footerMatches = [...indexOriginal.matchAll(/<small class="site-version">(v\d+\.\d+)<\/small>/g)];
+if (footerMatches.length !== 1) {
+  throw new Error('Expected exactly one bottom-footer site version. Found ' + footerMatches.length + '.');
+}
+const release = footerMatches[0][1];
+if (!/^v\d+\.\d+$/.test(release)) throw new Error('Invalid footer release version: ' + release);
+const projectCountMatch = indexOriginal.match(/<meta name="curioid-project-count" content="(\d+)"/);
+if (!projectCountMatch) throw new Error('index.html is missing its project-count metadata.');
+const projectCount = Number(projectCountMatch[1]);
+
+let health = readText('health-check.js');
+health = replaceRequired(
+  health,
+  /^\/\* CURIOID v\d+\.\d+ lazy Health Check module\./m,
+  '/* CURIOID ' + release + ' lazy Health Check module.',
+  'Health Check release comment'
+);
+health = replaceRequired(
+  health,
+  /const EXPECTED_RELEASE = 'v\d+\.\d+';/,
+  "const EXPECTED_RELEASE = '" + release + "';",
+  'Health Check expected release'
+);
+health = replaceRequired(
+  health,
+  /new URL\(['"]service-worker-current\.js\?release=v\d+\.\d+['"],\s*deploymentBase\)/,
+  "new URL('service-worker-current.js?release=' + EXPECTED_RELEASE, deploymentBase)",
+  'Health Check worker probe URL'
+);
+if (/service-worker-current\.js\?release=v\d+\.\d+/.test(health)) {
+  throw new Error('Health Check still contains a hard-coded service-worker release URL.');
+}
+
+let manifest = JSON.parse(readText('manifest.webmanifest'));
+if (typeof manifest.description !== 'string' ||
+    !/\b\d+\s+browser-native project windows\b/i.test(manifest.description)) {
+  throw new Error('PWA manifest description is missing its browser project count.');
+}
+manifest.description = manifest.description.replace(
+  /\b\d+\s+browser-native project windows\b/i,
+  projectCount + ' browser-native project windows'
+);
+const manifestText = JSON.stringify(manifest, null, 2) + '\n';
+
+for (const [file, source] of html) {
+  const marker = /<meta[^>]+name="curioid-release"[^>]+content="v\d+\.\d+"/;
+  if (!marker.test(source)) throw new Error(file + ' is missing its CURIOID release marker.');
+  html.set(file, source.replace(
+    /(<meta[^>]+name="curioid-release"[^>]+content=")v\d+\.\d+(")/,
+    '$1' + release + '$2'
+  ));
+}
+
+let runtime = readText('site-runtime-current.js');
+const runtimeVersionMatches = [...runtime.matchAll(/v\d+\.\d+/g)];
+if (!runtimeVersionMatches.length) throw new Error('No embedded service-worker release references found in the site runtime.');
+runtime = runtime.replace(/v\d+\.\d+/g, release);
+
+function syncRuntimeConstant(hashName, sriName, file, bytes) {
+  const nextHash = sha256(bytes);
+  const nextSri = sha384(bytes);
+  const hashPattern = new RegExp('(const ' + hashName + " = ')[a-f0-9]{64}(';)");
+  const sriPattern = new RegExp('(const ' + sriName + " = ')sha384-[^']+(';)");
+  if (!hashPattern.test(runtime) || !sriPattern.test(runtime)) {
+    throw new Error('Missing runtime integrity constants for ' + file);
+  }
   runtime = runtime.replace(hashPattern, '$1' + nextHash + '$2');
   runtime = runtime.replace(sriPattern, '$1' + nextSri + '$2');
 }
-syncRuntimeConstant('HEALTH_MODULE_HASH', 'HEALTH_MODULE_SRI', 'health-check.js');
-syncRuntimeConstant('PROJECT_STYLES_SHA256', 'PROJECT_STYLES_SRI', 'projects-styles.css');
+syncRuntimeConstant('HEALTH_MODULE_HASH', 'HEALTH_MODULE_SRI', 'health-check.js', Buffer.from(health));
+syncRuntimeConstant('PROJECT_STYLES_SHA256', 'PROJECT_STYLES_SRI', 'projects-styles.css', read('projects-styles.css'));
 
-const coreHash = sha256('projects-core.js'), coreSri = sha384('projects-core.js');
+const coreHash = sha256(read('projects-core.js'));
+const coreSri = sha384(read('projects-core.js'));
 const corePattern = /(file: "projects-core\.js", hash: ")[a-f0-9]{64}(", integrity: ")sha384-[^"]+(")/;
-const coreMatch = runtime.match(corePattern);
-if (!coreMatch) throw new Error('Could not locate projects-core.js integrity descriptor');
-if (!coreMatch[0].includes(coreHash) || !coreMatch[0].includes(coreSri)) changed = true;
+if (!corePattern.test(runtime)) throw new Error('Could not locate projects-core.js integrity descriptor.');
 runtime = runtime.replace(corePattern, '$1' + coreHash + '$2' + coreSri + '$3');
 
 const modulePattern = /"([^"]+)": \{ file: "([^"]+\.js)", hash: "([a-f0-9]{64})", integrity: "(sha384-[A-Za-z0-9+/=]+)" \}/g;
 let moduleCount = 0;
-runtime = runtime.replace(modulePattern, (whole, key, file, oldHash, oldSri) => {
+runtime = runtime.replace(modulePattern, (whole, key, file) => {
   if (!fs.existsSync(file)) throw new Error('Missing category bundle: ' + file);
-  const nextHash = sha256(file), nextSri = sha384(file);
+  const bytes = read(file);
   moduleCount++;
-  if (nextHash !== oldHash || nextSri !== oldSri) changed = true;
-  return '"' + key + '": { file: "' + file + '", hash: "' + nextHash + '", integrity: "' + nextSri + '" }';
+  return '"' + key + '": { file: "' + file + '", hash: "' + sha256(bytes) + '", integrity: "' + sha384(bytes) + '" }';
 });
-if (moduleCount !== 7) throw new Error('Expected 7 category integrity entries, found ' + moduleCount);
+if (moduleCount !== 7) throw new Error('Expected 7 category integrity entries, found ' + moduleCount + '.');
 
-const expectedMatch = worker.match(/const EXPECTED_SHA256 = Object\.freeze\(\{([\s\S]*?)\n\}\);/);
-if (!expectedMatch) throw new Error('Could not locate service-worker integrity table');
-const expectedEntries = [...expectedMatch[1].matchAll(/"([^"]+)": "([a-f0-9]{64})"/g)];
-if (expectedEntries.length < 20) throw new Error('Service-worker integrity table looks incomplete');
-for (const [, file, oldHash] of expectedEntries) {
-  if (!fs.existsSync(file)) throw new Error('Missing cached asset: ' + file);
-  if (sha256(file) !== oldHash) changed = true;
-}
-
-const releaseMatch = worker.match(/const RELEASE_ID = 'v1\.(\d+)';/);
-if (!releaseMatch) throw new Error('Could not read service-worker release ID');
-const oldRelease = 'v1.' + releaseMatch[1];
-const runtimeReleases = [...runtime.matchAll(/v1\.\d+/g)].map(match => match[0]);
-if (!runtimeReleases.length || runtimeReleases.some(version => version !== oldRelease)) changed = true;
-for (const [file, source] of html) {
-  const match = source.match(/<meta[^>]+name="curioid-release"[^>]+content="(v1\.\d+)"/);
-  if (match && match[1] !== oldRelease) changed = true;
-}
-if (!html.has('index.html')) throw new Error('index.html is missing from the release');
-if (!html.get('index.html').includes('<small class="site-version">' + oldRelease + '</small>')) changed = true;
-
-function inspectHtmlAssetTags(source, update, runtimeBytes) {
+function inspectHtmlAssetTags(source, runtimeBytes) {
   return source.replace(/<(?:script|link)\b[^>]*>/gi, tag => {
     const attribute = /^<script\b/i.test(tag) ? 'src' : 'href';
     const match = tag.match(new RegExp('\\b' + attribute + '="([^"]+)"'));
@@ -79,57 +125,80 @@ function inspectHtmlAssetTags(source, update, runtimeBytes) {
     if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|\/|#)/i.test(url)) return tag;
     const file = url.split(/[?#]/)[0];
     if (!file || !fs.existsSync(file)) return tag;
-    const bytes = file === 'site-runtime-current.js' && runtimeBytes ? runtimeBytes : read(file);
-    const nextHash = hash('sha256', bytes);
-    const nextSri = 'sha384-' + hash('sha384', bytes, 'base64');
+    const bytes = file === 'site-runtime-current.js' ? runtimeBytes
+      : file === 'health-check.js' ? Buffer.from(health)
+      : file === 'manifest.webmanifest' ? Buffer.from(manifestText)
+      : read(file);
+    const nextHash = sha256(bytes);
+    const nextSri = sha384(bytes);
     const oldSri = tag.match(/\bintegrity="(sha384-[^"]+)"/)?.[1];
     const hasVersionHash = /[?&]v=sha256-[a-f0-9]{64}/.test(url);
-    if ((hasVersionHash && !url.includes('v=sha256-' + nextHash)) || (oldSri && oldSri !== nextSri)) changed = true;
-    if (!update) return tag;
-    let nextTag = tag.replace(new RegExp('(' + attribute + '="[^"]*[?&]v=sha256-)[a-f0-9]{64}'), '$1' + nextHash);
+    let nextTag = tag;
+    if (hasVersionHash) {
+      nextTag = nextTag.replace(new RegExp('(' + attribute + '="[^"]*[?&]v=sha256-)[a-f0-9]{64}'), '$1' + nextHash);
+    }
     if (oldSri) nextTag = nextTag.replace(/(\bintegrity=")sha384-[^"]+/, '$1' + nextSri);
     return nextTag;
   });
 }
-for (const source of html.values()) inspectHtmlAssetTags(source, false, Buffer.from(runtime));
-const currentRuntimeHash = hash('sha256', Buffer.from(runtime));
-const currentRuntimeSri = 'sha384-' + hash('sha384', Buffer.from(runtime), 'base64');
-if (!html.get('index.html').includes('site-runtime-current.js?v=sha256-' + currentRuntimeHash)) changed = true;
-const preloadSri = html.get('index.html').match(/<link[^>]+href="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
-const scriptSri = html.get('index.html').match(/<script[^>]+src="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
-if (preloadSri !== currentRuntimeSri || scriptSri !== currentRuntimeSri) changed = true;
-
-if (!changed) {
-  console.log('Release integrity metadata is already current; no changes needed.');
-  process.exit(0);
-}
-
-const nextRelease = 'v1.' + (Number(releaseMatch[1]) + 1);
-runtime = runtime.replace(/v1\.\d+/g, nextRelease);
-for (const [file, source] of html) {
-  let next = source.replace(/(<meta[^>]+name="curioid-release"[^>]+content=")v1\.\d+(")/, '$1' + nextRelease + '$2');
-  if (file === 'index.html') {
-    next = next.replace(/(<small class="site-version">)v1\.\d+(<\/small>)/, '$1' + nextRelease + '$2');
-  }
-  html.set(file, next);
-}
-
 const runtimeBytes = Buffer.from(runtime);
-for (const [file, source] of html) html.set(file, inspectHtmlAssetTags(source, true, runtimeBytes));
+for (const [file, source] of html) html.set(file, inspectHtmlAssetTags(source, runtimeBytes));
 
-// Refresh every cached file hash using final in-memory bytes for rewritten files.
+const indexFinal = html.get('index.html');
+const preloadTag = indexFinal.match(/<link[^>]+href="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/);
+const scriptTag = indexFinal.match(/<script[^>]+src="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/);
+if (!preloadTag || !scriptTag || preloadTag[1] !== sha384(runtimeBytes) || scriptTag[1] !== sha384(runtimeBytes)) {
+  throw new Error('Runtime preload and executable script SHA-384 references are not aligned.');
+}
+const runtimeHash = sha256(runtimeBytes);
+if (!indexFinal.includes('site-runtime-current.js?v=sha256-' + runtimeHash)) {
+  throw new Error('index.html does not point to the final site runtime hash.');
+}
+
+let worker = readText('service-worker-current.js');
+const expectedMatch = worker.match(/const EXPECTED_SHA256 = Object\.freeze\(\{([\s\S]*?)\n\}\);/);
+if (!expectedMatch) throw new Error('Could not locate service-worker integrity table.');
+const expectedEntries = [...expectedMatch[1].matchAll(/"([^"]+)": "([a-f0-9]{64})"/g)];
+if (expectedEntries.length < 20) throw new Error('Service-worker integrity table looks incomplete.');
+const finalBytes = new Map([
+  ...[...html].map(([file, source]) => [file, Buffer.from(source)]),
+  ['health-check.js', Buffer.from(health)],
+  ['manifest.webmanifest', Buffer.from(manifestText)],
+  ['site-runtime-current.js', runtimeBytes]
+]);
 const updatedExpected = expectedMatch[1].replace(/("([^"]+)": ")[a-f0-9]{64}(")/g, (whole, prefix, file, suffix) => {
-  if (!fs.existsSync(file)) throw new Error('Missing cached asset during hash refresh: ' + file);
-  const bytes = html.has(file) ? Buffer.from(html.get(file))
-    : file === 'site-runtime-current.js' ? runtimeBytes
-    : read(file);
-  return prefix + hash('sha256', bytes) + suffix;
+  if (!finalBytes.has(file) && !fs.existsSync(file)) throw new Error('Missing cached asset during hash refresh: ' + file);
+  const bytes = finalBytes.get(file) || read(file);
+  return prefix + sha256(bytes) + suffix;
 });
 worker = worker.replace(expectedMatch[1], updatedExpected);
-worker = worker.replace(/const RELEASE_ID = 'v1\.\d+';/, "const RELEASE_ID = '" + nextRelease + "';");
-worker = worker.replace(/CURIOID v1\.\d+ offline shell/, 'CURIOID ' + nextRelease + ' offline shell');
+worker = replaceRequired(
+  worker,
+  /const RELEASE_ID = 'v\d+\.\d+';/,
+  "const RELEASE_ID = '" + release + "';",
+  'service-worker release ID'
+);
+worker = worker.replace(/CURIOID v\d+\.\d+ offline shell/, 'CURIOID ' + release + ' offline shell');
 
-for (const [file, source] of html) write(file, source);
-write('site-runtime-current.js', runtime);
-write('service-worker-current.js', worker);
-console.log('Refreshed runtime assets, all page script SRI, category integrity, page versions, offline hashes and release ID: ' + oldRelease + ' -> ' + nextRelease);
+const workerRelease = worker.match(/const RELEASE_ID = '(v\d+\.\d+)';/)?.[1];
+if (workerRelease !== release) throw new Error('Service-worker release ID does not match the footer.');
+for (const [file, source] of html) {
+  const marker = source.match(/<meta[^>]+name="curioid-release"[^>]+content="(v\d+\.\d+)"/)?.[1];
+  if (marker !== release) throw new Error(file + ' release marker does not match the footer.');
+}
+if (!health.includes("const EXPECTED_RELEASE = '" + release + "';")) {
+  throw new Error('Health Check release does not match the footer.');
+}
+
+let writes = 0;
+for (const [file, source] of html) if (writeIfChanged(file, source)) writes++;
+if (writeIfChanged('health-check.js', health)) writes++;
+if (writeIfChanged('manifest.webmanifest', manifestText)) writes++;
+if (writeIfChanged('site-runtime-current.js', runtime)) writes++;
+if (writeIfChanged('service-worker-current.js', worker)) writes++;
+
+console.log(
+  writes
+    ? 'CURIOID release build synchronized from footer ' + release + '; updated ' + writes + ' generated files, ' + moduleCount + ' category bundles and ' + expectedEntries.length + ' offline asset hashes.'
+    : 'CURIOID release build is already synchronized with footer ' + release + '; no changes needed.'
+);
