@@ -48,6 +48,15 @@ const fs = require('node:fs');
       'The page and service-worker release IDs do not match.');
     assert.ok(runtimeSource.includes('service-worker-current.js?release=' + release),
       'The runtime registers a different service-worker release.');
+    const runtimeVersions = [...runtimeSource.matchAll(/v1\\.\\d+/g)].map(match => match[0]);
+    assert.ok(runtimeVersions.length > 0 && runtimeVersions.every(version => version === release),
+      'Embedded runtime worker versions are not synchronized: ' + JSON.stringify(runtimeVersions));
+    assert.equal(await page.locator('.site-version').innerText(), release, 'The footer release marker is stale.');
+    for (const file of ['applications-tools-apps.html', 'music-audio-apps.html', 'chroma-loom.html', 'curioids.html']) {
+      const source = fs.readFileSync(file, 'utf8');
+      const marker = source.match(/<meta[^>]+name="curioid-release"[^>]+content="(v1\\.\\d+)"/);
+      if (marker) assert.equal(marker[1], release, file + ' has a stale release marker.');
+    }
     assert.equal(await page.locator('[data-category]').count(), 7);
 
 
@@ -82,11 +91,22 @@ const fs = require('node:fs');
     // Every collection must switch to its own view and expose a non-empty catalogue.
     await page.locator('#browseCollections > summary').click();
     for (const category of await page.locator('[data-category]').evaluateAll(nodes => nodes.map(node => node.dataset.category))) {
+      console.log('Switching collection:', category);
       await page.locator('[data-category="' + category + '"]').click();
-      await page.waitForFunction(id => {
-        const section = document.querySelector('#categorySections [data-category-section="' + id + '"]');
-        return section && !section.hidden;
-      }, category);
+      const section = page.locator('#categorySections [data-category-section="' + category + '"]');
+      try {
+        await section.waitFor({ state: 'visible', timeout: 30000 });
+      } catch (error) {
+        const diagnostic = await page.evaluate(id => ({
+          browseCollectionsOpen: document.querySelector('#browseCollections')?.open,
+          categorySectionsHidden: document.querySelector('#categorySections')?.hidden,
+          matchingButtons: [...document.querySelectorAll('[data-category]')].filter(node => node.dataset.category === id)
+            .map(node => ({ text: node.innerText, pressed: node.getAttribute('aria-pressed'), visible: Boolean(node.getClientRects().length) })),
+          matchingSections: [...document.querySelectorAll('[data-category-section]')].filter(node => node.dataset.categorySection === id)
+            .map(node => ({ hidden: node.hidden, classes: node.className }))
+        }), category);
+        throw new Error('Collection did not become visible: ' + category + ' / ' + JSON.stringify(diagnostic) + ' / ' + error.message);
+      }
       assert.ok(await page.locator('#categorySections .category-section:not([hidden])').count() >= 1, category + ' did not render');
     }
 
