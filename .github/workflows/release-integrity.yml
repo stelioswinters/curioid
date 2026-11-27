@@ -29,6 +29,10 @@ jobs:
       - name: Refresh hashes and commit generated metadata
         run: |
           node scripts/refresh-release-integrity.cjs
+          before="$(git diff --binary | sha256sum | cut -d' ' -f1)"
+          node scripts/refresh-release-integrity.cjs
+          after="$(git diff --binary | sha256sum | cut -d' ' -f1)"
+          test "$before" = "$after"
           if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

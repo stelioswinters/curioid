@@ -28,7 +28,12 @@ jobs:
           node-version: 22
 
       - name: Validate and refresh release integrity in test workspace
-        run: node scripts/refresh-release-integrity.cjs
+        run: |
+          node scripts/refresh-release-integrity.cjs
+          before="$(git diff --binary | sha256sum | cut -d' ' -f1)"
+          node scripts/refresh-release-integrity.cjs
+          after="$(git diff --binary | sha256sum | cut -d' ' -f1)"
+          test "$before" = "$after"
 
       - name: Install Playwright
         run: npm install --no-save --no-package-lock playwright
