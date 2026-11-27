@@ -1132,7 +1132,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.345', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.346', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1827,7 +1827,7 @@
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
         "operating-systems": { file: "projects-category-operating-systems.js", hash: "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946", integrity: "sha384-RAeqs0W7rIL7+1QEHb69xXtP2z33wA60MyETKQMJ4Kj8Jjm0KuoKte0Pp/G186tI" },
         "strange-archives": { file: "projects-category-strange-archives.js", hash: "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9", integrity: "sha384-g4hRSTBDB9JNNtb3KNiRCpfYEat7EF073JzAD7aRD1W3V3HVMxRL26IFDvl/VMW2" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "3b0d2be037824e25dbcca814003283ca665b1fa6b4f84766ae6290d2a756745a", integrity: "sha384-LmwRG9eI8rf2D+tdvDw1PJfkxlkgJBWlgj5klniLH0I67aKTMIAfTaRiHzPpu94P" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "4b309dbfd4ab439c3954de04b56570bfaa2bc6fa72aff88547079ec8f739f71b", integrity: "sha384-OYGCP1Y8nQg3zbMEu6SggRt2JSTr35M/TkLsvRUUmvd7NOf0sDf92eync06m3R0o" },
         "tiny-games": { file: "projects-category-tiny-games.js", hash: "fcec73cfca4acae789de6a070e0770be426e3a94e2375a7a89a64408e48dfe26", integrity: "sha384-Y+IF2taDbtR2SMYQOnxGl459KHMiWD0vq3r+9ZqMU735P3qLW1Wc9xjL7tZuIg09" },
         "digital-art": { file: "projects-category-digital-art.js", hash: "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3", integrity: "sha384-TRnF/hTCD3QKJQO6MiFqfw/qmdqcq8gEg4efciUIKIbrwRQgeiKtJiBZnX9AS5KF" },
         "sound-motion": { file: "projects-category-sound-motion.js", hash: "e6b3a0c1463a0b2ca758f94627988988e25b4f1012dc5561cd87c7f54bdba568", integrity: "sha384-Thv1TArF4xhPmLGiXOIrIecaOlmcqdKttl5kef/aYqfiG6lhnGHgF7Pvca7vgzrA" },

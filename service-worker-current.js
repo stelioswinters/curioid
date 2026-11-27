@@ -1,6 +1,6 @@
-/* CURIOID v1.345 offline shell. Exact release hashes for every cached deployment asset. */
+/* CURIOID v1.346 offline shell. Exact release hashes for every cached deployment asset. */
 'use strict';
-const RELEASE_ID = 'v1.345';
+const RELEASE_ID = 'v1.346';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
@@ -24,7 +24,7 @@ const EXPECTED_SHA256 = Object.freeze({
   "projects-category-sound-motion.js": "e6b3a0c1463a0b2ca758f94627988988e25b4f1012dc5561cd87c7f54bdba568",
   "projects-category-strange-archives.js": "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9",
   "projects-category-tiny-games.js": "fcec73cfca4acae789de6a070e0770be426e3a94e2375a7a89a64408e48dfe26",
-  "projects-category-web-experiments.js": "3b0d2be037824e25dbcca814003283ca665b1fa6b4f84766ae6290d2a756745a",
+  "projects-category-web-experiments.js": "4b309dbfd4ab439c3954de04b56570bfaa2bc6fa72aff88547079ec8f739f71b",
   "projects-core.js": "af961b333e3633aab2bc7aecf2551a87aab9de222c9c056f7f21bf83a15fdf6f",
   "projects-styles.css": "b0fe98f57d22d20206f174d71fe883a96dca51c817b837bfe8ac925f6f13864d",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
