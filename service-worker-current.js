@@ -98,7 +98,9 @@ async function responseLooksLikeImage(response, mime) {
 }
 async function installShellIsValid(cache) {
   const page = await cache.match(absolute('index.html'));
-  if (!await responseMatchesRelease('index.html', page) || !await responseHasCurrentPageIdentity(page)) throw new Error('The homepage failed its exact release hash, release marker or runtime URL check.');
+  // Cloudflare may transform HTML at the edge, so its byte hash is not a stable deployment identity.
+  // The release marker and exact SRI-versioned runtime URL identify the current shell instead.
+  if (!await responseHasCurrentPageIdentity(page)) throw new Error('The homepage failed its release marker or runtime URL check.');
   const runtimeRequest = new URL(SHELL_PATHS[1], SCOPE_URL);
   const runtime = await cache.match(runtimeRequest.href);
   if (!await responseMatchesRelease(RUNTIME_PATH, runtime)) throw new Error('The main runtime failed its exact release hash check.');
@@ -245,9 +247,10 @@ self.addEventListener('fetch', event => {
       try {
         const response = await fetch(request);
         if (response?.ok && response.type === 'basic' && CACHEABLE_DOCUMENTS.has(key)) {
-          const hashValid = await responseMatchesRelease(key,response);
-          const identityValid = key !== 'index.html' || await responseHasCurrentPageIdentity(response);
-          if (!hashValid || !identityValid) return new Response('This CURIOID document failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
+          const documentValid = key === 'index.html'
+            ? await responseHasCurrentPageIdentity(response)
+            : await responseMatchesRelease(key,response);
+          if (!documentValid) return new Response('This CURIOID document failed its release integrity check. Refresh after the matching deployment is available.', {status:502,headers:{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store'}});
           if (cache) { try { await cache.put(absolute(key), response.clone()); } catch (_) {} }
         }
         return response;
@@ -255,7 +258,9 @@ self.addEventListener('fetch', event => {
         if (cache) {
           try {
             const exact = await cache.match(absolute(key), {ignoreSearch:true});
-            const documentValid = !CACHEABLE_DOCUMENTS.has(key) || (await responseMatchesRelease(key,exact) && (key !== 'index.html' || await responseHasCurrentPageIdentity(exact)));
+            const documentValid = !CACHEABLE_DOCUMENTS.has(key) || (key === 'index.html'
+              ? await responseHasCurrentPageIdentity(exact)
+              : await responseMatchesRelease(key,exact));
             if (exact?.ok && documentValid) return exact;
             if (exact) await cache.delete(absolute(key));
             if (!key.includes('.') || key === 'index.html') {
