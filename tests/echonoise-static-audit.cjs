@@ -30,3 +30,21 @@ for (const [label, pattern] of patterns) {
     console.log(`@ ${match.index}: ${excerpt}`);
   }
 }
+
+const anchors = [
+  ['Vocal Synth advanced mode switch', 'data-eno-vocal-mode'],
+  ['Generate vocal action', 'data-eno-action="generate-vocal"'],
+  ['Sing vocal action', 'data-eno-action="sing-vocal"'],
+  ['Singer panel controls', 'data-eno-singer-panel'],
+  ['Vocal sample bank map', 'voicebank.buffers'],
+  ['Vocal synthesis function', 'synthesizeVocal'],
+  ['Phoneme speech synthesis', 'phoneme'],
+  ['Audio engine', 'AudioContext'],
+  ['Vocal oscillator engine', 'createOscillator'],
+  ['Voicebank playback', 'voicebank.files']
+];
+for (const [label, needle] of anchors) {
+  const index = source.indexOf(needle);
+  console.log(`\n=== ANCHOR ${label}: ${index} ===`);
+  if (index >= 0) console.log(source.slice(Math.max(0, index - 900), Math.min(source.length, index + 3500)).replace(/\s+/g, ' '));
+}
