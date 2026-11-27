@@ -265,7 +265,7 @@ self.addEventListener('fetch', event => {
             if (exact) await cache.delete(absolute(key));
             if (!key.includes('.') || key === 'index.html') {
               const shell = await cache.match(absolute('index.html'));
-              if (shell && await responseMatchesRelease('index.html', shell) && await responseHasCurrentPageIdentity(shell)) return shell;
+              if (shell && await responseHasCurrentPageIdentity(shell)) return shell;
             }
           } catch (_) {}
         }
