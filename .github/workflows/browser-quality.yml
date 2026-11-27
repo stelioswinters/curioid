@@ -65,6 +65,29 @@ jobs:
       - name: Run full browser smoke suite
         run: node tests/browser-smoke.cjs
 
+      - name: Package verified CURIOID website
+        run: |
+          zip -q curioid-v1.356-site.zip \
+            _headers robots.txt sitemap.xml social-preview.png \
+            index.html site-runtime-current.js service-worker-current.js manifest.webmanifest \
+            curioid-icon.svg curioid-icon-192.png curioid-icon-512.png \
+            health-check.js projects-core.js projects-styles.css \
+            projects-category-creative-tools.js projects-category-digital-art.js \
+            projects-category-operating-systems.js projects-category-sound-motion.js \
+            projects-category-strange-archives.js projects-category-tiny-games.js \
+            projects-category-web-experiments.js \
+            music-audio-apps.html applications-tools-apps.html chroma-loom.html curioids.html \
+            dark-looper-app.js glitchyard-app.js vanta-deck-app.js \
+            vocal-lexicon.js vocal-lexicon-data.json
+
+      - name: Upload verified CURIOID website ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: curioid-v1.356-site
+          path: curioid-v1.356-site.zip
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Upload local server log on failure
         if: failure()
         uses: actions/upload-artifact@v4
