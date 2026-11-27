@@ -1,34 +1,34 @@
-/* CURIOID v1.352 offline shell. Exact release hashes for every cached deployment asset. */
+/* CURIOID v1.353 offline shell. Exact release hashes for every cached deployment asset. */
 'use strict';
-const RELEASE_ID = 'v1.352';
+const RELEASE_ID = 'v1.353';
 const SCOPE_URL = new URL(self.registration.scope);
 const CACHE_PREFIX = `curioid-shell:${encodeURIComponent(SCOPE_URL.pathname)}:`;
 const CACHE_NAME = `${CACHE_PREFIX}${RELEASE_ID}`;
 const LEGACY_CACHE_PATTERN = /^curioid-shell-v1\.\d+$/;
 const EXPECTED_SHA256 = Object.freeze({
-  "applications-tools-apps.html": "79bea13ed7d1b18f18f04e83c837b6750763dc46ea9b83be958bc0bad37f4fc7",
-  "chroma-loom.html": "dc4724acb89c6679b66b7ebb543a901f6a827d124c1c61ba31650efcb236d8b6",
+  "applications-tools-apps.html": "f468eeb4d1a556e99ed0043f710d712abb4985ca3066cd5869d309ea38deb82e",
+  "chroma-loom.html": "d71d2792724bb4658568de56b715573ac5e367db01e71063c1c38daeb3c73a4c",
   "curioid-icon-192.png": "32799afd1249c7fdeac1ce46bc12f09a2dcbf9ed4fb104cd80664be64a99c887",
   "curioid-icon-512.png": "f5d307fcb59d1460bde3255c54ed57c281fd8e39cbbd82450250c6771a109086",
   "curioid-icon.svg": "d2a0e03abcf6fa43325036af29ff2762c8af2ed039082687e76ef9059f1cfd78",
-  "curioids.html": "028b29a74650f5a35274619ce482f2a847653b7ba482de802942e281df5b407d",
+  "curioids.html": "d133c8cd738b8dcb59fef10b10e62ecb633d9ff50d13b8a8cfb637d2024eb233",
   "dark-looper-app.js": "470251adba5b3f82c4c768b561fdc7490d4f9accda867a2fd7a8282761cd85a5",
   "glitchyard-app.js": "cbfaf76e775e50aded370afd8f73fa38458915caf5686299fcf5cb61f987dfb9",
   "health-check.js": "cc42adc57d6a1a6b848b457b2c793aeea7e87f226277e3bb6e7908b286f6794c",
-  "index.html": "436850b05f671e62647690963e6456f4711abf733f13d481a683545177b2e54a",
+  "index.html": "bbaafc8ed38d1d9181c7f0091d57a9b5bf817c43f4885af37e3e9bd1817eb557",
   "manifest.webmanifest": "578e2eaef7f5ab106f5887ee5edf810fa52468f128ceff691ba82967291e0eb1",
-  "music-audio-apps.html": "a97848ea240b68fb57a877af312df885e48576009072d3338f4cd694a8f8a321",
+  "music-audio-apps.html": "68f5b6fa7105b80fd1c9da29887c6395b65f4f7c50dc5b7e89f6cc19c8fc7f96",
   "projects-category-creative-tools.js": "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90",
   "projects-category-digital-art.js": "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3",
   "projects-category-operating-systems.js": "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946",
-  "projects-category-sound-motion.js": "e6b3a0c1463a0b2ca758f94627988988e25b4f1012dc5561cd87c7f54bdba568",
+  "projects-category-sound-motion.js": "653c0ec6903bdd150149534dd659625678dd29af3a65278eae906c1d720a2f22",
   "projects-category-strange-archives.js": "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9",
   "projects-category-tiny-games.js": "fcec73cfca4acae789de6a070e0770be426e3a94e2375a7a89a64408e48dfe26",
-  "projects-category-web-experiments.js": "4b309dbfd4ab439c3954de04b56570bfaa2bc6fa72aff88547079ec8f739f71b",
+  "projects-category-web-experiments.js": "18b369b9f2a52c28f2fb2d4db5486c89970cd45cd12b5bc832857eeb622178f3",
   "projects-core.js": "af961b333e3633aab2bc7aecf2551a87aab9de222c9c056f7f21bf83a15fdf6f",
   "projects-styles.css": "b0fe98f57d22d20206f174d71fe883a96dca51c817b837bfe8ac925f6f13864d",
   "robots.txt": "23877fe9514ab6e1c28495d254d75a56a96b79b0cf1e313102e0a74536c922d4",
-  "site-runtime-current.js": "5f14b65c8d85bb6de3ead902dca2e3324e816651ae35a8bd43a4c59070839815",
+  "site-runtime-current.js": "40296577c5134546de721ebc96d5102360c64b6f96be480650aa1ba6ba6b4500",
   "sitemap.xml": "e2635e23146209aa3ea5c9bb84e7edabd9ecca73a18c7f3c5ade6199153bf63a",
   "social-preview.png": "562537c5503eda0ce9958e11fad368fddc93a16475d49695e201df0d6b2f9809",
   "vanta-deck-app.js": "47b25c2ec7e4d05028579eee4111d647817a3004ddb1092089df767276fd7705",

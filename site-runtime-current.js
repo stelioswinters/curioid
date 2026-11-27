@@ -1132,7 +1132,7 @@
         // Re-register the same scope with the new script URL. Merely calling
         // getRegistration()/update() would keep the old service-worker.js (and
         // its stale cache) in control indefinitely.
-        const registration = await sw.register(new URL('service-worker-current.js?release=v1.352', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
+        const registration = await sw.register(new URL('service-worker-current.js?release=v1.353', siteRoot).href, {scope:siteRoot.pathname, updateViaCache:'none'});
         await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service-worker update check timed out.')),timeoutMs))]);
         if (!registration.waiting && registration.installing) {
           await new Promise(resolve => {
@@ -1164,7 +1164,7 @@
         });
       }
       function scheduleWorkerRecoveryReload() {
-        try { sessionStorage.setItem('curioid-worker-recovery-v1.352','1'); } catch (_) {}
+        try { sessionStorage.setItem('curioid-worker-recovery-v1.353','1'); } catch (_) {}
         const error = new Error('A newer CURIOID offline shell was activated. Reloading this page to reopen project assets from the matching release.');
         error.code = 'CURIOID_SW_RECOVERY_RELOAD';
         setTimeout(() => window.location.reload(), 80);
@@ -1176,7 +1176,7 @@
         curioidWorkerRepairPromise = (async () => {
           try {
             let attempted = false;
-            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.352') === '1'; } catch (_) {}
+            try { attempted = sessionStorage.getItem('curioid-worker-recovery-v1.353') === '1'; } catch (_) {}
             if (attempted) return false;
             const result = await refreshCurioidWorker({activateWaiting:true,timeoutMs:12000});
             if (result.activated) throw scheduleWorkerRecoveryReload();
@@ -1827,10 +1827,10 @@
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
         "operating-systems": { file: "projects-category-operating-systems.js", hash: "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946", integrity: "sha384-RAeqs0W7rIL7+1QEHb69xXtP2z33wA60MyETKQMJ4Kj8Jjm0KuoKte0Pp/G186tI" },
         "strange-archives": { file: "projects-category-strange-archives.js", hash: "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9", integrity: "sha384-g4hRSTBDB9JNNtb3KNiRCpfYEat7EF073JzAD7aRD1W3V3HVMxRL26IFDvl/VMW2" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "4b309dbfd4ab439c3954de04b56570bfaa2bc6fa72aff88547079ec8f739f71b", integrity: "sha384-OYGCP1Y8nQg3zbMEu6SggRt2JSTr35M/TkLsvRUUmvd7NOf0sDf92eync06m3R0o" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "18b369b9f2a52c28f2fb2d4db5486c89970cd45cd12b5bc832857eeb622178f3", integrity: "sha384-SHNxB4R0ZbidX3Tm41iAtgb38anmIe4tJsj4bPgopOYlqQXwhoFto6ueJU/oiBoV" },
         "tiny-games": { file: "projects-category-tiny-games.js", hash: "fcec73cfca4acae789de6a070e0770be426e3a94e2375a7a89a64408e48dfe26", integrity: "sha384-Y+IF2taDbtR2SMYQOnxGl459KHMiWD0vq3r+9ZqMU735P3qLW1Wc9xjL7tZuIg09" },
         "digital-art": { file: "projects-category-digital-art.js", hash: "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3", integrity: "sha384-TRnF/hTCD3QKJQO6MiFqfw/qmdqcq8gEg4efciUIKIbrwRQgeiKtJiBZnX9AS5KF" },
-        "sound-motion": { file: "projects-category-sound-motion.js", hash: "e6b3a0c1463a0b2ca758f94627988988e25b4f1012dc5561cd87c7f54bdba568", integrity: "sha384-Thv1TArF4xhPmLGiXOIrIecaOlmcqdKttl5kef/aYqfiG6lhnGHgF7Pvca7vgzrA" },
+        "sound-motion": { file: "projects-category-sound-motion.js", hash: "653c0ec6903bdd150149534dd659625678dd29af3a65278eae906c1d720a2f22", integrity: "sha384-sTE/7WfTJvfOJAjzRkhyxMKfqZ4NAvWcfSjTwCkf131896lbL5n61e3K8diQDkM0" },
         "creative-tools": { file: "projects-category-creative-tools.js", hash: "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90", integrity: "sha384-J11KlHxUtYqU40iMauGaO2PIaCJ0HYAaRopt97aPnOKK4/cUR0cS28noI6bTmnr+" }
       });
       function ensureProjectAssets() {
@@ -2121,7 +2121,7 @@
           // Refresh the registration metadata without activating a waiting worker.
           // This ensures the current release can receive the diagnostic pre-cache
           // command even when the site was opened before its update finished.
-          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.352", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
+          registration = await serviceWorker.register(new URL("service-worker-current.js?release=v1.353", serviceRoot).href, {scope:serviceRoot.pathname, updateViaCache:"none"});
           await Promise.race([registration.update(), new Promise((_,reject)=>setTimeout(()=>reject(new Error("Service-worker update check timed out")), Math.min(timeoutMs,15000)))]);
         } catch (error) {
           try { registration = await serviceWorker.getRegistration(serviceRoot.href); } catch (_) {}
@@ -2130,7 +2130,7 @@
         const isCurrent = worker => {
           try {
             const url = new URL(worker?.scriptURL || "");
-            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.352";
+            return url.pathname.endsWith("/service-worker-current.js") && url.searchParams.get("release") === "v1.353";
           } catch (_) { return false; }
         };
         if (!isCurrent(registration?.waiting) && isCurrent(registration?.installing)) {
@@ -2147,7 +2147,7 @@
           try { registration = await serviceWorker.getRegistration(serviceRoot.href) || registration; } catch (_) {}
         }
         const worker = isCurrent(registration?.waiting) ? registration.waiting : isCurrent(registration?.active) ? registration.active : null;
-        if (!worker) return { available:false, reason:"No current v1.352 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
+        if (!worker) return { available:false, reason:"No current v1.353 worker finished installing. The service-worker update may still be downloading.", active:registration?.active?.scriptURL || null, waiting:registration?.waiting?.scriptURL || null, installing:registration?.installing?.scriptURL || null };
         const send = (command, limit) => new Promise((resolve, reject) => {
           const channel = new MessageChannel();
           let settled = false;
@@ -2162,7 +2162,7 @@
           const timer = setTimeout(() => finish(new Error(`${command} timed out`)), limit);
           channel.port1.onmessage = event => finish(null, event.data || { ok:false, reason:"Worker returned an empty response." });
           channel.port1.onmessageerror = () => finish(new Error(`${command} response could not be decoded`));
-          try { worker.postMessage({ type:command, release:"v1.352" }, [channel.port2]); }
+          try { worker.postMessage({ type:command, release:"v1.353" }, [channel.port2]); }
           catch (error) { finish(error instanceof Error ? error : new Error(String(error))); }
         });
         if (worker === registration?.active && !serviceWorker.controller) {
@@ -3466,7 +3466,7 @@
         if (isSecureSite) {
           const registerCurioidOfflineShell = () => {
             const siteRoot = new URL("./", document.baseURI);
-            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.352", siteRoot).href, {
+            navigator.serviceWorker.register(new URL("service-worker-current.js?release=v1.353", siteRoot).href, {
               scope: siteRoot.pathname,
               updateViaCache: "none"
             }).then(registration => {
