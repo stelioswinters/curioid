@@ -9,7 +9,7 @@ function gravityMarkup() {
 
 function bindGravity(root) {
     const canvas = $('.gravity-canvas', root), stat = $('[data-stat="bodies"]', root), state = $('[data-stat="gravity"]', root);
-    let bodies = [], burns = [], paused = false, drag = null, trail = 55, gravity = 105, speed = 100, rotation = 0, lastW = 1, lastH = 1;
+    let bodies = [], burns = [], paused = false, drag = null, trail = 55, gravity = 105, speed = 100, rotation = 0, lastW = 1, lastH = 1 , lastGravityPaint = 0;
     const omega = () => (rotation / 100) * .055;
     function updateCount(){stat.textContent=`${bodies.length} / 20${bodies.some(b=>b.isBlackHole)?' · SINGULARITY':''}`;}
     const reset = () => {
@@ -30,6 +30,8 @@ function bindGravity(root) {
       updateCount(); sim.redraw();
     };
     let sim = fitCanvas(canvas, (ctx,w,h,t,dt,initial) => {
+      if (!initial && lastGravityPaint && t - lastGravityPaint < 1 / 30) return;
+      lastGravityPaint = t;
       lastW=w; lastH=h;
       ctx.fillStyle='#10131a'; ctx.fillRect(0,0,w,h);
       ctx.strokeStyle='rgba(214,255,105,.055)'; ctx.lineWidth=1;
@@ -1807,7 +1809,7 @@ function bindKineta(root, api = {}) {
     const nextHeight = Math.max(190, rect.height || canvas.clientHeight || 360);
     const lowMemory = Number(navigator.deviceMemory || 0) > 0 && Number(navigator.deviceMemory) <= 4;
     const lowCpu = Number(navigator.hardwareConcurrency || 0) > 0 && Number(navigator.hardwareConcurrency) <= 4;
-    const baseDpr = Math.min((coarseDevice || lowMemory || lowCpu) ? 1.12 : 1.38, window.devicePixelRatio || 1);
+    const baseDpr = Math.min((coarseDevice || lowMemory || lowCpu) ? 1.0 : 1.15, window.devicePixelRatio || 1);
     const nextDpr = Math.max(.72, baseDpr * adaptiveQualityScale);
     const changed = Math.abs(nextWidth - width) > .5 || Math.abs(nextHeight - height) > .5 || nextDpr !== dpr;
     width = nextWidth; height = nextHeight; dpr = nextDpr;

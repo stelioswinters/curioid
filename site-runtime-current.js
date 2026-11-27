@@ -1827,10 +1827,10 @@
       const PROJECT_CATEGORY_ASSETS = Object.freeze({
         "operating-systems": { file: "projects-category-operating-systems.js", hash: "75a8845a96abd4305b577a1b107fa24e024cb58ed497965d169656058955b946", integrity: "sha384-RAeqs0W7rIL7+1QEHb69xXtP2z33wA60MyETKQMJ4Kj8Jjm0KuoKte0Pp/G186tI" },
         "strange-archives": { file: "projects-category-strange-archives.js", hash: "87b1d3969eb06b591b02691ebb388749f83120492d110cfa54292b7d1f1d80d9", integrity: "sha384-g4hRSTBDB9JNNtb3KNiRCpfYEat7EF073JzAD7aRD1W3V3HVMxRL26IFDvl/VMW2" },
-        "web-experiments": { file: "projects-category-web-experiments.js", hash: "497be3e77f20adadeb03025662be9d4871439b026b079d3546ee2c3c49fbd5fc", integrity: "sha384-jhSrXXLkeMzAX7XLw8nYuCiX7OroxyFgJFs0PBeQio2oR2bId7cpDrVc9aOfGcxA" },
+        "web-experiments": { file: "projects-category-web-experiments.js", hash: "3b0d2be037824e25dbcca814003283ca665b1fa6b4f84766ae6290d2a756745a", integrity: "sha384-LmwRG9eI8rf2D+tdvDw1PJfkxlkgJBWlgj5klniLH0I67aKTMIAfTaRiHzPpu94P" },
         "tiny-games": { file: "projects-category-tiny-games.js", hash: "fcec73cfca4acae789de6a070e0770be426e3a94e2375a7a89a64408e48dfe26", integrity: "sha384-Y+IF2taDbtR2SMYQOnxGl459KHMiWD0vq3r+9ZqMU735P3qLW1Wc9xjL7tZuIg09" },
         "digital-art": { file: "projects-category-digital-art.js", hash: "94dc33499899b946a84e3efe86b95b7329e645001f8e7635c2c50bd89f635ec3", integrity: "sha384-TRnF/hTCD3QKJQO6MiFqfw/qmdqcq8gEg4efciUIKIbrwRQgeiKtJiBZnX9AS5KF" },
-        "sound-motion": { file: "projects-category-sound-motion.js", hash: "6bfbeeb6658f8909003c4c740019ae1e6668237709cf2c24649e4a95a358e58b", integrity: "sha384-fsANJ2SVk4Muy79tUnY9sY32oaOonFXTZbpZATSlWSEPRNDB3I/a4+UBmTtUW8L5" },
+        "sound-motion": { file: "projects-category-sound-motion.js", hash: "e6b3a0c1463a0b2ca758f94627988988e25b4f1012dc5561cd87c7f54bdba568", integrity: "sha384-Thv1TArF4xhPmLGiXOIrIecaOlmcqdKttl5kef/aYqfiG6lhnGHgF7Pvca7vgzrA" },
         "creative-tools": { file: "projects-category-creative-tools.js", hash: "8f80d886542f8780bf429e9c15203fb23e10f779a06582ad38180a7007e58c90", integrity: "sha384-J11KlHxUtYqU40iMauGaO2PIaCJ0HYAaRopt97aPnOKK4/cUR0cS28noI6bTmnr+" }
       });
       function ensureProjectAssets() {
