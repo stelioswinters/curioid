@@ -81,10 +81,11 @@ async function responseHasCurrentPageIdentity(response, path = 'index.html') {
   if (!response?.ok || !response.clone || typeof path !== 'string' || !CACHEABLE_DOCUMENTS.has(path)) return false;
   try {
     const html = await response.clone().text();
-    const marker = new RegExp('<meta\\s+name=["\']curioid-release["\']\\s+content=["\']' + RELEASE_ID + '["\']', 'i').test(html);
-    const escapedPath = path.replace(/\./g, '\\.');
-    const documentMarker = new RegExp('<meta\\s+name=["\']curioid-document["\']\\s+content=["\']' + escapedPath + '["\']', 'i').test(html);
-    const hasPolicy = /<meta\b[^>]*http-equiv=["']Content-Security-Policy["']/i.test(html);
+    const safeRelease = RELEASE_ID.replace(/\./g, '\\.');
+    const safePath = path.replace(/\./g, '\\.');
+    const marker = new RegExp('<meta\\b(?=[^>]*\\bname=["\']curioid-release["\'])(?=[^>]*\\bcontent=["\']' + safeRelease + '["\'])[^>]*>', 'i').test(html);
+    const documentMarker = new RegExp('<meta\\b(?=[^>]*\\bname=["\']curioid-document["\'])(?=[^>]*\\bcontent=["\']' + safePath + '["\'])[^>]*>', 'i').test(html);
+    const hasPolicy = /<meta\\b[^>]*http-equiv=["']Content-Security-Policy["']/i.test(html);
     const runtimeMatches = path !== 'index.html' || html.includes('site-runtime-current.js?v=sha256-' + RUNTIME_HASH);
     return marker && documentMarker && hasPolicy && runtimeMatches;
   } catch (_) { return false; }
