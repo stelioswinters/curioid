@@ -1,5 +1,5 @@
 'use strict';
-// Rebuild every current-release integrity reference after static assets change.
+// Rebuild all current-release integrity references after static assets change.
 // Run from the repository root with Node.js 20+.
 const fs = require('node:fs');
 const crypto = require('node:crypto');
@@ -15,14 +15,37 @@ let worker = fs.readFileSync('service-worker-current.js', 'utf8');
 const htmlFiles = fs.readdirSync('.').filter(name => name.endsWith('.html'));
 const html = new Map(htmlFiles.map(name => [name, fs.readFileSync(name, 'utf8')]));
 
+let changed = false;
+function syncRuntimeConstant(name, file) {
+  if (!fs.existsSync(file)) throw new Error('Missing runtime asset: ' + file);
+  const nextHash = sha256(file), nextSri = sha384(file);
+  const hashPattern = new RegExp("(const " + name + " = ')[a-f0-9]{64}(';)");
+  const sriPattern = new RegExp("(const " + name.replace(/_HASH$/, '_SRI') + " = ')sha384-[^']+(';)");
+  const currentHash = runtime.match(hashPattern)?.[0];
+  const currentSri = runtime.match(sriPattern)?.[0];
+  if (!currentHash || !currentSri) throw new Error('Missing runtime integrity constants for ' + file);
+  if (!currentHash.includes(nextHash) || !currentSri.includes(nextSri)) changed = true;
+  runtime = runtime.replace(hashPattern, '$1' + nextHash + '$2');
+  runtime = runtime.replace(sriPattern, '$1' + nextSri + '$2');
+}
+syncRuntimeConstant('HEALTH_MODULE_HASH', 'health-check.js');
+syncRuntimeConstant('PROJECT_STYLES_SHA256', 'projects-styles.css');
+
+const coreHash = sha256('projects-core.js'), coreSri = sha384('projects-core.js');
+const corePattern = /(file: "projects-core\.js", hash: ")[a-f0-9]{64}(", integrity: ")sha384-[^"]+(")/;
+const coreMatch = runtime.match(corePattern);
+if (!coreMatch) throw new Error('Could not locate projects-core.js integrity descriptor');
+if (!coreMatch[0].includes(coreHash) || !coreMatch[0].includes(coreSri)) changed = true;
+runtime = runtime.replace(corePattern, '$1' + coreHash + '$2' + coreSri + '$3');
+
 const modulePattern = /"([^"]+)": \{ file: "([^"]+\.js)", hash: "([a-f0-9]{64})", integrity: "(sha384-[A-Za-z0-9+/=]+)" \}/g;
-let moduleCount = 0, changed = false;
+let moduleCount = 0;
 runtime = runtime.replace(modulePattern, (whole, key, file, oldHash, oldSri) => {
   if (!fs.existsSync(file)) throw new Error('Missing category bundle: ' + file);
   const nextHash = sha256(file), nextSri = sha384(file);
   moduleCount++;
   if (nextHash !== oldHash || nextSri !== oldSri) changed = true;
-  return `"${key}": { file: "${file}", hash: "${nextHash}", integrity: "${nextSri}" }`;
+  return \`"\${key}": { file: "\${file}", hash: "\${nextHash}", integrity: "\${nextSri}" }\`;
 });
 if (moduleCount !== 7) throw new Error('Expected 7 category integrity entries, found ' + moduleCount);
 
@@ -45,13 +68,35 @@ for (const [file, source] of html) {
   if (match && match[1] !== oldRelease) changed = true;
 }
 if (!html.has('index.html')) throw new Error('index.html is missing from the release');
-const currentIndex = html.get('index.html');
-if (!currentIndex.includes('<small class="site-version">' + oldRelease + '</small>')) changed = true;
+if (!html.get('index.html').includes('<small class="site-version">' + oldRelease + '</small>')) changed = true;
+
+function inspectHtmlAssetTags(source, update, runtimeBytes) {
+  return source.replace(/<(?:script|link)\b[^>]*>/gi, tag => {
+    const attribute = /^<script\b/i.test(tag) ? 'src' : 'href';
+    const match = tag.match(new RegExp('\\b' + attribute + '="([^"]+)"'));
+    if (!match) return tag;
+    const url = match[1];
+    if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|\/|#)/i.test(url)) return tag;
+    const file = url.split(/[?#]/)[0];
+    if (!file || !fs.existsSync(file)) return tag;
+    const bytes = file === 'site-runtime-current.js' && runtimeBytes ? runtimeBytes : read(file);
+    const nextHash = hash('sha256', bytes);
+    const nextSri = 'sha384-' + hash('sha384', bytes, 'base64');
+    const oldSri = tag.match(/\bintegrity="(sha384-[^"]+)"/)?.[1];
+    const hasVersionHash = /[?&]v=sha256-[a-f0-9]{64}/.test(url);
+    if ((hasVersionHash && !url.includes('v=sha256-' + nextHash)) || (oldSri && oldSri !== nextSri)) changed = true;
+    if (!update) return tag;
+    let nextTag = tag.replace(new RegExp('(' + attribute + '="[^"]*[?&]v=sha256-)[a-f0-9]{64}'), '$1' + nextHash);
+    if (oldSri) nextTag = nextTag.replace(/(\bintegrity=")sha384-[^"]+/, '$1' + nextSri);
+    return nextTag;
+  });
+}
+for (const source of html.values()) inspectHtmlAssetTags(source, false, Buffer.from(runtime));
 const currentRuntimeHash = hash('sha256', Buffer.from(runtime));
 const currentRuntimeSri = 'sha384-' + hash('sha384', Buffer.from(runtime), 'base64');
-if (!currentIndex.includes('site-runtime-current.js?v=sha256-' + currentRuntimeHash)) changed = true;
-const preloadSri = currentIndex.match(/<link[^>]+href="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
-const scriptSri = currentIndex.match(/<script[^>]+src="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
+if (!html.get('index.html').includes('site-runtime-current.js?v=sha256-' + currentRuntimeHash)) changed = true;
+const preloadSri = html.get('index.html').match(/<link[^>]+href="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
+const scriptSri = html.get('index.html').match(/<script[^>]+src="site-runtime-current\.js\?v=sha256-[^"]+"[^>]+integrity="(sha384-[^"]+)"/)?.[1];
 if (preloadSri !== currentRuntimeSri || scriptSri !== currentRuntimeSri) changed = true;
 
 if (!changed) {
@@ -69,19 +114,14 @@ for (const [file, source] of html) {
   html.set(file, next);
 }
 
-let index = html.get('index.html');
-const runtimeHash = hash('sha256', Buffer.from(runtime));
-const runtimeSri = 'sha384-' + hash('sha384', Buffer.from(runtime), 'base64');
-index = index.replace(/(site-runtime-current\.js\?v=sha256-)[a-f0-9]{64}/g, '$1' + runtimeHash);
-index = index.replace(/(<link rel="preload" href="site-runtime-current\.js\?v=sha256-[^"]+" as="script" integrity=")sha384-[^"]+/, '$1' + runtimeSri);
-index = index.replace(/(<script src="site-runtime-current\.js\?v=sha256-[^"]+" defer integrity=")sha384-[^"]+/, '$1' + runtimeSri);
-html.set('index.html', index);
+const runtimeBytes = Buffer.from(runtime);
+for (const [file, source] of html) html.set(file, inspectHtmlAssetTags(source, true, runtimeBytes));
 
 // Refresh every cached file hash using final in-memory bytes for rewritten files.
 const updatedExpected = expectedMatch[1].replace(/("([^"]+)": ")[a-f0-9]{64}(")/g, (whole, prefix, file, suffix) => {
   if (!fs.existsSync(file)) throw new Error('Missing cached asset during hash refresh: ' + file);
   const bytes = html.has(file) ? Buffer.from(html.get(file))
-    : file === 'site-runtime-current.js' ? Buffer.from(runtime)
+    : file === 'site-runtime-current.js' ? runtimeBytes
     : read(file);
   return prefix + hash('sha256', bytes) + suffix;
 });
@@ -92,4 +132,4 @@ worker = worker.replace(/CURIOID v1\.\d+ offline shell/, 'CURIOID ' + nextReleas
 for (const [file, source] of html) write(file, source);
 write('site-runtime-current.js', runtime);
 write('service-worker-current.js', worker);
-console.log('Refreshed all page release markers, runtime references, category SRI, offline hashes and release ID: ' + oldRelease + ' -> ' + nextRelease);
+console.log('Refreshed runtime assets, all page script SRI, category integrity, page versions, offline hashes and release ID: ' + oldRelease + ' -> ' + nextRelease);
