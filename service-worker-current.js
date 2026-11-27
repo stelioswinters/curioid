@@ -78,33 +78,15 @@ async function responseMatchesRelease(path, response) {
   } catch (_) { return false; }
 }
 async function responseHasCurrentPageIdentity(response, path = 'index.html') {
-  if (!response?.ok || !response.clone || typeof path !== 'string') return false;
+  if (!response?.ok || !response.clone || typeof path !== 'string' || !CACHEABLE_DOCUMENTS.has(path)) return false;
   try {
     const html = await response.clone().text();
-    const releasePattern = `<meta\\s+name=[\"']curioid-release[\"']\\s+content=[\"']${RELEASE_ID.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\async function responseHasCurrentPageIdentity(response) {
-  if (!response?.ok || !response.clone) return false;
-  try {
-    const html = await response.clone().text();
-    const marker = new RegExp(`<meta\\s+name=[\"']curioid-release[\"']\\s+content=[\"']${RELEASE_ID.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\"']`, 'i').test(html);
-    const runtime = html.includes(`site-runtime-current.js?v=sha256-${RUNTIME_HASH}`);
-    return marker && runtime;
-  } catch (_) { return false; }
-}')}[\"']`;
-    const escapedPath = path.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\async function responseHasCurrentPageIdentity(response) {
-  if (!response?.ok || !response.clone) return false;
-  try {
-    const html = await response.clone().text();
-    const marker = new RegExp(`<meta\\s+name=[\"']curioid-release[\"']\\s+content=[\"']${RELEASE_ID.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\"']`, 'i').test(html);
-    const runtime = html.includes(`site-runtime-current.js?v=sha256-${RUNTIME_HASH}`);
-    return marker && runtime;
-  } catch (_) { return false; }
-}');
-    const documentPattern = `<meta\\s+name=[\"']curioid-document[\"']\\s+content=[\"']${escapedPath}[\"']`;
-    const releaseMatches = new RegExp(releasePattern, 'i').test(html);
-    const documentMatches = new RegExp(documentPattern, 'i').test(html);
-    const hasPolicy = /<meta\\b[^>]*http-equiv=[\"']Content-Security-Policy[\"']/i.test(html);
-    const runtimeMatches = path !== 'index.html' || html.includes(`site-runtime-current.js?v=sha256-${RUNTIME_HASH}`);
-    return releaseMatches && documentMatches && hasPolicy && runtimeMatches;
+    const marker = new RegExp('<meta\\s+name=["\']curioid-release["\']\\s+content=["\']' + RELEASE_ID + '["\']', 'i').test(html);
+    const escapedPath = path.replace(/\./g, '\\.');
+    const documentMarker = new RegExp('<meta\\s+name=["\']curioid-document["\']\\s+content=["\']' + escapedPath + '["\']', 'i').test(html);
+    const hasPolicy = /<meta\b[^>]*http-equiv=["']Content-Security-Policy["']/i.test(html);
+    const runtimeMatches = path !== 'index.html' || html.includes('site-runtime-current.js?v=sha256-' + RUNTIME_HASH);
+    return marker && documentMarker && hasPolicy && runtimeMatches;
   } catch (_) { return false; }
 }
 async function responseLooksLikeImage(response, mime) {
