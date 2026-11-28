@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="curioid-release" content="v1.396">
+  <meta name="curioid-document" content="doors98-v86-frame.html">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Doors98 Virtual PC sandbox</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none';script-src blob: 'wasm-unsafe-eval' 'sha256-ynJ2ZXg9ibqnJgC/Fhbbhm/SN9vXi6IskSqgn1WITDQ='; worker-src blob:; connect-src blob:; img-src blob: data:; style-src 'unsafe-inline'; media-src blob: data:; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'">
+  <style>
+    html,body{width:100%;height:100%;min-height:100%;margin:0;overflow:auto;background:#101820;color:#dce8f4;font:13px/1.45 system-ui,sans-serif}
+    #screen{display:grid;place-content:center;min-height:100%;overflow:auto;background:#101820;color:#dce8f4;outline:none}
+    #screen>div{white-space:pre;font:14px/14px ui-monospace,SFMono-Regular,Consolas,monospace}
+    #screen canvas{display:none;max-width:100%;height:auto;image-rendering:pixelated}
+    #screen canvas[style*="display: block"]{display:block!important;max-width:100%;height:auto}
+  </style>
+</head>
+<body>
+  <main id="screen" tabindex="0" aria-label="Virtual x86 guest display"><div>V86 WAITING FOR LOCAL ENGINE…</div><canvas style="display:none"></canvas></main>
+  <script>
+  (()=>{
+    'use strict';
+    const EXPECTED_PARENT_ORIGIN=new URLSearchParams(location.search).get('parentOrigin')||'';
+    const TOKEN_PATTERN=/^[a-f0-9]{32}$/;
+    const LIMITS=Object.freeze({engine:33554432,wasm:67108864,bios:4194304,vgaBios:4194304,boot:805306368,secondary:536870912,extra:805306368,state:536870912,total:1610612736,workingSet:2147483648});
+    let channel=null,emulator=null,engineUrl='',wasmUrl='',stopping=false,initialized=false,readyHandled=false;
+    const send=(type,fields={})=>{try{channel?.postMessage({type,token:activeToken,...fields});}catch(_){}};
+    let activeToken='';
+    const releaseUrls=()=>{for(const url of [engineUrl,wasmUrl])if(url){try{URL.revokeObjectURL(url);}catch(_){}}engineUrl='';wasmUrl='';};
+    const destroy=async()=>{if(stopping)return;stopping=true;try{if(typeof emulator?.destroy==='function')await emulator.destroy();else await emulator?.stop?.();}catch(_){try{await emulator?.stop?.();}catch(__){}}emulator=null;releaseUrls();send('status',{state:'stopped',message:'GUEST STOPPED / EMULATOR RESOURCES RELEASED'});try{channel?.close();}catch(_){}channel=null;};
+    const validateBootData=data=>{
+      if(!data||data.type!=='boot'||!['cdrom','floppy','disk'].includes(data.bootType)||!['none','cdrom','floppy'].includes(data.extraType)||data.extraType===data.bootType||![64,128,256].includes(data.memoryMiB))throw new Error('Unsupported Virtual PC boot configuration.');
+      if((data.extraType==='none'&&data.extra)||(data.extraType!=='none'&&!data.extra))throw new Error('Extra device type and extra media file do not match.');
+      let total=0;
+      for(const key of ['engine','wasm','bios','vgaBios','boot','secondary','extra']){
+        const bytes=data[key];if((key==='secondary'||key==='extra')&&!bytes)continue;
+        let limit=LIMITS[key];if(key==='boot'&&data.bootType==='floppy')limit=8*1024*1024;if(key==='extra'&&data.extraType==='floppy')limit=8*1024*1024;
+        if(!(bytes instanceof ArrayBuffer)||bytes.byteLength<1||bytes.byteLength>limit)throw new Error('Invalid or oversized local '+key+' input.');total+=bytes.byteLength;
+      }
+      if(total>LIMITS.total)throw new Error('Combined guest and emulator inputs exceed 1,536 MiB.');
+      const stateBytes=data.restoreState instanceof ArrayBuffer?data.restoreState.byteLength:0,hostReserveBytes=Number(data.hostReserveBytes||0);if(!Number.isSafeInteger(hostReserveBytes)||hostReserveBytes<0||hostReserveBytes>LIMITS.secondary||(hostReserveBytes>0&&!data.secondary))throw new Error('Invalid retained local disk reservation.');const workingBytes=total+(data.restoreState?stateBytes:0)+data.memoryMiB*1024*1024+hostReserveBytes;if(workingBytes>LIMITS.workingSet)throw new Error('Guest inputs, RAM and snapshot exceed the 2,048 MiB working-set limit.');
+      if(data.restoreState!==null&&data.restoreState!==undefined){if(!(data.restoreState instanceof ArrayBuffer)||data.restoreState.byteLength<1||data.restoreState.byteLength>LIMITS.state)throw new Error('Invalid or oversized VM restore state.');if(total+data.restoreState.byteLength+data.memoryMiB*1024*1024+hostReserveBytes>LIMITS.workingSet)throw new Error('Guest inputs, RAM and snapshot exceed the 2,048 MiB working-set limit.');}
+    };
+    const boot=async data=>{
+      if(initialized)throw new Error('This Virtual PC frame can only boot once.');
+      validateBootData(data);initialized=true;
+      engineUrl=URL.createObjectURL(new Blob([data.engine],{type:'text/javascript'}));
+      wasmUrl=URL.createObjectURL(new Blob([data.wasm],{type:'application/wasm'}));
+      const script=document.createElement('script');script.src=engineUrl;
+      script.onerror=()=>send('error',{message:'Could not load the supplied v86 JavaScript file. Select the matching official libv86.js build.'});
+      script.onload=async()=>{
+        try{
+          const Constructor=window.V86||window.V86Starter;
+          if(typeof Constructor!=='function')throw new Error('The selected JavaScript file does not expose V86 or V86Starter.');
+          const screen=document.getElementById('screen');
+          const bootOrder=data.bootType==='cdrom'?0x213:data.bootType==='floppy'?0x231:0x132;
+          const options={wasm_path:wasmUrl,memory_size:data.memoryMiB*1024*1024,vga_memory_size:4*1024*1024,screen_container:screen,bios:{buffer:data.bios},vga_bios:{buffer:data.vgaBios},boot_order:bootOrder,autostart:false,disable_speaker:true};
+          if(data.bootType==='cdrom')options.cdrom={buffer:data.boot};
+          else if(data.bootType==='floppy')options.fda={buffer:data.boot};
+          else options.hda={buffer:data.boot};
+          if(data.secondary){if(data.bootType==='disk')options.hdb={buffer:data.secondary};else options.hda={buffer:data.secondary};}
+          if(data.extra){if(data.extraType==='cdrom')options.cdrom={buffer:data.extra};else if(data.extraType==='floppy'){if(options.fda)options.fdb={buffer:data.extra};else options.fda={buffer:data.extra};}}
+          // No network device, 9p filesystem, proxy or host file bridge is configured.
+          emulator=new Constructor(options);
+          emulator.add_listener?.('emulator-loaded',()=>send('status',{state:'starting',message:'V86 ENGINE LOADED / PREPARING GUEST HARDWARE…'}));
+          emulator.add_listener?.('download-error',()=>send('error',{message:'The guest emulator could not load a required local engine resource. Check the v86 JS/WASM version pair.'}));
+          emulator.add_listener?.('emulator-ready',async()=>{
+            if(readyHandled||stopping)return;readyHandled=true;
+            try{
+              if(data.restoreState instanceof ArrayBuffer){await emulator.restore_state(data.restoreState);send('status',{state:'starting',message:'VERIFIED VM SNAPSHOT RESTORED / STARTING GUEST…'});}
+              await emulator.run();send('status',{state:'running',message:'GUEST RUNNING / NETWORK ADAPTER NOT CONFIGURED'});
+            }catch(error){send('error',{message:String(error?.message||error).slice(0,700)});}
+          });
+          screen.focus({preventScroll:true});send('ready');
+        }catch(error){send('error',{message:String(error?.message||error).slice(0,700)});}
+      };
+      document.head.append(script);
+    };
+    window.addEventListener('error',event=>{if(channel&&!stopping)send('error',{message:String(event.message||'Emulator script error').slice(0,500)});});
+    window.addEventListener('unhandledrejection',event=>{if(channel&&!stopping)send('error',{message:String(event.reason?.message||event.reason||'Emulator promise rejected').slice(0,500)});});
+    const onPortMessage=async event=>{
+      const data=event.data;if(!data||data.token!==activeToken||stopping)return;
+      try{
+        if(data.type==='boot'){await boot(data);return;}
+        if(!emulator)throw new Error('The guest machine has not initialized.');
+        if(data.type==='pause'){await emulator.stop();send('status',{state:'paused',message:'GUEST PAUSED'});}
+        else if(data.type==='resume'){await emulator.run();send('status',{state:'running',message:'GUEST RESUMED'});}
+        else if(data.type==='reset'){emulator.restart();send('status',{state:'running',message:'GUEST RESET REQUESTED'});}
+        else if(data.type==='save'){
+          const state=await emulator.save_state();
+          if(!(state instanceof ArrayBuffer)||state.byteLength<1||state.byteLength>LIMITS.state)throw new Error('Emulator returned an invalid or oversized state image.');
+          channel.postMessage({type:'state',token:activeToken,operationId:data.operationId||'',buffer:state},[state]);
+        }
+        else if(data.type==='ctrl-alt-del'){
+          if(typeof emulator.keyboard_send_scancodes!=='function')throw new Error('This v86 build does not expose guest keyboard scan codes.');
+          emulator.keyboard_send_scancodes([0x1D,0x38,0xE0,0x53,0xE0,0xD3,0xB8,0x9D]);
+          send('status',{state:'running',message:'CTRL+ALT+DELETE SENT TO THE GUEST KEYBOARD'});
+        }
+        else if(data.type==='screenshot'){
+          if(typeof emulator.screen_make_screenshot!=='function')throw new Error('This v86 build does not expose guest screenshots.');
+          const source=emulator.screen_make_screenshot(),width=Math.floor(Number(source?.naturalWidth||source?.videoWidth||source?.width||0)),height=Math.floor(Number(source?.naturalHeight||source?.videoHeight||source?.height||0));
+          if(!source||width<1||height<1||width>8192||height>8192||width*height>33554432)throw new Error('The guest display dimensions are invalid or exceed 32 megapixels.');
+          const canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;const context=canvas.getContext('2d',{alpha:false});if(!context)throw new Error('Could not allocate the guest screenshot canvas.');context.drawImage(source,0,0,width,height);
+          const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob||blob.size<1||blob.size>67108864)throw new Error('The guest screenshot could not be encoded or exceeds 64 MiB.');const buffer=await blob.arrayBuffer();channel.postMessage({type:'screenshot',token:activeToken,operationId:data.operationId||'',buffer,width,height},[buffer]);canvas.width=canvas.height=1;
+        }
+        else if(data.type==='stop')await destroy();
+      }catch(error){send('command-error',{fatal:!emulator,operationId:data.operationId||'',message:String(error?.message||error).slice(0,700)});}
+    };
+    const connect=event=>{
+      if(event.source!==parent||!EXPECTED_PARENT_ORIGIN||event.origin!==EXPECTED_PARENT_ORIGIN||event.data?.type!=='curioid-v86-connect'||!TOKEN_PATTERN.test(event.data?.token||'')||!event.ports?.[0])return;
+      window.removeEventListener('message',connect);activeToken=event.data.token;channel=event.ports[0];channel.onmessage=onPortMessage;channel.start();send('status',{state:'starting',message:'OPAQUE-ORIGIN GUEST CHANNEL READY'});
+    };
+    window.addEventListener('message',connect);
+    window.addEventListener('pagehide',()=>{try{emulator?.destroy?.();}catch(_){}releaseUrls();try{channel?.close();}catch(_){}},{once:true});
+  })();
+  </script>
+</body>
+</html>

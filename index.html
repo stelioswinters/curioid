@@ -1,0 +1,1494 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101014">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preload" href="site-runtime-current.js?v=sha256-7023287a608f9f595cfa703f9ee69832b53362b045f0178e9a5b1f81f336a94a" as="script" integrity="sha384-JTrh9b58CzjX4u7AFb8oepJ3duS+6kF9KgF6DN7izF0arDjATvRlPq+zcqvF3mRJ" crossorigin="anonymous" fetchpriority="high">
+  <meta name="description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
+  <meta name="curioid-release" content="v1.396">
+  <meta name="curioid-document" content="index.html">
+  <meta name="curioid-project-count" content="60">
+  <meta name="curioid-category-count" content="7">
+  <meta name="curioid-os-count" content="7">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="author" content="Stelios Winters">
+  <meta name="color-scheme" content="dark">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <!-- GitHub Pages cannot configure a Permissions-Policy response header. Sensitive features are denied on every untrusted iframe using its allow attribute. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self';script-src 'self' blob: 'wasm-unsafe-eval' 'sha256-aHI9x19kygkN7s1is/CayauZmM8YlaltoX1D1ChFN5M='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests">
+  <script data-cfasync="false" id="curioid-frame-guard">
+(() => {
+  let blocked = false;
+  try {
+    blocked = window.top !== window.self && window.top.location.origin !== window.location.origin;
+  } catch (_) {
+    blocked = true;
+  }
+  if (!blocked) return;
+
+  const cancelInteraction = event => {
+    if (event.cancelable) event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+  const blockedEvents = [
+    'click', 'auxclick', 'dblclick', 'contextmenu', 'submit', 'reset',
+    'beforeinput', 'input', 'change', 'focus', 'focusin', 'keydown', 'keypress', 'keyup',
+    'pointerdown', 'pointerup', 'pointermove', 'mousedown', 'mouseup',
+    'touchstart', 'touchend', 'dragstart', 'drop'
+  ];
+  for (const type of blockedEvents) {
+    window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
+  }
+
+  const showFrameWarning = () => {
+    if (document.body) document.body.inert = true;
+    if (document.getElementById('curioid-frame-warning')) return;
+    const panel = document.createElement('section');
+    panel.id = 'curioid-frame-warning';
+    panel.setAttribute('role', 'alert');
+    panel.setAttribute('aria-live', 'assertive');
+    panel.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:grid;place-content:center;justify-items:center;gap:12px;box-sizing:border-box;padding:32px;background:#101014;color:#f8f7ff;font:16px/1.55 system-ui,sans-serif;text-align:center;pointer-events:auto;isolation:isolate;';
+    const heading = document.createElement('h1');
+    heading.textContent = 'Open CURIOID directly';
+    heading.style.cssText = 'max-width:24ch;margin:0;font-size:clamp(24px,5vw,38px);line-height:1.15;';
+    const message = document.createElement('p');
+    message.textContent = 'For your safety, this page is disabled inside another website. Open it in its own tab to use CURIOID.';
+    message.style.cssText = 'max-width:48ch;margin:0;color:#d2d0dc;';
+    panel.append(heading, message);
+    document.documentElement.append(panel);
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
+  } else {
+    showFrameWarning();
+  }
+})();
+  </script>
+  <link rel="canonical" href="https://stelioswinters.com/curioid/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CURIOID">
+  <meta property="og:title" content="CURIOID | Browser Games, Music, Art &amp; Creative Worlds">
+  <meta property="og:description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
+  <meta property="og:url" content="https://stelioswinters.com/curioid/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CURIOID | Browser Games, Music, Art &amp; Creative Worlds">
+  <meta name="twitter:description" content="Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.">
+  <meta property="og:image" content="https://stelioswinters.com/curioid/social-preview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CURIOID eye logo alongside seven independent desktop worlds and a personal world builder, with examples from the games, art, sound and creative tools collection.">
+  <meta name="twitter:image" content="https://stelioswinters.com/curioid/social-preview.png">
+  <title>CURIOID</title>
+  
+  <script data-cfasync="false" type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"CURIOID","url":"https://stelioswinters.com/curioid/","description":"Browser games, music experiments, visual art, independent digital worlds and curious creative tools. No downloads or account needed.","creator":{"@type":"Person","name":"Stelios Winters"},"inLanguage":"en","isAccessibleForFree":true}</script>
+  <link rel="icon" type="image/svg+xml" href="curioid-icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="curioid-icon-192.png">
+  <link rel="apple-touch-icon" href="curioid-icon-192.png">
+  <style>
+    html{--curioid-app-display-scale:1;}
+    .room-window.open .room-mount>:not(.project-style-warning){zoom:var(--curioid-app-display-scale,1);}
+    .room-window.open .room-mount{overflow:auto!important;}
+    #curioidEggHuntToggle[hidden]{display:none!important;}
+    .noscript-notice { margin: 16px; padding: 14px 16px; border: 1px solid #596b3c; border-radius: 10px; background: #22291b; color: #eff8df; font-size:14px; line-height: 1.6; }
+    :root {
+      color-scheme: dark;
+      --bg: #101014;
+      --bg-soft: #15151b;
+      --panel: #191920;
+      --panel-raised: #202029;
+      --line: #30303a;
+      --line-soft: #26262f;
+      --text: #f1f0ed;
+      --muted: #a09eaa;
+      --dim: #8a8895;
+      --acid: #d6ff69;
+      --violet: #baa7ff;
+      --pink: #ff9cba;
+      --cyan: #85e6da;
+      --sidebar-width: 326px;
+      --radius: 16px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { min-height: 100%; scroll-behavior: smooth; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-size:14px;
+      line-height: 1.5;
+    }
+    button, input, select, textarea { font:inherit; }
+    button { color: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--acid);
+      outline-offset: 3px;
+    }
+    a { color: inherit; }
+    .app-shell { min-height: 100vh; }
+
+    /* The entire sidebar scrolls, including its footer links. */
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 50;
+      width: var(--sidebar-width);
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 22px 15px 15px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #454550 transparent;
+      background: #15151b;
+      border-right: 1px solid var(--line);
+    }
+    .sidebar::-webkit-scrollbar { width: 8px; }
+    .sidebar::-webkit-scrollbar-thumb { background: #41414b; border-radius: 20px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 54px;
+      margin: 0 3px 26px;
+      padding: 3px 5px;
+      text-decoration: none;
+    }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      flex: 0 0 48px;
+      width: 48px;
+      height: 48px;
+      color: var(--acid);
+      filter: drop-shadow(0 0 13px rgba(214,255,105,.12));
+    }
+    .brand-mark svg { display: block; width: 46px; height: 46px; overflow: visible; }
+    .brand-word { display: block; font-size:22px; font-weight: 900; letter-spacing: .16em; line-height: 1; }
+    .brand-caption { display: block; margin-top: 6px; color: var(--muted); font-size:9px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    .sidebar-section-label {
+      margin: 0 9px 9px;
+      color: var(--dim);
+      font-size:9px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+    .project-search { position: relative; margin: 0 1px 15px; }
+    .project-search input { width: 100%; min-height: 40px; padding: 9px 35px 9px 12px; border: 1px solid #383842; border-radius: 10px; outline: none; background: #1c1c24; color: var(--text); font-size:11px; }
+    .project-search input::placeholder { color: #777582; }
+    .project-search input:focus { border-color: #73704f; box-shadow: 0 0 0 3px rgba(214,255,105,.09); }
+    .project-search button { position: absolute; top: 4px; right: 5px; width: 30px; height: 30px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size:21px; cursor: pointer; }
+    .project-search button:hover { background: #2b2b35; color: var(--text); }
+    .sidebar-search { display:grid; gap:7px; margin:0 2px 17px; }
+    .sidebar-search>label { color:#aaa8b4; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    .sidebar-search>small { color:#777582; font-size:9px; line-height:1.45; }
+    .sidebar-search .project-search { margin:0; }
+    .sidebar-search .project-search input { padding-left:34px; }
+    .sidebar-search .discovery-search-icon { position:absolute; top:50%; left:10px; transform:translateY(-50%); color:var(--acid); font-size:19px; line-height:1; pointer-events:none; }
+    .search-results-status { margin: 0 0 13px; color: var(--muted); font-size:11px; }
+    .search-empty { padding: 26px; border: 1px dashed var(--line); border-radius: 13px; color: var(--muted); text-align: center; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .project-nav { display: grid; gap: 5px; }
+    .nav-item {
+      width: 100%;
+      min-height: 45px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: transparent;
+      color: #b6b4bf;
+      text-align: left;
+      cursor: pointer;
+      transition: color .16s ease, background .16s ease, border-color .16s ease;
+    }
+    .nav-item:hover { color: var(--text); background: #202027; }
+    .nav-item.active { color: var(--text); border-color: #414536; background: #22261d; }
+    .nav-symbol { flex: 0 0 22px; width: 22px; color: #8b8995; font-size:17px; text-align: center; }
+    .nav-item.active .nav-symbol { color: var(--acid); }
+    .nav-label { flex: 1; font-size:12px; font-weight: 680; }
+    .nav-indicator { width: 7px; height: 7px; border-radius: 50%; background: #55535f; }
+    .nav-item.active .nav-indicator { background: var(--acid); box-shadow: 0 0 10px rgba(214,255,105,.45); }
+
+    .sidebar-tools { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:0 2px 12px; }
+    .sidebar-tool { display:flex; align-items:center; gap:8px; min-width:0; min-height:43px; padding:7px 8px; border:1px solid #30313a; border-radius:8px; background:#17171d; color:#d8d6df; text-align:left; cursor:pointer; transition:border-color .16s ease,background .16s ease; }
+    .sidebar-tool:hover { border-color:#666b4f; background:#20221b; }
+    .sidebar-tool:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    .sidebar-tool>span:first-child { display:grid; place-items:center; flex:0 0 25px; width:25px; height:25px; border-radius:6px; background:#252630; color:var(--acid); font-size:14px; }
+    .sidebar-tool>span:last-child { display:grid; min-width:0; gap:2px; }
+    .sidebar-tool b { overflow:hidden; font-size:9px; font-weight:700; text-overflow:ellipsis; white-space:nowrap; }
+    .sidebar-tool small { overflow:hidden; color:var(--muted); font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
+    .sidebar-note { padding:11px 12px; background:linear-gradient(145deg,#1b1b22,#17171d); }
+    .sidebar-note-title { color:#c0b4ee; letter-spacing:.16em; }
+    .sidebar-note p { font-size:10px; line-height:1.55; }
+    @media(max-width:700px){.personal-shortcuts-summary{min-height:54px;padding:9px}.personal-shortcuts-content{max-height:54dvh}.sidebar-tools{gap:5px}.sidebar-tool{min-height:40px;padding:6px}.sidebar-tool b{font-size:9px}.sidebar-tool small{font-size:9px}}
+    .sidebar-bottom { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
+    .sidebar-note { margin: 0 2px 14px; padding: 12px; border: 1px solid var(--line); border-radius: 11px; background: #19191f; }
+    .sidebar-note-title { color: var(--violet); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .13em; text-transform: uppercase; }
+    .sidebar-note p { margin: 7px 0 0; color: var(--muted); font-size:11px; line-height: 1.55; }
+    .portfolio-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 43px;
+      padding: 10px 11px;
+      border: 1px solid #49415e;
+      border-radius: 10px;
+      background: #211e2a;
+      color: #ded6ff;
+      text-decoration: none;
+      font-size:11px;
+      font-weight: 700;
+      transition: background .16s ease, border-color .16s ease;
+    }
+    .portfolio-link:hover { background: #2b2638; border-color: #6a5b90; }
+    .portfolio-link span:last-child { font-size:16px; }
+    .sidebar-foot { margin: 12px 4px 1px; color: #666471; font-size:9px; letter-spacing: .08em; text-transform: uppercase; }
+
+    /* Main page */
+    .main { min-height: 100vh; margin-left: var(--sidebar-width); padding: 0 38px 55px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: rgba(16,16,20,.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 11px; min-width: 0; color: var(--muted); font-size:11px; }
+    .topbar-brand { color: var(--text); font-size:11px; font-weight: 850; letter-spacing: .12em; }
+    .topbar-separator { color: #55535f; }
+    .topbar-context { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .topbar-right { display: flex; align-items: center; gap: 13px; color: var(--dim); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .status-live { display: inline-flex; align-items: center; gap: 7px; color: var(--acid); }
+    .status-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 9px rgba(214,255,105,.55); }
+    .topbar-action { padding: 5px 8px; border: 1px solid #393843; border-radius: 6px; background: #17171e; color: #a09eaa; font:inherit; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: color .16s ease, border-color .16s ease, background .16s ease; }
+    .topbar-action:hover { color: var(--text); border-color: #68645c; background: #222229; }
+    .topbar-action:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+    .topbar-action[hidden] { display: none; }
+    .menu-toggle { position: relative; z-index: 51; display: none; width: 39px; height: 39px; flex: 0 0 auto; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); color: var(--text); cursor: pointer; }
+    .page-wrap { max-width: 1380px; margin: 0 auto; }
+    .hero { padding: 15px 0 18px; }
+    h1 { max-width: 790px; margin: 0; font-size:clamp(25px, 2.8vw, 31px); line-height: .99; letter-spacing: -.065em; font-weight: 820; }
+    .strange-word { position: relative; display: inline-flex; align-items: baseline; color: var(--acid); font-style: normal; letter-spacing: -.075em; transform: skewX(-8deg) rotate(-1.4deg); transform-origin: left center; text-shadow: 2px 0 rgba(214,255,105,.27), -2px 1px rgba(214,255,105,.16), 0 0 22px rgba(214,255,105,.12); white-space: nowrap; }
+    .strange-word::before { content: attr(data-word); position: absolute; z-index: 0; color: var(--acid); opacity: .2; transform: translate(4px,-3px) skewX(17deg) scaleY(.88); clip-path: inset(0 0 46% 0); pointer-events: none; }
+    .strange-word span { position: relative; z-index: 1; display: inline-block; }
+    .strange-word span:nth-child(1) { transform: translateY(2px) rotate(-9deg) scaleY(1.12); }
+    .strange-word span:nth-child(2) { transform: translateY(-3px) rotate(8deg) scaleY(.84); }
+    .strange-word span:nth-child(3) { transform: translateY(3px) rotate(-5deg) scaleX(1.1); }
+    .strange-word span:nth-child(4) { transform: translateY(-2px) rotate(5deg) scaleY(1.13); }
+    .strange-word span:nth-child(5) { transform: translateY(2px) rotate(-8deg) scaleX(.9); }
+    .strange-word span:nth-child(6) { transform: translateY(-3px) rotate(7deg) scaleY(.9); }
+    .strange-word span:nth-child(7) { transform: translateY(1px) rotate(-4deg) scaleX(1.08); }
+    .hero-assurance { display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:11px 0 0; color:#8f8d9a; font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.13em; }
+    .hero-assurance span { color:var(--acid); }
+    .featured-quickstart { padding:0 0 17px; }
+    .featured-quickstart-heading { display:flex; align-items:end; justify-content:space-between; gap:12px; margin:0 0 9px; }
+    .featured-quickstart-heading>div { min-width:0; }
+    .featured-quickstart-kicker { margin:0 0 3px; color:var(--acid); font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.15em; }
+    .featured-quickstart-heading h2 { margin:0; color:#efeee9; font-size:clamp(18px,2.1vw,22px); font-weight:820; letter-spacing:-.04em; }
+    .featured-quickstart-count { color:#777583; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; white-space:nowrap; }
+    .featured-carousel { display:grid; grid-template-columns:36px minmax(0,1fr) 36px; align-items:stretch; gap:9px; }
+    .featured-carousel-arrow { align-self:center; display:grid; place-items:center; width:36px; height:42px; padding:0; border:1px solid #383943; border-radius:9px; background:#171820; color:#aaa8b5; font:22px/1 system-ui,sans-serif; cursor:pointer; transition:border-color .16s ease,color .16s ease,background .16s ease,transform .16s ease; }
+    .featured-carousel-arrow:hover { border-color:#687548; background:#20231c; color:var(--acid); }
+    .featured-carousel-arrow:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    .featured-carousel-arrow[hidden] { display:none !important; }
+    .featured-preview-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; min-width:0; }
+    .featured-project-card { display:grid; grid-template-rows:auto auto; gap:5px; min-width:0; padding:6px; border:1px solid #30313b; border-radius:10px; background:linear-gradient(145deg,rgba(255,255,255,.025),rgba(255,255,255,.004)),#171820; color:#e9e7ef; text-align:left; cursor:pointer; transition:border-color .16s ease,background .16s ease,transform .16s ease,box-shadow .16s ease; }
+    .featured-project-card:hover,.featured-project-card:focus-visible { transform:translateY(-2px); border-color:#687548; background:#1b1e19; box-shadow:0 8px 22px rgba(0,0,0,.16); }
+    .featured-project-card:focus-visible { outline:2px solid var(--acid); outline-offset:3px; }
+    .featured-project-card .project-preview { aspect-ratio:16/6.8; }
+    .featured-project-title { display:-webkit-box; min-width:0; padding:0 3px 1px; overflow:hidden; color:#e7e5ed; font-size:11px; font-weight:720; line-height:1.25; text-overflow:ellipsis; white-space:normal; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+    .featured-divider { margin-top:1px; margin-bottom:13px; }
+    @media(prefers-reduced-motion:reduce) { .featured-project-card,.featured-carousel-arrow { transition:none !important; } .featured-project-card:hover,.featured-project-card:focus-visible { transform:none; } }
+    .discovery-section { padding:0 0 24px; }
+    .discovery-disclosure { border:1px solid #30313a; border-radius:11px; background:#15161d; overflow:hidden; }
+    .discovery-disclosure-summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:54px; padding:9px 13px; cursor:pointer; list-style:none; }
+    .discovery-disclosure-summary::-webkit-details-marker { display:none; }
+    .discovery-disclosure-summary>span:first-child { display:grid; gap:3px; }
+    .discovery-disclosure-summary small { color:#858390; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.12em; }
+    .discovery-disclosure-summary strong { color:#e4e2eb; font-size:12px; font-weight:700; }
+    .discovery-disclosure-mark { display:grid; place-items:center; flex:0 0 24px; width:24px; height:24px; border:1px solid #3a3b45; border-radius:7px; color:var(--acid); font-size:14px; }
+    .discovery-disclosure[open] .discovery-disclosure-mark { transform:rotate(45deg); }
+    .discovery-disclosure .discovery-grid { padding:0 12px 12px; }
+    .discovery-disclosure:not([open]) .discovery-grid { display:none; }
+    .discovery-disclosure[hidden] { display:none; }
+    .discovery-section[hidden] { display:none; }
+    .discovery-heading { display:flex; align-items:end; justify-content:space-between; gap:18px; margin:0 0 15px; }
+    .discovery-heading>div { min-width:0; }
+    .discovery-kicker { margin:0 0 5px; color:var(--acid); font:9px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.16em; }
+    .discovery-heading h2 { margin:0; color:#efeee9; font-size:clamp(19px,2.4vw,25px); font-weight:780; letter-spacing:-.045em; }
+    .discovery-heading>p { max-width:240px; margin:0; color:#858390; font-size:10px; line-height:1.55; text-align:right; }
+    .discovery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .discovery-card { --browse-accent:#c1a5ff; position:relative; display:grid; grid-template-columns:34px minmax(0,1fr); grid-template-rows:auto 1fr auto; align-content:start; align-items:center; gap:5px 11px; min-width:0; min-height:125px; padding:15px; overflow:hidden; border:1px solid #343540; border-radius:12px; background:linear-gradient(140deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 62%),#171820; color:#e9e7ef; text-align:left; cursor:pointer; transition:transform .16s ease,border-color .16s ease,background .16s ease,box-shadow .16s ease; }
+    .discovery-card::after { content:""; position:absolute; top:-34px; right:0; width:95px; height:95px; border-radius:50%; background:var(--browse-accent); opacity:.065; filter:blur(2px); pointer-events:none; }
+    .discovery-card:hover,.discovery-card:focus-visible { transform:translateY(-2px); border-color:color-mix(in srgb,var(--browse-accent) 65%,#343540); background:linear-gradient(140deg,color-mix(in srgb,var(--browse-accent) 8%,#171820),#171820 75%); box-shadow:0 9px 24px rgba(0,0,0,.16); }
+    .discovery-card:focus-visible { outline:2px solid var(--browse-accent); outline-offset:3px; }
+    .discovery-card[aria-pressed="true"] { border-color:var(--browse-accent); }
+    .discovery-glyph { grid-row:1 / span 2; display:grid; place-items:center; width:34px; height:34px; border:1px solid color-mix(in srgb,var(--browse-accent) 30%,#33343e); border-radius:9px; background:color-mix(in srgb,var(--browse-accent) 9%,#1d1e27); color:var(--browse-accent); font-size:19px; }
+    .discovery-title { align-self:end; color:var(--browse-accent); font:800 17px/1.05 system-ui,sans-serif; letter-spacing:.045em; }
+    .discovery-description { grid-column:2; align-self:start; max-width:280px; color:#a4a2af; font:10px/1.5 system-ui,sans-serif; }
+    .discovery-meta { grid-column:1 / -1; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:8px; padding-top:9px; border-top:1px solid rgba(255,255,255,.06); color:#797885; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.1em; }
+    .discovery-meta b { color:var(--browse-accent); font:700 9px ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .discovery-card[data-tone="play"] { --browse-accent:#f3c45c; }
+    .discovery-card[data-tone="make"] { --browse-accent:#ff8fc5; }
+    .discovery-card[data-tone="listen"] { --browse-accent:#79d9df; }
+    .discovery-card[data-tone="explore"] { --browse-accent:#9da8ff; }
+    .discovery-card[data-tone="worlds"] { --browse-accent:#b3e879; }
+    .discovery-card[data-tone="archive"] { --browse-accent:#c1a5ff; }
+    .discovery-card[data-tone="tools"] { --browse-accent:#f09d78; }
+    .discovery-card[data-tone="build"] { --browse-accent:#a8e3a0; }
+    .discovery-card[data-tone="all"] { --browse-accent:#e4e0f0; }
+    .discovery-card-build { background:linear-gradient(140deg,rgba(120,192,132,.10),rgba(255,255,255,.008) 70%),#171820; }
+    .discovery-card-all { background:linear-gradient(140deg,rgba(187,174,220,.10),rgba(255,255,255,.008) 70%),#171820; }
+    .rooms-label[hidden],.category-stack[hidden] { display:none; }
+    .rooms-label { margin-top:2px; }
+    .rooms-label span:last-child { text-transform:uppercase; }
+    .sidebar-browse-collections { margin:14px 12px 0; border:1px solid #343540; border-radius:9px; background:#171820; }
+    .sidebar-browse-collections>summary { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:40px; padding:0 11px; color:#c8c6d0; font-size:11px; font-weight:700; cursor:pointer; list-style:none; }
+    .sidebar-browse-collections>summary::-webkit-details-marker { display:none; }
+    .sidebar-browse-collections>summary::after { content:"＋"; color:#898795; font-size:13px; }
+    .sidebar-browse-collections[open]>summary::after { content:"−"; }
+    .sidebar-browse-count { margin-left:auto; color:#777684; font:9px ui-monospace,monospace; }
+    .sidebar-browse-collections .category-nav { padding:4px 6px 7px; }
+    .sidebar-browse-collections .category-nav .nav-item { min-height:37px; }
+    .sidebar-browse-collections .nav-item-all { margin-bottom:5px; border-bottom:1px solid #30313a; border-radius:5px 5px 0 0; }
+    .sidebar-browse-collections .nav-item[aria-current="location"] { color:var(--acid); }
+    .notification-tabs { display:flex; gap:5px; padding:8px 10px 0; border-bottom:1px solid #30313b; }
+    .notification-tabs button { display:flex; align-items:center; gap:6px; padding:7px 9px 8px; border:0; border-bottom:2px solid transparent; background:transparent; color:#9998a5; font:10px system-ui,sans-serif; cursor:pointer; }
+    .notification-tabs button[aria-selected="true"] { border-bottom-color:var(--acid); color:#e8e6ed; }
+    .notification-tabs button span { padding:2px 5px; border-radius:8px; background:#2b2d34; color:#c4c2cf; font:8px ui-monospace,monospace; }
+    .site-notification-updates { overflow:auto; padding:6px; }
+    .site-notification-updates[hidden] { display:none; }
+    .site-notification-updates article { display:grid; gap:4px; padding:10px; border-bottom:1px solid #2c2d36; }
+    .site-notification-updates article:last-child { border-bottom:0; }
+    .site-notification-updates small { color:var(--acid); font:8px ui-monospace,monospace; letter-spacing:.12em; }
+    .site-notification-updates b { color:#e6e4ed; font:600 11px system-ui,sans-serif; }
+    .site-notification-updates p { margin:0; color:#aaa8b5; font:10px/1.5 system-ui,sans-serif; }
+    .room-tags { display:flex; align-items:center; flex-wrap:wrap; gap:5px; padding:0 15px 12px 62px; }
+    .room-tag { min-height:22px; padding:4px 7px; border:1px solid #373843; border-radius:6px; background:#1d1e26; color:#a7a5b1; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.035em; cursor:pointer; }
+    .room-tag:hover,.room-tag:focus-visible { border-color:#707e4c; color:var(--acid); }
+    .room-tag:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    .room-tag-featured { border-color:rgba(214,255,105,.32); background:rgba(214,255,105,.075); color:var(--acid); font-weight:800; letter-spacing:.11em; cursor:default; }
+    .room-list-divider { display:flex; align-items:center; gap:10px; margin:8px 0 1px; color:#7c7a88; font:8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; }
+    .room-list-divider::after { content:""; height:1px; flex:1; background:#2b2c35; }
+    .room-list-divider[hidden] { display:none; }
+    .room-window.open .room-tags,.room-window.curioid-fullscreen-window .room-tags { display:none; }
+    @media(max-width:860px) { .discovery-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:760px) { .featured-preview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .featured-carousel { grid-template-columns:32px minmax(0,1fr) 32px; gap:7px; } .featured-carousel-arrow { width:32px; height:40px; } }
+    @media(max-width:560px) { .hero-assurance { font-size:8px; } .featured-preview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; } .featured-carousel { grid-template-columns:30px minmax(0,1fr) 30px; gap:5px; } .featured-carousel-arrow { width:30px; height:38px; } .featured-project-card { padding:5px; } .featured-project-title { font-size:10px; } .discovery-grid { gap:8px; } .discovery-card { min-height:125px; padding:12px; grid-template-columns:29px minmax(0,1fr); gap:5px 8px; } .discovery-glyph { width:29px; height:29px; } .discovery-title { font-size:15px; } .room-card-content { grid-template-columns:minmax(0,1fr) minmax(104px,34%); gap:7px; padding:6px 6px 0; } .room-card-content .room-card-head { grid-template-columns:minmax(0,1fr) 31px 31px; gap:3px; } .room-card-content .room-favorite,.room-card-content .room-share { width:30px; height:30px; margin:0; } .room-card-content .room-heading { gap:6px; padding:8px 5px; } .room-card-content .room-icon { width:27px; height:27px; flex-basis:27px; } .room-card-content .room-name { font-size:11px; } .room-card-content .room-description { max-width:100%; font-size:9px; } .room-card-content .room-tags { padding-left:12px; } .project-preview-window { inset:4px; } }
+    @media(max-width:380px) { .room-card-content { grid-template-columns:minmax(0,1fr) 94px; gap:5px; } .room-card-content .room-card-head { grid-template-columns:minmax(0,1fr) 28px 28px; gap:2px; } .room-card-content .room-favorite,.room-card-content .room-share { width:27px; height:27px; } .room-card-content .room-icon { display:none; } .room-card-content .room-heading { padding-left:4px; } }
+    @media(max-width:380px) { .discovery-grid { grid-template-columns:1fr; } .featured-carousel { grid-template-columns:32px minmax(0,1fr) 32px; gap:5px; } .featured-carousel-arrow { width:32px; height:40px; } .featured-preview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; } .featured-project-title { font-size:9px; } .discovery-card { min-height:112px; } }
+
+    /* Stage 5: the universe is a discovery layer, never another desktop. */
+    .room-related-link:focus-visible { outline: 2px solid var(--acid); outline-offset: 2px; }
+
+
+    .section-rule { height: 1px; margin: 0 0 22px; border: 0; background: var(--line); }
+    .rooms-label { display: flex; align-items: center; justify-content: space-between; flex-wrap:wrap; gap: 12px 20px; margin: 0 0 10px; color: var(--dim); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .15em; text-transform: uppercase; }
+    .rooms-label span:last-child { color: #686674; letter-spacing: .08em; }
+
+    .rooms-label{align-items:center;}
+    .rooms-label-actions{display:flex;align-items:center;gap:16px;min-width:0;flex-wrap:wrap;}
+    .rooms-label-actions>span:first-child{color:#858390;letter-spacing:.08em;}
+    .categories-return-button { min-height:28px; margin-left:3px; padding:5px 10px; border:1px solid #41434f; border-radius:7px; background:#1b1c24; color:#d0ced8; font:800 8px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.14em; cursor:pointer; transition:border-color .16s ease,color .16s ease,background .16s ease; }
+    .categories-return-button:hover { border-color:var(--acid); background:#22251d; color:var(--acid); }
+    .egg-hunt-toggle{position:relative;display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;padding:5px;border:1px solid rgba(214,255,105,.72);border-radius:8px;background:linear-gradient(145deg,#252a1d,#181a21);color:var(--acid);cursor:pointer;transition:border-color .18s,background .18s,transform .18s;}
+    .egg-hunt-toggle svg{display:block;width:19px;height:19px;fill:rgba(214,255,105,.18);stroke:var(--acid);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round;}
+    .topbar .egg-hunt-toggle{width:32px;height:32px;flex:0 0 32px;padding:5px;}
+    .egg-hunt-toggle[data-enabled="true"]{border-color:var(--acid);color:var(--acid);box-shadow:0 0 0 1px rgba(214,255,105,.14),0 0 15px rgba(214,255,105,.10);}
+    .egg-hunt-toggle[data-enabled="false"]{border-color:var(--acid);color:var(--acid);box-shadow:0 0 0 1px rgba(214,255,105,.14),0 0 15px rgba(214,255,105,.10);filter:none;opacity:1;}
+    .egg-hunt-toggle:hover{transform:translateY(-1px);}
+    .egg-hunt-toggle:focus-visible{outline:2px solid var(--acid);outline-offset:3px;}
+    .egg-hunt-status-dot{position:absolute;right:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:#55dc84;box-shadow:0 0 7px rgba(85,220,132,.8);}
+    .egg-hunt-toggle[data-enabled="true"] .egg-hunt-status-dot{background:#55dc84;box-shadow:0 0 7px rgba(85,220,132,.8);}
+    .egg-hunt-toggle[data-enabled="false"] .egg-hunt-status-dot{background:#ff5d68;box-shadow:0 0 7px rgba(255,93,104,.75);}
+    .egg-hunt-toggle-hint{display:none!important;}
+    .sidebar-notification-button>span:first-child{flex-basis:25px;width:25px;height:25px;}
+    .sidebar-notification-button .notification-count{top:-4px;right:-4px;}
+    .site-control-preferences{display:grid;gap:11px;margin:0 18px 14px;padding:12px;border:1px solid #343642;border-radius:10px;background:#20212a;}
+    .site-control-display-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+    .site-control-display-grid>label{display:grid;gap:7px;min-width:0;color:#c7c6d0;font:700 9px ui-monospace,monospace;letter-spacing:.08em;}
+    .site-control-display-grid select{width:100%;min-height:36px;padding:7px 9px;border:1px solid #41434e;border-radius:6px;background:#171922;color:#f1f1f5;font:11px system-ui,sans-serif;}
+    .site-control-display-grid small{color:#8c8e9b;font:10px/1.5 system-ui,sans-serif;letter-spacing:0;}
+    @media(max-width:560px){.site-control-display-grid{grid-template-columns:minmax(0,1fr)}}
+    .global-volume-control{display:grid;grid-template-columns:105px minmax(70px,1fr) 42px;align-items:center;gap:10px;color:#aaa8b5;font:9px ui-monospace,monospace;letter-spacing:.08em;}
+    .global-volume-control input{width:100%;min-width:0;accent-color:var(--acid);}
+    .global-volume-control output{color:#e9e7ef;text-align:right;font-size:10px;}
+    .topbar .global-volume-control{display:inline-flex;grid-template-columns:none;align-items:center;gap:7px;min-width:0;white-space:nowrap;color:var(--dim);font:9px ui-monospace, SFMono-Regular, Menlo, monospace;letter-spacing:.08em;}
+    .topbar .global-volume-control input{width:66px;min-width:48px;accent-color:var(--acid);}
+    .topbar .global-volume-control output{min-width:28px;color:#e9e7ef;text-align:right;font-size:9px;}
+    .topbar-notification-wrap{position:relative;display:flex;align-items:center;flex:0 0 auto;}
+    .topbar-notification-button{position:relative;display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;min-width:32px;padding:0;border:1px solid #393a46;border-radius:8px;background:#1a1b22;color:#d9d7e0;cursor:pointer;}
+    .topbar-notification-button:hover,.topbar-notification-button[aria-expanded="true"]{border-color:var(--acid);color:var(--acid);background:#22241d;}
+    .topbar-notification-button svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+    .topbar-notification-wrap .site-notification-panel{left:auto;right:0;}
+    .site-control-preference-actions{display:flex;flex-wrap:wrap;gap:7px;}
+    .site-control-small-action{min-height:31px;padding:6px 9px;border:1px solid #41434f;border-radius:7px;background:#171820;color:#d5d3dd;font-size:10px;cursor:pointer;}
+    .site-control-small-action:hover{border-color:#8f995d;background:#24261f;}
+    /* A single visible Health Check control changes from Run to Download when ready. */
+    /* Health report uses one visible control: the same anchor runs diagnostics, then becomes the download. */
+    .site-control-small-action[data-health-download][aria-disabled="true"]{opacity:.58;cursor:wait;pointer-events:none;} .site-control-small-action[data-health-run][data-running="true"]{opacity:.58;cursor:wait;pointer-events:none;}
+    .site-control-small-action[data-health-download][aria-disabled="false"]{cursor:pointer;}
+    .site-control-small-action[hidden]{display:none;}
+    .site-control-preferences .status-live{font-size:9px;letter-spacing:.08em;}
+    @media(max-width:900px){.rooms-label{align-items:flex-start;}.rooms-label-actions{flex-shrink:0;}}
+    @media(max-width:560px){.rooms-label{font-size:8px;letter-spacing:.1em;}.rooms-label-actions{gap:6px;}.site-control-preferences{margin-inline:12px;}.global-volume-control{grid-template-columns:1fr 42px;}.global-volume-control>span{grid-column:1/-1;}}
+
+    .category-stack { display: grid; gap: 37px; }
+    .category-section { min-width: 0; scroll-margin-top: 83px; }
+    #categorySections > .category-section { content-visibility: auto; contain-intrinsic-size: auto 880px; }
+    .category-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin: 0 0 12px; padding: 0 2px 11px; border-bottom: 1px solid var(--line-soft); }
+    .category-heading-copy { min-width: 0; }
+    .category-kicker { margin: 0 0 4px; color: var(--acid); font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; }
+    .category-title { margin: 0; color: #efeee9; font-size:clamp(20px, 2.5vw, 26px); font-weight: 810; letter-spacing: -.045em; }
+    .category-description { margin: 4px 0 0; color: var(--muted); font-size:11px; line-height: 1.6; }
+    .category-count { flex: 0 0 auto; padding: 5px 8px; border: 1px solid #373641; border-radius: 6px; color: #898793; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; white-space: nowrap; }
+    .studio-filter-row { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin:-1px 0 12px; }
+    .studio-filter-button { min-height:28px; padding:5px 9px; border:1px solid #34333e; border-radius:7px; background:#17171d; color:#aaa8b3; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.035em; cursor:pointer; transition:background .14s ease,border-color .14s ease,color .14s ease; }
+    .studio-filter-button:hover { border-color:#66694b; color:#eeede6; }
+    .studio-filter-button.is-active { border-color:#687b48; background:rgba(214,255,105,.09); color:var(--acid); }
+    .standalone-project-frame { display:block; width:100%; min-height:760px; height:860px; border:0; border-radius:9px; background:#090b0e; }
+
+    @media(max-width:620px) { .studio-filter-row { flex-wrap:wrap; max-width:100%; overflow:visible; padding:1px 0 5px; } .studio-filter-button { flex:0 1 auto; } }
+    .category-nav .nav-item { min-height: 43px; }
+
+    /* Click-to-expand project windows */
+    .room-list { display: grid; gap: 9px; }
+    .room-card-content { display:grid; grid-template-columns:minmax(0,1fr) minmax(190px,29%); align-items:center; gap:14px; min-width:0; padding:8px 10px 0; }
+    .room-card-details { min-width:0; }
+    .room-card-content .room-tags { padding-bottom:10px; }
+    .room-preview-button { display:block; min-width:0; width:100%; padding:0; border:0; border-radius:9px; background:transparent; cursor:pointer; }
+    .room-preview-button:hover .project-preview { border-color:#687548; box-shadow:0 0 0 1px rgba(214,255,105,.09),0 7px 20px rgba(0,0,0,.22); }
+    .room-preview-button:focus-visible { outline:2px solid var(--acid); outline-offset:4px; }
+    .room-window.open .room-card-content { grid-template-columns:minmax(0,1fr); }
+    .room-window.open .room-preview-button { display:none; }
+    .project-preview { --preview-accent:#d6ff69; --preview-secondary:#85e6da; --preview-background:#17221f; position:relative; display:block; width:100%; aspect-ratio:16/8.6; min-width:0; overflow:hidden; border:1px solid #3a3d45; border-radius:8px; background:var(--preview-background); isolation:isolate; }
+    .project-preview[data-preview-category="operating-systems"] { --preview-accent:#b9e879; --preview-secondary:#7fd5cf; --preview-background:#203c39; }
+    .project-preview[data-preview-category="strange-archives"] { --preview-accent:#c1a5ff; --preview-secondary:#edb8a2; --preview-background:#292437; }
+    .project-preview[data-preview-category="web-experiments"] { --preview-accent:#8fdbff; --preview-secondary:#b9a2ff; --preview-background:#182b3c; }
+    .project-preview[data-preview-category="tiny-games"] { --preview-accent:#f3c45c; --preview-secondary:#ff8fc5; --preview-background:#282332; }
+    .project-preview[data-preview-category="digital-art"] { --preview-accent:#ff9bc7; --preview-secondary:#85e6da; --preview-background:#2a2035; }
+    .project-preview[data-preview-category="sound-motion"] { --preview-accent:#80dce1; --preview-secondary:#b9a5ff; --preview-background:#182a36; }
+    .project-preview[data-preview-category="creative-tools"] { --preview-accent:#f0a27d; --preview-secondary:#b8e77e; --preview-background:#252832; }
+    .project-preview-window { position:absolute; inset:6px; overflow:hidden; border:1px solid color-mix(in srgb,var(--preview-accent) 25%,#3b3d47); border-radius:5px; background:linear-gradient(135deg,rgba(255,255,255,.045),transparent 58%),var(--preview-background); box-shadow:inset 0 0 22px rgba(0,0,0,.18); }
+    .project-preview-chrome { position:relative; z-index:2; display:flex; align-items:center; gap:4px; height:12px; padding:0 6px; border-bottom:1px solid rgba(255,255,255,.1); background:rgba(7,9,14,.32); }
+    .preview-chrome-dot { width:4px; height:4px; flex:0 0 4px; border-radius:50%; background:var(--preview-accent); opacity:.82; }
+    .preview-chrome-dot:nth-child(2) { background:var(--preview-secondary); }
+    .preview-chrome-dot:nth-child(3) { background:#918b9e; }
+    .preview-chrome-line { width:22%; height:2px; margin-left:auto; border-radius:2px; background:rgba(255,255,255,.2); }
+    .project-preview-screen { position:absolute; inset:12px 0 0; overflow:hidden; }
+    .preview-motif { position:absolute; inset:0; overflow:hidden; }
+    .preview-desktop-grid { position:absolute; inset:9px 9px 12px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); gap:7px; }
+    .preview-desktop-icon { display:grid; align-content:start; justify-items:center; gap:3px; min-width:0; color:var(--preview-secondary); font-size:clamp(9px,1.3vw,16px); text-shadow:0 1px 3px #000; }
+    .preview-desktop-icon i { display:block; width:72%; height:3px; border-radius:3px; background:rgba(255,255,255,.45); }
+    .preview-taskbar { position:absolute; right:0; bottom:0; left:0; height:8px; border-top:1px solid rgba(255,255,255,.25); background:linear-gradient(90deg,#d9d9d9,#999da4); }
+    .preview-archive-grid { position:absolute; inset:10px 10px 8px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; align-items:center; }
+    .preview-archive-card { position:relative; height:72%; border:1px solid color-mix(in srgb,var(--preview-accent) 35%,transparent); border-radius:3px; background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(0,0,0,.1)); }
+    .preview-archive-card::before,.preview-archive-card::after { content:""; position:absolute; left:15%; width:70%; height:3px; border-radius:2px; background:var(--preview-accent); opacity:.7; }
+    .preview-archive-card::before { top:22%; }
+    .preview-archive-card::after { top:39%; width:48%; background:rgba(255,255,255,.5); }
+    .preview-orbit { position:absolute; inset:0; display:grid; place-items:center; }
+    .preview-orbit::before,.preview-orbit::after { content:""; position:absolute; width:54%; aspect-ratio:1; border:1px solid color-mix(in srgb,var(--preview-accent) 55%,transparent); border-radius:50%; transform:rotate(-25deg) scaleX(1.7); }
+    .preview-orbit::after { width:38%; border-color:color-mix(in srgb,var(--preview-secondary) 55%,transparent); transform:rotate(48deg) scaleX(1.9); }
+    .preview-orbit-core { width:15%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 35% 30%,#fff,var(--preview-accent) 35%,color-mix(in srgb,var(--preview-accent) 20%,transparent) 75%); box-shadow:0 0 22px color-mix(in srgb,var(--preview-accent) 35%,transparent); }
+    .preview-orbit-node { position:absolute; width:8px; aspect-ratio:1; border-radius:50%; background:var(--preview-secondary); box-shadow:0 0 10px var(--preview-secondary); }
+    .preview-orbit-node:nth-child(2) { top:22%; left:27%; }
+    .preview-orbit-node:nth-child(3) { right:22%; bottom:22%; width:6px; background:var(--preview-accent); }
+    .preview-game-grid { position:absolute; inset:10px 17%; display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); gap:3px; transform:perspective(220px) rotateX(7deg); }
+    .preview-game-cell { border:1px solid rgba(255,255,255,.09); border-radius:2px; background:rgba(255,255,255,.045); }
+    .preview-game-cell.is-lit { background:color-mix(in srgb,var(--preview-accent) 76%,#302c43); border-color:color-mix(in srgb,var(--preview-accent) 70%,transparent); box-shadow:inset 0 0 7px rgba(255,255,255,.16); }
+    .preview-art-shape { position:absolute; display:block; width:48%; aspect-ratio:1; border-radius:46% 54% 60% 40%; background:linear-gradient(135deg,var(--preview-accent),var(--preview-secondary)); opacity:.82; filter:saturate(.88); }
+    .preview-art-shape:nth-child(1) { top:-15%; left:10%; transform:rotate(18deg) scale(.8,1.15); }
+    .preview-art-shape:nth-child(2) { right:3%; bottom:-23%; transform:rotate(-28deg) scale(1.05,.72); opacity:.74; }
+    .preview-art-shape:nth-child(3) { top:14%; right:23%; width:28%; border-radius:50%; background:linear-gradient(145deg,#fff,var(--preview-accent)); opacity:.85; }
+    .preview-wave { position:absolute; inset:16% 9% 12%; display:flex; align-items:center; justify-content:center; gap:2.1%; }
+    .preview-wave-bar { width:4.2%; height:var(--wave-height,40%); border-radius:5px; background:linear-gradient(180deg,var(--preview-accent),var(--preview-secondary)); box-shadow:0 0 8px color-mix(in srgb,var(--preview-accent) 22%,transparent); }
+    .preview-tool-layout { position:absolute; inset:8px; display:grid; grid-template-columns:1.35fr .85fr; gap:8px; }
+    .preview-tool-code { display:grid; align-content:center; gap:5px; padding-right:7px; border-right:1px solid rgba(255,255,255,.1); }
+    .preview-tool-code i { display:block; width:var(--code-width,75%); height:3px; border-radius:3px; background:rgba(255,255,255,.32); }
+    .preview-tool-code i:nth-child(2n) { background:var(--preview-accent); opacity:.72; }
+    .preview-tool-swatches { display:grid; grid-template-columns:repeat(2,1fr); align-content:center; gap:4px; }
+    .preview-tool-swatches i { display:block; aspect-ratio:1.6; border-radius:2px; background:var(--preview-accent); opacity:.78; }
+    .preview-tool-swatches i:nth-child(2n) { background:var(--preview-secondary); }
+    /* Seeded layout variants keep projects in the same family from looking identical. */
+    .project-preview[data-preview-variant="1"] .preview-desktop-grid { grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:repeat(4,minmax(0,1fr)); }
+    .project-preview[data-preview-variant="2"] .preview-desktop-grid { inset:7px 18px 12px 7px; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); }
+    .project-preview[data-preview-variant="1"] .preview-archive-grid { grid-template-columns:1.1fr 1.5fr .8fr; transform:rotate(-3deg); }
+    .project-preview[data-preview-variant="2"] .preview-archive-card:nth-child(2) { height:90%; transform:translateY(-5px); }
+    .project-preview[data-preview-variant="1"] .preview-orbit::before { transform:rotate(32deg) scaleX(1.25); }
+    .project-preview[data-preview-variant="2"] .preview-orbit::after { transform:rotate(-34deg) scaleX(1.35); }
+    .project-preview[data-preview-variant="1"] .preview-game-grid { transform:perspective(220px) rotateX(10deg) rotateZ(-7deg); }
+    .project-preview[data-preview-variant="2"] .preview-game-grid { inset:8px 11%; transform:perspective(220px) rotateX(5deg) rotateZ(5deg); }
+    .project-preview[data-preview-variant="1"] .preview-art-shape:nth-child(1) { left:35%; top:-20%; transform:rotate(-24deg) scale(.9,1.3); }
+    .project-preview[data-preview-variant="2"] .preview-art-shape:nth-child(2) { right:30%; bottom:-33%; transform:rotate(22deg) scale(1.15,.85); }
+    .project-preview[data-preview-variant="1"] .preview-tool-layout { grid-template-columns:.8fr 1.2fr; }
+    .project-preview[data-preview-variant="2"] .preview-tool-layout { grid-template-columns:1.6fr .6fr; }
+    .project-preview[data-preview-id="dead-interface"] { --preview-accent:#d9e3f2; --preview-secondary:#f6f0bf; --preview-background:#397f4c; border-color:#8ea7b8; background:linear-gradient(180deg,#7fb5e2 0 46%,#4b8c43 46% 100%); }
+    .project-preview[data-preview-id="dead-interface"] .project-preview-window { border-color:#b8c8d2; background:transparent; box-shadow:inset 0 0 0 1px rgba(0,0,0,.25); }
+    .project-preview[data-preview-id="dead-interface"] .project-preview-chrome { background:#163b91; border-bottom-color:#b7c8e2; }
+    .project-preview[data-preview-id="dead-interface"] .preview-desktop-icon { color:#fff; font-size:clamp(8px,1vw,12px); }
+    .project-preview[data-preview-id="dead-interface"] .preview-taskbar { z-index:3; height:12px; border-top:1px solid #fff; background:linear-gradient(#e5e5e5,#b9bbc2); }
+    .preview-doors98-dialog { position:absolute; z-index:2; top:20%; left:25%; display:grid; grid-template-columns:25% 1fr; grid-template-rows:auto 1fr auto; gap:3px 6px; width:55%; min-height:58%; padding:3px; border:1px solid #f4f4f4; background:#c5c6cc; box-shadow:2px 3px 0 rgba(0,0,0,.35); color:#101018; font:600 6px/1.1 system-ui,sans-serif; }
+    .preview-doors98-dialog-title { grid-column:1/-1; display:block; padding:3px 4px; background:#173b9a; color:#fff; font:600 6px/1.1 system-ui,sans-serif; }
+    .preview-doors98-door { display:grid; place-items:center; color:#183d92; font-size:clamp(16px,2.4vw,27px); }
+    .preview-doors98-copy { align-self:center; font-size:clamp(8px,1.3vw,15px); }
+    .preview-doors98-start { grid-column:1/-1; justify-self:center; padding:2px 10px; border:1px solid #686a72; background:#e2e2e2; }
+    .room-list { display: grid; gap: 9px; }
+    .room-window { min-width: 0; overflow: hidden; border: 1px solid #33333d; border-radius: 12px; background: #17171d; transition: border-color .18s ease, background .18s ease; scroll-margin-top: 77px; }
+    .room-window:not(.open) { content-visibility: auto; contain-intrinsic-size: auto 72px; }
+    .room-window.open { border-color: #585a46; background: #18191a; }
+    .room-heading {
+      width: 100%;
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 11px 15px;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+    }
+    .room-heading:hover { background: rgba(255,255,255,.025); }
+    .room-window.open .room-heading { border-bottom: 1px solid var(--line); }
+    .room-icon { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 34px; border: 1px solid #44434f; border-radius: 9px; background: #22222b; color: var(--violet); font-size:16px; }
+    .room-window:first-child .room-icon { border-color: #4e5937; background: #23291b; color: var(--acid); }
+    .room-number { color: #797784; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .room-name-wrap { flex: 1; min-width: 0; }
+    .room-name { display: block; overflow: hidden; color: #e9e8e4; font-size:13px; font-weight: 760; text-overflow: ellipsis; white-space: nowrap; }
+    .room-description { display: block; overflow: hidden; margin-top: 3px; color: #898794; font-size:10px; text-overflow: ellipsis; white-space: nowrap; }
+    .room-chevron { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 25px; border: 1px solid #393943; border-radius: 7px; color: #aaa8b3; font-size:15px; transition: transform .2s ease; }
+    .room-window.open .room-chevron { transform: rotate(180deg); color: var(--acid); }
+    .room-body { padding: 17px; }
+    .room-body[hidden] { display: none; }
+    .project-loading, .project-load-error { display: flex; align-items: center; gap: 12px; min-height: 92px; padding: 18px; color: var(--muted); font-size:12px; }
+    .loading-mark { width: 13px; height: 13px; border: 1.5px solid #55535f; border-top-color: var(--acid); border-radius: 50%; animation: curioid-load-spin .8s linear infinite; }
+    @keyframes curioid-load-spin { to { transform: rotate(360deg); } }
+    .project-load-error { justify-content: space-between; flex-wrap: wrap; border: 1px solid #51404a; border-radius: 10px; background: #21191e; color: #efb8c5; }
+    .project-style-warning { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin:0 0 14px; padding:12px 14px; border:1px solid #77643b; border-radius:10px; background:#282317; color:#f2dfae; font-size:12px; line-height:1.5; }
+    .project-style-warning p { margin:0; flex:1 1 260px; }
+    .project-style-warning button { border:1px solid #b39a59; border-radius:7px; padding:7px 10px; background:#3a311d; color:#fff0c5; cursor:pointer; }
+    .project-style-warning button:disabled { opacity:.6; cursor:wait; }
+    .room-mount { min-width: 0; }
+    .room-ecosystem { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 13px; margin-top: 13px; padding: 10px 1px 0; border-top: 1px solid rgba(255,255,255,.055); }
+    .room-ecosystem-label { color: #858592; font:9px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .11em; text-transform: uppercase; }
+    .room-related-links { display: flex; flex-wrap: wrap; gap: 6px; }
+    .room-related-link { padding: 5px 8px; border: 1px solid #383943; border-radius: 6px; background: #1a1a21; color: #b9b8c1; font-family: inherit; font-size:9px; line-height: 1.2; cursor: pointer; }
+    .room-related-link:hover { border-color: #596348; color: var(--acid); }
+
+    .results-word { color: var(--acid); letter-spacing: -.055em; text-shadow: 0 0 20px rgba(214,255,105,.09); }
+        /* Future room content */
+    .site-footer { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--line); color: #6f6d79; font-size:9px; }
+    .site-footer strong { color: #a5a2ad; font-weight: 760; letter-spacing: .09em; }
+    .site-footer .site-version { display: inline-block; margin-left: 5px; padding: 2px 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--dim); font-size:9px; font-weight: 700; letter-spacing: .06em; vertical-align: 1px; }
+    .toast { position: fixed; right: 20px; bottom: 20px; z-index: 100; max-width: min(350px, calc(100vw - 40px)); padding: 11px 14px; border: 1px solid #596b3c; border-radius: 9px; background: #22291b; color: #eff8df; font-size:11px; box-shadow: 0 12px 35px rgba(0,0,0,.35); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .18s ease, transform .18s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .scrim { display: none; }
+
+    @media (max-height: 690px) and (min-width: 901px) {
+      .sidebar { padding-top: 13px; padding-bottom: 10px; }
+      .brand { margin-bottom: 14px; }
+      .sidebar-bottom { margin-top: 16px; padding-top: 11px; }
+      .sidebar-note { margin-bottom: 9px; padding: 9px; }
+      .sidebar-note p { font-size:10px; }
+    }
+    @media (max-width: 1120px) {
+      .main { padding-right: 25px; padding-left: 25px; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { width: min(320px, 88vw); transform: translateX(-103%); transition: transform .23s ease; box-shadow: 20px 0 50px rgba(0,0,0,.4); }
+      body.menu-open .sidebar { transform: translateX(0); }
+      .scrim { display: block; position: fixed; inset: 0; z-index: 40; background: rgba(0,0,0,.62); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+      body.menu-open .scrim { opacity: 1; pointer-events: auto; }
+      .main { margin-left: 0; padding-right: 22px; padding-left: 22px; }
+      .category-section { scroll-margin-top: 70px; }
+      .menu-toggle { display: grid; place-items: center; }
+      .topbar { min-height: 60px; justify-content: flex-start; }
+      body.menu-open .topbar { z-index: 60; }
+      .topbar-right { margin-left: auto; }
+    }
+    @media (max-width: 420px) {
+      .topbar { gap: 7px; }
+      .topbar-left { flex: 0 1 auto; min-width: 0; }
+      .topbar-context { max-width: 52px; }
+      .topbar-right { flex: 0 1 auto; min-width: 0; gap: 5px; }
+      .topbar .global-volume-control { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; font-size:0; letter-spacing: 0; }
+      .topbar .global-volume-control input { width: clamp(34px, 12vw, 48px); min-width:0; }
+      .topbar .global-volume-control output { font-size:9px; letter-spacing:0; }
+      .motion-toggle { padding: 4px 5px; font-size:9px; }
+    }
+    @media (max-width: 340px) {
+      .topbar { gap:5px; }
+      .topbar-left { gap:4px; }
+      .topbar-right { gap:3px; }
+      .topbar-action { padding-right: 5px; padding-left: 5px; }
+      .topbar-context { max-width: 32px; }
+      .topbar .global-volume-control input { width: 28px; }
+      .topbar .global-volume-control output { display: none; }
+    }
+    @media (max-width: 600px) {
+      .main { padding: 0 12px 32px; }
+      .topbar { min-height:56px;gap:9px; }
+      .topbar-left { gap:7px;font-size:9px; }
+      .topbar-brand { font-size:10px; }
+      .topbar-right { gap:6px;font-size:9px; }
+      .motion-toggle { padding:4px 6px;font-size:9px;white-space:nowrap; }
+      .status-live { display:none; }
+      .hero { padding: 12px 1px 16px; }
+      h1 { font-size:clamp(25px, 7.2vw, 32px); }
+      .room-heading { flex-wrap: nowrap; }
+      .room-ecosystem { align-items: flex-start; }
+      .category-heading { align-items: flex-start; }
+      .category-count { margin-top: 4px; }
+      .room-heading { min-height: 61px; gap: 9px; padding: 9px; }
+      .room-icon { width: 30px; height: 30px; flex-basis: 30px; }
+      .room-number { display: none; }
+      .room-description { max-width: 200px; }
+      .room-body { padding: 9px; }
+      .site-footer { display: grid; justify-content: start; gap:7px; line-height:1.8; }
+      .site-footer > span { display:block; }
+      .site-footer .site-footer-meta { display:inline-flex; align-items:center; justify-content:flex-start; gap:7px; flex-wrap:wrap; }
+    }
+    /* Motion is enabled by default because the interactive projects rely on it.
+       Visitors can pause it explicitly with the Motion button in the top bar. */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+    html.motion-reduced *, html.motion-reduced *::before, html.motion-reduced *::after {
+      animation-play-state: paused !important;
+      transition-duration: .01ms !important;
+    }
+    html.motion-reduced { scroll-behavior: auto; }
+    .motion-toggle[aria-pressed="true"] { color: var(--acid); border-color: #52633a; background: rgba(214,255,105,.07); }
+    .motion-toggle[aria-pressed="false"] { color: #aaa7b2; }
+
+    /* Small navigation helpers: accessible, quiet and independent of project code. */
+    .skip-link {
+      position: fixed; z-index: 1000; top: 10px; left: 10px;
+      transform: translateY(-160%); padding: 10px 14px; border-radius: 8px;
+      background: var(--acid); color: #111; font-weight: 800; text-decoration: none;
+      box-shadow: 0 8px 28px rgba(0,0,0,.35); transition: transform .16s ease;
+    }
+    .skip-link:focus { transform: translateY(0); outline: 2px solid #fff; outline-offset: 3px; }
+    .back-to-top {
+      position: fixed; z-index: 30; right: 22px; bottom: 22px;
+      width: 44px; height: 44px; display: grid; place-items: center;
+      border: 1px solid rgba(214,255,105,.18); border-radius: 50%;
+      background: rgba(25,25,32,.16); color: rgba(214,255,105,.62); font-size:22px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.16); backdrop-filter: blur(5px); cursor: pointer;
+      opacity: 0; transform: translateY(8px); pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease, background .18s ease;
+    }
+    .back-to-top.is-visible { opacity: .86; transform: translateY(0); pointer-events: auto; }
+    .back-to-top:hover { opacity: .96; background: rgba(42,42,52,.68); color: var(--acid); border-color: rgba(214,255,105,.42); }
+    .back-to-top:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; }
+    .back-to-top[hidden] { display:none !important; }
+    .back-to-top:not([hidden]) { display:inline-flex; align-items:center; justify-content:center; width:auto; min-width:68px; height:40px; gap:7px; padding:0 12px; border-color:rgba(214,255,105,.38); background:rgba(17,19,22,.94); color:#d6ff69; font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.08em; opacity:0; }
+    .back-to-top svg { display:block; width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .back-to-top.is-visible { opacity:.96; }
+    .site-footer-meta { display:inline-flex; align-items:center; justify-content:flex-end; gap:3px; }
+    @media (max-width: 600px) {
+      .back-to-top { right: 13px; bottom: 14px; }
+      .personal-shortcuts-grid { grid-template-columns:1fr; gap:13px; }
+      .personal-shortcuts-head { align-items:flex-start; flex-direction:column; }
+      .personal-shortcuts-actions { width:100%; justify-content:flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .skip-link, .back-to-top { transition: none; }
+    }
+  
+    /* The brand eye uses a true open/closed cross-fade, not a tiny transform
+       on the full SVG group. It starts with a near-term blink and remains
+       independent of the site's project-motion toggle. */
+    .brand-mark svg .brand-eye-aperture {
+      opacity:1;
+      animation:curioidBrandOpen 7.6s linear -5.75s infinite!important;
+      will-change:opacity;
+    }
+    .brand-mark svg .brand-eye-closed {
+      opacity:0;
+      stroke:currentColor;
+      stroke-width:3.4;
+      stroke-linecap:round;
+      fill:none;
+      animation:curioidBrandClosed 7.6s linear -5.75s infinite!important;
+      will-change:opacity;
+    }
+    .brand-mark svg .brand-eye-crease { transform-box:fill-box; transform-origin:50% 50%; }
+    @keyframes curioidBrandOpen {
+      0%,80.8% { opacity:1; }
+      81.3%,83.6% { opacity:.015; }
+      84.1%,100% { opacity:1; }
+    }
+    @keyframes curioidBrandClosed {
+      0%,81% { opacity:0; }
+      81.4%,83.8% { opacity:1; }
+      84.2%,100% { opacity:0; }
+    }
+    html.motion-reduced .brand-mark svg .brand-eye-aperture,
+    html.motion-reduced .brand-mark svg .brand-eye-closed {
+      animation-play-state:running!important;
+    }
+    /* A slow, deliberate blink remains available even when the OS asks to
+       reduce motion. This is the one explicitly requested brand micro-motion. */
+    @media (prefers-reduced-motion:reduce) {
+      .brand-mark svg .brand-eye-aperture,
+      .brand-mark svg .brand-eye-closed { animation:none!important; will-change:auto!important; }
+    }
+
+
+    /* Expandable personal shortcuts, quiet until the visitor opens them. */
+    .personal-shortcuts { width:100%; margin:10px 0 12px; border:1px solid #2c2d35; border-radius:11px; background:rgba(255,255,255,.018); overflow:hidden; }
+    .personal-shortcuts-summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:58px; padding:11px 13px; cursor:pointer; list-style:none; }
+    .personal-shortcuts-summary::-webkit-details-marker { display:none; }
+    .personal-shortcuts-summary-copy { display:grid; gap:4px; min-width:0; }
+    .personal-shortcuts-summary small { color:var(--acid); font:9px ui-monospace,monospace; letter-spacing:.13em; }
+    .personal-shortcuts-summary b { color:#d9d7df; font-size:10px; font-weight:550; line-height:1.45; }
+    .personal-shortcuts-chevron { display:grid; place-items:center; flex:0 0 25px; width:25px; height:25px; border:1px solid #363742; border-radius:7px; color:var(--acid); transition:transform .16s ease; }
+    .personal-shortcuts[open] .personal-shortcuts-chevron { transform:rotate(180deg); }
+    .personal-shortcuts-content { padding:0 10px 11px; max-height:min(62dvh,680px); overflow:auto; overscroll-behavior:contain; }
+    .personal-shortcuts-head { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; margin:0 0 12px; padding-top:10px; border-top:1px solid #292a32; }
+    .personal-shortcuts-head>span { color:var(--dim); font:9px ui-monospace,monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .personal-shortcuts-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:5px; }
+    .personal-shortcuts-actions button { min-height:25px; padding:4px 8px; border:1px solid #373842; border-radius:6px; background:#1b1b22; color:#aaa8b4; font:10px ui-monospace,monospace; cursor:pointer; }
+    .personal-shortcuts-actions button:hover:not(:disabled) { border-color:#777b56; color:var(--acid); background:#23251d; }
+    .personal-shortcuts-actions button:disabled { opacity:.35; cursor:not-allowed; }
+    .personal-shortcuts-actions button:focus-visible,.personal-shortcuts-summary:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    .personal-shortcuts-memory{display:flex;align-items:flex-start;gap:9px;margin:0 0 12px;padding:9px 10px;border:1px solid #30313a;border-radius:7px;background:#171820;color:#c9c6d1;cursor:pointer}
+    .personal-shortcuts-memory input{flex:0 0 auto;width:15px;height:15px;margin:2px 0 0;accent-color:var(--acid)}
+    .personal-shortcuts-memory span{display:grid;gap:3px;min-width:0}
+    .personal-shortcuts-memory b{font-size:10px;font-weight:650}
+    .personal-shortcuts-memory small{color:#9694a1;font-size:9px;line-height:1.45}
+    .site-control-storage-warning{display:block;color:#a6a4af;font:9px/1.5 system-ui,sans-serif}
+    .site-control-storage-warning[data-state="warning"]{color:#e6cb84}
+    .site-control-storage-warning[data-state="critical"],.site-control-storage-warning[data-state="unknown"]{color:#f0a28f}
+    .site-control-backup-check{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid #353743;border-radius:7px;background:#171820}
+    .site-control-backup-check>div{min-width:0}
+    .site-control-backup-check b{color:#c6c4cf;font:700 9px ui-monospace,monospace;letter-spacing:.1em}
+    .site-control-backup-check p{margin:4px 0 0;color:#9694a1;font:9px/1.5 system-ui,sans-serif;overflow-wrap:anywhere}
+    .site-control-backup-check p[data-state="healthy"]{color:#9ed7a7}
+    .site-control-backup-check p[data-state="warning"],.site-control-backup-check p[data-state="error"]{color:#e6bd91}
+    .site-control-backup-check button{flex:0 0 auto}
+    @media(max-width:560px){.site-control-backup-check{align-items:stretch;flex-direction:column}.site-control-backup-check button{width:100%}}
+    .personal-shortcuts-grid { display:grid; grid-template-columns:1fr; gap:13px; }
+    .personal-shortcuts-grid section { min-width:0; }
+    .personal-shortcuts-grid h2 { margin:0 0 7px; color:#c9c6d1; font-size:10px; text-transform:uppercase; letter-spacing:.1em; }
+    .personal-shortcut-list { display:grid; grid-template-columns:1fr; gap:6px; }
+    .personal-shortcut-list { gap:3px; }
+    .personal-shortcut { min-width:0; display:grid; grid-template-columns:18px minmax(0,1fr) 9px; align-items:center; gap:4px; padding:3px 4px; border:1px solid #30313a; border-radius:5px; background:#17171d; color:var(--text); text-align:left; cursor:pointer; min-height:25px; }
+    .personal-shortcut:hover { border-color:#72764e; background:#202219; }
+    .personal-shortcut>span:first-child { display:grid; place-items:center; width:18px; height:18px; border-radius:4px; background:#242530; color:var(--violet); font-size:10px; }
+    .personal-shortcut-copy { display:grid; min-width:0; gap:0; }
+    .personal-shortcut-copy b { overflow:hidden; text-overflow:ellipsis; font-size:10px; line-height:1.25; white-space:nowrap; }
+    .personal-shortcut-copy small { overflow:hidden; text-overflow:ellipsis; color:var(--muted); font-size:8.5px; line-height:1.25; white-space:nowrap; }
+    .personal-shortcut-arrow { color:var(--acid); font-size:10px; }
+    .personal-shortcut-empty { margin:6px 0 0; color:var(--dim); font-size:9px; line-height:1.5; }
+    .universe-data-guide { margin:12px 0; padding:13px; border:1px solid #30323a; border-radius:10px; background:rgba(0,0,0,.13); }
+    .universe-data-guide>header { display:grid; gap:4px; margin-bottom:10px; }
+    .universe-data-guide>header small { color:var(--cyan); font:9px ui-monospace,monospace; letter-spacing:.13em; }
+    .universe-data-guide>header b { color:#e8e6ee; font-size:11px; }
+    .universe-data-guide>header p { margin:0; color:#a09eaa; font-size:9px; line-height:1.55; }
+    .universe-data-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+    .universe-data-grid article { display:grid; align-content:start; gap:4px; min-width:0; padding:9px; border:1px solid #30313a; border-radius:7px; background:#17171d; }
+    .universe-data-grid b { color:#e4e1ea; font-size:9px; }
+    .universe-data-grid span { color:#9996a3; font-size:9px; line-height:1.5; }
+    .room-card-head { display:grid; grid-template-columns:minmax(0,1fr) 38px 38px; align-items:stretch; gap:5px; }
+    .room-card-head .room-heading { min-width:0; }
+    .room-window.open .room-card-head { border-bottom:1px solid var(--line); }
+    .room-window.open .room-card-head .room-heading { border-bottom:0; }
+    .room-favorite,.room-share { display:grid; place-items:center; align-self:center; width:34px; height:34px; margin-right:2px; border:1px solid #3b3a45; border-radius:8px; background:#1c1c24; color:#898694; font-size:17px; cursor:pointer; }
+    .room-favorite:hover,.room-favorite.is-favorite { border-color:#687548; background:#23291c; color:var(--acid); }
+    .room-share { font-size:15px; }
+    .room-share:hover { border-color:#4b8b91; background:#1d292b; color:#85e6da; }
+    .room-favorite:focus-visible,.room-share:focus-visible { outline:2px solid var(--acid); outline-offset:2px; }
+    @media(max-width:420px){.room-card-head{grid-template-columns:minmax(0,1fr) 34px 34px}.room-favorite,.room-share{width:32px;height:32px;margin-right:0;}}
+    .room-heading { border-bottom:0!important; }
+
+    .sidebar-notification-wrap{position:relative;display:block;min-width:0}
+    .sidebar-notification-button{position:relative;width:100%;min-width:0}
+    .sidebar-notification-button:hover,.sidebar-notification-button[aria-expanded="true"]{border-color:var(--acid);color:var(--acid);background:#22241d}
+    .sidebar-notification-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .notification-count{position:absolute;top:-5px;right:-5px;min-width:15px;height:15px;padding:0 4px;border:1px solid #17171d;border-radius:9px;background:var(--acid);color:#171914;font:9px/13px ui-monospace,monospace;text-align:center}
+    .site-notification-panel{position:absolute;z-index:150;top:calc(100% + 9px);left:0;right:auto;width:min(360px,calc(100vw - 26px));max-height:min(65vh,520px);display:flex;flex-direction:column;border:1px solid #41424d;border-radius:12px;background:#181920;color:#e8e6ed;box-shadow:0 18px 55px rgba(0,0,0,.48);text-transform:none;letter-spacing:normal}
+    .site-notification-panel[hidden]{display:none}
+    .site-notification-panel>header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-bottom:1px solid #30313b}
+    .site-notification-panel>header>div:first-child{display:grid;gap:3px;min-width:0}
+    .site-notification-panel>header b{font:600 13px system-ui,sans-serif}
+    .site-notification-panel>header small,.site-notification-panel>footer{color:#9999a7;font:10px system-ui,sans-serif}
+    .site-notification-panel>header>div:last-child{display:flex;gap:5px}
+    .site-notification-panel>header button{padding:5px 7px;border:1px solid #3b3c48;border-radius:6px;background:#20212a;color:#c4c2cc;font:10px system-ui,sans-serif;cursor:pointer}
+    .site-notification-list{overflow:auto;padding:6px;min-height:54px}
+    .site-notification-empty{padding:16px 10px;color:#92929f;font:11px system-ui,sans-serif;text-align:center}
+    .site-notification-item{width:100%;display:grid;gap:4px;padding:9px;border:0;border-radius:7px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+    .site-notification-item:hover{background:#24252e}
+    .site-notification-item.is-unread{background:#22241f}
+    .site-notification-item-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#d6ff69;font:9px ui-monospace,monospace;text-transform:uppercase}
+    .site-notification-item time{color:#858592;font:9px ui-monospace,monospace;white-space:nowrap}
+    .site-notification-item p{margin:0;color:#dddbe4;font:11px/1.45 system-ui,sans-serif;overflow-wrap:anywhere}
+    .site-notification-panel>footer{padding:8px 12px;border-top:1px solid #30313b}
+    .site-shortcuts-dialog{width:min(520px,calc(100vw - 24px));max-width:none;max-height:min(82dvh,680px);padding:0;overflow:auto;border:1px solid #41424d;border-radius:15px;background:#191a21;color:#e9e7ef;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+    .site-shortcuts-dialog::backdrop{background:rgba(5,6,10,.72);backdrop-filter:blur(5px)}
+    .site-shortcuts-dialog[open]{display:block}
+    .site-shortcuts-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:19px 20px 14px;border-bottom:1px solid #30313a}
+    .site-shortcuts-head small{color:#d6ff69;font:9px ui-monospace,monospace;letter-spacing:.14em}
+    .site-shortcuts-head h2{margin:6px 0;font:600 21px system-ui,sans-serif}
+    .site-shortcuts-head p{margin:0;color:#a4a3af;font:11px/1.5 system-ui,sans-serif}
+    .site-shortcuts-head>button{width:30px;height:30px;flex:0 0 30px;border:1px solid #393a46;border-radius:7px;background:#22232b;color:#d8d6df;font-size:20px;cursor:pointer}
+    .site-shortcuts-list{display:grid;gap:0;padding:5px 18px}
+    .site-shortcuts-row{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:56px;padding:8px 2px;border-bottom:1px solid #2c2d36}
+    .site-shortcuts-row>span{display:grid;gap:3px;min-width:0}
+    .site-shortcuts-row b{color:#e9e7ef;font:600 11px system-ui,sans-serif}
+    .site-shortcuts-row small{color:#92919e;font:10px/1.4 system-ui,sans-serif}
+    .site-shortcuts-row kbd{flex:0 0 auto;padding:5px 8px;border:1px solid #464752;border-radius:6px;background:#24252e;color:#e6e4ec;font:10px ui-monospace,monospace;white-space:nowrap}
+    .site-shortcuts-foot{margin:0;padding:12px 20px 15px;color:#9998a4;font:10px/1.5 system-ui,sans-serif}
+    .site-control-center{width:min(560px,calc(100vw - 24px));max-width:none;max-height:min(86vh,760px);padding:0;border:1px solid #41424d;border-radius:15px;background:#191a21;color:#e9e7ef;box-shadow:0 24px 70px rgba(0,0,0,.55)}
+    .site-control-center::backdrop{background:rgba(5,6,10,.72);backdrop-filter:blur(5px)}
+    .site-control-center[open]{display:block}
+    .site-control-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 20px 14px;border-bottom:1px solid #30313a}
+    .site-control-head small{color:#d6ff69;font:9px ui-monospace,monospace;letter-spacing:.14em}
+    .site-control-head h2{margin:6px 0;font:600 22px system-ui,sans-serif}
+    .site-control-head p{margin:0;color:#a4a3af;font:12px/1.5 system-ui,sans-serif}
+    .site-control-head>button{width:30px;height:30px;border:1px solid #393a46;border-radius:7px;background:#22232b;color:#d8d6df;font-size:20px;cursor:pointer}
+    .site-control-status-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:14px 18px}
+    .site-control-status-grid article{display:grid;align-content:start;gap:6px;min-width:0;padding:10px;border:1px solid #30313b;border-radius:8px;background:#20212a}
+    .site-control-status-grid small{color:#aaa8b5;font:9px ui-monospace,monospace;letter-spacing:.1em}
+    .site-control-status-grid b{font:600 11px system-ui,sans-serif;overflow-wrap:anywhere}
+    .site-control-status-grid span{color:#9796a3;font:10px/1.4 system-ui,sans-serif}
+    .site-control-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 18px 15px}
+    .site-control-actions button{display:grid;gap:4px;min-height:58px;padding:10px;border:1px solid #363743;border-radius:8px;background:#20212a;color:#e4e2ea;text-align:left;cursor:pointer}
+    .site-control-actions button:hover{border-color:#8b945d;background:#25271f}
+    .site-control-actions b{font:600 11px system-ui,sans-serif}
+    .site-control-actions small{color:#a3a2ae;font:10px/1.35 system-ui,sans-serif}
+    .site-control-footnote{margin:0;padding:11px 18px 15px;border-top:1px solid #30313b;color:#9998a4;font:10px/1.5 system-ui,sans-serif}
+    @media(max-width:760px){.site-control-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:560px){.site-control-status-grid{grid-template-columns:1fr}.site-control-status-grid article{grid-template-columns:78px 1fr;align-items:center}.site-control-status-grid span{grid-column:2}.site-control-actions{grid-template-columns:1fr}.site-notification-panel{left:0;right:auto;width:min(360px,calc(100vw - 26px))}}
+
+
+    /* Fast, keyboard-first project and action launcher. Results are built with DOM nodes. */
+    .command-palette-trigger { display:inline-flex; align-items:center; justify-content:center; gap:4px; min-height:30px; white-space:nowrap; }
+    .command-palette-trigger::first-letter { font-size:17px; line-height:1; }
+    .command-palette-trigger span { font-size:9px; }
+    .curioid-command-dialog { width:min(660px,calc(100vw - 28px)); max-width:none; max-height:min(78dvh,720px); margin:auto; padding:0; overflow:hidden; border:1px solid #484956; border-radius:15px; background:#171820; color:#eeedf2; box-shadow:0 28px 100px rgba(0,0,0,.62); }
+    .curioid-command-dialog::backdrop { background:rgba(5,6,10,.76); backdrop-filter:blur(5px); }
+    .command-palette-shell { display:grid; grid-template-rows:auto auto minmax(100px,1fr) auto; max-height:min(78dvh,720px); }
+    .command-palette-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 16px 10px; border-bottom:1px solid #2d2f39; }
+    .command-palette-head-copy { display:grid; gap:2px; min-width:0; }
+    .command-palette-head-copy small { color:#d6ff69; font:9px ui-monospace,monospace; letter-spacing:.15em; }
+    .command-palette-head-copy strong { font-size:13px; font-weight:650; }
+    .command-palette-close { display:grid; place-items:center; flex:0 0 30px; width:30px; height:30px; border:1px solid #3b3d48; border-radius:8px; background:#20212a; color:#c8c6d0; font-size:19px; cursor:pointer; }
+    .command-palette-search-wrap { padding:12px 14px 9px; }
+    .command-palette-search { width:100%; min-height:46px; padding:10px 13px; border:1px solid #50515f; border-radius:10px; outline:none; background:#101117; color:#f3f2f6; font:14px system-ui,sans-serif; }
+    .command-palette-search:focus { border-color:#d6ff69; box-shadow:0 0 0 3px rgba(214,255,105,.12); }
+    .command-palette-private-toggle { display:flex; align-items:flex-start; gap:9px; margin:9px 2px 0; padding:8px 9px; border:1px solid #383a45; border-radius:8px; background:#1c1e27; color:#d9d7e1; cursor:pointer; }
+    .command-palette-private-toggle input { flex:0 0 auto; width:15px; height:15px; margin:2px 0 0; accent-color:#d6ff69; }
+    .command-palette-private-toggle span { display:grid; gap:3px; min-width:0; }
+    .command-palette-private-toggle strong { font-size:10px; font-weight:650; }
+    .command-palette-private-toggle small,.command-palette-private-status { color:#aaa8b5; font-size:9px; line-height:1.4; }
+    .command-palette-private-status { display:block; min-height:0; padding:0 3px; }
+    .command-palette-private-status:empty { display:none; }
+    .command-palette-results { display:grid; align-content:start; gap:4px; min-height:100px; max-height:min(51dvh,470px); padding:3px 9px 10px; overflow:auto; overscroll-behavior:contain; }
+    .command-palette-result { display:grid; grid-template-columns:32px minmax(0,1fr) auto; align-items:center; gap:10px; min-height:52px; width:100%; padding:7px 10px; border:1px solid transparent; border-radius:9px; background:transparent; color:#e9e7ef; text-align:left; cursor:pointer; }
+    .command-palette-result:hover,.command-palette-result[aria-selected="true"] { border-color:#515641; background:#25281f; }
+    .command-palette-result-icon { display:grid; place-items:center; width:30px; height:30px; border:1px solid #393b46; border-radius:8px; background:#20212b; color:#d6ff69; font-size:14px; }
+    .command-palette-result-copy { display:grid; gap:2px; min-width:0; }
+    .command-palette-result-copy strong { overflow:hidden; color:#f1eff5; font-size:11px; font-weight:620; text-overflow:ellipsis; white-space:nowrap; }
+    .command-palette-result-copy small { overflow:hidden; color:#a5a3b0; font-size:9px; line-height:1.4; text-overflow:ellipsis; white-space:nowrap; }
+    .command-palette-result-type { color:#9997a4; font:8px ui-monospace,monospace; letter-spacing:.08em; text-align:right; text-transform:uppercase; }
+    .command-palette-empty { margin:0; padding:28px 14px; color:#a5a3b0; font:11px system-ui,sans-serif; text-align:center; }
+    .command-palette-foot { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:9px 14px; border-top:1px solid #2d2f39; color:#9695a1; font:9px ui-monospace,monospace; }
+    .command-palette-foot kbd { padding:2px 5px; border:1px solid #444653; border-radius:4px; background:#20212a; color:#d5d2dc; font:9px ui-monospace,monospace; }
+    @media(max-width:560px) {
+      .command-palette-trigger { width:31px; padding:4px; font-size:16px; }
+      .command-palette-trigger span { display:none; }
+      .curioid-command-dialog { width:calc(100vw - 16px); max-height:84dvh; border-radius:12px; }
+      .command-palette-shell { max-height:84dvh; }
+      .command-palette-results { max-height:58dvh; }
+      .command-palette-result { grid-template-columns:29px minmax(0,1fr); }
+      .command-palette-result-type { display:none; }
+    }
+  </style>
+
+<style id="curioid-control-panel-layout">
+  .sidebar-tools{grid-template-columns:1fr;margin-bottom:12px}
+  .sidebar-control-panel-entry{width:100%;min-height:48px;padding:9px 10px;border-color:#3b3d47;background:linear-gradient(135deg,#20212a,#17181e)}
+  .sidebar-control-panel-entry>span:first-child{background:#2a2c35;color:#d6ff69;font-size:17px}
+  .sidebar-control-panel-entry b{font-size:10px}
+  .sidebar-control-panel-entry small{font-size:9px}
+  .site-control-panel{width:min(820px,calc(100vw - 24px));max-height:min(90dvh,900px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+  .site-control-storage{display:grid;gap:10px;margin:0 18px 16px;padding:13px;border:1px solid #343641;border-radius:9px;background:#1d1e26}
+  .site-control-storage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .site-control-storage-head h3{margin:0 0 5px;color:#b5b3c0;font:700 9px ui-monospace,monospace;letter-spacing:.15em}
+  .site-control-storage-head p{margin:0;color:#a3a2ae;font:10px/1.45 system-ui,sans-serif}
+  .site-control-storage-head>span{flex:0 0 auto;padding:4px 6px;border:1px solid #444650;border-radius:5px;color:#b8b6c2;font:8px ui-monospace,monospace;letter-spacing:.08em}
+  .site-control-storage-head>span[data-state="granted"]{border-color:#3b7255;color:#8fe0a8}
+  .site-control-storage-head>span[data-state="unprotected"]{border-color:#806b3c;color:#e6cb84}
+  .site-control-storage-meter-wrap{display:grid;gap:5px}
+  .site-control-storage-meter{height:7px;overflow:hidden;border:1px solid #383a45;border-radius:99px;background:#111218}
+  .site-control-storage-meter>span{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8d9b62,#d6ff69);transition:width .18s ease}
+  .site-control-storage-meter-wrap>small,.site-control-storage-note{color:#898895;font:9px/1.45 system-ui,sans-serif}
+  .site-control-storage-actions{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .site-control-storage-actions p{margin:0;color:#b4b2bf;font:10px/1.45 system-ui,sans-serif}
+  .site-control-storage-actions button{flex:0 0 auto}
+  .site-control-storage-actions button:disabled{opacity:.55;cursor:default}
+  .site-control-storage-note{display:block;margin:0}
+  @media(max-width:560px){.site-control-storage{margin-inline:12px}.site-control-storage-actions{align-items:stretch;flex-direction:column}.site-control-storage-actions button{width:100%}}
+  .site-control-panel .site-control-head{position:sticky;top:0;z-index:2;background:rgba(25,26,33,.97);backdrop-filter:blur(12px)}
+  .site-control-health{margin:14px 0;padding:13px;border:1px solid #3a4149;border-radius:10px;background:linear-gradient(145deg,#191f25,#15191f)}
+  .site-control-health-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.site-control-health-head h3{margin:0;color:#d6ff69;font:800 10px ui-monospace,monospace;letter-spacing:.12em}.site-control-health-head p{max-width:620px;margin:6px 0 0;color:#9aa5aa;font-size:10px;line-height:1.55}.site-control-health-head>[data-health-state]{flex:0 0 auto;padding:4px 7px;border:1px solid #4d6260;border-radius:4px;color:#b8d2cb;font:8px ui-monospace,monospace;letter-spacing:.08em}.site-control-health-head>[data-state="healthy"]{border-color:#426d50;color:#a8e3ae}.site-control-health-head>[data-state="issues-found"]{border-color:#8d5149;color:#ffc0a9}.site-control-health-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.site-control-health-status{margin:9px 0;color:#b8c1c5;font-size:9px;line-height:1.5}.site-control-health-results{display:grid;gap:5px;margin:0;padding:0;list-style:none}.site-control-health-results li{display:grid;grid-template-columns:minmax(105px,.3fr) minmax(0,1fr);gap:10px;padding:7px 8px;border:1px solid #303a40;border-radius:6px;background:#11171c;font-size:9px}.site-control-health-results li>b{color:#bce4cd}.site-control-health-results li>span{min-width:0;color:#98a5aa;overflow-wrap:anywhere}.site-control-health-results li[data-state="warning"]>b{color:#e6d08f}.site-control-health-results li[data-state="error"]>b{color:#f19c94}.site-control-health-details{margin-top:8px;border:1px solid #303a40;border-radius:7px;background:#12171c}.site-control-health-details>summary{padding:9px 10px;color:#cbd4d4;font:700 9px ui-monospace,monospace;letter-spacing:.06em;cursor:pointer;list-style:none}.site-control-health-details>summary::-webkit-details-marker{display:none}.site-control-health-details>summary::after{content:"＋";float:right;color:var(--acid)}.site-control-health-details[open]>summary::after{content:"−"}.site-control-health-results-scroll{max-height:min(34vh,320px);overflow:auto;overscroll-behavior:contain;padding:0 7px 7px}.site-control-health-results-scroll:focus-visible,.site-control-health-details>summary:focus-visible{outline:2px solid var(--acid);outline-offset:2px}.site-control-health-actions .site-control-small-action:disabled{opacity:.45;cursor:not-allowed}
+  @media(max-width:560px){.site-control-health-results li{grid-template-columns:1fr;gap:3px}.site-control-health-head{flex-direction:column}}
+
+  .site-control-tool-section,.site-control-personal,.site-control-about{padding:0 18px 15px}
+  .site-control-tool-section h3,.site-control-personal>h3,.site-control-preferences>h3{margin:2px 0 9px;color:#b5b3c0;font:700 9px ui-monospace,monospace;letter-spacing:.15em}
+  .site-control-tool-section .site-control-actions{padding:0;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .site-control-personal{padding-top:2px}
+  .site-control-personal .personal-shortcuts{margin:0;border:1px solid #343641;border-radius:9px;background:#1e1f27;overflow:hidden}
+  .site-control-personal .personal-shortcuts-summary{min-height:52px;padding:10px 12px}
+  .site-control-personal .personal-shortcuts-content{max-height:min(34dvh,300px);overflow:auto}
+  .site-control-personal .personal-shortcuts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .site-control-about{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:stretch}
+  .site-control-about .sidebar-note{margin:0;min-height:100%;}
+  .site-control-preferences{padding:13px 18px 15px;border-top:1px solid #30313b}
+  .site-control-preferences>h3{margin:0 0 10px}
+  .site-control-preferences .global-volume-control{width:100%;margin-bottom:10px}
+  @media(max-width:560px){
+    .site-control-panel{width:calc(100vw - 16px);max-height:94dvh}
+    .site-control-tool-section .site-control-actions{grid-template-columns:1fr}
+    .site-control-personal .personal-shortcuts-grid{grid-template-columns:1fr}
+    .site-control-about{grid-template-columns:1fr}
+  }
+</style>
+
+
+<style id="curioid-v1295-layout-guard">
+  /* v1.295: responsive content fitting. No project or interface is hidden. */
+  .app-shell, .main, .page-wrap, .category-stack, .category-section, .room-list,
+  .room-window, .room-body, .room-mount, .site-control-panel, .site-shortcuts-dialog {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .room-heading, .room-card-head, .room-name-wrap { min-width: 0; }
+  .room-name, .room-description {
+    display: block;
+    max-width: 100%;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  .room-description { line-height: 1.45; }
+  .category-heading { min-width: 0; flex-wrap: wrap; }
+  .category-heading-copy { min-width: 0; max-width: 100%; }
+  .category-count { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .personal-shortcut-copy, .personal-shortcut-copy b, .personal-shortcut-copy small {
+    min-width: 0; max-width: 100%; overflow: visible; overflow-wrap: anywhere;
+    text-overflow: clip; white-space: normal;
+  }
+  .app-shell :where(input, select, textarea, button) { max-width: 100%; }
+  .app-shell :where(input, select, textarea) { min-width: 0; }
+  .app-shell :where(img, video, iframe) { max-width: 100%; }
+  .app-shell :where(p, h1, h2, h3, h4, h5, h6, label, legend, summary, figcaption, li, dt, dd) {
+    overflow-wrap: break-word;
+  }
+  @media (max-width: 600px) {
+    .room-name-wrap { flex: 1 1 0; }
+    .room-description { max-width: 100%; }
+    .category-count { margin-left: auto; }
+  }
+</style>
+
+<style id="curioid-fullscreen-app-layout">
+  html.curioid-app-open,body.curioid-app-open{overflow:hidden!important;overscroll-behavior:none!important}
+  #curioid-app-layer[hidden]{display:none!important}
+  #curioid-app-layer:not([hidden]){position:fixed;z-index:10000;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8px;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));background:radial-gradient(ellipse at 50% -20%,rgba(78,91,73,.24),transparent 56%),rgba(7,8,11,.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);isolation:isolate}
+  .curioid-app-switcher{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:36px;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:2px 3px;scrollbar-width:thin}
+  .curioid-app-switcher-label{flex:0 0 auto;padding:0 7px;color:#858391;font:8px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;white-space:nowrap}
+  .curioid-app-switcher button{flex:0 0 auto;max-width:min(34vw,240px);min-height:31px;overflow:hidden;padding:6px 10px;border:1px solid #3b3c45;border-radius:7px;background:#17191e;color:#aaa8b4;font:9px ui-monospace,SFMono-Regular,Menlo,monospace;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+  .curioid-app-switcher button[aria-pressed="true"]{border-color:#788c51;background:#252b1e;color:#e4ffad;box-shadow:0 0 0 1px rgba(214,255,105,.1)}
+  .curioid-app-switcher button:focus-visible,.room-fullscreen-close:focus-visible{outline:2px solid var(--acid);outline-offset:2px}
+  .room-window.curioid-fullscreen-window{grid-column:1;grid-row:2;position:relative;display:flex;flex-direction:column;width:100%;height:100%;min-width:0;min-height:0;max-width:none;max-height:none;margin:0;overflow:hidden;border:1px solid #484b43;border-radius:13px;background:#111319;box-shadow:0 24px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.025);scroll-margin:0}
+  .room-window.curioid-fullscreen-window:not(.curioid-app-active){display:none!important}
+  .room-window.curioid-fullscreen-window .room-card-head{flex:0 0 auto;grid-template-columns:minmax(0,1fr) 38px 38px 38px;gap:6px;min-height:58px;padding:5px 8px;background:linear-gradient(180deg,#1b1d23,#16181e)}
+  .room-window.curioid-fullscreen-window .room-heading{min-height:48px;padding:7px 10px}
+  .room-window.curioid-fullscreen-window .room-name{font-size:14px}
+  .room-window.curioid-fullscreen-window .room-description{display:block;max-width:100%;white-space:normal;font-size:10px;line-height:1.35}
+  .room-window.curioid-fullscreen-window .room-chevron{display:none}
+  .room-fullscreen-close{display:none;place-items:center;align-self:center;width:34px;height:34px;margin-right:2px;padding:0;border:1px solid #68434c;border-radius:8px;background:#2a1b21;color:#ffb4bf;font:20px/1 system-ui,sans-serif;cursor:pointer}
+  .room-window.curioid-fullscreen-window .room-fullscreen-close{display:grid}
+  .room-fullscreen-close:hover{border-color:#ff889b;background:#392129;color:#fff}
+  .room-window.curioid-fullscreen-window .room-body{display:flex;flex:1 1 auto;flex-direction:column;min-width:0;min-height:0;overflow:auto;overscroll-behavior:contain;padding:clamp(9px,1.5vw,22px);background:radial-gradient(ellipse at 50% 0%,rgba(44,50,61,.22),transparent 58%)}
+  .room-window.curioid-fullscreen-window .room-mount{display:flex;flex:1 0 auto;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:none;min-width:0;min-height:100%;margin:0 auto}
+  .room-window.curioid-fullscreen-window .room-mount>:not(.project-style-warning){flex:0 0 auto;width:min(100%,1760px);max-width:100%;margin:auto}
+  .room-window.curioid-fullscreen-window .room-mount>.project-tool{display:flex;flex-direction:column;justify-content:center;width:100%;max-width:1760px;min-height:100%;transform-origin:center center}
+  .room-window.curioid-fullscreen-window .room-mount>.standalone-project-frame{width:100%;height:100%!important;min-height:0;max-height:100%;border-radius:8px}
+  .room-window.curioid-fullscreen-window .room-ecosystem{flex:0 0 auto;width:min(100%,1760px);margin:10px auto 0}
+  .room-window.curioid-fullscreen-window .project-style-warning{flex:0 0 auto}
+  .room-window.curioid-fullscreen-window .project-tool .tool-layout{align-items:start}
+  .room-window.curioid-fullscreen-window .project-tool .tool-main{min-width:0}
+  .room-window.curioid-fullscreen-window .project-tool .tool-canvas-wrap,.room-window.curioid-fullscreen-window .project-tool .tool-canvas{max-width:100%}
+  .room-window.curioid-fullscreen-window .room-mount>:is(.retro-desktop,.dead-interface,.food-os,.echonoise-os,.umbra-os,.aether-os,.aura-synthesis,.curioid-package-runtime,.sandbox-os-catalog-feature){width:100%;max-width:1760px;min-width:0}
+  .room-window[data-curioid-auto-fit="true"] .room-mount{align-items:flex-start}
+  @media(max-width:900px){#curioid-app-layer:not([hidden]){gap:5px;padding:max(5px,env(safe-area-inset-top)) max(5px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left))}.curioid-app-switcher{justify-content:flex-start}.room-window.curioid-fullscreen-window .room-card-head{min-height:52px;grid-template-columns:minmax(0,1fr) 34px 34px 34px;gap:4px;padding:4px}.room-window.curioid-fullscreen-window .room-heading{min-height:44px;padding:5px 7px}.room-window.curioid-fullscreen-window .room-name{font-size:12px}.room-window.curioid-fullscreen-window .room-description{font-size:9px}.room-window.curioid-fullscreen-window .room-body{padding:8px}.room-window.curioid-fullscreen-window .room-mount{align-items:flex-start}}
+  @media(max-height:620px){.room-window.curioid-fullscreen-window .room-card-head{min-height:44px}.room-window.curioid-fullscreen-window .room-heading{min-height:38px}.room-window.curioid-fullscreen-window .room-description{display:none}}
+  @media(prefers-reduced-motion:reduce){#curioid-app-layer *,#curioid-app-layer *:before,#curioid-app-layer *:after{scroll-behavior:auto!important;transition-duration:0s!important;animation-duration:.001ms!important}}
+</style>
+
+<style id="curioid-native-os-window-presentation">
+/* Native operating systems use the same large, dismissible workspace window as other CURIOID apps. */
+.room-window.open[data-room="dead-interface"],.room-window.open[data-room="aura-synthesis"],.room-window.open[data-room="aether-os"]{position:fixed!important;inset:3vh 3vw!important;z-index:99980!important;display:flex!important;flex-direction:column!important;width:auto!important;height:auto!important;min-width:0!important;min-height:0!important;max-width:none!important;max-height:none!important;margin:0!important;overflow:hidden!important;border:1px solid #525a67!important;border-radius:16px!important;background:#11151d!important;box-shadow:0 28px 100px rgba(0,0,0,.68),0 0 0 1px rgba(255,255,255,.035)!important}
+.room-window.open[data-room="dead-interface"] .room-card-head,.room-window.open[data-room="aura-synthesis"] .room-card-head,.room-window.open[data-room="aether-os"] .room-card-head{flex:0 0 auto!important;grid-template-columns:minmax(0,1fr) 38px 38px 38px!important;gap:6px!important;min-height:56px!important;padding:5px 8px!important;background:linear-gradient(180deg,#1b202b,#121720)!important}
+.room-window.open[data-room="dead-interface"] .room-heading,.room-window.open[data-room="aura-synthesis"] .room-heading,.room-window.open[data-room="aether-os"] .room-heading{min-height:46px!important;padding:6px 10px!important}
+.room-window.open[data-room="dead-interface"] .room-name,.room-window.open[data-room="aura-synthesis"] .room-name,.room-window.open[data-room="aether-os"] .room-name{font-size:14px!important}
+.room-window.open[data-room="dead-interface"] .room-description,.room-window.open[data-room="aura-synthesis"] .room-description,.room-window.open[data-room="aether-os"] .room-description{display:block!important;max-width:100%!important;white-space:normal!important;font-size:10px!important;line-height:1.35!important}
+.room-window.open[data-room="dead-interface"] .room-chevron,.room-window.open[data-room="aura-synthesis"] .room-chevron,.room-window.open[data-room="aether-os"] .room-chevron{display:none!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-fullscreen-close{display:grid!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-body{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-width:0!important;min-height:0!important;overflow:auto!important;padding:clamp(8px,1.4vw,20px)!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-mount{display:flex!important;flex:1 0 auto!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:100%!important;margin:0 auto!important}
+.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-mount>:not(.project-style-warning){flex:0 0 auto!important;width:min(100%,1760px)!important;max-width:100%!important;margin:auto!important}
+@media(max-width:760px){.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]){inset:max(4px,env(safe-area-inset-top)) max(4px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left))!important;border-radius:10px!important}.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-card-head{grid-template-columns:minmax(0,1fr) 32px 32px 32px!important;gap:3px!important;min-height:48px!important;padding:3px!important}.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-description{display:none!important}.room-window.open:is([data-room="dead-interface"],[data-room="aura-synthesis"],[data-room="aether-os"]) .room-body{padding:6px!important}}
+</style>
+
+<style id="curioid-v1-329-responsive-overflow-guard">
+  /* Additive layout guard: wrap content instead of clipping or deleting it. */
+  :where(.app-shell,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-shortcuts-dialog,.site-modal,.dialog,.modal,.panel,.panel-content){min-width:0;max-width:100%;}
+  :where(.main,.main-content,.category-stack,.category-section,.room-list,.room-body,.room-mount){overflow-wrap:anywhere;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(h1,h2,h3,h4,h5,h6,p,li,dt,dd,label,legend,summary,figcaption,.room-name,.room-description,.category-heading-copy){min-width:0;max-width:100%;overflow-wrap:anywhere;text-overflow:clip;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(button,input,select,textarea){min-width:0;max-width:100%;box-sizing:border-box;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(button){white-space:normal;overflow-wrap:anywhere;text-overflow:clip;}
+  :where(.app-shell,main,.main,.page-wrap,.main-content,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount) :where(img,video,iframe,svg,canvas){max-width:100%;}
+  :where(.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(pre,code){max-width:100%;}
+  :where(.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(pre){overflow:auto;white-space:pre;overscroll-behavior-x:contain;}
+  :where(.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(table){max-width:100%;}
+  @media(max-width:760px){
+    :where(.room-window.open,.site-control-panel,.site-modal,.dialog,.modal){max-width:calc(100vw - 16px);}
+    :where(.room-window.open .room-body,.room-window.open .room-mount){min-width:0;max-width:100%;}
+    :where(.room-window.open .room-mount) :where(button,input,select,textarea){max-width:100%;}
+  }
+  :where(.sidebar,.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(.grid,.row,.toolbar,.actions,.button-row,.action-row,.tabs,.tab-list){min-width:0;max-width:100%;flex-wrap:wrap;}
+  :where(.sidebar,.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(h1,h2,h3,h4,h5,h6,p,li,label,legend,summary,small,span,strong,em){overflow-wrap:anywhere;word-break:normal;}
+  :where(.sidebar,.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list,.room-window,.room-body,.room-mount,.site-control-panel,.site-modal,.dialog,.modal) :where(input,select,textarea,button){min-width:0;max-width:100%;box-sizing:border-box;}
+  @media(max-width:480px){:where(.main,.main-content,.page-wrap,.category-stack,.category-section,.room-list){min-width:0;max-width:100%;padding-inline:clamp(6px,2vw,12px);} :where(.site-control-panel,.site-modal,.dialog,.modal){max-width:calc(100vw - 12px);}}
+</style>
+
+<style id="curioid-v1-342-layout-guard">
+  /* Additive content-fit guards. Keep every control and content block available. */
+  :where(.main,.page-wrap,.topbar,.topbar-left,.topbar-right,.site-control-panel,
+    .site-control-actions,.site-control-tool-section,.site-control-health,.site-control-health-details,
+    .site-control-health-results-scroll,.personal-shortcuts-content,.site-shortcuts-dialog,
+    .site-notification-panel,.discovery-section,.discovery-grid) { min-width:0; max-width:100%; }
+  :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,
+    .discovery-description,.discovery-meta,.site-control-storage-note,.site-control-footnote) {
+    overflow-wrap:anywhere; word-break:normal;
+  }
+  :where(button,[role="button"],input,select,textarea,output) { min-width:0; max-width:100%; }
+  :where(img,svg,video,canvas,iframe) { max-width:100%; }
+  :where(pre,pre code,table,.site-control-health-results) { max-width:100%; }
+  /* The notification panel is intentionally wider than its 32px bell wrapper. */
+  .topbar-notification-wrap > .site-notification-panel { width:min(360px,calc(100vw - 24px)); min-width:min(360px,calc(100vw - 24px)); max-width:calc(100vw - 24px); box-sizing:border-box; flex:0 0 auto; writing-mode:horizontal-tb; overflow-wrap:normal; word-break:normal; font-family:system-ui,sans-serif; line-height:1.45; }
+  .topbar-notification-wrap > .site-notification-panel > header { min-width:0; flex-wrap:nowrap; }
+  .topbar-notification-wrap > .site-notification-panel > header > div:first-child { flex:1 1 auto; min-width:0; }
+  .topbar-notification-wrap > .site-notification-panel > header > div:last-child { flex:0 0 auto; min-width:max-content; }
+  .topbar-notification-wrap > .site-notification-panel > header button { flex:0 0 auto; white-space:nowrap; }
+  @media (max-width:760px) {
+    .topbar { flex-wrap:wrap; height:auto; min-height:56px; }
+    .topbar-right { min-width:0; max-width:100%; flex-wrap:wrap; white-space:normal; }
+    .topbar-left { min-width:0; flex-wrap:wrap; }
+    .site-control-actions,.site-control-preference-actions,.site-control-health-actions { min-width:0; flex-wrap:wrap; }
+    .site-control-display-grid { grid-template-columns:minmax(0,1fr); }
+  }
+  @media (max-width:420px) {
+    .site-control-panel,.site-shortcuts-dialog,.site-notification-panel { max-width:calc(100vw - 12px); }
+    .site-control-tool-section,.site-control-preferences,.personal-shortcuts-content { min-width:0; }
+  }
+</style>
+
+<style id="curioid-discovery-overflow-fix">
+  /* Keep catalogue cards inside their grid cell at browser zoom and narrow widths. */
+  .discovery-grid > .discovery-card {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .discovery-card > * {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .discovery-description {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+  .discovery-meta {
+    min-width: 0;
+    flex-wrap: wrap;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  .discovery-meta b {
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  @media (max-width: 1100px) {
+    .discovery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 560px) {
+    .discovery-grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+
+
+<!-- CURIOID v1.385 content-fit and responsive text care -->
+<style id="curioid-content-fit-v1-385">
+/* CURIOID v1.385 cross-page content-fit safeguards. These rules preserve nodes and
+   content; code/data surfaces keep their own horizontal scrolling where needed. */
+:where(html,body,main,header,footer,section,article,aside,nav,form,fieldset,dialog,div,ul,ol,li,dl,dt,dd,figure,figcaption,table,thead,tbody,tfoot,tr,th,td){min-width:0;}
+:where(h1,h2,h3,h4,h5,h6,p,li,label,legend,summary,figcaption,dt,dd,blockquote,a,output,.description,.help,.status,.message,.readout,.notice,.toast){overflow-wrap:anywhere;word-break:normal;}
+:where(button,[role="button"],input,select,textarea){box-sizing:border-box;min-width:0;max-width:100%;}
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),select,textarea){max-inline-size:100%;}
+:where(img,picture,video,iframe,svg){max-inline-size:100%;}
+:where(img,video){block-size:auto;}
+:where(pre,pre code,.code-editor,.code-output,.console-output,.log-output,.terminal-output,.source-editor,.monospace-output){max-inline-size:100%;overflow-x:auto;overflow-wrap:normal;white-space:pre;overscroll-behavior-inline:contain;}
+:where(table){max-inline-size:100%;}
+:where(.room-window .room-mount,.room-window .room-body,.room-window .room-content,.room-window .room-header,.room-window .room-footer){min-width:0;max-width:100%;}
+:where(.room-window .room-mount,.room-window .room-body) :where(.toolbar,.tool-row,.tool-bar,.actions,.action-row,.button-row,.control-row,.form-actions,.tabs,.tab-list,[role="tablist"]){min-width:0;max-width:100%;flex-wrap:wrap;}
+:where(.room-window .room-mount,.room-window .room-body) :where(.toolbar,.tool-row,.tool-bar,.actions,.action-row,.button-row,.control-row,.form-actions) :where(button,a,input,select){min-width:0;max-width:100%;}
+:where(.room-window .room-mount,.room-window .room-body) :where(.grid,.form-grid,.card-grid,.panel-grid,.workspace-grid,.editor-grid,.split-layout,.column-layout){min-width:0;max-width:100%;}
+:where(.room-window .room-mount,.room-window .room-body) :where(input[type="file"],input[type="text"],input[type="search"],input[type="email"],input[type="url"],input[type="number"],select,textarea){box-sizing:border-box;min-width:0;max-width:100%;}
+@media(max-width:760px){
+  :where(.room-window.open .room-body,.room-window.open .room-mount){min-width:0;max-width:100%;}
+  :where(.room-window.open .room-mount,.room-window.open .room-body) :where(.toolbar,.tool-row,.tool-bar,.actions,.action-row,.button-row,.control-row,.form-actions,.tabs,.tab-list,[role="tablist"]){flex-wrap:wrap;}
+  :where(.room-window.open .room-mount,.room-window.open .room-body) table{display:block;max-width:100%;overflow-x:auto;}
+  :where(.room-window.open .room-mount,.room-window.open .room-body) :where(button,a,input,select,textarea){max-width:100%;}
+}
+
+</style>
+
+<style id="curioid-v1396-content-fit">
+  /* Content-fit safeguards: preserve every control and section; prevent intrinsic
+     flex/grid widths and long tokens from pushing the viewport or clipping text. */
+  :where(.main,.sidebar,.site-control-panel,.site-control-health,.site-control-storage,.site-control-tool-section,.site-control-personal,.site-control-preferences,.site-control-about,.discovery-grid,.discovery-card,.featured-grid,.featured-preview-grid,.room-window,.room-header,.room-body,.room-mount){min-width:0;box-sizing:border-box;}
+  :where(.main,.sidebar,.site-control-panel,.site-control-health,.site-control-storage,.site-control-tool-section,.site-control-personal,.site-control-preferences,.site-control-about,.discovery-card,.room-window,.room-body,.room-mount) :where(h1,h2,h3,h4,p,li,label,legend,small,span,strong,b,output,code,kbd,summary,a,button,dt,dd,figcaption,blockquote){min-width:0;overflow-wrap:anywhere;word-break:normal;}
+  :where(.site-control-panel,.site-control-health,.site-control-storage,.site-control-tool-section,.site-control-personal,.site-control-preferences,.site-control-about,.site-control-health-results-scroll,.site-control-health-results,.site-control-health-results li,.site-control-health-results li>span){max-width:100%;box-sizing:border-box;}
+  :where(.site-control-health-actions,.site-control-storage-actions,.site-control-preference-actions,.site-control-tool-section .site-control-actions,.sidebar-tools){min-width:0;max-width:100%;flex-wrap:wrap;}
+  :where(.site-control-panel,dialog,[role="dialog"]){max-inline-size:min(calc(100vw - 16px),100%);max-block-size:calc(100dvh - 16px);box-sizing:border-box;}
+  :where(.room-window,.room-body,.room-mount,.site-control-panel) :where(input,select,textarea,button){max-inline-size:100%;box-sizing:border-box;}
+  :where(.main,.site-control-panel,.room-window,.room-body) :where(img,svg,video,canvas,iframe){max-inline-size:100%;}
+  @media(max-width:560px){:where(.site-control-health-actions,.site-control-storage-actions,.site-control-preference-actions){align-items:stretch;}}
+</style>
+</head>
+<body>
+  <noscript><div class="noscript-notice">CURIOID needs JavaScript enabled to open its interactive projects. No account or remote AI service is required.</div></noscript>
+  <a class="skip-link" href="#discoveryChoices">Skip to collections</a>
+  <div class="scrim" id="scrim" aria-hidden="true"></div>
+  <aside class="sidebar" id="sidebar" aria-label="CURIOID destinations">
+    <a class="brand" href="#top" aria-label="CURIOID home" id="brandHome">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" role="presentation" focusable="false">
+          <g class="brand-eye-aperture">
+            <path d="M4.5 24C9.3 13.7 17.1 8.5 24 8.5S38.7 13.7 43.5 24C38.7 34.3 30.9 39.5 24 39.5S9.3 34.3 4.5 24Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/>
+            <circle cx="24" cy="24" r="8.1" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="24" cy="24" r="3.6" fill="currentColor"/>
+          </g>
+          <path class="brand-eye-closed" d="M4.5 24 Q24 36.5 43.5 24" aria-hidden="true"/>
+          <path class="brand-eye-crease brand-eye-crease-left" d="M15.5 14.5 11 10" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+          <path class="brand-eye-crease brand-eye-crease-right" d="M32.5 14.5 37 10" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span><span class="brand-word">CURIOID</span><span class="brand-caption">A place for all<br><span>things curious</span></span></span>
+    </a>
+
+    <section class="sidebar-search" aria-label="Search projects">
+      <label for="projectSearch">Looking for something?</label>
+      <div class="project-search" role="search">
+        <span class="discovery-search-icon" aria-hidden="true">⌕</span>
+        <input id="projectSearch" type="search" placeholder="Search projects, ideas or tags…" autocomplete="off" spellcheck="false" aria-keyshortcuts="/" aria-controls="categorySections" aria-describedby="projectSearchHint">
+        <button id="clearProjectSearch" type="button" aria-label="Clear project search" title="Clear search" hidden>×</button>
+      </div>
+      <small id="projectSearchHint">Try “music”, “physics”, “pixel” or “mystery”.</small>
+    </section>
+
+    <details class="sidebar-browse-collections" id="browseCollections">
+      <summary><span>Browse collections</span><span class="sidebar-browse-count">7</span></summary>
+      <nav class="project-nav category-nav" id="categoryNav" aria-label="Project collections">
+        <button class="nav-item nav-item-all" type="button" data-browse-all aria-pressed="false">
+          <span class="nav-symbol" aria-hidden="true">✳</span><span class="nav-label">All projects</span><span class="nav-indicator"></span>
+        </button>
+        <button class="nav-item" type="button" data-category="operating-systems" aria-pressed="false">
+          <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Digital Worlds</span><span class="nav-indicator"></span>
+        </button>
+      <button class="nav-item" type="button" data-category="strange-archives" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">⌑</span><span class="nav-label">Stories</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="web-experiments" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">◉</span><span class="nav-label">Web Experiments</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="tiny-games" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">▣</span><span class="nav-label">Tiny Games</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="digital-art" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">◈</span><span class="nav-label">Digital Art</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="sound-motion" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">〰</span><span class="nav-label">Music &amp; Sound</span><span class="nav-indicator"></span>
+      </button>
+      <button class="nav-item" type="button" data-category="creative-tools" aria-pressed="false">
+        <span class="nav-symbol" aria-hidden="true">⌘</span><span class="nav-label">Creative Tools</span><span class="nav-indicator"></span>
+      </button>
+      </nav>
+    </details>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-tools" aria-label="Website settings">
+        <button class="sidebar-tool sidebar-control-panel-entry" type="button" id="openControlCenter" aria-haspopup="dialog" aria-controls="siteControlCenter">
+          <span aria-hidden="true">⚙</span><span><b>Control Panel</b><small>Website tools, settings and saved items</small></span>
+        </button>
+      </div>
+      <a class="portfolio-link" data-sidebar-creator-link href="https://stelioswinters.com/" target="_blank" rel="noopener noreferrer"><span>Visit the creator's website</span><span aria-hidden="true">↗</span></a>
+    </div>
+  </aside>
+
+  <main class="main" id="top">
+    <header class="topbar">
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open project menu" aria-expanded="false" aria-controls="sidebar">☰</button>
+      <div class="topbar-left"><span class="topbar-brand">CURIOID</span><span class="topbar-separator">/</span><span class="topbar-context" id="projectCount" aria-live="polite">60 Projects</span></div>
+      <div class="topbar-right">
+        <button class="egg-hunt-toggle" id="curioidEggHuntToggle" type="button" hidden data-enabled="false" aria-label="Turn Egg Hunt on" aria-pressed="false" title="Egg Hunt is paused · click to resume hidden eggs"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8C8.7 2.8 6.1 8 6.1 13.2c0 4.7 2.4 7.3 5.9 7.3s5.9-2.6 5.9-7.3C17.9 8 15.3 2.8 12 2.8Z"/><path d="M9.5 10.5c.4-2.4 1.3-3.8 2.5-4.7M9.3 14.2c.8 1.2 1.8 1.5 2.7 1.3"/><path d="M7.4 7.3 4.8 6.1M16.6 7.3l2.6-1.2"/></svg><span class="egg-hunt-status-dot" aria-hidden="true"></span></button>
+        <label class="global-volume-control" title="Master volume">VOL <input id="globalMasterVolume" type="range" min="0" max="100" value="70" aria-label="Master volume"><output id="globalMasterVolumeValue">70%</output></label>
+        <button class="topbar-action motion-toggle" id="motionToggle" type="button" aria-pressed="true" title="Pause or resume animated projects">Motion ON</button>
+        <button class="topbar-action" id="closeAllRooms" type="button" hidden>Close all</button>
+        <div class="topbar-notification-wrap"><button class="topbar-notification-button" id="notificationBell" type="button" aria-label="Notifications" aria-expanded="false" aria-controls="notificationPanel" title="Notifications"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="notification-count" id="notificationCount" hidden>0</span></button><section class="site-notification-panel" id="notificationPanel" aria-label="Notifications" hidden>
+          <header><div><b>Notifications</b><small>Updates when you choose to look</small></div><div><button type="button" data-notification-read-all>Mark read</button><button type="button" data-notification-clear>Clear</button></div></header>
+          <div class="notification-tabs" role="tablist" aria-label="Notification sections">
+            <button type="button" id="notificationActivityTab" role="tab" data-notification-tab="activity" aria-selected="true" aria-controls="notificationActivityView">Activity</button>
+            <button type="button" id="notificationUpdatesTab" role="tab" data-notification-tab="updates" aria-selected="false" aria-controls="notificationUpdatesView" tabindex="-1">New &amp; Updated <span>12</span></button>
+          </div>
+          <div class="site-notification-list" id="notificationActivityView" role="tabpanel" aria-labelledby="notificationActivityTab" data-notification-list><p class="site-notification-empty">You're all caught up.</p></div>
+          <div class="site-notification-updates" id="notificationUpdatesView" role="tabpanel" aria-labelledby="notificationUpdatesTab" hidden>
+            <article><small>v1.396 · NOV 28, 2026</small><h3>Whole-site Health Check, interaction evidence &amp; responsive content fit</h3><p>Expanded read-only diagnostics across all seven operating systems, project templates and standalone documents. Added per-control and select-option inventories, safe trusted-interaction observations, source-wiring hints, page and iframe overflow scans, privacy-aware layout reporting, and targeted content-fit safeguards. Corrected catalogue health metadata and strengthened release regression checks.</p></article>
+    <article><small>v1.395 · NOV 28, 2026</small><b>CURIOID + DREAMFORGER receive an adversarial reliability and accessibility hardening pass</b><p>Cross-tab project imports now claim their action state before asynchronous work, serialize by source artifact ID and re-read persisted state before duplicate and capacity checks. Exchange handoffs use a stable SHA-256 content fingerprint, a per-handoff lock and Exchange's delivery idempotency key; ambiguous timeouts retain the artifact for safe retry instead of deleting a possibly accepted handoff. Asset Library reference writes now perform verified compensating rollback when persistence or read-back fails. Its service-worker cache identity rotates with the host release to retire stale offline shells. DREAMFORGER detail and help dialogs expose accessible names without changing the existing layout. New adversarial tests cover duplicate submissions, concurrent sends, ambiguous Exchange outcomes, reference rollback and 100,000 window-state transitions. The audit also documents the trusted same-origin integration boundary and the browser/deployment checks that remain pending.</p></article>
+            <article><small>v1.394 · NOV 28, 2026</small><b>DREAMFORGER joins the Digital Worlds as the seventh independent operating system</b><p>DREAMFORGER is integrated as a first-party creative development OS above the Doors98-hosted Sandbox environment. Its native Kernel adapter exports only dreamforger/project, accepts the exact declared artifact types from the six existing OSes, imports DREAMFORGER projects as new copies with lineage, and stores foreign work as metadata-only Asset Library references. Registration is lifecycle-managed, refuses adapter conflicts, uses CURIOID's existing Kernel, Connect, App SDK, Exchange and Local Services, and requires explicit Exchange permission. The OS catalogue, reciprocal discovery links, public project count, embedded operating-system module and offline deployment checks are updated. The shared roadmap now consolidates security, storage, lifecycle, import/export, accessibility and performance work instead of repeating it per system. All source OSes retain their distinct tools and visual identities.</p></article>
+            <article><small>v1.393 · NOV 28, 2026</small><b>Doors98 Program Manager adds verified CURIOAPP rollback</b><p>Program Manager now offers a version-specific rollback to the newest unambiguous older CURIOAPP release retained in Key Return. It checks the full archived history, rejects ambiguous SemVer duplicates, and blocks rollback when exact-version dependencies or installed dependents would be broken. Before the paired C: transaction, both package records are revalidated, every resource is checked against its SHA-256 digest, the WebAssembly entry is recompiled and inspected, and any publisher signature is verified. The current version is retained intact in Key Return. Rollback does not execute package code or perform application data migrations.</p></article>
+            <article><small>v1.392 · NOV 28, 2026</small><b>Doors98 Virtual PC adds guided boot presets, guest keyboard controls and verified capture</b><p>Doors98 Virtual PC now offers five quick device-layout presets for Windows 9x floppy-first and CD-first installation, FreeDOS floppy boot, experimental 32-bit Linux live-CD boot and existing hard disks. It explicitly prioritizes the selected BIOS boot device for multi-device installation workflows. A guest Ctrl+Alt+Delete control and bounded PNG screenshot capture are available. Snapshot and screenshot requests now carry unique operation IDs, enforce deadlines and ignore late responses from expired or replaced operations. Pause, resume, reset and keyboard actions are locked while a save is in progress. Browser Vault status distinguishes a confirmed save from the persistence level reported by the Vault notice. These changes improve the optional v86 guest workflow; they do not prove native guest boot compatibility in every browser or add x86-64 support.</p></article>
+            <article><small>v1.390 · NOV 28, 2026</small><b>CURIOAPP adds offline signed repositories and a dependency-aware Program Manager browser</b><p>The portable application ecosystem now supports offline repository catalogs containing multiple CURIOAPP packages. New developer tools build repositories from validated packages, calculate dependency-first install order, verify package and resource hashes, and optionally sign the catalog with Ed25519. The verifier can require a separately supplied trusted key and refuses path traversal, symlinks, missing dependencies, cycles, modified package bytes and malformed package metadata. Doors98 Program Manager can load a local repository index, select its package files, inspect repository and publisher status, and enable one-at-a-time installation only after matching file digests, every embedded resource, the declared WebAssembly entry and exact dependencies have been verified. Repository-index trust and app-publisher trust remain independent. Package updates still retain the previous version in Key Return and protect exact-version dependents. This is a local offline repository workflow, not a remote network catalog or bulk installer, and CURIOAPP execution remains bounded WebAssembly rather than native Windows, Linux or macOS execution.</p></article>
+            <article><small>v1.389 · NOV 28, 2026</small><b>CURIOAPP v2 adds multi-file packages and exact-version app dependencies</b><p>Doors98 now accepts a second portable package format with up to 64 hashed files, one declared WebAssembly entry module, passive assets and exact semantic-version dependencies. Program Manager checks dependencies while holding the package installation lock, refuses ambiguous or damaged package registries, and prevents removal of packages required by installed apps. Universal File Desk shows the package resource map and rechecks active installation state, exact dependencies, every resource hash, publisher signature and the bounded runtime policy immediately before execution. The development tools add a v2 multi-file packager and examples that demonstrate install order and dependency protection. v1 packages remain compatible. Stored assets are not exposed to application code, dependencies are not dynamically linked, and host capabilities remain disabled. This is not yet WASI or native Windows, Linux or macOS execution.</p></article>
+            <article><small>v1.388 · NOV 28, 2026</small><b>Doors98 adds Ed25519 publisher signing and a local trust manager for CURIOAPP</b><p>CURIOAPP packages can now carry an Ed25519 signature over a canonicalized manifest and payload. Program Manager verifies signatures during installation and Universal File Desk verifies them again immediately before execution. An embedded key is never trusted automatically: users import a separate .curioid-pub file, independently compare its SHA-256 fingerprint, and can revoke trusted keys later. Trust-store changes are serialized across tabs and fail closed on malformed or unavailable storage. The development package adds local publisher key generation and signing tools; private keys are never included in the website or sent to a service. Unsigned and unknown-key packages remain explicitly labeled and require separate confirmation. This does not add WASI, filesystem/network capabilities or native Windows/Linux/macOS executable support.</p></article>
+            <article><small>v1.387 · NOV 28, 2026</small><b>Doors98 installs portable CURIOAPP packages and adds a matching developer packager</b><p>Program Manager now installs a versioned .curioapp package into C:, verifies its SHA-256 payload, validates the no-import WebAssembly module and records the app without executing it. Universal File Desk verifies the package again before an explicit Run action, uses the restricted disposable Worker, and moves uninstalled packages to Key Return. The full development package includes a Node.js packager that shares the exact runtime validator, refuses silent overwrite and ships with a working example returning 42. The first format has no host capabilities, dependencies or WASI support and remains unsigned; native Windows, Linux and macOS binaries still require dedicated guest or compatibility environments.</p></article>
+            <article><small>v1.386 · NOV 28, 2026</small><b>Doors98 gains bounded WebAssembly execution and architecture-aware binary inspection</b><p>Universal File Desk now identifies DOS MZ, PE32/PE32+, ELF32/ELF64 and thin/universal Mach-O architectures from bounded headers, and displays advisory compatibility routes without claiming native execution. It also separates WebAssembly inspection from execution. The optional runner executes only a no-import module with an explicit zero-argument entrypoint, no automatic start section, bounded linear memory and tables, a 2 MB input cap and a short-lived disposable Worker. It refuses WASI, filesystem, network, DOM and all other host imports. The Worker is terminated on timeout, navigation or application disposal. This is a deliberately small first execution bridge, not yet a full WASI application runtime or support for Windows PE, Linux ELF or macOS Mach-O binaries.</p></article>
+            <article><small>v1.385 · NOV 28, 2026</small><b>Whole-site interaction coverage, source audit and content-fit diagnostics</b><p>Health Check now puts the whole-site control census into one item: live website and Management controls, all 59 project templates, four standalone app documents and every select option. Trusted clicks, committed changes and form submissions are matched to stable control identities and followed by a short, privacy-safe response observation. It never force-clicks or submits controls, and it never reads passwords or file-input paths. A rendered layout check records horizontal overflow, clipped text and intentional scroll regions. The new whole-package source audit parses JavaScript, inline scripts and structured data, resolves local resources, checks CSP/sandbox boundaries, and inventories dynamic DOM, frame, message and Worker integration points. Curioids battle-log output now preserves only a strict formatting allowlist and escapes all other composed content; replay damage is numeric-clamped before markup insertion. Cross-page content-fit safeguards improve wrapping and small-screen sizing without removing elements or disabling code/data scrolling.</p></article>
+            <article><small>v1.384 · NOV 28, 2026</small><b>Universal File Desk shares the complete C: import preflight</b><p>Universal File Desk now uses the same full-batch validator as File Manager. Both entry points reject selections above 50 files, reserve collision-checked IDs, enforce the per-file and aggregate byte limits, and check current active plus returned C: storage and the key-count ceiling before reading any selected file. The existing commit-time quota check remains in place for changes from other tabs.</p></article>
+            <article><small>v1.383 · NOV 28, 2026</small><b>Doors98 file imports get capacity preflight and close-safe staging</b><p>File Manager now checks the full selected batch, current C: usage, key count and per-file limits before reading files. Universal File Desk rejects selections above 50 instead of silently ignoring extras. Both import paths stage asynchronous reads and classification before changing C:, and pending work is discarded if its window closes before commit. When a save cannot be confirmed, recoverable in-session file bytes are preserved and clearly identified instead of leaving incomplete binary records.</p></article>
+            <article><small>v1.382 · NOV 28, 2026</small><b>Web Lock cancellation diagnostics and bounded cleanup</b><p>Health Check now verifies that an exclusive lock blocks a competing request and that a queued request can be cancelled with AbortError before its callback runs. The disposable lock canary also aborts a stalled initial acquisition and uses bounded cleanup, so an abnormal lock-manager response cannot leave the diagnostic waiting indefinitely. This is an API behavior check, not a substitute for testing separate browser tabs.</p></article>
+            <article><small>v1.381 · NOV 28, 2026</small><b>IndexedDB upgrade and rollback diagnostics go deeper</b><p>Health Check now tests a real version-1 to version-2 IndexedDB upgrade while an older connection is still open, verifies the versionchange and blocked events, and confirms that the original store and data survive after the older connection closes. The rollback canary now covers both explicit abort and duplicate-key ConstraintError rollback. Temporary database cleanup only counts confirmed deletions and warns when an open connection blocks cleanup.</p></article>
+            <article><small>v1.380 · NOV 28, 2026</small><b>Workflow Studio saves are coordinated across tabs</b><p>Workflow creation, updates, imports, deletions and initial example seeding now commit through one exclusive cross-tab lock. Each save rechecks the stored revision after acquiring the lock, verifies the exact result, and rejects stale or uncertain writes instead of overwriting newer workflows. Library operations are awaited before the interface reports success, and outdated releases fail closed. The storage inventory also recognizes common Web Storage adapters and aliased Web Lock requests.</p></article>
+            <article><small>v1.379 · NOV 28, 2026</small><b>Curioids arena and UMBRA personal bests are safer across tabs</b><p>Curioids arena saves now use revision-checked cross-tab commits and preserve malformed or conflicting raw data for recovery export. Audio preferences merge one field at a time and write only when a slider change is committed. UMBRA Arcade personal bests now use a monotonic, validated scorebook transaction with read-back verification and stale-project cancellation. The site-wide master-volume control updates audio immediately but persists only on change under a shared lock, with cross-tab refresh and malformed-value protection.</p></article>
+            <article><small>v1.378 · NOV 28, 2026</small><b>Shared OS preferences now update safely across tabs</b><p>Universal desktop shortcuts, wallpaper, icon size and layout now merge against the latest saved settings under a shared cross-tab lock. Operating-system sound preferences use the same validated transaction pattern, with read-back verification, cross-tab refresh and safe recovery for malformed records. Pending preference writes are cancelled when the owning interface closes.</p></article>
+            <article><small>v1.376 · NOV 28, 2026</small><b>Project saves and stale-tab commits get stricter protection</b><p>Connect and installed-app operations now recheck the release generation inside their shared mutation locks, including package imports, permission changes, private-data deletion and launch. Imported Connect metadata updates are revision-checked under a shared lock. Dream Index notebooks, Kineta champion records, Hyperion Stride distance records, Color Alchemist palettes and Idea Tumbler saved seeds now use cross-tab transactions with validation and read-back verification. Workflow Studio run history and CURIOID Exchange handoff activity now serialize appends and clears across tabs. Malformed saved records are preserved and fail closed instead of being silently replaced.</p></article>
+            <article><small>v1.375 · NOV 28, 2026</small><b>Doors98 personal ledgers join restore-safe storage</b><p>Clipboard Vault, Appointment Book, Archive Cabinet, Room Atlas visit history, Task Board and Budget Ledger now commit through the same cross-tab System Restore lock as C: and profile restore. Each write checks the stored revision after acquiring the lock, verifies the replacement, and fails closed if coordination is unavailable. Mutation handlers await the commit instead of reporting success early. Personal Shortcuts can now import its bounded raw recovery export through the full ordered lock set, with stale-snapshot rejection, read-back verification and guarded rollback.</p></article>
+            <article><small>v1.374 · NOV 28, 2026</small><b>Safer Doors98 fallback storage transactions</b><p>When IndexedDB is unavailable, Doors98 C: and Key Return writes now use the same cross-tab lock as restore operations. Single-key saves capture their candidate only after acquiring the lock, and two-key moves verify both original snapshots before either replacement. All callers await fallback commits so the interface cannot report success before storage confirms it.</p></article>
+            <article><small>v1.373 · NOV 28, 2026</small><b>Personal memory controls and safer stale-tab handoff</b><p>Recently opened projects and session restoration are opt-in for new visitors, with existing saved history preserved. Personal shortcut and session writes now coordinate through ordered cross-tab locks, and recovery exports capture one consistent raw snapshot. Control Panel adds proactive recovery export, full-system backup verification and storage-pressure warnings. Outdated tabs stop tracked project runtime scopes before showing the reload gate.</p></article>
+            <article><small>v1.371 · NOV 28, 2026</small><b>Permission, storage and export integrity</b><p>Capability requests revalidate grants after asynchronous providers finish. Personal and installed-app libraries now coordinate shared mutations and coherent exports across tabs. Doors98 Rooms and restore points share a restore lock, Strange Archives collections and Tiny Games records use verified transactions, and installed-app exports await complete snapshots.</p></article>
+            <article><small>v1.370 · NOV 27, 2026</small><b>AURA transactional storage</b><p>AURA now serializes saved records across tabs, verifies every replacement, protects paired Release Office restores, and fails closed on stale or uncertain data. Added same-tab ledger ordering, cancelled-import guards and expanded adversarial coverage.</p></article>
+            <article><small>v1.368 · NOV 27, 2026</small><b>Safer cross-tab saves in five projects</b><p>Extended exclusive Web Lock transactions and verified storage revisions to Frequency Garden, Last Corridor, Face Machine, Museum favorites and Doors98 Focus Room. Same-tab writes are queued, stale tabs cannot replace newer data, and recovery replaces damaged records atomically after a backup.</p></article>
+            <article><small>v1.359 · NOV 27, 2026</small><b>Deployment-safe diagnostics and a more reliable local launcher</b><p>Health Check and service-worker repair now resolve assets from the deployment that actually served the page, rather than following an SEO canonical URL to another host. The Windows local launcher now binds a real free loopback port before opening the browser. Added a repeatable pre-upload validation command.</p></article>
+            <article><small>v1.358 · NOV 27, 2026</small><b>Consistent indexing and clearer hosting requirements</b><p>Chroma Loom now follows the same noindex policy as the other standalone tools. Hosting notes explain where the included response-header rules are applied and what requires a CDN or host-level configuration. The local deployment guide now points to those notes.</p></article>
+            <article><small>v1.357 · NOV 27, 2026</small><b>Reliable local launch and cleaner release packaging</b><p>Added a one-click Windows launcher, clearer local setup instructions and faster, safer cache rules for versioned assets. Release markers and integrity hashes are aligned for this standalone ZIP build.</p></article>
+            <article><small>v1.345 · NOV 26, 2026</small><b>Service-worker release alignment</b><p>Aligned all runtime service-worker registration, update, recovery and diagnostic message checks with v1.345. The runtime script preload, execution integrity and offline cache manifest now reference the same verified build.</p></article>
+            <article><small>v1.345 · NOV 26, 2026</small><b>More reliable audio and accessible controls</b><p>D4RK L00PER now releases short-lived audio graph nodes, preserves the browser’s actual recording format, and shuts down active recording cleanly when its window closes. Step and sound selection controls now support keyboard navigation.</p></article>
+            <article><small>v1.342 · NOV 26, 2026</small><b>Whole-site health audit and responsive care</b><p>Health Check now combines live site controls, all project templates and standalone tools in one privacy-safe interaction audit. Added live overflow and host-header checks, exact-origin app-frame messages and additive small-screen text-fit guards.</p></article>
+            <article><small>v1.341 · NOV 26, 2026</small><b>Hardened App SDK resource lifecycles</b><p>Fixed long-session resource accounting so released listeners, timers and registrations free capacity. Resource-limit failures now avoid leaving behind untracked timers or partially registered Connect contracts.</p></article>
+            <article><small>v1.340 · NOV 26, 2026</small><b>App SDK foundation, lifecycle controls and expanded MIME support</b><p>Introduced CurioidAppSDK v1 with manifest-gated capabilities, typed contracts and automatic app resource cleanup. UMBRA now uses the SDK for Echonoise integration, and GLITCHYARD MIME lookup covers more than 1,500 file extensions. Connect Console now reports SDK sessions and tracked resources.</p></article>
+            <article><small>v1.339 · NOV 26, 2026</small><b>Cleaner Control Panel and expanded conversion tools</b><p>Removed the creator-site button from Control Panel and expanded GLITCHYARD unit conversions to 13 categories. Release integrity references refreshed.</p></article>
+            <article><small>v1.338 · NOV 26, 2026</small><b>Stronger isolation and safer app lifecycles</b><p>Studio app isolation, stricter offline integrity checks, safer file processing and more reliable Back navigation.</p></article>
+            <article><small>DISCOVERY</small><b>Search where you browse</b><p>Project search now lives in the sidebar, ready whenever you need it.</p></article>
+            <article><small>COLLECTIONS</small><b>Stories, not Archives</b><p>The former Archives collection is now called Stories, with its unusual archives kept front and center.</p></article>
+            <article><small>ACCESSIBILITY</small><b>One tap back to categories</b><p>Category views now include a CATEGORIES button, and All expands the sidebar collection list.</p></article>
+            <article><small>HEALTH CHECK</small><b>Integrity references corrected</b><p>The Health Check loader now uses the current module hashes and matching release metadata.</p></article>
+          </div>
+          <footer>Activity stays in this session. Release notes wait here until you open them. Detailed notes for every intermediate maintenance build are not included in this archive.</footer>
+        </section></div>
+        <span class="status-live" id="topStatus" aria-live="polite">0 experiences open</span>
+      </div>
+    </header>
+    <div class="page-wrap">
+      <section class="hero" aria-labelledby="heroTitle">
+        <h1 id="heroTitle">Small experiments.<br><span class="strange-word" aria-label="Strange" data-word="Strange"><span>S</span><span>t</span><span>r</span><span>a</span><span>n</span><span>g</span><span>e</span></span> <span class="results-word">results.</span></h1>
+        <p class="hero-assurance">NO DOWNLOADS <span aria-hidden="true">·</span> NO ACCOUNT <span aria-hidden="true">·</span> JUST EXPLORE</p>
+      </section>
+      <hr class="section-rule">
+      <section class="featured-quickstart" id="featuredQuickstart" aria-labelledby="featuredQuickstartTitle">
+        <div class="featured-quickstart-heading">
+          <div><p class="featured-quickstart-kicker">A FEW PLACES TO BEGIN</p><h2 id="featuredQuickstartTitle">FEATURED</h2></div>
+          <span class="featured-quickstart-count" id="featuredQuickstartCount" aria-live="polite" aria-atomic="true">01 / 03</span>
+        </div>
+        <div class="featured-carousel" id="featuredCarousel" role="region" aria-roledescription="carousel" aria-label="Featured projects">
+          <button class="featured-carousel-arrow" id="featuredPrevious" type="button" aria-label="Show previous six featured projects" aria-controls="featuredPreviewGrid" title="Previous six">‹</button>
+          <div class="featured-preview-grid" id="featuredPreviewGrid" role="group" aria-label="Featured projects"></div>
+          <button class="featured-carousel-arrow" id="featuredNext" type="button" aria-label="Show next six featured projects" aria-controls="featuredPreviewGrid" title="Next six">›</button>
+        </div>
+      </section>
+      <hr class="section-rule featured-divider">
+      <details class="discovery-section discovery-disclosure" id="discoveryChoices">
+        <summary class="discovery-disclosure-summary">
+          <span><small>PICK A DIRECTION</small><strong>Explore by collection</strong></span>
+          <span class="discovery-disclosure-mark" aria-hidden="true">＋</span>
+        </summary>
+        <div class="discovery-grid">
+          <button class="discovery-card" type="button" data-browse-category="tiny-games" data-tone="play" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">▣</span><span class="discovery-title">PLAY</span><span class="discovery-description">Tiny games, odd rules and unexpected challenges.</span><span class="discovery-meta">TINY GAMES <b>08</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="digital-art" data-tone="make" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">✺</span><span class="discovery-title">MAKE</span><span class="discovery-description">Generative art, images and visual experiments.</span><span class="discovery-meta">DIGITAL ART <b>09</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="sound-motion" data-tone="listen" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">〰</span><span class="discovery-title">LISTEN</span><span class="discovery-description">Play with sound, rhythm and strange instruments.</span><span class="discovery-meta">MUSIC &amp; AUDIO <b>05</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="web-experiments" data-tone="explore" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">◉</span><span class="discovery-title">EXPLORE</span><span class="discovery-description">Interactive oddities, simulations and living systems.</span><span class="discovery-meta">WEB EXPERIMENTS <b>08</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="operating-systems" data-tone="worlds" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">◈</span><span class="discovery-title">WORLDS</span><span class="discovery-description">Seven independent desktops with their own apps and personalities.</span><span class="discovery-meta">DIGITAL WORLDS <b>07</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="strange-archives" data-tone="archive" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">⌑</span><span class="discovery-title">STORIES</span><span class="discovery-description">Unusual archives, impossible objects and lost fragments.</span><span class="discovery-meta">STORIES <b>05</b></span></button>
+          <button class="discovery-card" type="button" data-browse-category="creative-tools" data-tone="tools" aria-pressed="false"><span class="discovery-glyph" aria-hidden="true">⌘</span><span class="discovery-title">TOOLS</span><span class="discovery-description">Clever creative utilities for making and tinkering.</span><span class="discovery-meta">CREATIVE TOOLS <b>17</b></span></button>
+          <button class="discovery-card discovery-card-build" type="button" data-build-project="sandbox-os" data-tone="build"><span class="discovery-glyph" aria-hidden="true">✳</span><span class="discovery-title">BUILD</span><span class="discovery-description">Design a digital world and make it your own.</span><span class="discovery-meta">MAKE YOUR OWN WORLD <b>↗</b></span></button>
+          <button class="discovery-card discovery-card-all" type="button" data-browse-all aria-pressed="false" data-tone="all"><span class="discovery-glyph" aria-hidden="true">↗</span><span class="discovery-title">ALL</span><span class="discovery-description">See every project, all seven collections, one big rabbit hole.</span><span class="discovery-meta">ALL 60 PROJECTS <b>60</b></span></button>
+        </div>
+      </details>
+      <div class="rooms-label" id="catalogLabel" hidden>
+        <div class="rooms-label-actions">
+          <span id="catalogTitle">All projects</span>
+          <button class="categories-return-button" id="returnToCategories" type="button" aria-label="Return to categories" title="Choose another category" hidden>CATEGORIES</button>
+        </div>
+        <span id="catalogHint">FEATURED FIRST · BROWSE EVERY COLLECTION</span>
+      </div>
+      <p class="search-results-status" id="searchResultsStatus" aria-live="polite" hidden></p>
+      <div class="search-empty" id="searchEmpty" hidden>No projects match that search. Try another word or tag.</div>
+      <div class="category-stack" id="categorySections" aria-label="Project collections" hidden></div>
+      <footer class="site-footer"><span><strong>CURIOID</strong> · A creative playground <small class="site-version">v1.396</small></span><span class="site-footer-meta"><span>© Stelios Winters. All Rights Reserved.</span></span></footer>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog class="site-control-center site-control-panel" id="siteControlCenter" aria-labelledby="siteControlCenterTitle">
+    <header class="site-control-head"><div><small>CURIOID / WEBSITE CONTROL</small><h2 id="siteControlCenterTitle">Control Panel</h2><p>Website-wide tools, preferences and saved items in one place. Each OS keeps its own apps and workspaces; its connections and transfers live under Management on that OS taskbar.</p></div><button type="button" data-control-close aria-label="Close Control Panel">×</button></header>
+    <section class="site-control-status-grid" aria-label="Local site status">
+      <article><small>STORAGE</small><b data-control-storage>Checking browser storage…</b><span>The browser estimates storage for this full domain, not just CURIOID.</span></article>
+      <article><small>WORLDS</small><b>6 independent worlds</b><span>Each world keeps its own workspace.</span></article>
+      <article><small>YOUR SHORTCUTS</small><b data-control-shortcuts>0 favorites · 0 recent</b><span>Saved locally in this browser.</span></article>
+      <article><small>APP RUNTIMES</small><b data-control-runtime aria-live="polite" aria-atomic="true">0 active · 0 tracked</b><span>Resources are released when an app closes.</span></article>
+    </section>
+    <section class="site-control-storage" aria-labelledby="controlPanelStorageTitle">
+      <div class="site-control-storage-head"><div><h3 id="controlPanelStorageTitle">LOCAL STORAGE PROTECTION</h3><p>CURIOID saves work in this browser. Ask the browser to protect storage for this full domain from automatic cleanup.</p></div><span data-storage-protection-badge>CHECKING</span></div>
+      <div class="site-control-storage-meter-wrap"><div class="site-control-storage-meter" role="progressbar" aria-label="Estimated browser storage usage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-storage-meter><span data-storage-meter-fill></span></div><small data-storage-breakdown>Checking storage estimate…</small></div>
+      <small class="site-control-storage-warning" data-storage-warning role="status" aria-live="polite">Checking available browser storage headroom…</small>
+      <div class="site-control-storage-actions"><p data-storage-protection-status role="status" aria-live="polite">Checking persistent-storage support…</p><button type="button" class="site-control-small-action" data-storage-persist-request>Request storage protection</button></div>
+      <small class="site-control-storage-note">The browser decides whether to grant this domain-wide request. Protection is not a backup: export important work regularly and before clearing site data or changing devices.</small>
+      <div class="site-control-backup-check">
+        <div><b>BACKUP HEALTH</b><p data-backup-health-status role="status" aria-live="polite">Not checked during this visit. Verify your latest full-system backup before relying on it.</p></div>
+        <button type="button" class="site-control-small-action" data-backup-health-check>Verify full-system backup</button>
+      </div>
+    </section>
+    <section class="site-control-health" aria-labelledby="controlPanelHealthTitle">
+      <div class="site-control-health-head"><div><h3 id="controlPanelHealthTitle">CURIOID HEALTH CHECK</h3><p>Run deep local checks for every project bundle, styling, offline delivery, storage transactions, lifecycle cleanup and browser capabilities. Safe maintenance runs automatically; saved work is never deleted and nothing is uploaded.</p></div><span data-health-state>NOT RUN</span></div>
+      <div class="site-control-health-actions"><a href="#" role="button" class="site-control-small-action" data-health-run data-health-download aria-disabled="false" aria-label="Run full diagnostics and safe fixes">Run full diagnostics + safe fixes</a><button type="button" class="site-control-small-action" data-health-repair>Refresh service-worker registration</button></div>
+      <p class="site-control-health-status" data-health-status role="status" aria-live="polite">Diagnostics run only when requested. The report contains technical status and error details, not saved project contents or passwords.</p>
+      <details class="site-control-health-details" data-health-details>
+        <summary data-health-details-summary>View detailed results</summary>
+        <div class="site-control-health-results-scroll"><ul class="site-control-health-results" data-health-results aria-label="CURIOID health check results"></ul></div>
+      </details>
+      <small class="site-control-storage-note">Refresh checks for a current offline shell. If an older cached release is blocking project assets, it can activate the waiting update and reload CURIOID. It never clears saved projects, OS packages, Browser Vault artifacts or backups. The report is generated locally and downloaded only when you press its button.</small>
+    </section>
+    <section class="site-control-tool-section" aria-labelledby="controlPanelCreateTitle">
+      <h3 id="controlPanelCreateTitle">CREATE &amp; BUILD</h3>
+      <div class="site-control-actions">
+        <button type="button" id="openWorkflowStudio" data-control-launch><b>Workflow Studio</b><small>Build approved local workflows</small></button>
+        <button type="button" id="openCreatorWorkshop" data-control-launch><b>Creator Workshop</b><small>Plan and develop projects</small></button>
+        <button type="button" id="openUniverseWorkshop" data-control-launch><b>Sandbox OS</b><small>Build your own operating system</small></button>
+        <button type="button" id="openMySandboxWorlds" data-control-launch><b>My Sandbox OS</b><small>Launch your saved personal worlds</small></button>
+      </div>
+    </section>
+    <section class="site-control-tool-section" aria-labelledby="controlPanelLibraryTitle">
+      <h3 id="controlPanelLibraryTitle">TOOLS, CONNECTIONS &amp; STORAGE</h3>
+      <div class="site-control-actions">
+        <button type="button" id="openConnectConsole" data-control-launch><b>Connect Console</b><small>Website services and permissions</small></button>
+        <button type="button" data-control-action="library"><b>Universal App Library</b><small>Find and manage local app packages</small></button>
+        <button type="button" id="openBrowserVault" data-control-launch><b>Browser Vault</b><small>Saved outputs and recovery copies</small></button>
+        <button type="button" data-control-action="backup"><b>Backup &amp; Restore</b><small>Open full local system backup tools</small></button>
+      </div>
+    </section>
+    <section class="site-control-personal" aria-label="Personal shortcuts and saved projects">
+      <h3>YOUR CURIOID</h3>
+      <details class="personal-shortcuts" id="personalShortcuts" aria-label="My CURIOID saved shortcuts">
+          <summary class="personal-shortcuts-summary">
+            <span class="personal-shortcuts-summary-copy"><small>MY CURIOID</small><b>Favorites and recently opened projects, ready to return to.</b></span>
+            <span class="personal-shortcuts-chevron" aria-hidden="true">⌄</span>
+          </summary>
+          <div class="personal-shortcuts-content">
+            <div class="personal-shortcuts-head">
+              <span>Saved in this browser</span>
+              <div class="personal-shortcuts-actions">
+                <button type="button" data-restore-site-session aria-label="Restore previously open CURIOID experiences" title="Reopen up to eight experiences from your last saved session" disabled>Restore last session</button>
+                <button type="button" data-clear-site-session aria-label="Clear the saved CURIOID session" disabled>Clear session</button>
+                <button type="button" data-export-site-recovery hidden>Export recovery copy</button>
+                <button type="button" data-import-site-recovery>Import recovery copy</button><input type="file" data-site-recovery-file accept="application/json,.json" hidden>
+                <button type="button" data-clear-site-favorites aria-label="Clear all CURIOID favorites" disabled>Clear favorites</button>
+                <button type="button" data-clear-site-recents aria-label="Clear recently opened projects" disabled>Clear recent</button>
+              </div>
+            </div>
+            <label class="personal-shortcuts-memory"><input type="checkbox" data-site-memory-toggle><span><b>Remember recent projects and last session</b><small>Stores up to 12 recent projects and 8 open experiences in this browser. Turn it off to pause future history updates. Existing saved history is retained until you clear it.</small></span></label>
+            <div class="personal-shortcuts-grid">
+              <section><h2>Favorites</h2><div class="personal-shortcut-list" data-site-favorites></div><p class="personal-shortcut-empty" data-site-favorites-empty>No favorites yet. Use the star on any project to keep it here.</p></section>
+              <section><h2>Recently opened</h2><div class="personal-shortcut-list" data-site-recents></div><p class="personal-shortcut-empty" data-site-recents-empty>Your recently opened worlds and projects will appear here.</p></section>
+            </div>
+          </div>
+        </details>    </section>
+    <section class="site-control-tool-section site-control-display" aria-labelledby="siteDisplaySettingsTitle">
+      <h3 id="siteDisplaySettingsTitle">APP DISPLAY &amp; ANIMATION</h3>
+      <div class="site-control-display-grid">
+        <label><span>APP INTERFACE SIZE</span><select data-app-display-scale aria-label="App interface size"><option value="0.8">80% · Compact</option><option value="0.9">90% · Smaller</option><option value="1" selected>100% · Standard</option><option value="1.1">110% · Larger</option><option value="1.2">120% · Large</option><option value="1.3">130% · Extra large</option></select><small>Scales project interfaces inside their windows. It does not change your monitor resolution.</small></label>
+        <label><span>ANIMATION TARGET</span><select data-motion-frame-rate aria-label="Animation frame rate"><option value="60" selected>60 FPS · Smooth (maximum)</option><option value="30">30 FPS · Lower workload</option></select><small>Targets 30 or 60 frames per second. Actual performance depends on your device and browser.</small></label>
+      </div>
+    </section>
+    <section class="site-control-preferences" aria-label="Site-wide preferences and shortcuts">
+      <h3>WEBSITE PREFERENCES</h3>
+      <label class="global-volume-control" title="Master volume"><span>MASTER VOLUME</span><input data-global-volume-mirror type="range" min="0" max="100" value="70" aria-label="Master volume"><output data-global-volume-mirror-value>70%</output></label>
+      <div class="site-control-preference-actions"><button type="button" class="site-control-small-action" data-motion-toggle-mirror aria-pressed="true" title="Pause or resume animated projects">Motion ON</button><button type="button" class="site-control-small-action" id="commandPaletteOpen" aria-label="Open command palette" title="Search projects and actions (Ctrl+K)" aria-keyshortcuts="Control+K Meta+K">Command palette · Ctrl+K</button><button type="button" class="site-control-small-action" id="openShortcutsHelp" title="Show keyboard shortcuts (?)" aria-keyshortcuts="Shift+Slash">Keyboard shortcuts · ?</button><button type="button" class="site-control-small-action" data-close-all-mirror hidden>Close all open projects</button></div><span class="status-live" data-open-status-mirror aria-live="polite">0 experiences open</span>
+    </section>
+    <section class="site-control-about" aria-label="About CURIOID">
+      <div class="sidebar-note"><div class="sidebar-note-title">THE CURIOID UNIVERSE</div><p>Seven independent worlds plus Sandbox OS, where you build your own. Your work stays in this browser. Connect Downloads only when you approve it.</p></div>
+    </section>
+    <p class="site-control-footnote">No cloud account or background upload. Browser storage can still be cleared, so export a backup before clearing site data or changing devices. Notifications remain on the top-bar bell.</p>
+  </dialog>
+  <dialog class="site-shortcuts-dialog" id="siteShortcutsDialog" aria-labelledby="siteShortcutsTitle" aria-describedby="siteShortcutsDescription">
+    <header class="site-shortcuts-head"><div><small>CURIOID / KEYBOARD GUIDE</small><h2 id="siteShortcutsTitle">Keyboard shortcuts</h2><p id="siteShortcutsDescription">Quick ways to explore without changing the independence of each world.</p></div><button type="button" data-shortcuts-close aria-label="Close keyboard shortcuts">×</button></header>
+    <div class="site-shortcuts-list">
+      <div class="site-shortcuts-row"><span><b>Find a project</b><small>Focus the catalogue search field.</small></span><kbd>/</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Quick launch</b><small>Search projects and site-wide actions.</small></span><kbd>Ctrl / ⌘ K</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Show this guide</b><small>Open the keyboard shortcut reference.</small></span><kbd>?</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Move through results</b><small>Choose an item in the command palette.</small></span><kbd>↑ ↓ ↵</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Close the current panel</b><small>Dismiss dialogs and close the menu.</small></span><kbd>Esc</kbd></div>
+      <div class="site-shortcuts-row"><span><b>Move between controls</b><small>Use the standard browser focus order.</small></span><kbd>Tab</kbd></div>
+    </div>
+    <p class="site-shortcuts-foot">Global shortcuts are paused while you type in a field. Individual worlds may have their own additional controls.</p>
+  </dialog>
+  <button class="back-to-top" id="backToTop" type="button" aria-label="Back to top" title="Back to top" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 16V4M4.5 9.5 10 4l5.5 5.5"/></svg><span>TOP</span></button>
+
+
+
+  <script src="site-runtime-current.js?v=sha256-7023287a608f9f595cfa703f9ee69832b53362b045f0178e9a5b1f81f336a94a" defer integrity="sha384-JTrh9b58CzjX4u7AFb8oepJ3duS+6kF9KgF6DN7izF0arDjATvRlPq+zcqvF3mRJ" crossorigin="anonymous" data-cfasync="false"></script>
+</body>
+</html>

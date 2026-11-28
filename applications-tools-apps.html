@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta name="curioid-release" content="v1.396">
+<meta name="curioid-document" content="applications-tools-apps.html">
+
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="#10131a" name="theme-color"/>
+<meta content="noindex,nofollow" name="robots"/>
+<meta content="default-src 'self';script-src 'self' 'strict-dynamic' 'sha256-7tfxcDo611s8f1N/TKYkAvXToalij/ienMXq0vocHw8=' 'sha256-Ym9qk00mp5HJ0p9BHY+idtaJqA+va7Iwy3rn12UhNqc='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob: data:; connect-src 'self' blob:; frame-src 'self' blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests" http-equiv="Content-Security-Policy"/>
+  <script data-cfasync="false" id="curioid-frame-guard">
+(() => {
+  const embedded = window.top !== window.self;
+  let parentOrigin = '';
+  if (embedded) {
+    try {
+      const ownOrigin = new URL(window.location.href).origin;
+      const referrerOrigin = new URL(document.referrer).origin;
+      if (ownOrigin === referrerOrigin) parentOrigin = referrerOrigin;
+    } catch (_) {}
+  }
+  const blocked = embedded && !parentOrigin;
+  if (!embedded) return;
+
+  if (!blocked) {
+    let stopped = false;
+    let lastHeight = 0;
+    let frameRequest = 0;
+    let resizeObserver = null;
+    let mutationObserver = null;
+    let observing = false;
+    const reportHeight = () => {
+      frameRequest = 0;
+      if (stopped) return;
+      const body = document.body;
+      const doc = document.documentElement;
+      if (!body || !doc) return;
+      const height = Math.max(1, Math.ceil(Math.max(body.scrollHeight, doc.scrollHeight, body.offsetHeight, doc.offsetHeight)));
+      if (Math.abs(height - lastHeight) < 2) return;
+      lastHeight = height;
+      try { window.parent.postMessage({ type: 'CURIOID_APP_HEIGHT', height }, parentOrigin); } catch (_) {}
+    };
+    const scheduleHeight = () => {
+      if (stopped || frameRequest) return;
+      frameRequest = requestAnimationFrame(reportHeight);
+    };
+    const suspendObservers = () => {
+      if (frameRequest) cancelAnimationFrame(frameRequest);
+      frameRequest = 0;
+      resizeObserver?.disconnect();
+      mutationObserver?.disconnect();
+      resizeObserver = null;
+      mutationObserver = null;
+      window.removeEventListener('resize', scheduleHeight);
+      observing = false;
+    };
+    const stopObservers = () => {
+      if (stopped) return;
+      suspendObservers();
+      stopped = true;
+      try { window.__curioidAppDisposed = true; } catch (_) {}
+      document.removeEventListener('DOMContentLoaded', startObservers);
+      window.removeEventListener('load', scheduleHeight);
+      window.removeEventListener('pagehide', onPageHide);
+      window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('message', onParentMessage);
+    };
+    function startObservers() {
+      if (stopped || observing) return;
+      observing = true;
+      scheduleHeight();
+      window.addEventListener('resize', scheduleHeight, { passive: true });
+      if (typeof ResizeObserver === 'function') {
+        resizeObserver = new ResizeObserver(scheduleHeight);
+        if (document.documentElement) resizeObserver.observe(document.documentElement);
+        if (document.body) resizeObserver.observe(document.body);
+      }
+      if (typeof MutationObserver === 'function' && document.documentElement) {
+        mutationObserver = new MutationObserver(scheduleHeight);
+        mutationObserver.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+      }
+    }
+    const onPageHide = event => { if (event?.persisted === true) suspendObservers(); else stopObservers(); };
+    const onPageShow = event => { if (event?.persisted === true) startObservers(); };
+    const onParentMessage = event => {
+      if (stopped || event.source !== window.parent || event.origin !== parentOrigin || event.data?.type !== 'CURIOID_APP_DISPOSE') return;
+      stopObservers();
+      try { window.dispatchEvent(new Event('curioid-app-dispose')); } catch (_) {}
+    };
+    window.addEventListener('load', scheduleHeight, { once: true });
+    window.addEventListener('pagehide', onPageHide);
+    window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('message', onParentMessage);
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startObservers, { once: true });
+    else startObservers();
+    Object.defineProperty(window, '__curioidTrustedParentOrigin', { value: parentOrigin, configurable: false, enumerable: false, writable: false });
+  }
+
+  if (!blocked) return;
+  const cancelInteraction = event => {
+    if (event.cancelable) event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+  const blockedEvents = [
+    'click', 'auxclick', 'dblclick', 'contextmenu', 'submit', 'reset',
+    'beforeinput', 'input', 'change', 'focus', 'focusin', 'keydown', 'keypress', 'keyup',
+    'pointerdown', 'pointerup', 'pointermove', 'mousedown', 'mouseup',
+    'touchstart', 'touchend', 'dragstart', 'drop'
+  ];
+  for (const type of blockedEvents) window.addEventListener(type, cancelInteraction, { capture: true, passive: false });
+  const showFrameWarning = () => {
+    if (document.body) document.body.inert = true;
+    if (document.getElementById('curioid-frame-warning')) return;
+    const panel = document.createElement('section');
+    panel.id = 'curioid-frame-warning';
+    panel.setAttribute('role', 'alert');
+    panel.setAttribute('aria-live', 'assertive');
+    panel.style.cssText = 'position:fixed;inset:0;z-index:2147483647;display:grid;place-content:center;justify-items:center;gap:12px;box-sizing:border-box;padding:32px;background:#101014;color:#f8f7ff;font:16px/1.55 system-ui,sans-serif;text-align:center;pointer-events:auto;isolation:isolate;';
+    const heading = document.createElement('h1');
+    heading.textContent = 'Open CURIOID directly';
+    heading.style.cssText = 'max-width:24ch;margin:0;font-size:clamp(24px,5vw,38px);line-height:1.15;';
+    const message = document.createElement('p');
+    message.textContent = 'For your safety, this page is disabled inside another website. Open it in its own tab to use CURIOID.';
+    message.style.cssText = 'max-width:48ch;margin:0;color:#d2d0dc;';
+    panel.append(heading, message);
+    document.documentElement.append(panel);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', showFrameWarning, { once: true });
+  else showFrameWarning();
+})();
+  </script>
+<title>CURIOID</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #070809;
+  --panel: #101213;
+  --panel-2: #151819;
+  --line: rgba(235, 224, 200, .11);
+  --line-strong: rgba(163, 230, 53, .3);
+  --ink: #f4f0e6;
+  --ink-soft: #c4bfb3;
+  --muted: #84847c;
+  --gold: #a3e635;
+  --gold-bright: #bef264;
+  --gold-deep: #4d7c0f;
+  --gold-wash: rgba(163, 230, 53, .14);
+  --rust: #9e4339;
+  --crimson: #c93b2b;
+  --font-display: "Cinzel", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--bg); }
+body {
+  margin: 0; min-height: 100vh;
+  color: var(--ink); background: var(--bg);
+  font-family: var(--font-body);
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start;
+  padding: 14px 10px 20px;
+}
+.btn-download-rec:hover { background: var(--gold-bright); }
+.btn-discard-rec { background: #2a1210; color: #ff7b6b; border: 1px solid var(--crimson) !important; }
+.btn-discard-rec:hover { background: #3d1916; }
+.zt-root {
+      --zt-bg: #05080f;
+      --zt-surface: #0b111e;
+      --zt-surface-2: #10192c;
+      --zt-surface-3: #16223b;
+      --zt-line: #1d2c4a;
+      --zt-line-hi: #314b7a;
+      --zt-text: #f1f5fb;
+      --zt-muted: #8fa3c4;
+      --zt-cyan: #22d3ee;
+      --zt-indigo: #818cf8;
+      --zt-violet: #a78bfa;
+      --zt-ok: #10b981;
+      --zt-warn: #f59e0b;
+      --zt-err: #ef4444;
+      --zt-radius: 13px;
+
+      --zt-font-sans: "Avenir Next", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif;
+      --zt-font-mono: "Cascadia Code", "Fira Code", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+      box-sizing: border-box;
+      font-family: var(--zt-font-sans);
+      background:
+        radial-gradient(ellipse 85% 42% at 50% -12%, rgba(34, 211, 238, 0.13), transparent 65%),
+        radial-gradient(ellipse 65% 38% at 88% 4%, rgba(129, 140, 248, 0.12), transparent 62%),
+        var(--zt-bg);
+      color: var(--zt-text);
+      line-height: 1.55;
+      min-height: 100vh;
+      padding: 14px 12px 18px;
+      width:100%;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+.zt-root *,
+    .zt-root *::before,
+    .zt-root *::after {
+      box-sizing: border-box;
+    }
+.zt-root code,
+    .zt-root pre,
+    .zt-root .zt-mono {
+      font-family: var(--zt-font-mono);
+    }
+.zt-container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+.zt-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 18px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--zt-line);
+    }
+.zt-title {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.5vw, 1.82rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, #f8fafc 0%, #bae6fd 55%, #c7d2fe 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+.zt-subtitle {
+      margin: 4px 0 0;
+      color: var(--zt-muted);
+      font-size: 0.9rem;
+    }
+.zt-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+.zt-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--zt-font-mono);
+      font-size: 0.73rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #6ee7b7;
+      background: rgba(16, 185, 129, 0.09);
+      border: 1px solid rgba(16, 185, 129, 0.32);
+    }
+.zt-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--zt-ok);
+      box-shadow: 0 0 10px var(--zt-ok);
+    }
+.zt-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: var(--zt-surface);
+      border: 1px solid var(--zt-line);
+      border-radius: var(--zt-radius);
+      padding: 6px;
+      margin-bottom: 22px;
+    }
+@media (max-width: 740px) {
+      .zt-nav {
+        grid-template-columns: 1fr;
+      }
+    }
+.zt-tab {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--zt-muted);
+      padding: 11px 14px;
+      border-radius: 9px;
+      font-family: var(--zt-font-sans);
+      font-size: 0.89rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+.zt-tab:hover {
+      color: var(--zt-text);
+      background: var(--zt-surface-2);
+    }
+.zt-tab.is-active {
+      color: var(--zt-text);
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(129, 140, 248, 0.15));
+      border-color: rgba(34, 211, 238, 0.45);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+.zt-card {
+      background: linear-gradient(180deg, rgba(16, 25, 44, 0.75) 0%, rgba(11, 17, 30, 0.96) 100%);
+      border: 1px solid var(--zt-line);
+      border-radius: var(--zt-radius);
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+.zt-hero {
+      text-align: center;
+      padding: 42px 22px;
+    }
+.zt-hero h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.3rem, 2.4vw, 1.66rem);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+.zt-hero p {
+      margin: 0 auto 24px;
+      max-width: 660px;
+      color: var(--zt-muted);
+      font-size: 0.95rem;
+    }
+.zt-btn-primary {
+      appearance: none;
+      border: 1px solid rgba(34, 211, 238, 0.55);
+      background: linear-gradient(135deg, var(--zt-cyan), var(--zt-indigo));
+      color: #040811;
+      font-family: var(--zt-font-sans);
+      font-weight: 800;
+      font-size: 0.96rem;
+      letter-spacing: -0.01em;
+      padding: 14px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(34, 211, 238, 0.2);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, opacity 0.14s ease;
+    }
+.zt-btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 34px rgba(34, 211, 238, 0.3);
+    }
+.zt-btn-primary:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+.zt-btn {
+      appearance: none;
+      border: 1px solid var(--zt-line);
+      background: var(--zt-surface-2);
+      color: var(--zt-text);
+      font-family: var(--zt-font-sans);
+      font-weight: 650;
+      font-size: 0.83rem;
+      padding: 8px 13px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.14s ease, background 0.14s ease, color 0.14s ease;
+    }
+.zt-btn:hover {
+      border-color: var(--zt-cyan);
+      background: var(--zt-surface-3);
+    }
+.zt-btn-danger:hover {
+      border-color: var(--zt-err);
+      color: #fca5a5;
+    }
+.zt-score-pair {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+.zt-banner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      background: var(--zt-surface-2);
+      border: 1px solid var(--zt-line);
+      border-radius: var(--zt-radius);
+      padding: 18px 20px;
+    }
+.zt-score {
+      font-family: var(--zt-font-mono);
+      font-size: 1.95rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #34d399;
+      font-variant-numeric: tabular-nums;
+    }
+.zt-score.is-sec {
+      color: var(--zt-cyan);
+    }
+.zt-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+.zt-metric {
+      background: var(--zt-surface-2);
+      border: 1px solid var(--zt-line);
+      border-radius: 10px;
+      padding: 14px 15px;
+      transition: border-color 0.15s ease;
+    }
+.zt-metric:hover {
+      border-color: var(--zt-line-hi);
+    }
+.zt-kicker {
+      font-family: var(--zt-font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--zt-muted);
+    }
+.zt-metric-val {
+      font-size: 1.05rem;
+      font-weight: 750;
+      letter-spacing: -0.015em;
+      margin-top: 4px;
+      word-break: break-word;
+    }
+.zt-metric-sub {
+      font-size: 0.8rem;
+      color: var(--zt-muted);
+      margin-top: 4px;
+      word-break: break-word;
+    }
+.zt-rec-list {
+      display: grid;
+      gap: 10px;
+    }
+.zt-rec {
+      background: var(--zt-surface-2);
+      border: 1px solid var(--zt-line);
+      border-left: 3px solid var(--zt-cyan);
+      border-radius: 9px;
+      padding: 12px 15px;
+    }
+.zt-rec.good { border-left-color: var(--zt-ok); }
+.zt-rec.warn { border-left-color: var(--zt-warn); }
+.zt-rec.bad  { border-left-color: var(--zt-err); }
+.zt-rec h4 {
+      margin: 0 0 4px;
+      font-size: 0.94rem;
+      font-weight: 750;
+      letter-spacing: -0.01em;
+    }
+.zt-rec p {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--zt-muted);
+    }
+.zt-q {
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--zt-line);
+    }
+.zt-q:last-of-type {
+      border-bottom: none;
+      margin-bottom: 6px;
+    }
+.zt-q-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 0.94rem;
+      margin-bottom: 10px;
+    }
+.zt-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+.zt-chip {
+      appearance: none;
+      border: 1px solid var(--zt-line);
+      background: var(--zt-surface-2);
+      color: var(--zt-muted);
+      padding: 7px 13px;
+      border-radius: 999px;
+      font-family: var(--zt-font-sans);
+      font-size: 0.84rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+.zt-chip:hover {
+      color: var(--zt-text);
+      border-color: var(--zt-line-hi);
+    }
+.zt-chip.is-selected {
+      background: rgba(34, 211, 238, 0.16);
+      border-color: var(--zt-cyan);
+      color: var(--zt-text);
+    }
+.zt-range {
+      width: 100%;
+      accent-color: var(--zt-cyan);
+      cursor: pointer;
+    }
+.zt-two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+.zt-input,
+    .zt-textarea {
+      width: 100%;
+      background: var(--zt-surface-2);
+      border: 1px solid var(--zt-line);
+      color: var(--zt-text);
+      border-radius: 9px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      font-family: var(--zt-font-sans);
+    }
+.zt-textarea {
+      min-height: 104px;
+      resize: vertical;
+      font-family: var(--zt-font-mono);
+      font-size: 0.81rem;
+    }
+.zt-input:focus,
+    .zt-textarea:focus {
+      outline: none;
+      border-color: var(--zt-cyan);
+    }
+.zt-widget-box {
+      padding: 18px;
+      border-radius: 10px;
+      background: var(--zt-surface-2);
+      border: 1px solid var(--zt-line);
+      text-align: center;
+    }
+.zt-readout {
+      font-family: var(--zt-font-mono);
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: var(--zt-cyan);
+      margin-top: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+.zt-screen-pad {
+      margin-top: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--zt-line);
+      padding: 18px;
+      text-align: center;
+      background: var(--zt-surface-2);
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+.zt-toast {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      background: var(--zt-surface-3);
+      border: 1px solid var(--zt-cyan);
+      color: var(--zt-text);
+      padding: 10px 15px;
+      border-radius: 9px;
+      font-family: var(--zt-font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.16s ease, transform 0.16s ease;
+      z-index: 9999;
+    }
+.zt-toast.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+.zt-hidden {
+      display: none !important;
+    }
+/* CURIOID DevToys Field Kit - scoped app skin */
+.glitchyard-app{--dt-bg:#10131a;--dt-panel:#171c25;--dt-panel-2:#1d2430;--dt-line:#303a49;--dt-text:#eef2f4;--dt-muted:#99a6b5;--dt-lime:#c78bff;--dt-green:#74e0d0;--dt-radius:14px;color:var(--dt-text);font:inherit;min-width:0;max-width:100%;overflow:hidden;border:1px solid rgba(180,205,140,.18);border-radius:20px;background:radial-gradient(1000px 400px at 90% -15%,rgba(160,202,94,.09),transparent 55%),var(--dt-bg);box-shadow:0 22px 60px rgba(0,0,0,.22)}
+.glitchyard-app *{box-sizing:border-box}
+.glitchyard-app button,.glitchyard-app input,.glitchyard-app textarea,.glitchyard-app select{font:inherit}
+.glitchyard-app button{cursor:pointer}
+.glitchyard-app button:disabled{cursor:not-allowed;opacity:.48}
+.dt-header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 24px;border-bottom:1px solid var(--dt-line);background:rgba(255,255,255,.018)}
+.dt-brand{display:flex;align-items:center;gap:15px;min-width:0}
+.dt-brand-mark{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border:1px solid rgba(190,126,255,.34);border-radius:15px;background:rgba(190,126,255,.08);color:var(--dt-lime);font:700 17px/1 ui-monospace,monospace;letter-spacing:-2px}
+.dt-eyebrow{margin:0 0 5px;color:var(--dt-green);font:700 10px/1.3 ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase}
+.dt-brand h3{margin:0;font-size:23px;letter-spacing:-.04em}
+.dt-brand h3 small{margin-left:7px;color:var(--dt-lime);font:700 9px/1 ui-monospace,monospace;letter-spacing:.13em;vertical-align:middle}
+.dt-subtitle{margin:5px 0 0;color:var(--dt-muted);font-size:12px}
+.dt-header-meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.dt-local-badge,.dt-tool-count{padding:7px 10px;border:1px solid var(--dt-line);border-radius:999px;color:#c5d0d8;font:700 9px/1 ui-monospace,monospace;letter-spacing:.08em;white-space:nowrap}
+.dt-local-badge i{display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:var(--dt-lime);box-shadow:0 0 10px rgba(190,126,255,.55)}
+.dt-smartbar{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--dt-line);background:rgba(190,126,255,.045)}
+.dt-spark{display:grid;place-items:center;flex:0 0 30px;height:30px;border-radius:9px;background:rgba(190,126,255,.11);color:var(--dt-lime)}
+.dt-smartbar div{display:grid;gap:2px;min-width:0;flex:1}
+.dt-smartbar strong{font-size:11px}
+.dt-smartbar small{overflow:hidden;color:var(--dt-muted);font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.dt-smartbar button{padding:7px 10px;border:1px solid rgba(190,126,255,.3);border-radius:8px;background:rgba(190,126,255,.08);color:var(--dt-lime);font-size:10px;font-weight:700}
+.dt-workbench{display:grid;grid-template-columns:minmax(190px,235px) minmax(0,1fr);min-width:0}
+.dt-sidebar{display:flex;flex-direction:column;min-width:0;max-height:910px;border-right:1px solid var(--dt-line);background:rgba(255,255,255,.012)}
+.dt-search{display:flex;align-items:center;gap:8px;margin:13px 12px 8px;padding:0 10px;border:1px solid var(--dt-line);border-radius:9px;background:var(--dt-panel)}
+.dt-search>span{color:var(--dt-muted);font-size:17px}
+.dt-search input{width:100%;min-width:0;padding:10px 0;border:0;outline:0;background:transparent;color:var(--dt-text);font-size:11px}
+.dt-search input::placeholder{color:#798594}
+.dt-search kbd{padding:3px 5px;border:1px solid var(--dt-line);border-radius:4px;color:var(--dt-muted);font:10px ui-monospace,monospace}
+.dt-nav{overflow-y:auto;overscroll-behavior:contain;padding:0 8px 12px}
+.dt-nav-group{margin-top:12px}
+.dt-nav-group[hidden]{display:none}
+.dt-nav-group h4{display:flex;align-items:center;gap:7px;margin:0;padding:5px 8px;color:#8793a0;font:700 9px/1.3 ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase}
+.dt-nav-group h4 span{color:var(--dt-lime);font-size:12px}
+.dt-tool-link{display:flex;align-items:center;gap:9px;width:100%;min-width:0;padding:8px 9px;border:0;border-radius:8px;background:transparent;color:#c0c9d2;text-align:left;font-size:11px;transition:background .15s,color .15s}
+.dt-tool-link:hover{background:rgba(255,255,255,.045);color:#fff}
+.dt-tool-link.is-active{background:rgba(190,126,255,.105);color:var(--dt-lime);font-weight:700}
+.dt-tool-link .dt-tool-dot{flex:0 0 5px;width:5px;height:5px;border-radius:50%;background:#596573}
+.dt-tool-link.is-active .dt-tool-dot{background:var(--dt-lime);box-shadow:0 0 8px rgba(190,126,255,.7)}
+.dt-tool-link[hidden]{display:none}
+.dt-sidebar-foot{display:flex;justify-content:space-between;gap:6px;margin-top:auto;padding:12px;border-top:1px solid var(--dt-line);color:#758190;font:8px ui-monospace,monospace;letter-spacing:.05em}
+.dt-workspace{min-width:0;padding:22px;overflow:hidden}
+.dt-tool-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:15px}
+.dt-tool-heading h4{margin:0;font-size:20px;letter-spacing:-.03em}
+.dt-tool-heading p:last-child{margin:6px 0 0;color:var(--dt-muted);font-size:11px;line-height:1.5}
+.dt-tool-index{padding:7px 9px;border:1px solid var(--dt-line);border-radius:8px;color:#9ba7b4;font:10px ui-monospace,monospace;white-space:nowrap}
+.dt-options{display:flex;align-items:flex-end;gap:9px;flex-wrap:wrap;margin:0 0 13px;padding:10px 12px;border:1px solid var(--dt-line);border-radius:11px;background:rgba(255,255,255,.02)}
+.dt-unit-help{flex:1 1 100%;color:#9eabb8;font-size:9px;line-height:1.55}.dt-unit-help summary{cursor:pointer;color:var(--dt-lime);font-weight:700}.dt-unit-help p{margin:6px 0 0;max-width:100%;overflow-wrap:anywhere}
+.dt-option{display:grid;gap:5px;min-width:100px;color:#b9c4ce;font-size:10px}
+.dt-option>span{display:flex;justify-content:space-between;gap:8px;color:#9eabb8}
+.dt-option select,.dt-option input:not([type=checkbox]):not([type=range]){min-width:0;max-width:190px;padding:7px 9px;border:1px solid #394554;border-radius:7px;background:#151b24;color:#edf2f3;font-size:11px}
+.dt-option input[type=range]{width:120px;accent-color:var(--dt-lime)}
+.dt-option output{color:var(--dt-lime);font:10px ui-monospace,monospace}
+.dt-check{display:inline-flex;align-items:center;gap:6px;padding:5px 3px;color:#c4ced7;font-size:10px}
+.dt-check input{accent-color:var(--dt-lime)}
+.dt-io-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:11px;min-width:0}
+.dt-io-grid:has(.dt-secondary-pane:not([hidden])){grid-template-columns:repeat(2,minmax(0,1fr))}
+.dt-pane,.dt-result-pane{min-width:0;overflow:hidden;border:1px solid var(--dt-line);border-radius:var(--dt-radius);background:var(--dt-panel)}
+.dt-pane header,.dt-result-pane>header{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--dt-line)}
+.dt-pane header label,.dt-result-pane header label{color:#dfe7eb;font-size:11px;font-weight:700}
+.dt-pane header span,.dt-result-pane header span{overflow:hidden;color:#83909e;font-size:9px;text-overflow:ellipsis;white-space:nowrap}
+.dt-pane textarea{display:block;width:100%;min-height:210px;max-height:420px;resize:vertical;padding:12px;border:0;outline:0;background:transparent;color:#d8e4e9;font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;tab-size:2}
+.dt-pane textarea::placeholder{color:#697786}
+.dt-pane-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--dt-line);color:#7e8b98;font:9px ui-monospace,monospace}
+.dt-pane-foot button,.dt-file-button{padding:5px 8px;border:1px solid #394553;border-radius:6px;background:#202835;color:#c9d3db;font-size:9px}
+.dt-file-button{cursor:pointer}
+.dt-secondary-pane[hidden]{display:none}
+.dt-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:12px 0}
+.dt-actions>button{padding:8px 11px;border:1px solid #3b4654;border-radius:8px;background:#202835;color:#d0d9e0;font-size:10px;font-weight:600}
+.dt-actions>button:hover,.dt-pane-foot button:hover,.dt-file-button:hover{border-color:#a77adb}
+.dt-actions .dt-run{border-color:#c78bff;background:var(--dt-lime);color:#1a2111;font-weight:800}
+.dt-run span{margin-left:12px;color:#483261}
+.dt-run-state{margin-left:auto;color:#9ca9b4;font:9px ui-monospace,monospace}
+.dt-run-state[data-state=error]{color:#ff9e9e}
+.dt-run-state[data-state=success]{color:var(--dt-lime)}
+.dt-result-pane>header div{display:grid;gap:3px}
+.dt-result-pane>header button{padding:5px 8px;border:1px solid var(--dt-line);border-radius:6px;background:#202835;color:#aebbc5;font-size:9px}
+.dt-result{max-height:430px;min-height:150px;margin:0;overflow:auto;padding:14px;background:#111720;color:#cce0d7;font:11px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre;tab-size:2}
+.dt-result.wrap-lines{white-space:pre-wrap;overflow-wrap:anywhere}
+.dt-preview{max-height:520px;overflow:auto;padding:14px;background:#fff;color:#20242a}
+.dt-preview[hidden]{display:none}
+.dt-preview img{display:block;max-width:100%;max-height:470px;margin:auto;object-fit:contain}
+.dt-markdown-render{color:#252a32;font:14px/1.7 system-ui,sans-serif}
+.dt-markdown-render h2,.dt-markdown-render h3,.dt-markdown-render h4{margin:.7em 0 .35em;color:#202833}
+.dt-markdown-render pre{overflow:auto;padding:12px;border-radius:8px;background:#edf0f3}
+.dt-markdown-render code{font:12px ui-monospace,monospace}
+.dt-result-pane footer{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;border-top:1px solid var(--dt-line);color:#73808e;font:8px ui-monospace,monospace;letter-spacing:.07em}
+.dt-tool-note{margin-top:11px;color:#84919e;font-size:10px;line-height:1.55}
+.dt-about{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:11px;padding-top:10px;border-top:1px solid var(--dt-line);color:#758291;font-size:9px;line-height:1.5}
+.dt-about a{color:var(--dt-lime);text-decoration:underline;text-underline-offset:2px}
+.glitchyard-app :focus-visible{outline:2px solid var(--dt-lime);outline-offset:2px}
+@media(max-width:900px){.dt-workspace{padding:16px}.dt-workbench{grid-template-columns:minmax(165px,195px) minmax(0,1fr)}.dt-io-grid:has(.dt-secondary-pane:not([hidden])){grid-template-columns:1fr}.dt-pane textarea{min-height:170px}}
+@media(max-width:650px){.dt-header{padding:16px;align-items:flex-start}.dt-brand-mark{width:42px;height:42px;flex-basis:42px;border-radius:12px}.dt-brand h3{font-size:19px}.dt-header-meta{gap:5px}.dt-local-badge,.dt-tool-count{font-size:8px;padding:6px 7px}.dt-workbench{grid-template-columns:1fr}.dt-sidebar{max-height:270px;border-right:0;border-bottom:1px solid var(--dt-line)}.dt-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;overflow:auto}.dt-nav-group{margin-top:5px}.dt-nav-group h4{padding-left:5px}.dt-nav-group>div{display:grid;grid-template-columns:1fr}.dt-sidebar-foot{display:none}.dt-workspace{padding:13px}.dt-smartbar{padding:10px 12px}.dt-smartbar small{white-space:normal}.dt-smartbar button{max-width:125px}.dt-tool-heading h4{font-size:18px}.dt-actions .dt-run-state{width:100%;margin:3px 0}.dt-pane textarea{min-height:150px}.dt-result{min-height:120px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.glitchyard-app *{scroll-behavior:auto!important;transition:none!important}}
+/* GLITCHYARD lazy-module loading and retry states */
+.glitchyard-loader{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center;color:var(--text,#dfe8ec);background:linear-gradient(145deg,rgba(214,255,105,.045),rgba(18,25,29,.55));border:1px solid rgba(214,255,105,.18);border-radius:16px}
+.glitchyard-loader-mark{display:grid;place-items:center;width:52px;height:52px;border:1px solid rgba(214,255,105,.42);border-radius:15px;color:#d6ff69;font:700 18px/1 ui-monospace,monospace;background:rgba(214,255,105,.07)}
+.glitchyard-loader>span:not(.glitchyard-loader-mark){color:var(--muted,#91a0a8);font-size:12px}
+.glitchyard-loader-error{border-color:rgba(255,93,104,.42)}
+.glitchyard-loader-error>button{border:1px solid rgba(214,255,105,.4);border-radius:9px;padding:9px 13px;background:rgba(214,255,105,.1);color:#e4ff9b;font:600 12px inherit;cursor:pointer}
+.glitchyard-loader-error>button:focus-visible{outline:2px solid #d6ff69;outline-offset:3px}
+/* Consolidated app frame layout */
+.studio-app[hidden]{display:none!important}
+</style>
+<meta name="referrer" content="strict-origin"/>
+
+<style id="curioid-v1-342-layout-guard">
+  :where(main,section,article,aside,header,footer,form,fieldset,nav,div,label,details,summary,
+    .container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; }
+  :where(h1,h2,h3,h4,h5,p,li,small,label,legend,summary,button,a,span,b,strong,output,figcaption) { overflow-wrap:anywhere; word-break:normal; }
+  :where(button,[role="button"],input,select,textarea,output) { min-width:0; max-width:100%; white-space:normal; }
+  :where(img,svg,video,canvas,iframe) { max-width:100%; }
+  :where(pre,pre code,table,textarea,.code-output,.console-output) { max-width:100%; }
+  @media(max-width:680px) {
+    :where(.toolbar,.actions,.action-row,.button-row,.tool-button-row,.form-actions,.dt-actions,.header-actions,.footer-actions) { min-width:0; flex-wrap:wrap; }
+    :where(.container,.workspace,.workbench,.app-shell,.app-content,.tool-pane,.tool-card,.panel,.card) { min-width:0; max-width:100%; }
+  }
+</style>
+
+
+<!-- CURIOID v1.385 content-fit and responsive text care -->
+<style id="curioid-content-fit-v1-385">
+/* CURIOID v1.385 cross-page content-fit safeguards. These rules preserve nodes and
+   content; code/data surfaces keep their own horizontal scrolling where needed. */
+:where(html,body,main,header,footer,section,article,aside,nav,form,fieldset,dialog,div,ul,ol,li,dl,dt,dd,figure,figcaption,table,thead,tbody,tfoot,tr,th,td){min-width:0;}
+:where(h1,h2,h3,h4,h5,h6,p,li,label,legend,summary,figcaption,dt,dd,blockquote,a,output,.description,.help,.status,.message,.readout,.notice,.toast){overflow-wrap:anywhere;word-break:normal;}
+:where(button,[role="button"],input,select,textarea){box-sizing:border-box;min-width:0;max-width:100%;}
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),select,textarea){max-inline-size:100%;}
+:where(img,picture,video,iframe,svg){max-inline-size:100%;}
+:where(img,video){block-size:auto;}
+:where(pre,pre code,.code-editor,.code-output,.console-output,.log-output,.terminal-output,.source-editor,.monospace-output){max-inline-size:100%;overflow-x:auto;overflow-wrap:normal;white-space:pre;overscroll-behavior-inline:contain;}
+:where(table){max-inline-size:100%;}
+:where(.room-window .room-mount,.room-window .room-body,.room-window .room-content,.room-window .room-header,.room-window .room-footer){min-width:0;max-width:100%;}
+:where(.room-window .room-mount,.room-window .room-body) :where(.toolbar,.tool-row,.tool-bar,.actions,.action-row,.button-row,.control-row,.form-actions,.tabs,.tab-list,[role="tablist"]){min-width:0;max-width:100%;flex-wrap:wrap;}
+:where(.room-window .room-mount,.room-window .room-body) :where(.toolbar,.tool-row,.tool-bar,.actions,.action-row,.button-row,.control-row,.form-actions) :where(button,a,input,select){min-width:0;max-width:100%;}
+:where(.room-window .room-mount,.room-window .room-body) :where(.grid,.form-grid,.card-grid,.panel-grid,.workspace-grid,.editor-grid,.split-layout,.column-layout){min-width:0;max-width:100%;}
+:where(.room-window .room-mount,.room-window .room-body) :where(input[type="file"],input[type="text"],input[type="search"],input[type="email"],input[type="url"],input[type="number"],select,textarea){box-sizing:border-box;min-width:0;max-width:100%;}
+@media(max-width:760px){
+  :where(.room-window.open .room-body,.room-window.open .room-mount){min-width:0;max-width:100%;}
+  :where(.room-window.open .room-mount,.room-window.open .room-body) :where(.toolbar,.tool-row,.tool-bar,.actions,.action-row,.button-row,.control-row,.form-actions,.tabs,.tab-list,[role="tablist"]){flex-wrap:wrap;}
+  :where(.room-window.open .room-mount,.room-window.open .room-body) table{display:block;max-width:100%;overflow-x:auto;}
+  :where(.room-window.open .room-mount,.room-window.open .room-body) :where(button,a,input,select,textarea){max-width:100%;}
+}
+
+</style>
+</head>
+<body>
+<div aria-live="polite" class="studio-toast" id="studio-toast" role="status"></div>
+<section class="studio-app" data-studio-app="vanta-deck" hidden="" id="studio-vanta">
+<div class="zt-root" id="zt-app">
+<div class="zt-container">
+<header class="zt-header">
+<div>
+<h1 class="zt-title">VANTA DECK</h1>
+<p class="zt-subtitle">PRIVATE SYSTEM CHECKS · QUICK RESETS · LOCAL UTILITIES</p>
+</div>
+<div class="zt-header-actions">
+<span class="zt-status-pill" title="Runs 100% locally in memory. Zero external calls or permission prompts.">
+<span aria-hidden="true" class="zt-dot"></span>
+            LOCAL FIRST / NO ACCOUNTS
+          </span>
+<button class="zt-btn zt-btn-danger" data-zt-action="wipe" type="button">Wipe All Data</button>
+</div>
+</header>
+<nav aria-label="Workbench sections" class="zt-nav">
+<button class="zt-tab is-active" data-zt-tab="pc" type="button">
+          01 / PC, Security &amp; Browser Check
+        </button>
+<button class="zt-tab" data-zt-tab="life" type="button">
+          02 / 1-Minute Personal Check-In
+        </button>
+<button class="zt-tab" data-zt-tab="tools" type="button">
+          03 / Offline Utility Suite
+        </button>
+</nav>
+<!-- SECTION 1: PC, SECURITY & BROWSER -->
+<section id="zt-panel-pc">
+<div class="zt-card zt-hero" id="zt-pc-intro">
+<h2>System, Web Security &amp; Browser Diagnostics in One Click</h2>
+<p>
+            Evaluates browser &amp; connection security posture, live frame/refresh rate, main-thread jitter,
+            WebGPU &amp; WebGL support, CPU speed, display color/HDR capabilities, storage quota, and network hints
+            with zero permissions.
+          </p>
+<button class="zt-btn-primary" data-zt-action="scan-pc" id="zt-run-pc-btn" type="button">
+            Run Full System &amp; Security Check
+          </button>
+</div>
+<div class="zt-hidden" id="zt-pc-results">
+<div class="zt-score-pair">
+<div class="zt-banner">
+<div>
+<div class="zt-kicker">Environment &amp; Performance Score</div>
+<div class="zt-score" id="zt-pc-score">-- / 100</div>
+<div class="zt-metric-sub" id="zt-pc-summary"></div>
+</div>
+</div>
+<div class="zt-banner">
+<div>
+<div class="zt-kicker">Browser &amp; Context Security Score</div>
+<div class="zt-score is-sec" id="zt-sec-score">-- / 100</div>
+<div class="zt-metric-sub" id="zt-sec-summary"></div>
+</div>
+</div>
+</div>
+<div class="zt-card" style="padding:14px 18px;margin-bottom:18px;">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+<span class="zt-metric-sub" style="margin:0;">Full diagnostic export (hardware, security posture &amp; recommendations):</span>
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+<button class="zt-btn" data-zt-action="scan-pc" type="button">Re-Run Scan</button>
+<button class="zt-btn" data-zt-action="copy-pc" type="button">Copy Report</button>
+<button class="zt-btn" data-zt-action="dl-pc" type="button">Download .TXT</button>
+</div>
+</div>
+</div>
+<div class="zt-grid" id="zt-pc-metrics"></div>
+<div class="zt-card">
+<h3 style="margin-top:0;margin-bottom:12px;">Web Security, Privacy &amp; System Findings</h3>
+<div class="zt-rec-list" id="zt-pc-recs"></div>
+</div>
+<div class="zt-card">
+<h3 style="margin-top:0;margin-bottom:6px;">Display Uniformity &amp; Keystroke Tester</h3>
+<p class="zt-metric-sub" style="margin-top:0;">
+              Cycle solid screen colors to inspect stuck pixels or panel tinting, and press keys to test input events.
+            </p>
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+<button class="zt-btn" data-zt-bg="#000000" data-zt-fg="#ffffff" type="button">Black</button>
+<button class="zt-btn" data-zt-bg="#ffffff" data-zt-fg="#05080f" type="button">White</button>
+<button class="zt-btn" data-zt-bg="#dc2626" data-zt-fg="#ffffff" type="button">Red</button>
+<button class="zt-btn" data-zt-bg="#16a34a" data-zt-fg="#040811" type="button">Green</button>
+<button class="zt-btn" data-zt-bg="#2563eb" data-zt-fg="#ffffff" type="button">Blue</button>
+<button class="zt-btn" data-zt-bg="" data-zt-fg="" type="button">Reset Surface</button>
+</div>
+<div class="zt-screen-pad" id="zt-test-pad">
+<div style="font-weight:750;">Display &amp; Key Test Pad</div>
+<div class="zt-metric-sub zt-mono" id="zt-key-readout" style="margin-top:6px;">
+                Press any key on your keyboard while focused...
+              </div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: 1-MINUTE PERSONAL CHECK-IN -->
+<section class="zt-hidden" id="zt-panel-life">
+<div class="zt-card" id="zt-life-form">
+<h2 style="margin-top:0;margin-bottom:6px;">Quick 1-Minute Private Check-In</h2>
+<p class="zt-metric-sub" style="margin-top:0;margin-bottom:20px;">
+            Five quick selections with zero personal details or persistence. Generate a tailored reset and focus plan in one click.
+          </p>
+<div class="zt-q">
+<div class="zt-q-head"><span>1. Primary area needing help right now</span></div>
+<div class="zt-chips" data-zt-group="focus">
+<button class="zt-chip is-selected" data-val="overwhelm" type="button">Overwhelm</button>
+<button class="zt-chip" data-val="fatigue" type="button">Low Energy / Eyes</button>
+<button class="zt-chip" data-val="decision" type="button">Hard Choice</button>
+<button class="zt-chip" data-val="posture" type="button">Posture / Tension</button>
+<button class="zt-chip" data-val="sleep" type="button">Sleep Wind-Down</button>
+<button class="zt-chip" data-val="creative" type="button">Creative Block</button>
+<button class="zt-chip" data-val="money" type="button">Subscriptions / Spend</button>
+</div>
+</div>
+<div class="zt-q">
+<div class="zt-q-head"><span>2. Guidance tone</span></div>
+<div class="zt-chips" data-zt-group="style">
+<button class="zt-chip is-selected" data-val="calm" type="button">Calm &amp; Unhurried</button>
+<button class="zt-chip" data-val="action" type="button">Direct &amp; Action-First</button>
+<button class="zt-chip" data-val="structured" type="button">Structured Steps</button>
+</div>
+</div>
+<div class="zt-q">
+<div class="zt-q-head">
+<span>3. Current energy level</span>
+<span class="zt-mono" id="zt-val-energy" style="color:var(--zt-cyan);font-variant-numeric:tabular-nums;">5 / 10</span>
+</div>
+<input class="zt-range" id="zt-q-energy" aria-label="Current energy level, 1 to 10" max="10" min="1" type="range" value="5"/>
+</div>
+<div class="zt-q">
+<div class="zt-q-head">
+<span>4. Stress &amp; screen load</span>
+<span class="zt-mono" id="zt-val-load" style="color:var(--zt-cyan);font-variant-numeric:tabular-nums;">5 / 10</span>
+</div>
+<input class="zt-range" id="zt-q-load" aria-label="Stress and screen load, 1 to 10" max="10" min="1" type="range" value="5"/>
+</div>
+<div class="zt-q">
+<div class="zt-q-head"><span>5. Available reset window</span></div>
+<div class="zt-chips" data-zt-group="mins">
+<button class="zt-chip is-selected" data-val="2" type="button">2 Min</button>
+<button class="zt-chip" data-val="5" type="button">5 Min</button>
+<button class="zt-chip" data-val="10" type="button">10 Min</button>
+<button class="zt-chip" data-val="25" type="button">25 Min</button>
+</div>
+</div>
+<div style="text-align:center;margin-top:22px;">
+<button class="zt-btn-primary" data-zt-action="plan-life" type="button">
+              Generate My Instant Plan
+            </button>
+</div>
+</div>
+<div class="zt-hidden" id="zt-life-results">
+<div class="zt-banner" style="margin-bottom:18px;">
+<div>
+<div class="zt-kicker">Tailored Reset &amp; Focus Plan</div>
+<div class="zt-score" id="zt-life-headline" style="font-size:1.35rem;font-family:var(--zt-font-sans);">Ready</div>
+<div class="zt-metric-sub" id="zt-life-sub"></div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;">
+<button class="zt-btn" data-zt-action="edit-life" type="button">Adjust Answers</button>
+<button class="zt-btn" data-zt-action="copy-life" type="button">Copy Plan</button>
+<button class="zt-btn" data-zt-action="dl-life" type="button">Download .TXT</button>
+</div>
+</div>
+<div class="zt-card">
+<h3 style="margin-top:0;margin-bottom:12px;">Recommended Protocol</h3>
+<div class="zt-rec-list" id="zt-life-recs"></div>
+<div class="zt-two-col" style="margin-top:16px;">
+<div class="zt-widget-box">
+<div class="zt-kicker">4-4-6 Breathing Pacer</div>
+<div class="zt-readout" id="zt-breath-text">Standby</div>
+<div style="margin-top:12px;">
+<button class="zt-btn" data-zt-action="toggle-breath" id="zt-breath-btn" type="button">Start Pacer</button>
+</div>
+</div>
+<div class="zt-widget-box">
+<div class="zt-kicker">Countdown Timer</div>
+<div class="zt-readout" id="zt-timer-display">02:00</div>
+<div style="margin-top:12px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
+<button class="zt-btn" data-zt-action="toggle-timer" id="zt-timer-btn" type="button">Start</button>
+<button class="zt-btn" data-zt-action="reset-timer" type="button">Reset</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: OFFLINE UTILITY SUITE -->
+<section class="zt-hidden" id="zt-panel-tools">
+<div class="zt-two-col">
+<div class="zt-card">
+<h3 style="margin-top:0;margin-bottom:6px;">Link Cleaner &amp; Base64 Codec</h3>
+<p class="zt-metric-sub" style="margin-top:0;">
+              Strip tracking query parameters (<code>utm_*</code>, <code>fbclid</code>, <code>gclid</code>, <code>ref</code>) or encode/decode Base64 locally.
+            </p>
+<textarea class="zt-textarea" id="zt-url-input" aria-label="URLs or text to clean or encode" placeholder="Paste URLs (one per line) or text for Base64..."></textarea>
+<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+<button class="zt-btn" data-zt-action="clean-urls" type="button">Clean Links</button>
+<button class="zt-btn" data-zt-action="b64-enc" type="button">Base64 Encode</button>
+<button class="zt-btn" data-zt-action="b64-dec" type="button">Base64 Decode</button>
+<button class="zt-btn" data-zt-copy="zt-url-output" type="button">Copy</button>
+</div>
+<textarea class="zt-textarea" id="zt-url-output" aria-label="Cleaned or encoded URL output" placeholder="Output appears here..." readonly="" style="margin-top:10px;"></textarea>
+</div>
+<div class="zt-card">
+<h3 style="margin-top:0;margin-bottom:6px;">Text Inspector, JSON &amp; SHA-256</h3>
+<p class="zt-metric-sub" style="margin-top:0;">
+              Count words and reading time, clean extra spaces, format JSON, or compute a local SHA-256 hash.
+            </p>
+<textarea class="zt-textarea" id="zt-text-input" aria-label="Text or JSON to inspect" maxlength="2000000" placeholder="Paste text or JSON here..." spellcheck="false"></textarea>
+<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+<button class="zt-btn" data-zt-action="text-stats" type="button">Stats &amp; Clean</button>
+<button class="zt-btn" data-zt-action="fmt-json" type="button">Format JSON</button>
+<button class="zt-btn" data-zt-action="sha256" type="button">SHA-256</button>
+<button class="zt-btn" data-zt-copy="zt-text-output" type="button">Copy</button>
+</div>
+<textarea class="zt-textarea" id="zt-text-output" aria-label="Text inspection and JSON formatting output" placeholder="Result appears here..." readonly="" style="margin-top:10px;"></textarea>
+</div>
+</div>
+<div class="zt-two-col">
+<div class="zt-card">
+<h3 style="margin-top:0;margin-bottom:6px;">Cryptographic Secret Generator</h3>
+<p class="zt-metric-sub" style="margin-top:0;">
+              Generated locally via <code>crypto.getRandomValues</code>. Nothing is stored or transmitted.
+            </p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+<button class="zt-btn" data-zt-action="pw-18" type="button">18-Char Password</button>
+<button class="zt-btn" data-zt-action="pw-28" type="button">28-Char Password</button>
+<button class="zt-btn" data-zt-action="passphrase" type="button">4-Word Passphrase</button>
+<button class="zt-btn" data-zt-copy="zt-pw-output" type="button">Copy</button>
+</div>
+<input class="zt-input zt-mono" id="zt-pw-output" aria-label="Generated password or passphrase" placeholder="Generated password or passphrase..." readonly="" style="margin-top:12px;" type="text"/>
+</div>
+<div class="zt-card">
+<h3 style="margin-top:0;margin-bottom:10px;">2-Option Trade-Off Scorer</h3>
+<div class="zt-two-col" style="gap:10px;">
+<div>
+<input class="zt-input" id="zt-opt-a-name" aria-label="Option A name" style="margin-bottom:8px;" type="text" value="Option A"/>
+<label class="zt-metric-sub">Upside (1-10): <strong id="zt-a-up-lbl">7</strong></label>
+<input class="zt-range" id="zt-a-up" aria-label="Option A upside, 1 to 10" max="10" min="1" type="range" value="7"/>
+<label class="zt-metric-sub">Ease (1-10): <strong id="zt-a-ea-lbl">6</strong></label>
+<input class="zt-range" id="zt-a-ea" aria-label="Option A ease, 1 to 10" max="10" min="1" type="range" value="6"/>
+<label class="zt-metric-sub">Low Risk/Cost (1-10): <strong id="zt-a-co-lbl">6</strong></label>
+<input class="zt-range" id="zt-a-co" aria-label="Option A low risk or cost, 1 to 10" max="10" min="1" type="range" value="6"/>
+</div>
+<div>
+<input class="zt-input" id="zt-opt-b-name" aria-label="Option B name" style="margin-bottom:8px;" type="text" value="Option B"/>
+<label class="zt-metric-sub">Upside (1-10): <strong id="zt-b-up-lbl">6</strong></label>
+<input class="zt-range" id="zt-b-up" aria-label="Option B upside, 1 to 10" max="10" min="1" type="range" value="6"/>
+<label class="zt-metric-sub">Ease (1-10): <strong id="zt-b-ea-lbl">8</strong></label>
+<input class="zt-range" id="zt-b-ea" aria-label="Option B ease, 1 to 10" max="10" min="1" type="range" value="8"/>
+<label class="zt-metric-sub">Low Risk/Cost (1-10): <strong id="zt-b-co-lbl">7</strong></label>
+<input class="zt-range" id="zt-b-co" aria-label="Option B low risk or cost, 1 to 10" max="10" min="1" type="range" value="7"/>
+</div>
+</div>
+<div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+<button class="zt-btn" data-zt-action="score-opts" type="button">Score Options</button>
+<span id="zt-decision-verdict" style="font-weight:700;color:#34d399;font-size:0.88rem;"></span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div aria-live="polite" class="zt-toast" id="zt-toast" role="status"></div>
+</div>
+</section>
+<section class="studio-app" data-studio-app="devtoys" hidden="" id="studio-glitchyard">
+<div class="glitchyard-mount" id="studio-glitchyard-mount"></div>
+</section>
+<script data-cfasync="false" id="curioid-applications-tools-bootstrap">(()=>{
+  'use strict';
+  const allowed=new Set(['vanta-deck','devtoys']);
+  let requested='vanta-deck';
+  try { requested=decodeURIComponent(location.hash.slice(1)||'vanta-deck'); }
+  catch (_) { requested='vanta-deck'; }
+  const active=allowed.has(requested)?requested:'vanta-deck';
+  document.body.dataset.app=active;
+  document.title='CURIOID';
+  const section=document.querySelector(`[data-studio-app="${active}"]`);
+  if(section)section.hidden=false;
+  const sources={ 'vanta-deck':'vanta-deck-app.js', 'devtoys':'glitchyard-app.js' };
+  const sri={'vanta-deck-app.js':'sha384-Ue4ohMQ9ETdgQuT9FnopDzmuBQgqP582k9OaVsBmArahK+NraGZ/V82jGMo+D8HN','glitchyard-app.js':'sha384-DQeZmCvk2Ai6/hrLL28V48Ev6ba6O/nWA+3ig1ElFI7KkJmKOhQsN4i+adS1srxb'};
+  const showFailure=(message)=>{const host=(active==='devtoys'?document.getElementById('studio-glitchyard-mount'):section)||section||document.body;const box=document.createElement('div');box.setAttribute('role','alert');box.style.cssText='margin:24px;padding:18px;border:1px solid #b45309;border-radius:12px;background:#241b13;color:#ffdfad;font:14px/1.55 system-ui';box.textContent='This studio could not start. '+message+' Refresh the page after the current release files have finished deploying.';host.replaceChildren(box);};
+  function loadLocalScript(file,integrity){return new Promise((resolve,reject)=>{if(!/^sha384-[A-Za-z0-9+/]+={0,2}$/.test(integrity||''))return reject(new Error('The release integrity declaration for '+file+' is missing or malformed.'));const script=document.createElement('script');script.src=new URL(file,location.href).href;script.async=false;script.integrity=integrity;script.crossOrigin='anonymous';script.referrerPolicy='no-referrer';script.onload=()=>resolve();script.onerror=()=>reject(new Error('The SRI-verified '+file+' script failed to load. Check that the file is beside this page and belongs to the same release.'));document.head.appendChild(script);});}
+  let cleanup=()=>{};
+  const appApi={ 'vanta-deck':{file:sources['vanta-deck'],integrity:sri[sources['vanta-deck']]}, 'devtoys':{file:sources.devtoys,integrity:sri[sources.devtoys]} }[active];
+  loadLocalScript(appApi.file,appApi.integrity).then(()=>{
+    if(window.__curioidAppDisposed)return;
+    if(active==='devtoys'){let toastTimer=0;const notify=(message)=>{const toast=document.getElementById('studio-toast');if(!toast)return;toast.textContent=String(message||'Done');toast.classList.add('is-visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-visible'),2200);};const host=document.getElementById('studio-glitchyard-mount');if(typeof window.CurioidGlitchyard?.mount!=='function')throw new Error('Glitchyard registered no mount function.');cleanup=window.CurioidGlitchyard.mount(host,{toast:notify})||(()=>{});window.addEventListener('curioid-app-dispose',()=>{try{cleanup();}catch(_){}clearTimeout(toastTimer);},{once:true});}
+  }).catch(error=>showFailure(String(error?.message||error).slice(0,220)));
+})();</script>
+</body>
+</html>
